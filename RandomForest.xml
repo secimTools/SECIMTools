@@ -1,0 +1,87 @@
+<tool id="random-forest" name="Random Forest">
+  <description> for feature selection.</description>
+  <command interpreter="python">RandomForest.py $input $class_column_name $number_of_estimators $outfile1 $outfile2 </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Dataset" help="Dataset missing? See TIP below"/>
+    <param name="class_column_name" size="30" type="text" value="" label="Column name for the class"/>
+    <param name="number_of_estimators" size="30" type="text" value="" label="Number of trees in the forest"/>
+  </inputs>
+  <outputs>
+    <data format="csv" name="outfile1" label="Selected 2D Data"/>
+    <data format="csv" name="outfile2" label="Importance Factors"/>
+  </outputs>
+  <requirements>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">sklearn</requirement>
+  </requirements>
+  <!-- TODO: uncomment the following test when we have tools.update_state() working for 
+       multiple dependents with the same dependency.
+  <tests>
+    <test>
+      <param name="input" value="scatterplot_in1.tabular" ftype="tabular"/>
+      <param name="col1" value="2"/>
+      <param name="col2" value="3"/>
+      <param name="title" value="Scatterplot"/>
+      <param name="xlab" value="V1"/>
+      <param name="ylab" value="V2"/>
+      <output name="out_file1" file="scatterplot_out1.png" />
+    </test>
+  </tests>
+  -->
+  <help>
+
+.. class:: infomark
+
+**TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+-----
+
+**Syntax**
+
+This tool uses the Random forest algorithm to select the important features that the groups/classes differentiate the most based on.
+
+- Two sets of results are displayed in the resulting history item.
+
+-----
+
+**Example input**
+
+-- Input file::
+
+    group    feature1    feature2    feature3                                   
+    human    68          4.1         0.10                                       
+    human    71          4.6         0.31                                       
+    nonhuman 62          3.8         0.09                                       
+    human    75          4.4         0.65                                       
+    nonhuman 58          3.2         0.23                                       
+    nonhuman 60          3.1         0.77                                       
+
+-- class column name = group
+
+-- Typical number of trees are 10 or 100. One would increase the number of trees in the forest if upon multiple rerunning of the algorithm, the order of importance of features changes significantly.
+
+**Example output**
+
+-- output 1: Reduced dataset::
+
+    group    feature1    feature3
+    human    68          0.1
+    human    71          0.31
+    nonhuman 62          0.09
+    human    75          0.65
+    nonhuman 58          0.23
+    nonhuman 60          0.77
+
+-- output 2: rank-order list of features and their relative importance ::
+
+	feature1	0.45
+	feature3	0.34
+	feature2	0.22
+
+-----
+
+**Next Step**
+
+Use the scatterplotPNG tool on output1 (reduced dataset) to plot the two most important features againt each other and test the separation levels.
+  </help>
+</tool>
