@@ -1,0 +1,60 @@
+<tool id="hierarchical-cluster-heatmap" name="Hierarchical Cluster Heatmap" version="0.0.1">
+  <description> </description>
+  <command interpreter="python">
+    hierarchical-cluster-heatmap.py 
+      --i $input1
+      --o1 $out_file1
+  </command>
+  <inputs>
+    <param format="tabular" name="input1" type="data" label="Select data" help="Dataset missing? See TIP below."/>
+  </inputs>
+  <outputs>
+    <data format="png" name="out_file1" />
+  </outputs>
+  <requirements>
+    <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">scipy</requirement>
+  </requirements>
+  <help>
+
+
+.. class:: infomark
+
+**TIP:** If your data is not TAB delimited, use *Edit Datasets-&gt;Convert characters*
+
+-----
+
+.. class:: infomark
+
+**What it does**
+
+This tool Generates a Hierarchical Cluster Heatmap from the provided data.
+
+
+-----
+
+.. class:: warningmark
+
+**Note**
+This is port to galaxy of David Gladstone's:
+
+### hierarchical_clustering.py
+#Copyright 2005-2012 J. David Gladstone Institutes, San Francisco California
+#Author Nathan Salomonis - nsalomonis@gmail.com
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy 
+#of this software and associated documentation files (the "Software"), to deal 
+#in the Software without restriction, including without limitation the rights 
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+#copies of the Software, and to permit persons to whom the Software is furnished 
+#to do so, subject to the following conditions:
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+#INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+#PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+#HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
+#OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+#SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+  </help>
+</tool>

@@ -1,0 +1,24 @@
+<tool id="addheader" name="Add Header" version="0.1">
+  <description></description>
+    <command interpreter="sh">
+      addheader.sh "$header" $input_file $output_file
+    </command>
+  <inputs>
+    <param name="input_file" type="data" format="tabular" label="File (tabular)"/>
+    <param name="header" type="text" size='120' value="" label="Header line (tab-delimited)"> 
+      <sanitizer sanitize="False"/>
+    </param>
+ </inputs>
+  <outputs>
+    <data name="output_file" type="data" format="tabular" label="${tool.name} on ${on_string}"/>
+  </outputs>
+  <help>
+
+**Header line**
+
+Copy and paste tab-delimited text (from Excel, etc.)
+
+	col1	col2	col3
+
+  </help>
+</tool>

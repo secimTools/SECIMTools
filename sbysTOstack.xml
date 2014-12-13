@@ -1,0 +1,15 @@
+<tool id="sbysTOstack" name="sbysTOstack">
+  <description></description>
+  <command interpreter="python">sbysTOstack.py $input $ID $prefix $out_file1 </command>
+  <inputs>
+    <param name="input" type="data" format="table" label="Dataset" help="Enter the name of side-by-side data file name\n"/>
+    <param name="ID" label="Name of the id column" type="data_column" help="Enter the name of the ID column (rows of the side-by-side data) e.g. 'probeset_id'\n"/>
+    <param name="prefix" label="prefix of to-be-stacked columns" type="data_column" help="Enter the prefix of the names of the side-by-side columns to be stacked e.g. 'intensity_'\n"/>
+  </inputs>
+  <outputs>
+    <data format="csv" name="out_file1" />
+  </outputs>
+  <requirements>
+    <requirement type="python-module">pandas</requirement>
+  </requirements>
+</tool>

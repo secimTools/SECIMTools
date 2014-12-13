@@ -1,0 +1,67 @@
+<tool id="anova-single-file" name="One-Way ANOVA">
+  <description> for two or more groups.</description>
+  <command interpreter="python">anova.py --infile $input --group-column $gcolumn --groups $groups --test-column $tcolumn</command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Dataset" help="Dataset missing? See TIP below"/>
+    <param name="gcolumn" size="30" type="text" value="" label="Groups Column Label"/>
+    <param name="groups" size="30" type="text" value="" label="Groups for ANOVA (comma separated)"/>
+    <param name="tcolumn" size="30" type="text" value="" label="Test values Column Label"/>
+  </inputs>
+  <outputs>
+    <data format="txt" name="out_file1" />
+  </outputs>
+  <requirements>
+    <requirement type="python-module">scipy</requirement>
+  </requirements>
+  <!-- TODO: uncomment the following test when we have tools.update_state() working for 
+       multiple dependents with the same dependency.
+  <tests>
+    <test>
+      <param name="input" value="scatterplot_in1.tabular" ftype="tabular"/>
+      <param name="col1" value="2"/>
+      <param name="col2" value="3"/>
+      <param name="title" value="Scatterplot"/>
+      <param name="xlab" value="V1"/>
+      <param name="ylab" value="V2"/>
+      <output name="out_file1" file="scatterplot_out1.png" />
+    </test>
+  </tests>
+  -->
+  <help>
+
+.. class:: infomark
+
+**TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+-----
+
+**Syntax**
+
+This tool calculates a one way ANOVA on the selected sample groups. 
+
+- All invalid, blank and comment lines in the dataset are skipped.  Results are displayed in the resulting history item.
+
+- **Group Column Label and Test Column Label** The label of the of the column header which respectively deliniates the groups and group test values on which ANOVA will be run.
+- **Groups** A comma seperated list of groups on which to run ANOVA.
+
+-----
+
+- Groups: 68,71,69,62,75,58,60
+
+- Input file::
+    id	group	testval
+    1	68	4.1
+    2   71	4.6
+    3   62	3.8
+    4   75	4.4
+    5   58	3.2
+    6   60	3.1
+    7   67	3.8
+    8   68	4.1
+    9   71	4.3
+    10  69	3.7
+
+
+
+</help>
+</tool>
