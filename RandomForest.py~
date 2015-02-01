@@ -20,7 +20,8 @@ importance=DF([data.columns, model.feature_importances_]).T.sort(columns=1,ascen
 importance.to_csv(outfile2,index=False, header=False,sep='	')
 
 data=data[importance.ix[:,0].tolist()]
-selected_data=DF(model.transform(data,threshold=0))
-selected_data.columns=data.columns
+selected_data=DF(model.fit_transform(data,classes))
+selected_data=selected_data.ix[:,:1]
+selected_data.columns=data.columns[:]#[:2]
 selected_data[class_column_name]=classes
 selected_data.to_csv(outfile1,index=False,sep='	')

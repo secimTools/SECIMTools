@@ -92,8 +92,8 @@ def main():
             savefig( out_fname, format='png' )
 
 	    #Show plot for testing purposes.
-#	    if displaywindow:
-#                plt.show()
+	    if displaywindow:
+                plt.show()
 
 	    #Copy to data file
 	    #assert not os.path.isabs(out_fname_png)
