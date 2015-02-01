@@ -82,6 +82,6 @@ This tool uses the Random forest algorithm to select the important features that
 
 **Next Step**
 
-Use the scatterplotPNG tool on output1 (transformed dataset) to plot the two most important features againt each other and test the separation levels.
+Use the scatterplotPNG tool on output1 (reduced dataset) to plot the two most important features againt each other and test the separation levels.
   </help>
 </tool>
