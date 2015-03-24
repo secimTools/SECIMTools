@@ -13,7 +13,7 @@
     </param>
   </inputs>
   <outputs>
-    <data format="tabular" name="results_table" />
+    <data format="tabular" name="results_table"/>
     <data format="pdf" name="qq_plots" />
     <data format="pdf" name="volcano_plots" />
   </outputs>
