@@ -1,0 +1,83 @@
+<tool id="anova-single-file" name="One-Way ANOVA">
+  <description> for two or more groups.</description>
+  <command interpreter="python">anova.py --input $input --design $design --ID $uniqID --group $group --std $std --out $results_table --fig $q_q_plots --fig2 $volcano_plots</command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column(s) in your Design File that contains group classifications. Separate multiple names by spaces."/>
+    <param name="std" type="select" label="Mean Standardization">
+        <option value="None">NONE</option>
+        <option value="STD">STD</option>
+        <option value="MEAN">MEAN</option>
+    </param>
+  </inputs>
+  <outputs>
+    <data format="tabular" name="results_table" />
+    <data format="pdf" name="q_q_plots" />
+    <data format="pdf" name="volcano_plots" />
+  </outputs>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">statsmodels</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
+  <!-- TODO: uncomment the following test when we have tools.update_state() working for 
+       multiple dependents with the same dependency.
+  <tests>
+    <test>
+      <param name="input" value="scatterplot_in1.tabular" ftype="tabular"/>
+      <param name="col1" value="2"/>
+      <param name="col2" value="3"/>
+      <param name="title" value="Scatterplot"/>
+      <param name="xlab" value="V1"/>
+      <param name="ylab" value="V2"/>
+      <output name="out_file1" file="scatterplot_out1.png" />
+    </test>
+  </tests>
+  -->
+  <help>
+
+.. class:: infomark
+
+**TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+-----
+
+**Syntax**
+
+This tool calculates a one way ANOVA on the selected sample groups. 
+
+- All invalid, blank and comment lines in the dataset are skipped.  Results are displayed in the resulting history item.
+
+- **Group Column Label and Test Column Label** The label of the of the column header which respectively deliniates the groups and group test values on which ANOVA will be run.
+- **Groups** A comma seperated list of groups on which to run ANOVA.
+
+-----
+
+- Groups: 68,71,69,62,75,58,60
+
+Input file::
+
+    +----+-------+---------+
+    | id | group | testval |
+    +====+=======+=========+
+    | 1  | 68    | 4.1     |
+    | 2  | 71    | 4.6     |
+    | 3  | 62    | 3.8     |
+    | 4  | 75    | 4.4     |
+    | 5  | 58    | 3.2     |
+    | 6  | 60    | 3.1     |
+    | 7  | 67    | 3.8     |
+    | 8  | 68    | 4.1     |
+    | 9  | 71    | 4.3     |
+    | 10 | 69    | 3.7     |
+    +----+-------+---------+
+
+
+
+</help>
+</tool>
+
