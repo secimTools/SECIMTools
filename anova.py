@@ -27,19 +27,19 @@ def getOptions():
     parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
     parser.add_argument("--group", dest="group", action='store', nargs='*', required=True, help="Group/treatment identifiers. Can be multiple names separated by a space.")
-    parser.add_argument("--std", dest="std", action='store', choices=['STD', 'MEAN'], required=False, help="Group/treatment identifiers. Can be multiple names separated by a space.")
+    parser.add_argument("--std", dest="std", action='store', choices=['STD', 'MEAN', 'None'], required=True, help="Group/treatment identifiers. Can be multiple names separated by a space.")
     parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
     parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
-#     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.txt',
-                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
-                              '--ID', 'Name',
-                              '--group', 'treatment',
-                              '--std', 'STD',
-                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
-                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-                              '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf'])
+    args = parser.parse_args()
+#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.tsv',
+#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
+#                               '--ID', 'Name',
+#                               '--group', 'treatment',
+#                               '--std', 'STD',
+#                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
+#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
+#                               '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf'])
     return(args)
 
 
@@ -304,8 +304,8 @@ def oneWay(dat, compound, results):
     results.ix[compound, 'ErrorSS'] = model_lm.ssr
     results.ix[compound, 'ModelSS'] = model_lm.ess
     results.ix[compound, 'TotalSS'] = model_lm.ess + model_lm.ssr
-    results.ix[compound, 'NDF_treatment'] = model_lm.df_model
-    results.ix[compound, 'DDF_treatment'] = model_lm.df_resid
+    results.ix[compound, 'NDF_treatment'] = int(model_lm.df_model)
+    results.ix[compound, 'DDF_treatment'] = int(model_lm.df_resid)
     results.ix[compound, 'SampleVariance'] = dat.sdat[compound].var()
     results.ix[compound, 'RSquare'] = model_lm.rsquared
     return pd.Series(model_lm.resid, name=compound)
@@ -351,7 +351,7 @@ def qqPlot(resids, oname):
     with PdfPages(oname) as pdf:
         trans = resids.T
         for col in trans.columns:
-            fig = sm.graphics.qqplot(trans[col], fit=True, line='q')
+            fig = sm.graphics.qqplot(trans[col], fit=True, line='r')
             fig.suptitle(col)
             pdf.savefig(fig)
             plt.close(fig)
@@ -382,13 +382,14 @@ def volcano(combo, results, oname, cutoff=4):
             plt.close(fig)
 
 
-def cleanCol(col, decimals=4):
+def cleanCol(x, decimals=4):
     """ Round floats to `decimals` places """
-    try:
-        col = np.round(col, decimals=decimals)
-    except:
-        pass
-    return col
+    if isinstance(x, float):
+        formatString = '%.{0}f'.format(str(decimals))
+        x2 = float(formatString % x)
+    else:
+        x2 = x
+    return x2
 
 
 def main():
@@ -400,13 +401,10 @@ def main():
     results = initResults(dat)
 
     # Standardize the data
-    try:
-        if args.std == 'STD':
-            dat.sdat = sasSTD(dat, results)
-        elif args.sstd == 'MEAN':
-            dat.sdat = sasMEAN(dat, results)
-    except:
-        pass
+    if args.std == 'STD':
+        dat.sdat = sasSTD(dat, results)
+    elif args.std == 'MEAN':
+        dat.sdat = sasMEAN(dat, results)
 
     # NOTE: JMP does not seem to use the standardized values. The output looks
     # identical with and without standardization. Set sdat back to
@@ -445,8 +443,8 @@ def main():
     volcano(combo, results, args.ofig2)
 
     # write results table
-    clean = results.apply(lambda x: cleanCol(x))
-    clean.to_csv(args.oname, sep="\t")
+    clean = results.applymap(lambda x: cleanCol(x))
+    clean.to_csv(args.oname, sep="\t", columns=clean.notnull().any())
 
 
 if __name__ == '__main__':
