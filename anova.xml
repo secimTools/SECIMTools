@@ -113,9 +113,11 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
 
 This tool outputs 3 different files.
 
-- `results_table` is a `TSV` table that contains the One-Way-ANOVA results and analysis of means.
-- `qq_plots` is a `PDF` that contains q-q plots from the ANOVA.
-- `volcano_plots` is a `PDF` that contains the volcano plots comparing the differences between group means.
+    - **results_table** is a `TSV` table that contains the One-Way-ANOVA results and analysis of means.
+
+    - **qq_plots** is a `PDF` that contains q-q plots from the ANOVA.
+
+    - **volcano_plots** is a `PDF` that contains the volcano plots comparing the differences between group means.
 
 </help>
 </tool>
