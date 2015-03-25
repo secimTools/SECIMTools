@@ -1,17 +1,28 @@
 <tool id="anova-single-file" name="One-Way ANOVA">
   <description> for two or more groups.</description>
-  <command interpreter="python">anova.py --infile $input --group-column $gcolumn --groups $groups --test-column $tcolumn</command>
+  <command interpreter="python">anova.py --input $input --design $design --ID $uniqID --group $group --std $std --out $results_table --fig $qq_plots --fig2 $volcano_plots</command>
   <inputs>
-    <param name="input" type="data" format="tabular" label="Dataset" help="Dataset missing? See TIP below"/>
-    <param name="gcolumn" size="30" type="text" value="" label="Groups Column Label"/>
-    <param name="groups" size="30" type="text" value="" label="Groups for ANOVA (comma separated)"/>
-    <param name="tcolumn" size="30" type="text" value="" label="Test values Column Label"/>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column(s) in your Design File that contains group classifications. Separate multiple names by spaces."/>
+    <param name="std" type="select" label="Mean Standardization">
+        <option value="None">NONE</option>
+        <option value="STD">STD</option>
+        <option value="MEAN">MEAN</option>
+    </param>
   </inputs>
   <outputs>
-    <data format="txt" name="out_file1" />
+    <data format="tabular" name="results_table"/>
+    <data format="pdf" name="qq_plots" />
+    <data format="pdf" name="volcano_plots" />
   </outputs>
   <requirements>
+    <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">statsmodels</requirement>
+    <requirement type="python-module">matplotlib</requirement>
   </requirements>
   <!-- TODO: uncomment the following test when we have tools.update_state() working for 
        multiple dependents with the same dependency.
@@ -31,37 +42,83 @@
 
 .. class:: infomark
 
-**TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+**TIP:** 
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
------
+.. class:: warningmark
+
+**WARNING: This script automatically removes spaces and special characters from strings.**
+Also if a compound names start with a number it will prepend an '_'.
+
+--------------------------------------------------------------------------------
 
 **Syntax**
 
-This tool calculates a one way ANOVA on the selected sample groups. 
+This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected groups. 
 
-- All invalid, blank and comment lines in the dataset are skipped.  Results are displayed in the resulting history item.
+- Two input datasets are required. 
 
-- **Group Column Label and Test Column Label** The label of the of the column header which respectively deliniates the groups and group test values on which ANOVA will be run.
-- **Groups** A comma seperated list of groups on which to run ANOVA.
+    **Wide Fromated Dataset:**
 
------
+    A wide formatted dataset that contains measurements for each sample.::
 
-- Groups: 68,71,69,62,75,58,60
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
 
-- Input file::
-    id	group	testval
-    1	68	4.1
-    2   71	4.6
-    3   62	3.8
-    4   75	4.4
-    5   58	3.2
-    6   60	3.1
-    7   67	3.8
-    8   68	4.1
-    9   71	4.3
-    10  69	3.7
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    Extra columns will automatically be ignored.
 
 
+    **Design File:**
+    A design file relating samples to various groups/treatments.::
+
+        +----------+--------+--------+
+        | sampleID | group1 | group2 |
+        +==========+========+========+
+        | sample1  | g1     | t1     |
+        | sample2  | g1     | t1     |
+        | sample3  | g1     | t1     |
+        | sample4  | g2     | t1     |
+        | sample5  | g2     | t1     |
+        | sample6  | g2     | t1     |
+        | ...      | ...    | ...    |
+        +----------+--------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+- In addition to your datasets, you need to provide:
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*.
+
+    **Group/Treatment**
+
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group1 group2*.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+This tool outputs 3 different files.
+
+    - **results_table** is a `TSV` table that contains the One-Way-ANOVA results and analysis of means.
+
+    - **qq_plots** is a `PDF` that contains q-q plots from the ANOVA.
+
+    - **volcano_plots** is a `PDF` that contains the volcano plots comparing the differences between group means.
 
 </help>
 </tool>
+

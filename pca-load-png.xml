@@ -93,8 +93,8 @@ This tool performs Principal Component Analysis on the given numeric input data 
 - The summary statistics in the output are described below:
 
   - Std. deviation: Standard deviations of the principal components
+  - Proportion of variance explained by each principal component
   - Loadings: a list of eigen-vectors/variable loadings
-  - Scores: Scores of the input data on the principal components
 
   </help>
 </tool>

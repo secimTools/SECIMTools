@@ -108,14 +108,14 @@ for i,var in enumerate(vars):
        
 print >>fout, "#Proportion of variance explained\t%s" %("\t".join(["%.4g" % el for el in vars]))
 
-print >>fout, "#Loadings\t%s" %("\t".join(["%s" % el for el in range(1,ncomps+1)]))
-xcolnames = ["c%d" %(el+1) for el in x_cols]
-if 'loadings' in summary: #in case of princomp
-    loadings = 'loadings'
-elif 'rotation' in summary: #in case of prcomp
-    loadings = 'rotation'
-for i,val in enumerate(summary[loadings]):
-    print >>fout, "%s\t%s" %(xcolnames[i], "\t".join(["%.4g" % el for el in val]))
+#print >>fout, "#Loadings\t%s" %("\t".join(["%s" % el for el in range(1,ncomps+1)]))
+#xcolnames = ["c%d" %(el+1) for el in x_cols]
+#if 'loadings' in summary: #in case of princomp
+#    loadings = 'loadings'
+#elif 'rotation' in summary: #in case of prcomp
+#    loadings = 'rotation'
+#for i,val in enumerate(summary[loadings]):
+#    print >>fout, "%s\t%s" %(xcolnames[i], "\t".join(["%.4g" % el for el in val]))
 
 print >>fout, "#Scores\t%s" %("\t".join(["%s" % el for el in range(1,ncomps+1)]))
 if 'scores' in summary: #in case of princomp

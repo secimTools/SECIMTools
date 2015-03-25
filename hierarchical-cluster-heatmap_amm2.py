@@ -31,12 +31,12 @@ import scipy.spatial.distance as dist
 import numpy
 import string
 import time
-import sys, os
+import sys, os, csv
 import getopt
 
 ################# Perform the hierarchical clustering #################
 
-def heatmap(x, row_header, column_header, row_method,
+def heatmap(design, x, row_header, column_header, row_method,
             column_method, row_metric, column_metric,
             color_gradient, filename, outfile):
     
@@ -50,6 +50,31 @@ def heatmap(x, row_header, column_header, row_method,
     x is an m by n ndarray, m observations, n genes
     """
     
+    #### Import Design file
+
+    with open(design) as D:
+        DESIGN=csv.DictReader(D,delimiter="\t")
+        find_ID = None
+        find_group = None
+        groups = list()
+	IDs = dict()
+        for row in DESIGN:
+            find_ID = row["sampleID"]
+            find_group = row["group"]
+            groups.append(row["group"])
+	    IDs[row['sampleID']] = row["group"]
+        design_groups = set(groups)     # unique list of groups
+        num_groups = len(design_groups)  # how many different groups
+#    print num_groups
+#    print design_groups
+
+#    for grp in design_groups:
+
+        color_list = ['r','g','b','c','m','k','y']
+        col_labels = {}
+        col_labels = dict(zip(design_groups, color_list))
+
+        
     ### Define the color gradient to use based on the provided name
     n = len(x[0]); m = len(x)
     if color_gradient == 'red_white_blue':
@@ -72,6 +97,8 @@ def heatmap(x, row_header, column_header, row_method,
         cmap=pylab.cm.PiYG_r
     if color_gradient == 'coolwarm':
         cmap=pylab.cm.coolwarm
+    else: 
+	cmap=pylab.cm.jet
 
     ### Scale the max and min colors so that 0 is white/black
     vmin=x.min()
@@ -136,7 +163,8 @@ def heatmap(x, row_header, column_header, row_method,
         print 'Column clustering completed in %s seconds' % time_diff
     else:
         ind2 = ['NA']*len(column_header) ### Used for exporting the flat cluster data
-        
+
+
     # Compute and plot left dendrogram.
     if row_method != None:
         start_time = time.time()
@@ -146,7 +174,7 @@ def heatmap(x, row_header, column_header, row_method,
         Y1 = sch.linkage(D1, method=row_method, metric=row_metric) ### gene-clustering metric - 'average', 'single', 'centroid', 'complete'
         Z1 = sch.dendrogram(Y1, orientation='right')
         ind1 = sch.fcluster(Y1,0.7*max(Y1[:,2]),'distance') ### This is the default behavior of dendrogram
-        ax1.set_xticks([]) ### Hides ticks
+	ax1.set_xticks([]) ### Hides ticks
         ax1.set_yticks([])
         time_diff = str(round(time.time()-start_time,1))
         print 'Row clustering completed in %s seconds' % time_diff
@@ -158,6 +186,7 @@ def heatmap(x, row_header, column_header, row_method,
     xt = x
     if column_method != None:
         idx2 = Z2['leaves'] ### apply the clustering for the array-dendrograms to the actual matrix data
+#        print idx2  ### ALISON ADDED
         xt = xt[:,idx2]
         ind2 = [ind2[i] for i in idx2]
         ## Commented out by Sergio due to error with version of numpy >= 1.8 ind2 = ind2[:,idx2] ### reorder the flat cluster to match the order of the leaves the dendrogram
@@ -167,7 +196,7 @@ def heatmap(x, row_header, column_header, row_method,
         ind1 = [ind1[i] for i in idx1]
         ## Commented out by Sergio due to error with version of numpy >= 1.8 ind1 = ind1[idx1,:] ### reorder the flat cluster to match the order of the leaves the dendrogram
     ### taken from http://stackoverflow.com/questions/2982929/plotting-results-of-hierarchical-clustering-ontop-of-a-matrix-of-data-in-python/3011894#3011894
-    im = axm.matshow(xt, aspect='auto', origin='lower', cmap=cmap, norm=norm) ### norm=norm added to scale coloring of expression with zero = white or black
+    im = axm.matshow(xt, aspect='auto', origin='lower',cmap=cmap, norm=norm) ### norm=norm added to scale coloring of expression with zero = white or black
     axm.set_xticks([]) ### Hides x-ticks
     axm.set_yticks([])
 
@@ -185,20 +214,33 @@ def heatmap(x, row_header, column_header, row_method,
             new_row_header.append(row_header[i])
     for i in range(x.shape[1]):
         if column_method != None:
-            axm.text(i, -0.9, ' '+column_header[idx2[i]], rotation=270, verticalalignment="top") # rotation could also be degrees
+            xlbls = axm.text(i, -0.9, ' '+column_header[idx2[i]], rotation=270, verticalalignment="top") # rotation could also be degrees
             new_column_header.append(column_header[idx2[i]])
         else: ### When not clustering columns
-            axm.text(i, -0.9, ' '+column_header[i], rotation=270, verticalalignment="top")
+            xlbls = axm.text(i, -0.9, ' '+column_header[i], rotation=270, verticalalignment="top")   # Alison added color bit
             new_column_header.append(column_header[i])
 
     # Plot colside colors
     # axc --> axes for column side colorbar
     if column_method != None:
+        gps = list()
+        for i in idx2:
+	    gps.append(IDs[new_column_header[i]])
+	
+        dummy = dict()
+        cnt = 1
+        for val in gps:
+            if not val in dummy:
+                dummy[val] = cnt
+                cnt += 1
+        conVert = numpy.array([dummy[val] for val in gps])
+        conVert.shape = (1,len(ind2))
         axc = fig.add_axes([axc_x, axc_y, axc_w, axc_h])  # axes for column side colorbar
         cmap_c = mpl.colors.ListedColormap(['r', 'g', 'b', 'y', 'w', 'k', 'm'])
         dc = numpy.array(ind2, dtype=int)
         dc.shape = (1,len(ind2)) 
-        im_c = axc.matshow(dc, aspect='auto', origin='lower', cmap=cmap_c)
+        im_c = axc.matshow(conVert, aspect='auto', origin='lower', cmap=cmap_c)
+        
         axc.set_xticks([]) ### Hides ticks
         axc.set_yticks([])
     
@@ -366,6 +408,25 @@ def YellowBlackBlue():
 
 ################# General data import methods #################
 
+def importDesign(design):
+    D=csv.DictReader(DESIGN,delimiter="\t")
+    find_ID = None
+    find_group = None
+    for row in D:
+        Design_ID = row["sampleID"]
+        Design_group = row["group"]
+        groups.append(row["group"])
+
+    design_groups = set(groups)
+    num_groups = len(design_groups)
+#    print num_groups
+#    print design_groups
+
+    color_list = ['r','g','b','c','m','k','y']
+    col_labels = {}
+    col_labels = dict(zip(design_groups, color_list))
+#print col_labels
+
 def importData(filename):
     start_time = time.time()
     matrix=[]
@@ -419,14 +480,15 @@ if __name__ == '__main__':
     """
     ################  Comand-line arguments ################
     if len(sys.argv[1:])<=1:  ### Indicates that there are insufficient number of command-line arguments
-        print "Warning! Please designate a tab-delimited input expression file in the command-line"
-        print "Example: python hierarchical_clustering.py --i /Users/me/logfolds.txt"
+        print "Warning! Please designate a tab-delimited input file in the command-line"
+        print "Example: python hierarchical_clustering.py --sbys_dataFile --designFile"
         sys.exit()
     else:
-        options, remainder = getopt.getopt(sys.argv[1:],'', ['i=','o1=','o2=','o3=','row_header','column_method',
+        options, remainder = getopt.getopt(sys.argv[1:],'', ['i=','d=','o1=','row_header','column_method',
                                              'row_metric','column_metric','color_gradient'])
         for opt, arg in options:
             if opt == '--i': filename=arg
+	    elif opt == '--d': design=arg
 	    elif opt == '--o1': out_fname1=arg
 	    #elif opt == '--o2': out_fname2=arg
 	    #elif opt == '--o3': out_fname3=arg
@@ -439,15 +501,15 @@ if __name__ == '__main__':
                 print "Warning! Command-line argument: %s not recognized. Exiting..." % opt; sys.exit()
             
     matrix, column_header, row_header = importData(filename)
-
+    
     if len(matrix)>0:
         try:
-            heatmap(matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
+            heatmap(design, matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
         except Exception:
             print 'Error using %s ... trying euclidean instead' % row_metric
             row_metric = 'euclidean'
             try:
-                heatmap(matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
+                heatmap(design, matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
             except IOError:
                 print 'Error with clustering encountered'
 
