@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 ### hierarchical_clustering.py
 #Copyright 2005-2012 J. David Gladstone Institutes, San Francisco California
 #Author Nathan Salomonis - nsalomonis@gmail.com
@@ -20,6 +21,8 @@
 ### Imports an tab-delimited expression matrix and produces and hierarchically clustered heatmap
 #################
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as pylab
 import matplotlib as mpl
 import scipy

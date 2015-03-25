@@ -2,6 +2,8 @@
 #Greg Von Kuster
 
 import sys
+import matplotlib
+matplotlib.use('Agg')
 from pylab import *
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
@@ -100,7 +102,7 @@ def main():
 	    #dstdir =  os.path.join(dstroot, os.path.dirname(out_fname_png))
 
 	    #os.makedirs(dstdir) # create all directories, raise an error if it already exists
-	    #shutil.copy(out_fname_png, out_fname)
+	    #shutil.copy(out_fname_png, out_fname_png)
             
         except Exception, exc:
             stop_err( "%s" %str( exc ) )
