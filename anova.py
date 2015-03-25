@@ -31,15 +31,15 @@ def getOptions():
     parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
     parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
-    args = parser.parse_args()
-#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.tsv',
-#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
-#                               '--ID', 'Name',
-#                               '--group', 'treatment',
-#                               '--std', 'STD',
-#                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
-#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-#                               '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf'])
+#     args = parser.parse_args()
+    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.txt',
+                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
+                              '--ID', 'Name',
+                              '--group', 'treatment',
+                              '--std', 'STD',
+                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
+                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
+                              '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf'])
     return(args)
 
 
@@ -308,7 +308,8 @@ def oneWay(dat, compound, results):
     results.ix[compound, 'DDF_treatment'] = int(model_lm.df_resid)
     results.ix[compound, 'SampleVariance'] = dat.sdat[compound].var()
     results.ix[compound, 'RSquare'] = model_lm.rsquared
-    return pd.Series(model_lm.resid, name=compound)
+    resid = model_lm.resid / np.sqrt(model_lm.mse_resid)
+    return pd.Series(resid, name=compound)
 
 
 def calcDiff(dat, compound, grpMeans, combo, results):
@@ -351,8 +352,20 @@ def qqPlot(resids, oname):
     with PdfPages(oname) as pdf:
         trans = resids.T
         for col in trans.columns:
-            fig = sm.graphics.qqplot(trans[col], fit=True, line='r')
+            fig = plt.figure(figsize=(8, 8))
             fig.suptitle(col)
+            ax1 = fig.add_subplot(311)
+            ax2 = fig.add_subplot(312)
+
+            ax2.axes.get_xaxis().set_visible(False)
+            ax2.axes.get_yaxis().set_visible(False)
+
+            ax3 = fig.add_subplot(313)
+
+            sm.graphics.qqplot(trans[col], fit=True, line='r', ax=ax1)
+            ax2.boxplot(trans[col].values.ravel(), vert=False)
+            ax3.hist(trans[col].values.ravel())
+
             pdf.savefig(fig)
             plt.close(fig)
 
@@ -439,12 +452,12 @@ def main():
     # Generate qqplots
     qqPlot(residDat, args.ofig)
 
-    # Generate Volcano plots
+#     # Generate Volcano plots
     volcano(combo, results, args.ofig2)
 
-    # write results table
+#     # write results table
     clean = results.applymap(lambda x: cleanCol(x))
-    clean.to_csv(args.oname, sep="\t", columns=clean.notnull().any())
+    clean.to_csv(args.oname, sep="\t")
 
 
 if __name__ == '__main__':
