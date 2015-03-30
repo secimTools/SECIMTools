@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Built-in packages
+import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 from itertools import combinations
@@ -19,6 +20,7 @@ import matplotlib.pyplot as plt
 
 # Local Packages
 from interface import wideToDesign
+import logger as sl
 
 
 def getOptions():
@@ -28,20 +30,21 @@ def getOptions():
     parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
     parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument("--group", dest="group", action='store', nargs='*', required=True, help="Group/treatment identifiers. Can be multiple names separated by a space.")
-    parser.add_argument("--std", dest="std", action='store', choices=['STD', 'MEAN', 'None'], required=True, help="Group/treatment identifiers. Can be multiple names separated by a space.")
+    parser.add_argument("--group", dest="group", action='store', required=True, help="Group/treatment identifier in design file.")
+    parser.add_argument("--std", dest="std", action='store', choices=['STD', 'MEAN'], required=False, default=None, help="Group/treatment identifiers. Can be multiple names separated by a space.")
     parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
     parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
+    parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 #     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.tsv',
+    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/small.tsv',
                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
                               '--ID', 'Name',
                               '--group', 'treatment',
-                              '--std', 'STD',
                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-                              '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf'])
+                              '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf',
+                              '--debug'])
     return(args)
 
 
@@ -66,7 +69,7 @@ def initResults(dat):
     """ Initialize the results dataset """
     base = ['GrandMean', 'ErrorSS']
     means = ['Mean treatment {0}'.format(x) for x in dat.levels]
-    base2 = ['ErrorSS', 'ModelSS', 'TotalSS', 'NDF_treatment', 'DDF_treatment',
+    base2 = ['ErrorSS', 'ModelSS', 'TotalSS', 'MSE', 'NDF_treatment', 'DDF_treatment',
              'Variance_Residual', 'SampleVariance', 'RSquare', 'F_T3_treatment',
              'PrF_T3_treatment', 'MeanMean', 'StdDevMean']
     means2 = ['Std Mean treatment {0}'.format(x) for x in dat.levels]
@@ -140,16 +143,18 @@ def sasMEAN(dat, results):
 
 def oneWay(dat, compound, results):
     """ One-way ANOVA """
-    formula = '{0} ~ {1}'.format(str(compound), str(dat.group[0]))
-    model_lm = ols(formula, data=dat.sdat).fit()
+    formula = '{0} ~ {1}'.format(str(compound), str(dat.group))
+    logger.info('ANOVA model: {0}'.format(formula))
+    model_lm = ols(formula, data=dat.trans).fit()
     results.ix[compound, 'F_T3_treatment'] = model_lm.fvalue
     results.ix[compound, 'PrF_T3_treatment'] = model_lm.f_pvalue
     results.ix[compound, 'ErrorSS'] = model_lm.ssr
     results.ix[compound, 'ModelSS'] = model_lm.ess
     results.ix[compound, 'TotalSS'] = model_lm.ess + model_lm.ssr
+    results.ix[compound, 'MSE'] = model_lm.mse_resid
     results.ix[compound, 'NDF_treatment'] = int(model_lm.df_model)
     results.ix[compound, 'DDF_treatment'] = int(model_lm.df_resid)
-    results.ix[compound, 'SampleVariance'] = dat.sdat[compound].var()
+    results.ix[compound, 'SampleVariance'] = dat.trans[compound].var()
     results.ix[compound, 'RSquare'] = model_lm.rsquared
     resid = model_lm.resid / np.sqrt(model_lm.mse_resid)
     return pd.Series(resid, name=compound)
@@ -166,16 +171,20 @@ def calcDiff(dat, compound, grpMeans, combo, results):
 
 def calcDiffSE(dat, compound, combo, results):
     """ One-way ANOVA """
-    # NOTE: This is a hack to get the right SEs
-    # Run anova model using each treatment as the reference, pull out
-    # corresponding SEs
-    for i in range(0, len(dat.levels)):
-        formula = '{0} ~ C({1}, Treatment(reference={2}))'.format(str(compound), str(dat.group[0]), i)
-        model_lm = ols(formula, data=dat.sdat).fit()
 
-        for j in range(i + 1, len(dat.levels)):
-            SE = model_lm.bse[j]
-            results.ix[compound, combo[(i, j)]['StdErr']] = SE
+    # MSE from ANOVA
+    MSE = results.ix[compound, 'MSE']
+
+    # Group by Treatment, need number of samples per treatment
+    grp = dat.design.groupby(dat.group)
+
+    for cbn in combo.values():
+        n1 = cbn['Levels'][0]
+        n2 = cbn['Levels'][1]
+        df1 = len(grp.get_group(n1))
+        df2 = len(grp.get_group(n2))
+        SE = np.sqrt((MSE / df1) + (MSE / df2))
+        results.ix[compound, cbn['StdErr']] = SE
 
 
 def tTest(compound, combo, results, cutoff=4):
@@ -248,27 +257,27 @@ def cleanCol(x, decimals=4):
     return x2
 
 
-def main():
-    # Command line options
-    args = getOptions()
-
+def main(args):
     # Import data
-    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
+    logger.info('Importing data')
+    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group, clean_string=True)
     results = initResults(dat)
 
     # Standardize the data
     if args.std == 'STD':
+        logger.info('Calculating STD standardization')
         dat.sdat = sasSTD(dat, results)
     elif args.std == 'MEAN':
+        logger.info('Calculating MEAN standardization')
         dat.sdat = sasMEAN(dat, results)
 
-    # NOTE: JMP does not seem to use the standardized values. The output looks
-    # identical with and without standardization. Set sdat back to
-    # unstandardized results.
-    dat.sdat = dat.transpose()
+    # NOTE: JMP does not standardized values for the ANOVA. The standardized
+    # values are only used for the creation of Hierarchical clusters, parallel
+    # plots, and PCA.
+    dat.trans = dat.transpose()
 
     # Group by Treatment
-    grp = dat.sdat.groupby(dat.group)
+    grp = dat.trans.groupby(dat.group)
     grpMeans = grp.mean().T
     combo = createCbn(dat)
 
@@ -276,7 +285,7 @@ def main():
     # Iterate over compound
     for compound in dat.wide.index.tolist():
         # Get Overall Mean
-        results.ix[compound, 'GrandMean'] = dat.sdat[compound].mean()
+        results.ix[compound, 'GrandMean'] = dat.trans[compound].mean()
         # run one-way anova
         resid = oneWay(dat, compound, results)
         resids.append(resid)
@@ -299,9 +308,20 @@ def main():
     volcano(combo, results, args.ofig2)
 
     # write results table
+    #TODO: Test the reversion part of the class
+    dat.revertSring(results)
     clean = results.applymap(lambda x: cleanCol(x))
     clean.to_csv(args.oname, sep="\t")
 
 
 if __name__ == '__main__':
-    main()
+    # Command line options
+    args = getOptions()
+
+    logger = logging.getLogger()
+    if args.debug:
+        sl.setLogger(logger, logLevel='debug')
+    else:
+        sl.setLogger(logger)
+
+    main(args)
