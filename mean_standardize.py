@@ -31,9 +31,8 @@ def getOptions():
     parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
     parser.add_argument("--group", dest="group", action='store', required=True, help="Group/treatment identifier in design file.")
+    parser.add_argument("--std", dest="std", action='store', choices=['STD', 'MEAN'], required=False, default=None, help="Group/treatment identifiers. Can be multiple names separated by a space.")
     parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
-    parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
-    parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 #     args = parser.parse_args()
     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/small.tsv',
@@ -41,25 +40,11 @@ def getOptions():
                               '--ID', 'Name',
                               '--group', 'treatment',
                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
-                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-                              '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf',
                               '--debug'])
     return(args)
 
 
 def createCbn(dat):
-    """ Create all pairwise combinations of treatments
-
-    Args:
-        dat.levels (list): A list of levels in the group.
-
-    Returns:
-        combo (dict): A dictionary of dictionaries with all possible pairwise
-            combinations. Used this to create the various column headers in the
-            results table.
-
-    """
-
     combo = defaultdict(dict)
     cbn = list(combinations(range(0, len(dat.levels)), 2))
     for c1, c2 in cbn:
@@ -77,23 +62,13 @@ def createCbn(dat):
 
 
 def initResults(dat):
-    """ Initialize the results dataset
-
-    Args:
-        dat.levels (list): A list of levels in the group.
-
-        dat.wide.index (list): A list of compounds.
-
-    Returns:
-        (pd.DataFrame): Initializes the results table, adding a row for each
-            compound and all column headers.
-
-    """
+    """ Initialize the results dataset """
     base = ['GrandMean', 'ErrorSS']
     means = ['Mean treatment {0}'.format(x) for x in dat.levels]
     base2 = ['ErrorSS', 'ModelSS', 'TotalSS', 'MSE', 'NDF_treatment', 'DDF_treatment',
-             'SampleVariance', 'RSquare', 'F_T3_treatment',
-             'PrF_T3_treatment']
+             'Variance_Residual', 'SampleVariance', 'RSquare', 'F_T3_treatment',
+             'PrF_T3_treatment', 'MeanMean', 'StdDevMean']
+    means2 = ['Std Mean treatment {0}'.format(x) for x in dat.levels]
 
     combo = createCbn(dat)
     diff = [combo[x]['Diff'] for x in sorted(combo.keys())]
@@ -103,37 +78,69 @@ def initResults(dat):
     lpT = [combo[x]['lpTval'] for x in sorted(combo.keys())]
     spT = [combo[x]['sTval'] for x in sorted(combo.keys())]
 
-    cols = base + means + base2 + diff + SE + T + pT + lpT + spT
+    cols = base + means + base2 + means2 + diff + SE + T + pT + lpT + spT
     return pd.DataFrame(index=dat.wide.index, columns=cols)
 
 
+def sasSTD(dat, results):
+    """ Function standardize using SAS STD procedure """
+    # Get transposed table
+    trans = dat.transpose()
+
+    # group by treatment
+    grp = trans.groupby(dat.group)
+
+    # Calculate group means and std
+    meanMean = grp.mean().mean()
+    stdMean = grp.mean().std()
+
+    # Standardize using sas STD method
+    standard = grp.transform(lambda x: (x - meanMean[x.name]) / stdMean[x.name])
+    merged = standard.join(dat.design)
+    merged.index.name = 'sampleID'
+
+    # Add results to output table
+    sMeans = merged.groupby(dat.group).mean().T
+    for compound in dat.wide.index.tolist():
+        results.ix[compound, 'MeanMean'] = meanMean.ix[compound]
+        results.ix[compound, 'StdDevMean'] = stdMean.ix[compound]
+        for lvl in dat.levels:
+            results.ix[compound, 'Std Mean treatment {0}'.format(lvl)] = sMeans.ix[compound, lvl]
+
+    return merged
+
+
+def sasMEAN(dat, results):
+    """ Function standardize using SAS STD procedure """
+    # Get transposed table
+    trans = dat.transpose()
+
+    # group by treatment
+    grp = trans.groupby(dat.group)
+
+    # Calculate group means and std
+    meanMean = grp.mean().mean()
+
+    # Standardize using sas MEAN method
+    standard = grp.transform(lambda x: x - meanMean[x.name])
+    merged = standard.join(dat.design)
+    merged.index.name = 'sampleID'
+
+    # Add results to output table
+    sMeans = merged.groupby(dat.group).mean().T
+    for compound in dat.wide.index.tolist():
+        results.ix[compound, 'MeanMean'] = meanMean.ix[compound]
+        results.ix[compound, 'StdDevMean'] = 1
+        for lvl in dat.levels:
+            results.ix[compound, 'Std Mean treatment {0}'.format(lvl)] = sMeans.ix[compound, lvl]
+
+    return merged
+
+
 def oneWay(dat, compound, results):
-    """ One-way ANOVA
-
-    Run a simple one-way anova, where compound is the dependent variable and
-    group is the independent variable.
-
-    Args:
-        dat.group (str): Column in the design file that contains group information.
-
-        dat.trans (pd.DataFrame): A table where each row is a sample and each
-            compound is a column. Also contains a column with group information.
-
-        compound (str): The name of the current compound.
-
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
-
-    Returns:
-        results (pd.DataFrame): Updates in place the results table. Adds 'Anova
-            model:...', 'F_T3_treatment', 'PrF_T3_treatment', 'ErrorSS', 'ModelSS',
-            'TotalSS', 'MSE', 'NDF_treatment', 'DDF_treatment', 'SampleVariance',
-            'RSquare' to results.
-
-        (pd.Series): Pearson normalized residuals. (residuals / sqrt(MSE))
-
-    """
+    """ One-way ANOVA """
     formula = '{0} ~ {1}'.format(str(compound), str(dat.group))
+    logger.info('ANOVA model: {0}'.format(formula))
     model_lm = ols(formula, data=dat.trans).fit()
     results.ix[compound, 'F_T3_treatment'] = model_lm.fvalue
     results.ix[compound, 'PrF_T3_treatment'] = model_lm.f_pvalue
@@ -150,26 +157,7 @@ def oneWay(dat, compound, results):
 
 
 def calcDiff(dat, compound, grpMeans, combo, results):
-    """ Calculate group means and the differences between group means.
-
-    Args:
-        dat.levels (list): A list of levels in the group.
-
-        compound (str): The name of the current compound.
-
-        grpMeans (pd.DataFrame): A table with the overall mean for each group.
-
-        combo (dict): A dictionary of dictionaries with all possible pairwise
-            combinations. Used this to create the various column headers in the
-            results table.
-
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
-
-    Returns:
-        results (pd.DataFrame): Updates the results table. Adds 'Diff' to results.
-
-    """
+    """ Calculate group means and the differences between group means """
     for lvl in dat.levels:
         results.ix[compound, 'Mean treatment {0}'.format(lvl)] = grpMeans.ix[compound, lvl]
 
@@ -178,25 +166,8 @@ def calcDiff(dat, compound, grpMeans, combo, results):
 
 
 def calcDiffSE(dat, compound, combo, results):
-    """ Calculate the Standard Error between differences.
+    """ One-way ANOVA """
 
-    Args:
-        dat.group (str): Name of the column containing group information in the
-            design file.
-
-        compound (str): The name of the current compound.
-
-        combo (dict): A dictionary of dictionaries with all possible pairwise
-            combinations. Used this to create the various column headers in the
-            results table.
-
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
-
-    Returns:
-        results (pd.DataFrame): Updates the results table. Adds 'StdErr' to results.
-
-    """
     # MSE from ANOVA
     MSE = results.ix[compound, 'MSE']
 
@@ -213,24 +184,7 @@ def calcDiffSE(dat, compound, combo, results):
 
 
 def tTest(compound, combo, results, cutoff=4):
-    """ Calculate T-value and T-critical.
-
-    Args:
-        compound (str): The name of the current compound.
-
-        combo (dict): A dictionary of dictionaries with all possible pairwise
-            combinations. Used this to create the various column headers in the
-            results table.
-
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
-
-        cutoff (int): The cutoff value for significance [default: 4].
-
-    Returns:
-        results (pd.DataFrame): Updates the results table. Adds 'Tval', 'pTval', 'lpTval', 'sTval' to results.
-
-    """
+    """ Calculate T-value and T-critical """
     for key in sorted(combo.keys()):
         results.ix[compound, combo[key]['Tval']] = results.ix[compound, combo[key]['Diff']] / results.ix[compound, combo[key]['StdErr']]
         results.ix[compound, combo[key]['pTval']] = stats.t.sf(abs(results.ix[compound, combo[key]['Tval']]), results.ix[compound, 'DDF_treatment']) * 2
@@ -242,61 +196,30 @@ def tTest(compound, combo, results, cutoff=4):
 
 
 def qqPlot(resids, oname):
-    """ Plot the residual diagnostic plots by sample.
-
-    Output q-q plot, boxplots and distributions of the residuals. These plots
-    will be used diagnose if residuals are approximately normal.
-
-    Args:
-        resids (pd.Series): Pearson normalized residuals. (residuals / sqrt(MSE))
-
-        oname (str): Name of the output file in pdf format.
-
-    Returns:
-        (PDF): Outputs a pdf file containing all plots.
-
-    """
+    """ Plot the residuals by sample """
     with PdfPages(oname) as pdf:
         trans = resids.T
         for col in trans.columns:
-            fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 8))
+            fig = plt.figure(figsize=(8, 8))
             fig.suptitle(col)
+            ax1 = fig.add_subplot(311)
+            ax2 = fig.add_subplot(312)
 
-            ax2.get_xaxis().set_visible(False)
-            ax2.get_yaxis().set_visible(False)
+            ax2.axes.get_xaxis().set_visible(False)
+            ax2.axes.get_yaxis().set_visible(False)
+
+            ax3 = fig.add_subplot(313)
 
             sm.graphics.qqplot(trans[col], fit=True, line='r', ax=ax1)
             ax2.boxplot(trans[col].values.ravel(), vert=False)
             ax3.hist(trans[col].values.ravel())
-
-            fig.subplots_adjust(hspace=0)
 
             pdf.savefig(fig)
             plt.close(fig)
 
 
 def volcano(combo, results, oname, cutoff=4):
-    """ Plot volcano plots.
-
-    Creates volcano plots to compare means, for all pairwise differences.
-
-    Args:
-        combo (dict): A dictionary of dictionaries with all possible pairwise
-            combinations. Used this to create the various column headers in the
-            results table.
-
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
-
-        oname (str): Name of the output file in pdf format.
-
-        cutoff (int): The cutoff value for significance [default: 4].
-
-    Returns:
-        (PDF): Outputs a pdf file containing all plots.
-
-    """
-
+    """ Plot volcano plots """
     with PdfPages(oname) as pdf:
         for key in sorted(combo.keys()):
             diff = combo[key]['Diff']
@@ -332,11 +255,21 @@ def cleanCol(x, decimals=4):
 
 def main(args):
     # Import data
-    logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}\n\tGroup Column: {3}'.format(args.fname, args.dname, args.uniqID, args.group))
+    logger.info('Importing data')
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group, clean_string=True)
     results = initResults(dat)
 
-    # Transpose the data
+    # Standardize the data
+    if args.std == 'STD':
+        logger.info('Calculating STD standardization')
+        dat.sdat = sasSTD(dat, results)
+    elif args.std == 'MEAN':
+        logger.info('Calculating MEAN standardization')
+        dat.sdat = sasMEAN(dat, results)
+
+    # NOTE: JMP does not standardized values for the ANOVA. The standardized
+    # values are only used for the creation of Hierarchical clusters, parallel
+    # plots, and PCA.
     dat.trans = dat.transpose()
 
     # Group by Treatment
@@ -346,12 +279,10 @@ def main(args):
 
     resids = list()
     # Iterate over compound
-    logger.info('Running row-by-row analysis.')
     for compound in dat.wide.index.tolist():
         # Get Overall Mean
         results.ix[compound, 'GrandMean'] = dat.trans[compound].mean()
-
-        # run one-way ANOVA
+        # run one-way anova
         resid = oneWay(dat, compound, results)
         resids.append(resid)
 
@@ -367,18 +298,15 @@ def main(args):
     residDat = pd.concat(resids, axis=1)
 
     # Generate qqplots
-    logger.info('Generating q-q plots.')
     qqPlot(residDat, args.ofig)
 
     # Generate Volcano plots
-    logger.info('Generating volcano plots.')
     volcano(combo, results, args.ofig2)
 
     # write results table
-    results = results.convert_objects(convert_numeric=True)
-    clean = dat.revertSring(results)
-    clean.set_index(dat.uniqID, inplace=True)
-    clean = clean.apply(lambda x: x.round(4))
+    #TODO: Test the reversion part of the class
+    dat.revertSring(results)
+    clean = results.applymap(lambda x: cleanCol(x))
     clean.to_csv(args.oname, sep="\t")
 
 

@@ -91,7 +91,7 @@ class wideToDesign:
             else:
                 self.group = group
 
-            self.design = self.design[self.group]   # Only keep group columns in the design file
+            self.design = self.design[[self.group, ]]   # Only keep group columns in the design file
             grp = self.design.groupby(self.group)
             self.levels = sorted(grp.groups.keys())  # Get a list of group levels
 
@@ -135,11 +135,12 @@ class wideToDesign:
 
     def revertSring(self, table):
         """ Revert strings back to starting values """
-        table.reset_index()
-        table = table.applymap(lambda x: self._revertStr(x))
+        clean = table.reset_index()
+        clean = clean.applymap(lambda x: self._revertStr(x))
+        return clean
 
     def _revertStr(self, x):
-        """ Clean strings so they behave well.
+        """ Rever strings back to their original value so they behave well.
 
         Clean strings may need to be revertd back to original values for
         convience.
