@@ -3,7 +3,6 @@
 # Built-in packages
 import argparse
 from argparse import RawDescriptionHelpFormatter
-import re
 from itertools import combinations
 from collections import defaultdict
 
@@ -17,6 +16,9 @@ import statsmodels.api as sm
 from statsmodels.formula.api import ols
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
+
+# Local Packages
+from interface import wideToDesign
 
 
 def getOptions():
@@ -32,7 +34,7 @@ def getOptions():
     parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
 #     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.txt',
+    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.tsv',
                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
                               '--ID', 'Name',
                               '--group', 'treatment',
@@ -41,165 +43,6 @@ def getOptions():
                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
                               '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf'])
     return(args)
-
-
-class wideToDesign:
-    """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, wide, design, uniqID, group):
-        """ Import and set-up data.
-
-        Import data both wide formated data and a design file. Set-up basic
-        attributes.
-
-        Input:
-            wide (TSV): A table in wide format with compounds/genes as rows and
-                samples as columns.
-
-                Name     sample1   sample2   sample3
-                ------------------------------------
-                one      10        20        10
-                two      10        20        10
-
-            design (TSV): A table relating samples ('sampleID') to groups or
-                treatments.
-
-                sampleID   group1  group2
-                -------------------------
-                sample1    g1      t1
-                sample2    g1      t1
-                sample3    g1      t1
-
-            uniqID (str): The name of the unique identifier column in 'wide'
-                (i.e. The column with compound/gene names).
-
-        Returns:
-            **Attribute**
-
-            self.uniqID (np.array): An array of uniqIDs in self.wide.
-                Typically this will be just a single string.
-
-            self.wide (pd.DataFrame): A wide formatted table with compound/gene
-                as row and sample as columns.
-
-            self.sampleIDs (list): An list of sampleIDs. These will correspond
-                to columns in self.wide.
-
-            self.design (pd.DataFrame): A table relating sampleID to groups.
-
-            self.group (list): A list of column names in self.design that give
-                group information. For example: treatment, tissue
-
-            self.levels (list): A list of levels in self.group. For example:
-            trt1, tr2, control.
-
-        """
-
-        # Import data file to pandas
-        try:
-            self.uniqID = np.asarray(uniqID)
-            self.wide = pd.read_table(wide)
-            self.wide = self.wide.applymap(lambda x: self._cleanStr(x))     # Need to do this for the ols model
-            self.wide.set_index(uniqID, inplace=True)
-        except:
-            print "Please make sure that your data file has a column called '{0}'.".format(uniqID)
-            raise ValueError
-
-        # Import design file to pandas
-        try:
-            self.design = pd.read_table(design, index_col='sampleID')
-
-            # Set up group information
-            self.sampleIDs = self.design.index.tolist()  # Create a list of sampleIDs
-            self.group = list(group)
-            self.design = self.design[self.group]   # Only keep group columns in the design file
-            grp = self.design.groupby(self.group)
-            self.levels = sorted(grp.groups.keys())  # Get a list of group levels
-        except:
-            print "Please make sure that your design file has a column called 'sampleID'."
-            raise ValueError
-
-    def _cleanStr(self, x):
-        """ Clean strings so they behave well.
-
-        uniqIDs cannot contain spaces, '-', or '()'. statsmodel parses the
-        strings and interprets them in the model.
-
-        Args:
-            x (str): A string that needs cleaning
-
-        Returns:
-            x (str): The cleaned string.
-
-        """
-        if type(x) is str:
-            x = x.replace(' ', '_')
-            x = x.replace('-', '_')
-            x = x.replace('(', '_')
-            x = x.replace(')', '_')
-            x = x.replace(')', '_')
-            x = re.sub(r'^([0-9].*)', r'_\1', x)
-        return x
-
-    def melt(self):
-        """ Convert a wide formated table to a long formated table.
-
-        Args:
-            self.wide (pd.DataFrame): A wide formatted table with compound/gene
-                as row and sample as columns.
-
-            self.uniqID (np.array): An array of uniqIDs in self.wide.
-                Typically this will be just a single string.
-
-            self.sampleIDs (list): An list of sampleIDs. These will correspond
-                to columns in self.wide.
-
-        Returns:
-            **Attributes**
-
-            self.long (pd.DataFrame): Creates a new attribute called self.long
-                that also has group information merged to the dataset.
-
-        """
-        melted = pd.melt(self.wide.reset_index(), id_vars=self.uniqID, value_vars=self.sampleIDs,
-                         var_name='sampleID')
-        melted.set_index('sampleID', inplace=True)
-        self.long = melted.join(self.design).reset_index()   # merge on group information using sampleIDs as key
-
-    def transpose(self):
-        """ Transpose the wide table and merge on treatment information.
-
-        Args:
-            self.wide (pd.DataFrame): A wide formatted table with compound/gene
-                as row and sample as columns.
-
-            self.design (pd.DataFrame): A table relating sampleID to groups.
-
-        Returns:
-            merged (pd.DataFrame): A wide formatted table with sampleID as row
-                and compound/gene as column. Also has column with group ID.
-
-        """
-        trans = self.wide[self.sampleIDs].T
-
-        # Merge on group information using table index (aka 'sampleID')
-        merged = trans.join(self.design)
-        merged.index.name = 'sampleID'
-        return merged
-
-    def getRow(self, ID):
-        """ Get a row corresponding to a uniqID.
-
-        Args:
-            self.wide (pd.DataFrame): A wide formatted table with compound/gene
-                as row and sample as columns.
-
-            ID (str): A string refering to a uniqID in the dataset.
-
-        Returns:
-            (pd.DataFrame): with only the corresponding rows from the uniqID.
-
-        """
-        return self.wide[self.wide[self.uniqID] == ID]
 
 
 def createCbn(dat):
@@ -452,10 +295,10 @@ def main():
     # Generate qqplots
     qqPlot(residDat, args.ofig)
 
-#     # Generate Volcano plots
+    # Generate Volcano plots
     volcano(combo, results, args.ofig2)
 
-#     # write results table
+    # write results table
     clean = results.applymap(lambda x: cleanCol(x))
     clean.to_csv(args.oname, sep="\t")
 
