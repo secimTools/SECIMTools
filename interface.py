@@ -4,15 +4,12 @@
 import re
 
 # Add-on packages
-import matplotlib
-matplotlib.use('Agg')
-import numpy as np
 import pandas as pd
 
 
 class wideToDesign:
     """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, wide, design, uniqID, group, clean_string=False):
+    def __init__(self, wide, design, uniqID, group=None, clean_string=False):
         """ Import and set-up data.
 
         Import data both wide formated data and a design file. Set-up basic
@@ -84,7 +81,11 @@ class wideToDesign:
 
             # Set up group information
             self.sampleIDs = self.design.index.tolist()  # Create a list of sampleIDs
+        except:
+            print "Please make sure that your design file has a column called 'sampleID'."
+            raise ValueError
 
+        if group:
             if clean_string:
                 self.group = self._cleanStr(group)
                 self.design.columns = [self._cleanStr(x) for x in self.design.columns]
@@ -94,10 +95,6 @@ class wideToDesign:
             self.design = self.design[[self.group, ]]   # Only keep group columns in the design file
             grp = self.design.groupby(self.group)
             self.levels = sorted(grp.groups.keys())  # Get a list of group levels
-
-        except:
-            print "Please make sure that your design file has a column called 'sampleID'."
-            raise ValueError
 
     def _cleanStr(self, x):
         """ Clean strings so they behave.
