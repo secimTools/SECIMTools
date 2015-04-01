@@ -35,15 +35,15 @@ def getOptions():
     parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-#     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/small.tsv',
-                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
-                              '--ID', 'Name',
-                              '--group', 'treatment',
-                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
-                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-                              '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf',
-                              '--debug'])
+    args = parser.parse_args()
+#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/small.tsv',
+#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
+#                               '--ID', 'Name',
+#                               '--group', 'treatment',
+#                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
+#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
+#                               '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf',
+#                               '--debug'])
     return(args)
 
 
