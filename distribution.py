@@ -29,13 +29,14 @@ def getOptions():
     parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name [pdf].")
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name [html].")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-#     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.tsv',
-                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
-                              '--ID', 'Name',
-                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-                              '--fig2', '/home/jfear/sandbox/secim/data/test2.html',
-                              '--debug'])
+    args = parser.parse_args()
+#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.txt',
+#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
+#                               '--ID', 'Name',
+#                               '--group', 'treatment',
+#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
+#                               '--fig2', '/home/jfear/sandbox/secim/data/test2.html',
+#                               '--debug'])
     return(args)
 
 

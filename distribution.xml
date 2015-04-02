@@ -5,7 +5,7 @@
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-    <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column(s) in your Design File that contains group classifications. Separate multiple names by spaces."/>
+    <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment" help="Name of the column(s) in your Design File that contains group classifications. Separate multiple names by spaces."/>
   </inputs>
   <outputs>
     <data format="pdf" name="dist1" />

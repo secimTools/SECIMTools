@@ -9,7 +9,7 @@ import pandas as pd
 
 class wideToDesign:
     """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, wide, design, uniqID, group=None, clean_string=False):
+    def __init__(self, wide, design, uniqID, group=False, clean_string=False):
         """ Import and set-up data.
 
         Import data both wide formated data and a design file. Set-up basic
