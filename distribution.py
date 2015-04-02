@@ -20,12 +20,12 @@ import logger as sl
 
 def getOptions():
     """ Function to pull in arguments """
-    description = """ One-Way ANOVA """
+    description = """ Distribution Analysis: Plot sample distrubtions. """
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
     parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument("--group", dest="group", action='store', required=False, help="Group/treatment identifier in design file.")
+    parser.add_argument("--group", dest="group", action='store', required=False, help="Name of column in design file with Group/treatment information.")
     parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name [pdf].")
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name [html].")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
@@ -41,7 +41,11 @@ def getOptions():
 
 
 def pltByTrt(dat, ax):
-    """ Color Lines by Treatment """
+    """ Color Lines by Group
+
+    If group information is provided, then color distribution lines by group.
+
+    """
     colors = pd.tools.plotting._get_standard_colors(len(dat.group))
     colLines = list()
     for i, grp in enumerate(dat.levels):
@@ -61,8 +65,9 @@ def main(args):
 
     fig = plt.figure(figsize=(20, 10))
     ax = fig.add_subplot(111)
+
+    # If there is group information, color by group.
     if hasattr(dat, 'group'):
-        # If there is group information, go ahead and plot it.
         logger.info('Plotting sample distributions by group')
         legend1 = pltByTrt(dat, ax)
     else:
