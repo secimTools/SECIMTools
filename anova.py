@@ -320,16 +320,6 @@ def volcano(combo, results, oname, cutoff=4):
             plt.close(fig)
 
 
-def cleanCol(x, decimals=4):
-    """ Round floats to `decimals` places """
-    if isinstance(x, float):
-        formatString = '%.{0}f'.format(str(decimals))
-        x2 = float(formatString % x)
-    else:
-        x2 = x
-    return x2
-
-
 def main(args):
     # Import data
     logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}\n\tGroup Column: {3}'.format(args.fname, args.dname, args.uniqID, args.group))
