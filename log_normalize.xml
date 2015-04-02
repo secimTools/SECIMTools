@@ -1,6 +1,6 @@
 <tool id="log_normalize" name="Log Normalization">
     <description>Normalize your data using the log.</description>
-    <command interpreter="python">distribution.py --input $input --design $design --ID $uniqID --group $group --log $log --out $out</command>
+    <command interpreter="python">log_normalize.py --input $input --design $design --ID $uniqID --group $group --log $log --out $out</command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
