@@ -24,13 +24,13 @@ def getOptions():
     parser.add_argument("--log", dest="log", action='store', choices=['log', 'log10', 'log2'], required=True, default=None, help="Group/treatment identifiers. Can be multiple names separated by a space.")
     parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-#     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.txt',
-                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
-                              '--ID', 'Name',
-                              '--log', 'log',
-                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
-                              '--debug'])
+    args = parser.parse_args()
+#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.txt',
+#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
+#                               '--ID', 'Name',
+#                               '--log', 'log',
+#                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
+#                               '--debug'])
     return(args)
 
 
