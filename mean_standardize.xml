@@ -1,6 +1,6 @@
 <tool id="mean_standardize" name="Mean standardization">
     <description>Standardize the data using various types of mean standadardization.</description>
-    <command interpreter="python">distribution.py --input $input --design $design --ID $uniqID --group $group --std $std --out $out</command>
+    <command interpreter="python">mean_standardize.py --input $input --design $design --ID $uniqID --group $group --std $std --out $out</command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
