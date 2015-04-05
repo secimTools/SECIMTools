@@ -17,6 +17,7 @@ import statsmodels.api as sm
 from statsmodels.formula.api import ols
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 # Local Packages
 from interface import wideToDesign
@@ -35,15 +36,15 @@ def getOptions():
     parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-    args = parser.parse_args()
-#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/small.tsv',
-#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
-#                               '--ID', 'Name',
-#                               '--group', 'treatment',
-#                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
-#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-#                               '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf',
-#                               '--debug'])
+#     args = parser.parse_args()
+    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.txt',
+                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
+                              '--ID', 'Name',
+                              '--group', 'treatment',
+                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
+                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
+                              '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf',
+                              '--debug'])
     return(args)
 
 
@@ -146,7 +147,8 @@ def oneWay(dat, compound, results):
     results.ix[compound, 'SampleVariance'] = dat.trans[compound].var()
     results.ix[compound, 'RSquare'] = model_lm.rsquared
     resid = model_lm.resid / np.sqrt(model_lm.mse_resid)
-    return pd.Series(resid, name=compound)
+    fitted = model_lm.fittedvalues
+    return pd.Series(resid, name=compound), pd.Series(fitted, name=compound)
 
 
 def calcDiff(dat, compound, grpMeans, combo, results):
@@ -241,7 +243,7 @@ def tTest(compound, combo, results, cutoff=4):
             results.ix[compound, combo[key]['sTval']] = 0
 
 
-def qqPlot(resids, oname):
+def qqPlot(resids, fit, oname):
     """ Plot the residual diagnostic plots by sample.
 
     Output q-q plot, boxplots and distributions of the residuals. These plots
@@ -257,19 +259,29 @@ def qqPlot(resids, oname):
 
     """
     with PdfPages(oname) as pdf:
-        trans = resids.T
-        for col in trans.columns:
-            fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 8))
+        tresid = resids.T
+        tfit = fit.T
+        for col in tresid.columns:
+            fig = plt.figure(figsize=(8, 8))
             fig.suptitle(col)
 
+            # Set up layout using gridspec
+            gs = gridspec.GridSpec(3, 2, wspace=0.05)
+            ax1 = plt.subplot(gs[0, 0])
+            ax2 = plt.subplot(gs[1, 0])
+            ax3 = plt.subplot(gs[2, 0])
+            ax4 = plt.subplot(gs[:, 1])
+
+            # Generate Plots
+            sm.graphics.qqplot(tresid[col], fit=True, line='r', ax=ax1)
+            ax2.boxplot(tresid[col].values.ravel(), vert=False)
+            ax3.hist(tresid[col].values.ravel())
+            import ipdb; ipdb.set_trace()
+            ax4.scatter(tfit[col], tresid[col])
+
+            # Clean up plots
             ax2.get_xaxis().set_visible(False)
             ax2.get_yaxis().set_visible(False)
-
-            sm.graphics.qqplot(trans[col], fit=True, line='r', ax=ax1)
-            ax2.boxplot(trans[col].values.ravel(), vert=False)
-            ax3.hist(trans[col].values.ravel())
-
-            fig.subplots_adjust(hspace=0)
 
             pdf.savefig(fig)
             plt.close(fig)
@@ -335,6 +347,7 @@ def main(args):
     combo = createCbn(dat)
 
     resids = list()
+    fitted = list()
     # Iterate over compound
     logger.info('Running row-by-row analysis.')
     for compound in dat.wide.index.tolist():
@@ -342,8 +355,9 @@ def main(args):
         results.ix[compound, 'GrandMean'] = dat.trans[compound].mean()
 
         # run one-way ANOVA
-        resid = oneWay(dat, compound, results)
+        resid, fit = oneWay(dat, compound, results)
         resids.append(resid)
+        fitted.append(fit)
 
         # Calculate mean differences
         calcDiff(dat, compound, grpMeans, combo, results)
@@ -355,22 +369,23 @@ def main(args):
         tTest(compound, combo, results)
 
     residDat = pd.concat(resids, axis=1)
+    fitDat = pd.concat(fitted, axis=1)
 
     # Generate qqplots
     logger.info('Generating q-q plots.')
-    qqPlot(residDat, args.ofig)
+    qqPlot(residDat, fitDat, args.ofig)
 
     # Generate Volcano plots
-    logger.info('Generating volcano plots.')
-    volcano(combo, results, args.ofig2)
-
-    # write results table
-    results = results.convert_objects(convert_numeric=True)
-    clean = dat.revertSring(results)
-    clean.set_index(dat.uniqID, inplace=True)
-    clean = clean.apply(lambda x: x.round(4))
-    clean.to_csv(args.oname, sep="\t")
-
+#     logger.info('Generating volcano plots.')
+#     volcano(combo, results, args.ofig2)
+# 
+#     # write results table
+#     results = results.convert_objects(convert_numeric=True)
+#     clean = dat.revertSring(results)
+#     clean.set_index(dat.uniqID, inplace=True)
+#     clean = clean.apply(lambda x: x.round(4))
+#     clean.to_csv(args.oname, sep="\t")
+# 
 
 if __name__ == '__main__':
     # Command line options
