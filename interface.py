@@ -63,6 +63,7 @@ class wideToDesign:
                 trt1, tr2, control.
 
         """
+        self.origString = dict()
 
         # Import wide formatted data file
         try:
@@ -114,8 +115,6 @@ class wideToDesign:
                 for reverting back to original values.
 
         """
-        self.origString = dict()
-
         if isinstance(x, str):
             val = x
             x = x.replace(' ', '_')
@@ -130,14 +129,8 @@ class wideToDesign:
             self.origString[x] = val
         return x
 
-    def revertSring(self, table):
-        """ Revert strings back to starting values """
-        clean = table.reset_index()
-        clean = clean.applymap(lambda x: self._revertStr(x))
-        return clean
-
-    def _revertStr(self, x):
-        """ Rever strings back to their original value so they behave well.
+    def revertStr(self, x):
+        """ Revert strings back to their original value so they behave well.
 
         Clean strings may need to be revertd back to original values for
         convience.
@@ -152,10 +145,8 @@ class wideToDesign:
             x (str): Original string.
 
         """
-        try:
+        if isinstance(x, str) and x in self.origString:
             x = self.origString[x]
-        except:
-            pass
         return x
 
     def melt(self):

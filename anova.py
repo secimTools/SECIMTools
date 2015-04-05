@@ -37,7 +37,7 @@ def getOptions():
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 #     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.txt',
+    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/log_ST000015.tsv',
                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
                               '--ID', 'Name',
                               '--group', 'treatment',
@@ -266,22 +266,34 @@ def qqPlot(resids, fit, oname):
             fig.suptitle(col)
 
             # Set up layout using gridspec
-            gs = gridspec.GridSpec(3, 2, wspace=0.05)
+            gs = gridspec.GridSpec(2, 3, wspace=0)
             ax1 = plt.subplot(gs[0, 0])
-            ax2 = plt.subplot(gs[1, 0])
-            ax3 = plt.subplot(gs[2, 0])
-            ax4 = plt.subplot(gs[:, 1])
+            ax2 = plt.subplot(gs[0, 1])
+            ax3 = plt.subplot(gs[0, 2], sharey=ax1)
+            ax4 = plt.subplot(gs[1, :])
 
             # Generate Plots
             sm.graphics.qqplot(tresid[col], fit=True, line='r', ax=ax1)
-            ax2.boxplot(tresid[col].values.ravel(), vert=False)
-            ax3.hist(tresid[col].values.ravel())
-            import ipdb; ipdb.set_trace()
+            ax2.boxplot(tresid[col].values.ravel(), vert=True)
+            ax3.hist(tresid[col].values.ravel(), orientation='horizontal')
             ax4.scatter(tfit[col], tresid[col])
+            ax4.axhline(0, c='r', lw=1)
 
             # Clean up plots
+            ## Set titles
+            ax2.set_title('Distribution of P-values')
+            ax4.set_title('Fitted Values vs Residuals')
+
+            ## Add axis labels
+            ax4.set_xlabel('Fitted Values')
+            ax4.set_ylabel('Standardized Residuals')
+
+            ## remove unnecessary axis
+            ax1.get_xaxis().set_visible(False)
             ax2.get_xaxis().set_visible(False)
             ax2.get_yaxis().set_visible(False)
+            ax3.get_xaxis().set_visible(False)
+            ax3.get_yaxis().set_visible(False)
 
             pdf.savefig(fig)
             plt.close(fig)
@@ -376,16 +388,15 @@ def main(args):
     qqPlot(residDat, fitDat, args.ofig)
 
     # Generate Volcano plots
-#     logger.info('Generating volcano plots.')
-#     volcano(combo, results, args.ofig2)
-# 
-#     # write results table
-#     results = results.convert_objects(convert_numeric=True)
-#     clean = dat.revertSring(results)
-#     clean.set_index(dat.uniqID, inplace=True)
-#     clean = clean.apply(lambda x: x.round(4))
-#     clean.to_csv(args.oname, sep="\t")
-# 
+    logger.info('Generating volcano plots.')
+    volcano(combo, results, args.ofig2)
+
+    # write results table
+    results = results.convert_objects(convert_numeric=True)
+    results.index = pd.Series([dat.revertStr(x) for x in results.index])
+    results = results.apply(lambda x: x.round(4))
+    results.to_csv(args.oname, sep="\t")
+
 
 if __name__ == '__main__':
     # Command line options
