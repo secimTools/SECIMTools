@@ -1,7 +1,7 @@
 <tool id="hierarchical-cluster-heatmap" name="Hierarchical Cluster Heatmap" version="0.0.1">
   <description> </description>
   <command interpreter="python">
-    hierarchical-cluster-heatmap_amm6.py 
+    hierarchical-cluster-heatmap_amm.py 
       --i $input1
       --d $design
       --g $group
