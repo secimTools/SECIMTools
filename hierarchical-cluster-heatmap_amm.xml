@@ -1,0 +1,113 @@
+<tool id="hierarchical-cluster-heatmap" name="Hierarchical Cluster Heatmap" version="0.0.1">
+  <description> </description>
+  <command interpreter="python">
+    hierarchical-cluster-heatmap_amm.py 
+      --i $input1
+      --d $design
+      --g $group
+      --a $anno
+      --c $cmpd
+      --n $a_col
+      --o1 $out_file1
+  </command>
+  <inputs>
+    <param format="tabular" name="input1" type="data" label="Select side-by-side data set." help="Dataset missing? See TIP below."/>
+    <param format="tabular" name="design" type="data" label="Select design file." help="Dataset missing? See TIP below."/>
+    <param name="group" type="text" label="Group/Treatment column in Design File to color samples by" help="Name of column in design file containing group categories."/>
+    <param format="tabular" name="anno" type="data" optional="true" label="Optional - Select Annotation File." help="Dataset missing? See TIP below."/>
+    <param name="cmpd" type="text" optional="true" label="Column containing unique Compound IDs in Annotation File" help="Name of column in Annotation File containing unique compound IDs."/>
+    <param name="a_col" type="text" optional="true" label="Annotations to color compounds by." help="Name of the column in the annotation data set that contains the annotations for each unique compound/gene ID."/>
+  </inputs>
+  <outputs>
+    <data format="png" name="out_file1" />
+  </outputs>
+  <requirements>
+    <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">scipy</requirement>
+  </requirements>
+  <help>
+
+
+.. class:: infomark
+
+**TIP:** If your data is not TAB delimited, use *Edit Datasets-&gt;Convert characters*
+
+-----
+
+.. class:: infomark
+
+**FYI:** If no Annotation File is selected, the row colorbar (e.g. for coloring compounds/genes by pathway) will be solid red
+
+-----
+
+.. class:: infomark
+
+**What it does**
+
+This tool Generates a Hierarchical Cluster Heatmap from (1) a Wide Formated (side-by-side) Dataset, (2) a Design File and (3) an optional Annotation File.  
+    
+**Wide Formated Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **Note 1:** The sample IDs must match the sample IDs in the Design File (below).
+    **Note 2:** If using an Annotation File, the compound names must match the compound names in the Annotation File.
+
+
+**Design File:**
+    
+    A Design File relating samples to various groups/treatments::
+
+        +----------+--------+--------+
+        | sampleID | group1 | group2 |
+        +==========+========+========+
+        | sample1  | g1     | t1     |
+        | sample2  | g1     | t1     |
+        | sample3  | g1     | t1     |
+        | sample4  | g2     | t1     |
+        | sample5  | g2     | t1     |
+        | sample6  | g2     | t1     |
+        | ...      | ...    | ...    |
+        +----------+--------+--------+
+    
+    **Note:** The sample IDs must match the sample IDs in the Dataset file (above).  
+
+
+**Optional Annotation File:**
+    
+    An Annotation File relating compounds to pathways of interest::
+
+        +------------+------------+
+        | Compound   | annotation |
+        +============+============+
+        | compound1  |    a1      |
+        | compound2  |    a1      |
+        | compound3  |    a1      |
+        | compound4  |    a2      |
+        +----------+--------------+
+      **Note:** The compound names must match the compound names in the Wide Format Dataset.
+
+
+**In addition to the above datasets, you need to provide:**
+
+    **Group/Treatment** 
+	
+    (1) the column name in the Design File that contains the sample treatment groups.  Used to generate a column (sampleID) color bar.
+
+    **Optional Annotation Information**
+
+    (2) the column name in the Annotation Fie that contains the list of compounds.  This list should match the list of compounds in the Wide Format Dataset.
+    (3) the column name in the Annotation File that contains pathway/functional annotations for each compound.  Used to generate a row (compound) color bar.
+		
+  </help>
+</tool>

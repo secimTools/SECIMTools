@@ -34,9 +34,11 @@ import time
 import sys, os, csv
 import getopt
 
+
+
 ################# Perform the hierarchical clustering #################
 
-def heatmap(design, x, row_header, column_header, row_method,
+def heatmap(group, cmpd, a_col, anno, design, x, row_header, column_header, row_method,
             column_method, row_metric, column_metric,
             color_gradient, filename, outfile):
     
@@ -51,7 +53,8 @@ def heatmap(design, x, row_header, column_header, row_method,
     """
     
     #### Import Design file
-
+	#### unique sample identifier - 'sampleID'
+	#### column to group/categorize by is group
     with open(design) as D:
         DESIGN=csv.DictReader(D,delimiter="\t")
         find_ID = None
@@ -60,22 +63,36 @@ def heatmap(design, x, row_header, column_header, row_method,
 	IDs = dict()
         for row in DESIGN:
             find_ID = row["sampleID"]
-            find_group = row["group"]
-            groups.append(row["group"])
-	    IDs[row['sampleID']] = row["group"]
+            find_group = row[group]
+            groups.append(row[group])
+	    IDs[row['sampleID']] = row[group]
         design_groups = set(groups)     # unique list of groups
         num_groups = len(design_groups)  # how many different groups
-#    print num_groups
-#    print design_groups
 
-#    for grp in design_groups:
+    ### Import the annotation file, if given
+    try:
+        with open(anno) as A:
+            ANNO=csv.DictReader(A,delimiter="\t")
+            find_aID = None
+	    find_agroup = None
+	    agroups = list()
+            aIDs = dict()
+            for row in ANNO:
+                find_aID = row[cmpd]
+                find_agroup = row[a_col]
+                agroups.append(row[a_col])
+                aIDs[row[cmpd]] = row[a_col]
+            design_agroups = set(agroups)     # unique list of different annotations
+            num_agroups = len(design_agroups)  # num different annotations
+    except:
+        design_agroups = ["A"] 
+	num_agroups = 1
+        	
+#    print num_agroups
+#    print design_agroups
 
-        color_list = ['r','g','b','c','m','k','y']
-        col_labels = {}
-        col_labels = dict(zip(design_groups, color_list))
-
-        
     ### Define the color gradient to use based on the provided name
+
     n = len(x[0]); m = len(x)
     if color_gradient == 'red_white_blue':
         cmap=pylab.cm.bwr
@@ -224,6 +241,7 @@ def heatmap(design, x, row_header, column_header, row_method,
     # axc --> axes for column side colorbar
     if column_method != None:
         gps = list()
+#	print idx2
         for i in idx2:
 	    gps.append(IDs[new_column_header[i]])
 	
@@ -237,8 +255,8 @@ def heatmap(design, x, row_header, column_header, row_method,
         conVert.shape = (1,len(ind2))
         axc = fig.add_axes([axc_x, axc_y, axc_w, axc_h])  # axes for column side colorbar
         cmap_c = mpl.colors.ListedColormap(['r', 'g', 'b', 'y', 'w', 'k', 'm'])
-        dc = numpy.array(ind2, dtype=int)
-        dc.shape = (1,len(ind2)) 
+#        dc = numpy.array(ind2, dtype=int)
+#        dc.shape = (1,len(ind2)) 
         im_c = axc.matshow(conVert, aspect='auto', origin='lower', cmap=cmap_c)
         
         axc.set_xticks([]) ### Hides ticks
@@ -247,15 +265,39 @@ def heatmap(design, x, row_header, column_header, row_method,
     # Plot rowside colors
     # axr --> axes for row side colorbar
     if row_method != None:
-        axr = fig.add_axes([axr_x, axr_y, axr_w, axr_h])  # axes for column side colorbar
-        dr = numpy.array(ind1, dtype=int)
-        dr.shape = (len(ind1),1)
-        #print ind1, len(ind1)
-        cmap_r = mpl.colors.ListedColormap(['r', 'g', 'b', 'y', 'w', 'k', 'm'])
-        im_r = axr.matshow(dr, aspect='auto', origin='lower', cmap=cmap_r)
-        axr.set_xticks([]) ### Hides ticks
-        axr.set_yticks([])
-
+	ans = list()
+#	print idx1
+        try:
+	    for i in idx1:
+	        ans.append(aIDs[new_row_header[i]])
+    	    dummy2 = dict()
+	    cnt = 1
+	    for val in ans:
+	        if not val in dummy2:
+		    dummy2[val] = cnt;
+		    cnt += 1
+	    rowVert = numpy.array([dummy2[val] for val in ans])
+#	    print rowVert
+	    rowVert.shape = (len(ind1),1)
+	    axr = fig.add_axes([axr_x, axr_y, axr_w, axr_h])  # axes for column side colorbar
+        
+#	    dr = numpy.array(ind1, dtype=int)
+#            dr.shape = (len(ind1),1)
+        #    print ind1, len(ind1)
+            cmap_r = mpl.colors.ListedColormap(['r', 'g', 'b', 'y', 'w', 'k', 'm'])
+            im_r = axr.matshow(rowVert, aspect='auto', origin='lower', cmap=cmap_r)
+            axr.set_xticks([]) ### Hides ticks
+            axr.set_yticks([])
+        except:
+            axr = fig.add_axes([axr_x, axr_y, axr_w, axr_h])  # axes for row side colorbar
+            dr = numpy.array(ind1, dtype=int)
+            dr.shape = (len(ind1),1)
+        #    print ind1, len(ind1)
+            cmap_r = mpl.colors.ListedColormap(['r', 'g', 'b', 'y', 'w', 'k', 'm'])
+            im_r = axr.matshow(dr, aspect='auto', origin='lower', cmap=cmap_r)
+            axr.set_xticks([]) ### Hides ticks
+            axr.set_yticks([])
+      
     # Plot color legend
     axcb = fig.add_axes([axcb_x, axcb_y, axcb_w, axcb_h], frame_on=False)  # axes for colorbar
     cb = mpl.colorbar.ColorbarBase(axcb, cmap=cmap, norm=norm, orientation='horizontal')
@@ -408,25 +450,6 @@ def YellowBlackBlue():
 
 ################# General data import methods #################
 
-def importDesign(design):
-    D=csv.DictReader(DESIGN,delimiter="\t")
-    find_ID = None
-    find_group = None
-    for row in D:
-        Design_ID = row["sampleID"]
-        Design_group = row["group"]
-        groups.append(row["group"])
-
-    design_groups = set(groups)
-    num_groups = len(design_groups)
-#    print num_groups
-#    print design_groups
-
-    color_list = ['r','g','b','c','m','k','y']
-    col_labels = {}
-    col_labels = dict(zip(design_groups, color_list))
-#print col_labels
-
 def importData(filename):
     start_time = time.time()
     matrix=[]
@@ -470,6 +493,7 @@ if __name__ == '__main__':
     #color_gradient = 'red_white_blue'
     color_gradient = 'jet'
     #color_gradient = 'spectral'
+    a_col = None
     
     """ Running with cosine or other distance metrics can often produce negative Z scores
         during clustering, so adjustments to the clustering may be required.
@@ -484,11 +508,14 @@ if __name__ == '__main__':
         print "Example: python hierarchical_clustering.py --sbys_dataFile --designFile"
         sys.exit()
     else:
-        options, remainder = getopt.getopt(sys.argv[1:],'', ['i=','d=','o1=','row_header','column_method',
-                                             'row_metric','column_metric','color_gradient'])
+        options, remainder = getopt.getopt(sys.argv[1:],'', ['i=','d=', 'a=', 'n=', 'c=', 'g=', 'o1=','row_header','column_method','row_metric','column_metric','color_gradient'])
         for opt, arg in options:
             if opt == '--i': filename=arg
 	    elif opt == '--d': design=arg
+	    elif opt == '--a': anno=arg
+	    elif opt == '--n': a_col=arg
+	    elif opt == '--c': cmpd=arg
+	    elif opt == '--g': group=arg
 	    elif opt == '--o1': out_fname1=arg
 	    #elif opt == '--o2': out_fname2=arg
 	    #elif opt == '--o3': out_fname3=arg
@@ -504,12 +531,12 @@ if __name__ == '__main__':
     
     if len(matrix)>0:
         try:
-            heatmap(design, matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
+            heatmap(group, cmpd, a_col, anno, design, matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
         except Exception:
             print 'Error using %s ... trying euclidean instead' % row_metric
             row_metric = 'euclidean'
-            try:
-                heatmap(design, matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
+	    try:
+                heatmap(group, cmpd, a_col, anno, design, matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
             except IOError:
                 print 'Error with clustering encountered'
 
