@@ -71,7 +71,7 @@ def pltByTrt(dat, ax):
 
         colLines.append(matplotlib.lines.Line2D([], [], c=colors[i], label=grp))
 
-    return plt.legend(colLines, dat.levels, loc='upper left')
+    return ax.legend(colLines, dat.levels, loc='lower center', bbox_to_anchor=(0.5, -0.1), ncol=10)
 
 
 def pltBySample(dat, ax):
@@ -89,33 +89,47 @@ def pltBySample(dat, ax):
         adjXCoord(ax)
 
 
+def pltBoxplot(dat, ax):
+    """ Color Lines by Group
+
+    If no group information then color distribution lines by sample.
+
+    """
+    samp = dat.wide[dat.sampleIDs]
+    samp.boxplot(ax=ax, rot=45, return_type='dict')
+    ax.set_title('Sample Distribution')
+
+
 def main(args):
     # Import data
     logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}\n\tGroup Column: {3}'.format(args.fname, args.dname, args.uniqID, args.group))
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
     dat.wide.convert_objects(convert_numeric=True)
 
-    fig = plt.figure(figsize=(20, 10))
-    ax = fig.add_subplot(111)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(20, 20))
+    plt.subplots_adjust(hspace=0.3)
 
     # If there is group information, color by group.
     if hasattr(dat, 'group'):
         logger.info('Plotting sample distributions by group')
-        legend1 = pltByTrt(dat, ax)
+        legend1 = pltByTrt(dat, ax1)
     else:
         logger.info('Plotting sample distributions')
-        pltBySample(dat, ax)
+        pltBySample(dat, ax1)
 
     # Create Legend
-    handles, labels = ax.get_legend_handles_labels()
-    plt.legend(handles, labels, ncol=5, loc='upper right', fontsize=10)
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(handles, labels, ncol=5, loc='upper right', fontsize=10)
 
     # Create second legend if there is group information
     if hasattr(dat, 'group'):
-        ax.add_artist(legend1)
+        ax1.add_artist(legend1)
+
+    # Plot boxplot of samples
+    pltBoxplot(dat, ax2)
 
     plt.savefig(args.ofig, format='pdf')
-    mpld3.save_html(fig, args.ofig2)
+    mpld3.save_html(fig, args.ofig2, template_type='simple')
 
 
 if __name__ == '__main__':
