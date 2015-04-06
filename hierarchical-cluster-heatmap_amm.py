@@ -69,7 +69,7 @@ def heatmap(group, cmpd, a_col, anno, design, x, row_header, column_header, row_
         design_groups = set(groups)     # unique list of groups
         num_groups = len(design_groups)  # how many different groups
 
-    ### Define the color gradient to use based on the provided name
+    ### Import the annotation file, if given
     try:
         with open(anno) as A:
             ANNO=csv.DictReader(A,delimiter="\t")
@@ -90,6 +90,8 @@ def heatmap(group, cmpd, a_col, anno, design, x, row_header, column_header, row_
         	
 #    print num_agroups
 #    print design_agroups
+
+    ### Define the color gradient to use based on the provided name
 
     n = len(x[0]); m = len(x)
     if color_gradient == 'red_white_blue':
