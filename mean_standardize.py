@@ -86,9 +86,10 @@ def main(args):
 
     # write standardized table
     standard = dat.sdat.convert_objects(convert_numeric=True)
-    standard.set_index(dat.uniqID, inplace=True)
     standard = standard.apply(lambda x: x.round(4))
-    standard.to_csv(args.oname, sep="\t")
+    standardT = standard.T
+    standardT.index.name = dat.uniqID
+    standardT.to_csv(args.oname, sep="\t")
 
 
 if __name__ == '__main__':
