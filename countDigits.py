@@ -26,14 +26,14 @@ def getOptions():
     parser.add_argument("--summary", dest="sname", action='store', required=True, help="Output file name for summary table.")
     parser.add_argument("--fig", dest="figname", action='store', required=True, help="Name of output figure name.")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-#     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015.tsv',
-                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
-                              '--ID', 'Name',
-                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
-                              '--summary', '/home/jfear/sandbox/secim/data/test_summary.csv',
-                              '--fig', '/home/jfear/sandbox/secim/data/test.png',
-                              '--debug'])
+    args = parser.parse_args()
+#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015.tsv',
+#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
+#                               '--ID', 'Name',
+#                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
+#                               '--summary', '/home/jfear/sandbox/secim/data/test_summary.csv',
+#                               '--fig', '/home/jfear/sandbox/secim/data/test.png',
+#                               '--debug'])
     return(args)
 
 
