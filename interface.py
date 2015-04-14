@@ -80,12 +80,18 @@ class wideToDesign:
         try:
             self.design = pd.read_table(design, index_col='sampleID')
 
-            # Set up group information
-            self.sampleIDs = self.design.index.tolist()  # Create a list of sampleIDs
+            # Create a list of sampleIDs, but first check that they are present
+            # in the wide data.
+            self.sampleIDs = list()
+
+            for sample in self.design.index.tolist():
+                if sample in self.wide.columns:
+                    self.sampleIDs.append(sample)
         except:
             print "Please make sure that your design file has a column called 'sampleID'."
             raise ValueError
 
+        # Set up group information
         if group:
             if clean_string:
                 self.group = self._cleanStr(group)
