@@ -25,6 +25,7 @@ def getOptions():
     parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
     parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
+    parser.add_argument("--noZero", dest="zero", action='store_true', required=False, help="Flag to ignore zeros.")
     parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name for counts table.")
     parser.add_argument("--summary", dest="sname", action='store', required=True, help="Output file name for summary table.")
     parser.add_argument("--fig", dest="figname", action='store', required=True, help="Name of output figure name.")
@@ -40,6 +41,15 @@ def getOptions():
     return(args)
 
 
+def splitDigit(x):
+    """ Function to split digits by decimal """
+    if x == 0:
+        cnt = np.nan
+    else:
+        cnt = len(str(x).split('.')[0])
+    return cnt
+
+
 def main(args):
     """ """
     # Import data
@@ -50,7 +60,7 @@ def main(args):
     wide = dat.wide[dat.sampleIDs]
 
     # Count the number of digits before decimal and get basic distribution info
-    cnt = wide.applymap(lambda x: len(str(x).split('.')[0]))
+    cnt = wide.applymap(lambda x: splitDigit(x))
     cnt['min'] = cnt.apply(np.min, axis=1)
     cnt['max'] = cnt.apply(np.max, axis=1)
     cnt['diff'] = cnt['max'] - cnt['min']
