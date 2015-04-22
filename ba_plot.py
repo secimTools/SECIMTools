@@ -119,8 +119,19 @@ class FlagOutlier:
         self.flag_outlier = pd.DataFrame(index=index)
         self.design = pd.DataFrame(index=[0], columns=('cbn1', 'cbn2'))
 
-    def dropOutlier(self, data):
+    def dropOutlier(self, data, group=False, acrossAll=False):
         """ """
+        if acrossAll:
+            #TODO
+            pass
+        elif group:
+            #TODO
+            pass
+        else:
+            #TODO
+            pass
+
+        return
 
     def updateOutlier(self, c1, c2, outlierMask):
         """ Update the flag_outlier object with a 0|1.
@@ -199,8 +210,9 @@ def main(args):
     # Close PDF with plots
     pp.close()
 
-    #
-    print flags.flag_outlier.head(4)
+    # Drop outliers
+    clean = flags.dropOutlier(wide, acrossAll=True)
+    clean.to_table('/home/jfear/sandbox/secim/data/test.tsv')
 
 
 if __name__ == '__main__':
