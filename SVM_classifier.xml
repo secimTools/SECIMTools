@@ -1,0 +1,110 @@
+<tool id="SVM_classifier" name="SVM classifier">
+  <description> for classification.</description>
+  <command interpreter="python">SVM_classifier.py $train $target $class_column_name $kernel $degree $C $a $b $outfile1 $accuracy_on_training </command>
+  <inputs>
+    <param name="train" type="data" format="tabular" label="Training Dataset" help="Dataset missing? See TIP below"/>
+    <param name="target" type="data" format="tabular" label="Target Dataset" help="Dataset missing? See TIP below"/>
+    <param name="class_column_name" size="30" type="text" value="class" label="Column name for the class"/>
+    <param name="kernel" size="30" type="select" display="radio" value="rbf" label="SVM kernel function">
+        <option value="rbf">Radial Basis function (Gaussians)</option>
+        <option value="linear">Linear</option>
+        <option value="poly">Polynomial</option>
+        <option value="sigmoid">Sigmoid</option>
+    </param>
+    <param name="degree" size="30" type="text" value="3" label="Polynomial degree" help='only used for the polynomial kernel'/>
+    <param name="C" size="30" type="text" value="1" label="Regularization parameter C" help='penalizes potential overfitting, and must have a positive value C > 0.'/>
+    <param name="a" size="30" type="text" value="0.0" label="coefficient a" help='a>0 --see kernel definitions below in help'/>
+    <param name="b" size="30" type="text" value="0.0" label="coefficient b" help='see kernel definitions below in help'/>
+  </inputs>
+  <outputs>
+    <data format="csv" name="outfile1" label="Classified target"/>
+    <data name="accuracy_on_training" format='tabular' label="accuracy on the trainig set"/>
+  </outputs>
+  <requirements>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">sklearn</requirement>
+  </requirements>
+  <!-- TODO: uncomment the following test when we have tools.update_state() working for 
+       multiple dependents with the same dependency.
+  <tests>
+    <test>
+      <param name="input" value="scatterplot_in1.tabular" ftype="tabular"/>
+      <param name="col1" value="2"/>
+      <param name="col2" value="3"/>
+      <param name="title" value="Scatterplot"/>
+      <param name="xlab" value="V1"/>
+      <param name="ylab" value="V2"/>
+      <output name="out_file1" file="scatterplot_out1.png" />
+    </test>
+  </tests>
+  -->
+  <help>
+
+.. class:: infomark
+
+**TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+-----
+
+**SVM classifier**
+
+This is a support vector machine(SVM) classification tool. The inputs are two datasets, training and target dataset, as well as other parameters for the SVM algorithm. The trainig set contains a column which is the class label (the name of this column is an input in this tool, i.e. class column name) and the target set does not have such column. The tool returns the classified taget set (adds a column containing predicted class labels) as well as the accuracy of the trained SVM on the training set. It is important to note that the two dataset, training and target, must have identical structure (expect for the trainig set having an extra column containing the class labels).
+
+-----
+
+**Example input**
+
+-- training set::
+
+     group    feature1    feature2    feature3                                  
+     human    68          4.1         0.10                                      
+     human    71          4.6         0.31                                      
+     nonhuman 62          3.8         0.09                                      
+     human    75          4.4         0.65                                      
+     nonhuman 58          3.2         0.23                                      
+     nonhuman 60          3.1         0.77                                      
+
+-- target set::
+
+     feature1    feature2    feature3                                  
+     68          4.1         0.10                                      
+     71          4.6         0.31                                      
+     62          3.8         0.09                                      
+     75          4.4         0.65                                      
+     58          3.2         0.23                                      
+     60          3.1         0.77                                      
+
+-- class column name = group
+
+-- kernel function used for SVM can be one of the following:
+
+.. image:: ${static_path}/images/kernels.png
+    :height: 160 
+    :width: 300
+    
+|   
+    
+-- degree for the polynomial kernel:: has to be a positive integer
+
+-- regularization parameter C:: has to be greater than zero.
+Larger values for C adds to the bias and helps removing potential overfitting efftecs.
+
+-- Coefficient a:: used in the kernel functions above and has to be greater than zero. However, the value zero is the default and translates to a=1/n_features, where n_features is the number of features same as the length of the descrition vector same as the number of dimensions.
+
+-- Coefficient b:: Independent term in kernel function. It is only significant in ‘poly’ and ‘sigmoid’ kernels.
+
+**Example output**
+
+-- output 1: classified target set::
+
+     predicted    feature1    feature2    feature3                                  
+     human        68          4.1         0.10                                      
+     human        71          4.6         0.31                                      
+     nonhuman     62          3.8         0.09                                      
+     human        75          4.4         0.65                                      
+     nonhuman     58          3.2         0.23                                      
+     nonhuman     60          3.1         0.77                                      
+
+-- output 2: accuracy on the training set:: 100.0 percent
+  </help>
+</tool>
