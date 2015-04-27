@@ -9,6 +9,7 @@ from itertools import combinations
 
 # Add-on packages
 import pandas as pd
+import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -69,20 +70,80 @@ class FlagOutlier:
         self.flag_outlier = pd.DataFrame(index=index)
         self.design = pd.DataFrame(index=[0], columns=('cbn1', 'cbn2'))
 
-    def dropOutlier(self, data, bygroup=False, acrossAll=False):
-        """ """
-        if acrossAll:
-            # Drop row if a flag is present in any sample.
-            pass
-        elif bygroup:
+    def dropOutlier(self, data, group, how='acrossAll'):
+        """ Drop rows based on outlier values.
+
+        Outlier flags are used to identify rows X samples that should be
+        removed from data set. Depending on the situation you may want to use
+        different filtering criteria. Here there are three criteria:
+
+        acrossAll: Drop entire row if contains outlier. Look at each compound
+            (row) and determine if there was an outlier. If there is at least 1
+            sample that is an outlier, then delete the entire row.
+
+        bygroup: For each group, determine if a compound has an outlier and set
+            group values to missing. This may be useful if you have many groups
+            and are only interested in specific comparisons.
+
+        sample [default]: For each compound that a sample was an outlier, set that value
+            to missing.
+
+        Args:
+            data (pd.DataFrame): Data frame containing data in wide format compound
+                as rows and samples as columns.
+
+            group (str): Default is None if there are no groups. Otherwise it is
+                the name of the current group.
+
+            how (str): when equal to acrossAll then do 'acrossAll' filtering.
+                When equal to bygroup then do 'bygroup' filtering. When equal to
+                sample then do 'sample' filtering.
+
+        Returns:
+            clean (pd.DataFrame): Data frame containing data in wide format compound
+                as rows and samples as columns after removing outliers.
+
+        """
+        if how == 'acrossAll':
+            # Keep rows that are not flagged in any sample.
+            clean = data[self.flag_outlier.apply(lambda x: ~x.any(), axis=1)]
+        elif (how == 'bygroup') and (group):
             # Set values for entire group to NaN if flag is present in any
             # sample within a group.
-            pass
-        else:
-            # Set values to NaN if they were flagged.
-            pass
+            grp = data.groupby(group)
+            for i, val in grp:
+                # Get list of samples in current group
+                samples = val.index
 
-        return
+                # Which pairwise flags correspond to the current set of samples
+                pflag = (self.design['cbn1'].isin(samples)) | (self.design['cbn2'].isin(samples))
+
+                # Pull flag_outlier columns that correspond to sample
+                cols = self.flag_outlier.columns[pflag]
+                currFlags = self.flag_outlier[cols]
+
+                # If there are any samples in the group that have an outlier
+                # than set all to NaN
+                clean = data.copy()
+                clean.ix[currFlags.apply(lambda x: x.any(), axis=1), samples] = np.nan
+        elif how == 'sample':
+            # Set values to NaN if they were flagged.
+            ## Iterate over samples
+            for sample in data.columns:
+                # Which pairwise flags correspond to the current sample
+                pflag = (self.design['cbn1'] == sample) | (self.design['cbn2'] == sample)
+
+                # Pull flag_outlier columns that correspond to sample
+                cols = self.flag_outlier.columns[pflag]
+                currFlags = self.flag_outlier[cols]
+
+                # If sample is ever flagged as outlier set it to NaN
+                clean = data.copy()
+                clean.ix[currFlags.apply(lambda x: x.any(), axis=1), sample] = np.nan
+        else:
+            raise ValueError
+
+        return clean
 
     def updateOutlier(self, c1, c2, outlierMask):
         """ Update the flag_outlier object with a 0|1.
@@ -161,6 +222,9 @@ def iterateCombo(data, combos, out, flags, group=None):
 
         # Update Flags
         flags.updateOutlier(combo[0], combo[1], outlier)
+
+        # Filter data
+        clean = flags.dropOutlier(data, group)
 
 
 def runRegression(x, y):
