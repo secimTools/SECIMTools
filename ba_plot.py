@@ -24,30 +24,82 @@ import logger as sl
 
 def getOptions():
     """ Function to pull in arguments """
-    description = """ One-Way ANOVA """
+    description = """ The Bland-Altman plot (BA-plot) is commonly used to look
+    at concordance of data between samples. It is especially useful for looking
+    at variability between replicates. This script will generate BA-plots for
+    all pairwise combinations of samples, or if group information is provided
+    it will only report pairwise combinations within the group.
+
+    A linear regression is also performed on the BA-plots to identify samples
+    that lay outside of a 95% confidence interval. For each compound (row) in
+    the dataset, a sample is flagged as an outlier if it was outside of the 95%
+    confidence interval for any pairwise comparison.
+
+    These flags can be output by specifying the --table1 and --table2 options.
+    Table1 is a table with compounds as rows and flag_outlier## as columns,
+    where the ## is incremented for each pairwise comparison between samples.
+    Table2 can then be used to relate sample to its corresponding flags.
+
+    This script can also output a filtered dataset removing problematic data
+    points by specifying --filter_criteria and --out. The Filter Criteria
+    determines how to remove problematic data points. There are three methods:
+
+        (1) accrossAll: Drops entire rows if any sample contained an outlier.
+            This is probably want you want.
+
+        (2) bygroup: For each group, determine if a compound has an outlier and
+            set group values to missing. This may be useful if you have many groups
+            and are only interested in specific comparisons.
+
+        (3) sample: For each compound that a sample was an outlier, set that value
+                to missing.
+
+    """
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
     parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
     parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
     parser.add_argument("--group", dest="group", action='store', default=False, required=False, help="Group/treatment identifier in design file.")
-    parser.add_argument("--out", dest="oname", action='store', required=True, help="Name of the output PDF")
+
+    parser.add_argument("--fig", dest="figName", action='store', required=True, help="Name of the output PDF for plots.")
+
+    parser.add_argument("--filter_criteria", dest="criteria", choices=['acrossAll', 'bygroup', 'sample'], action='store', required=False, help="Name of the output PDF")
+    parser.add_argument("--out", dest="oname", action='store', required=False, help="Output wide formatted table with outliers removed using '--filter_criteria'. [Optional]")
+
+    parser.add_argument("--table1", dest="tname1", action='store', required=False, help="Output pairwise flags in Tabular format")
+    parser.add_argument("--table2", dest="tname2", action='store', required=False, help="Output table relating pairwise flags back to sample ID.")
+
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 #     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
+    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log_small.tsv',
                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
                               '--ID', 'Name',
                               '--group', 'treatment',
-                              '--out', '/home/jfear/sandbox/secim/data/test.pdf',
+                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
+                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
+                              '--filter_criteria', 'acrossAll',
                               '--debug'])
+
+    # Check mutually inclusive options
+    if (args.criteria and not args.oname) or (args.oname and not args.criteria):
+        parser.error('--filter_criteria and --out are both needed if you want to output filtered datasets.')
+
+    if (args.tname1 and not args.tname2) or (args.tname2 and not args.tname1):
+        parser.error('--table1 and --table2 are both needed if you want to output pairwise flags.')
+
+    if args.criteria == 'bygroup' and not args.group:
+        parser.error('--filter_criteria bygroup requires that you also specify --group.')
+
     return(args)
 
 
 class FlagOutlier:
     """ Object for handling flags for outliers.
 
-    Here we are iterating of pairwise combinations of samples and creating BA
-    plots. If a sample falls outside of a 95% CI then want to flag these
-    samples and outliers. We will have a flag for each pairwise combination.
+    Iterate over pairwise combinations of samples and create BA
+    plots. If a sample falls outside of a 95% CI then flag the sample as an
+    outlier. This class is used to store flag information an provides a few
+    basic methods for interacting with flags.
 
     """
     def __init__(self, index):
@@ -70,6 +122,32 @@ class FlagOutlier:
         self.flag_outlier = pd.DataFrame(index=index)
         self.design = pd.DataFrame(index=[0], columns=('cbn1', 'cbn2'))
 
+    def updateOutlier(self, c1, c2, outlierMask):
+        """ Update the flag_outlier object with a 0|1.
+
+        Where 0 indicates a compound was not an outlier and 1 indicates that it
+        was an outlier.
+
+        Args:
+            outlierMask (bool array-like): This is a boolean array-like object
+                (i.e., pandas series) that is True for compounds that are outliers
+                and False for compounds that are not outliers.
+
+        Returns:
+            self.flag_outlier: Updates self.flag_outlier with 0|1 flags.
+            self.cnt: increments self.cnt by 1
+
+        """
+
+        # Update flag table
+        self.flag_outlier.loc[outlierMask, 'flag_outlier{}'.format(self.cnt)] = 1
+        self.flag_outlier.loc[~outlierMask, 'flag_outlier{}'.format(self.cnt)] = 0
+
+        # Update design table
+        self.design.loc[self.cnt, 'cbn1'] = c1
+        self.design.loc[self.cnt, 'cbn2'] = c2
+        self.cnt += 1
+
     def dropOutlier(self, data, group, how='acrossAll'):
         """ Drop rows based on outlier values.
 
@@ -85,7 +163,7 @@ class FlagOutlier:
             group values to missing. This may be useful if you have many groups
             and are only interested in specific comparisons.
 
-        sample [default]: For each compound that a sample was an outlier, set that value
+        sample: For each compound that a sample was an outlier, set that value
             to missing.
 
         Args:
@@ -145,32 +223,6 @@ class FlagOutlier:
 
         return clean
 
-    def updateOutlier(self, c1, c2, outlierMask):
-        """ Update the flag_outlier object with a 0|1.
-
-        Where 0 indicates a compound was not an outlier and 1 indicates that it
-        was an outlier.
-
-        Args:
-            outlierMask (bool array-like): This is a boolean array-like object
-                (i.e., pandas series) that is True for compounds that are outliers
-                and False for compounds that are not outliers.
-
-        Returns:
-            self.flag_outlier: Updates self.flag_outlier with 0|1 flags.
-            self.cnt: increments self.cnt by 1
-
-        """
-
-        # Update flag table
-        self.flag_outlier.loc[outlierMask, 'flag_outlier{}'.format(self.cnt)] = 1
-        self.flag_outlier.loc[~outlierMask, 'flag_outlier{}'.format(self.cnt)] = 0
-
-        # Update design table
-        self.design.loc[self.cnt, 'cbn1'] = c1
-        self.design.loc[self.cnt, 'cbn2'] = c2
-        self.cnt += 1
-
 
 def iterateCombo(data, combos, out, flags, group=None):
     """ Iterate over pairwise combinations and generate plots.
@@ -222,9 +274,6 @@ def iterateCombo(data, combos, out, flags, group=None):
 
         # Update Flags
         flags.updateOutlier(combo[0], combo[1], outlier)
-
-        # Filter data
-        clean = flags.dropOutlier(data, group)
 
 
 def runRegression(x, y):
@@ -354,10 +403,12 @@ def main(args):
     # Import data
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
     wide = dat.wide[dat.sampleIDs]
+
+    # Create a FlagOutlier object to store all flags
     flags = FlagOutlier(dat.wide.index)
 
     # Open a multiple page PDF for plots
-    pp = PdfPages(args.oname)
+    pp = PdfPages(args.figName)
 
     # If group is given, only do within group pairwise combinations
     if args.group:
@@ -367,14 +418,20 @@ def main(args):
     else:
         # Get all pairwise combinations for all samples
         combos = list(combinations(dat.sampleIDs, 2))
-        iterateCombo(wide, combos, flags, pp)
+        iterateCombo(wide, combos, pp, flags, group=None)
 
     # Close PDF with plots
     pp.close()
 
     # Drop outliers
-    clean = flags.dropOutlier(wide, acrossAll=True)
-    clean.to_table('/home/jfear/sandbox/secim/data/test.tsv')
+    if args.criteria and args.oname:
+        clean = flags.dropOutlier(wide, args.group, how=args.criteria)
+        clean.to_csv(args.oname, sep='\t')
+
+    # Output Flags
+    if args.table1 and args.table2:
+        flags.flag_outlier.to_csv(args.tname1, sep='\t')
+        flags.design.to_csv(args.tname2, sep='\t')
 
 
 if __name__ == '__main__':
