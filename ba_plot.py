@@ -70,15 +70,17 @@ def getOptions():
     parser.add_argument("--table2", dest="tname2", action='store', required=False, help="Output table relating pairwise flags back to sample ID.")
 
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-#     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log_small.tsv',
-                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
-                              '--ID', 'Name',
-                              '--group', 'treatment',
-                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
-                              '--filter_criteria', 'acrossAll',
-                              '--debug'])
+    args = parser.parse_args()
+#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
+#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
+#                               '--ID', 'Name',
+#                               '--group', 'treatment',
+#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
+#                               '--out', '/home/jfear/sandbox/secim/data/test.tsv',
+#                               '--filter_criteria', 'acrossAll',
+#                               '--table1', '/home/jfear/sandbox/secim/data/test_table1.tsv',
+#                               '--table2', '/home/jfear/sandbox/secim/data/test_table2.tsv',
+#                               '--debug'])
 
     # Check mutually inclusive options
     if (args.criteria and not args.oname) or (args.oname and not args.criteria):
@@ -324,9 +326,9 @@ def makeScatter(x, y, ax):
 
     # Plot
     ax.plot(x, y, 'o')
-    ax.plot(x, lower, 'r--')
+    ax.plot(x, lower, 'r:')
     ax.plot(x, fitted, 'k-')
-    ax.plot(x, upper, 'r--')
+    ax.plot(x, upper, 'r:')
     ax.set_xlabel(xname)
     ax.set_ylabel(yname)
     ax.set_title('Scatter plot')
@@ -366,9 +368,9 @@ def makeBA(x, y, ax):
     ax.scatter(x=mean[~mask], y=diff[~mask])
     ax.scatter(x=mean[mask], y=diff[mask], color='r')
 
-    ax.plot(mean, lower, 'r--')
+    ax.plot(mean, lower, 'r:')
     ax.axhline(0, color='k')
-    ax.plot(mean, upper, 'r--')
+    ax.plot(mean, upper, 'r:')
 
     # Adjust axis
     ax.set_xlabel('Mean')
@@ -429,7 +431,7 @@ def main(args):
         clean.to_csv(args.oname, sep='\t')
 
     # Output Flags
-    if args.table1 and args.table2:
+    if args.tname1 and args.tname2:
         flags.flag_outlier.to_csv(args.tname1, sep='\t')
         flags.design.to_csv(args.tname2, sep='\t')
 
