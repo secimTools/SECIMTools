@@ -70,17 +70,17 @@ def getOptions():
     parser.add_argument("--table2", dest="tname2", action='store', required=False, help="Output table relating pairwise flags back to sample ID.")
 
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-    args = parser.parse_args()
-#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
-#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
-#                               '--ID', 'Name',
-#                               '--group', 'treatment',
-#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-#                               '--out', '/home/jfear/sandbox/secim/data/test.tsv',
-#                               '--filter_criteria', 'acrossAll',
-#                               '--table1', '/home/jfear/sandbox/secim/data/test_table1.tsv',
-#                               '--table2', '/home/jfear/sandbox/secim/data/test_table2.tsv',
-#                               '--debug'])
+#     args = parser.parse_args()
+    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
+                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
+                              '--ID', 'Name',
+                              '--group', 'treatment',
+                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
+                              '--out', '/home/jfear/sandbox/secim/data/test.tsv',
+                              '--filter_criteria', 'acrossAll',
+                              '--table1', '/home/jfear/sandbox/secim/data/test_table1.tsv',
+                              '--table2', '/home/jfear/sandbox/secim/data/test_table2.tsv',
+                              '--debug'])
 
     # Check mutually inclusive options
     if (args.criteria and not args.oname) or (args.oname and not args.criteria):
@@ -224,6 +224,34 @@ class FlagOutlier:
             raise ValueError
 
         return clean
+
+    def summarizeSampleFlags(self, data):
+        """ Summarize flag_outlier to the sample level for easy qc.
+
+        Args:
+
+        """
+
+        # Create a new dataframe to hold summarized flags
+        summary = pd.DataFrame(index=data.index)
+
+        ## Iterate over samples
+        for sample in data.columns:
+            # Which pairwise flags correspond to the current sample
+            pflag = (self.design['cbn1'] == sample) | (self.design['cbn2'] == sample)
+
+            # Pull flag_outlier columns that correspond to sample
+            cols = self.flag_outlier.columns[pflag]
+            currFlags = self.flag_outlier[cols]
+
+            # Sum across columns
+            sums = currFlags.apply(np.sum, axis=1)
+            sums.name = sample
+
+            # Update summary dataset
+            summary = summary.join(sums)
+
+        return summary
 
 
 def iterateCombo(data, combos, out, flags, group=None):
@@ -401,6 +429,13 @@ def buildTitle(xname, yname, group):
     return title
 
 
+def heatmap(summary):
+    """ Plot Heat maps """
+
+    fig, ax = plt.subplots(figsize=(8,8))
+    ax.imshow(summary)
+
+
 def main(args):
     # Import data
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
@@ -434,6 +469,8 @@ def main(args):
     if args.tname1 and args.tname2:
         flags.flag_outlier.to_csv(args.tname1, sep='\t')
         flags.design.to_csv(args.tname2, sep='\t')
+
+    summary = flags.summarizeSampleFlags(wide)
 
 
 if __name__ == '__main__':
