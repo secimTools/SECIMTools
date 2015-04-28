@@ -78,11 +78,11 @@ This is a support vector machine(SVM) classification tool. The inputs are two da
 
 -- kernel function used for SVM can be one of the following:
 
-.. image:: ${static_path}/images/kernels.png
+.. image:: ${static_path}/images/secimtools_SVM_kernels.png
     :height: 160 
     :width: 300
     
-|   
+    
     
 -- degree for the polynomial kernel:: has to be a positive integer
 
