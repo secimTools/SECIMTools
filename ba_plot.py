@@ -63,6 +63,7 @@ def getOptions():
 
     parser.add_argument("--fig", dest="figName", action='store', required=True, help="Name of the output PDF for plots.")
 
+    parser.add_argument("--filter_cutoff", dest="cutoff", action='store', default=3, required=False, help="Cutoff value for flagging outliers. [default=3]")
     parser.add_argument("--filter_criteria", dest="criteria", choices=['acrossAll', 'bygroup', 'sample'], action='store', required=False, help="Name of the output PDF")
     parser.add_argument("--out", dest="oname", action='store', required=False, help="Output wide formatted table with outliers removed using '--filter_criteria'. [Optional]")
 
@@ -251,10 +252,12 @@ class FlagOutlier:
             # Update summary dataset
             summary = summary.join(sums)
 
+        summary.fillna(0, inplace=True)
+
         return summary
 
 
-def iterateCombo(data, combos, out, flags, group=None):
+def iterateCombo(data, combos, out, flags, cutoff, group=None):
     """ Iterate over pairwise combinations and generate plots.
 
     This is a wrapper function to iterate over pairwise combinations and
@@ -291,7 +294,7 @@ def iterateCombo(data, combos, out, flags, group=None):
         ax1 = makeScatter(data[combo[0]], data[combo[1]], ax1)
 
         # BA plot
-        ax2, outlier = makeBA(data[combo[0]], data[combo[1]], ax2)
+        ax2, outlier = makeBA(data[combo[0]], data[combo[1]], ax2, cutoff)
 
         # Add plot title
         title = buildTitle(combo[0], combo[1], group)
@@ -321,12 +324,24 @@ def runRegression(x, y):
 
         fitted (pd.Series): Series of fitted values.
 
+        resid (pd.DataFrame): DataFrame containing residuals and Pearson
+            normalized residuals to have unit variance.
+
     """
+    # Fit linear regression
     model = sm.OLS(y, x)
     results = model.fit()
     fitted = results.fittedvalues
+
+    # Pull Residuals
+    presid = pd.Series(results.resid_pearson, index=results.resid.index)
+    resid = pd.concat([results.resid, presid], axis=1)
+    resid.columns = pd.Index(['resid', 'resid_pearson'])
+
+    # Get 95% CI
     prstd, lower, upper = wls_prediction_std(results)
-    return lower, upper, fitted
+
+    return lower, upper, fitted, resid
 
 
 def makeScatter(x, y, ax):
@@ -350,12 +365,12 @@ def makeScatter(x, y, ax):
     yname = y.name
 
     # Get Upper and Lower CI
-    lower, upper, fitted = runRegression(x, y)
+    lower, upper, fitted, resid = runRegression(x, y)
 
     # Plot
     ax.plot(x, y, 'o')
     ax.plot(x, lower, 'r:')
-    ax.plot(x, fitted, 'k-')
+    ax.plot(x, fitted, 'r-')
     ax.plot(x, upper, 'r:')
     ax.set_xlabel(xname)
     ax.set_ylabel(yname)
@@ -364,7 +379,7 @@ def makeScatter(x, y, ax):
     return ax
 
 
-def makeBA(x, y, ax):
+def makeBA(x, y, ax, cutoff):
     """ Function to make BA Plot comparing x vs y.
 
     Args:
@@ -389,21 +404,23 @@ def makeBA(x, y, ax):
     mean = (x + y) / 2
 
     # Get Upper and Lower CI
-    lower, upper, fitted = runRegression(mean, diff)
-    mask = (diff >= upper) | (diff <= lower)
+    lower, upper, fitted, resid = runRegression(mean, diff)
+    mask = abs(resid['resid_pearson']) > cutoff
 
     # Plot
     ax.scatter(x=mean[~mask], y=diff[~mask])
-    ax.scatter(x=mean[mask], y=diff[mask], color='r')
+    ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Outliers (sdtDev > {}).'.format(cutoff))
+    ax.legend(fontsize=10)
 
-    ax.plot(mean, lower, 'r:')
+    #ax.plot(mean, lower, 'r:')
+    ax.plot(mean, fitted, 'r')
     ax.axhline(0, color='k')
-    ax.plot(mean, upper, 'r:')
+    #ax.plot(mean, upper, 'r:')
 
     # Adjust axis
-    ax.set_xlabel('Mean')
+    ax.set_xlabel('Mean\n{0} & {1}'.format(x.name, y.name))
     ax.set_ylabel('Difference\n{0} - {1}'.format(x.name, y.name))
-    ax.set_title('BA Plot')
+    ax.set_title('Bland-Altman Plot')
     labels = ax.get_xmajorticklabels()
     plt.setp(labels, rotation=45)
 
@@ -429,11 +446,29 @@ def buildTitle(xname, yname, group):
     return title
 
 
-def heatmap(summary):
-    """ Plot Heat maps """
+def plotFlagDist(data, flags, out):
+    """ """
+    # Summarize flag counts
+    summary = flags.summarizeSampleFlags(data)
 
-    fig, ax = plt.subplots(figsize=(8,8))
-    ax.imshow(summary)
+    # Sum flags across samples
+    col_sum = summary.sum(axis=0)
+    col_sum.sort(ascending=False)
+
+    # Sum flags across compounds
+    row_sum = summary.sum(axis=1)
+    row_sum.sort(ascending=False)
+
+    # How many flags could I have
+    row_max, col_max = summary.shape
+
+    # Plot samples
+    col_sum.plot(kind='bar', ylim=(0, col_max), figsize=(20, 10))
+    out.savefig(plt.gcf(), bbox_inches='tight')
+
+    # Plot compounds
+    row_sum[row_sum > 0].plot(kind='bar', ylim=(0, row_max), figsize=(20, 10))
+    out.savefig(plt.gcf(), bbox_inches='tight')
 
 
 def main(args):
@@ -451,11 +486,14 @@ def main(args):
     if args.group:
         for i, val in dat.design.groupby(dat.group):
             combos = list(combinations(val.index, 2))
-            iterateCombo(wide, combos, pp, flags, group=i)
+            iterateCombo(wide, combos, pp, flags, args.cutoff, group=i)
     else:
         # Get all pairwise combinations for all samples
         combos = list(combinations(dat.sampleIDs, 2))
-        iterateCombo(wide, combos, pp, flags, group=None)
+        iterateCombo(wide, combos, pp, flags, args.cutoff, group=None)
+
+    # Summarize flags
+    plotFlagDist(wide, flags, pp)
 
     # Close PDF with plots
     pp.close()
@@ -469,8 +507,6 @@ def main(args):
     if args.tname1 and args.tname2:
         flags.flag_outlier.to_csv(args.tname1, sep='\t')
         flags.design.to_csv(args.tname2, sep='\t')
-
-    summary = flags.summarizeSampleFlags(wide)
 
 
 if __name__ == '__main__':
