@@ -424,6 +424,14 @@ def plotFlagDist(summary, out):
     ppFlag.close()
 
 
+def convertToInt(x):
+    """ Convert to integer before export """
+    try:
+        return x.astype(int)
+    except:
+        return x
+
+
 def main(args):
     # Import data
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
@@ -459,10 +467,13 @@ def main(args):
     # Summarize flags
     summary = flags.summarizeSampleFlags(wide)
     plotFlagDist(summary, args.distName)
+
+    summary.apply(convertToInt)
     summary.to_csv(args.flagSummary, sep='\t')
 
     # Output Raw Flags
     if args.flagTable and args.flagDesign:
+        flags.flag_outlier.apply(convertToInt)
         flags.flag_outlier.to_csv(args.flagTable, sep='\t')
         flags.design.to_csv(args.flagDesign, sep='\t')
 
