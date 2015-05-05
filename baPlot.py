@@ -31,67 +31,59 @@ def getOptions():
     it will only report pairwise combinations within the group.
 
     A linear regression is also performed on the BA-plots to identify samples
-    that lay outside of a 95% confidence interval. For each compound (row) in
-    the dataset, a sample is flagged as an outlier if it was outside of the 95%
-    confidence interval for any pairwise comparison.
+    whoes residuals are beyond a cutoff. For each compound (row) in the
+    dataset, a sample is flagged as an outlier if the pearson normalized
+    residuals are greater than a cutoff (--filter_cutoff).
 
-    These flags can be output by specifying the --table1 and --table2 options.
-    Table1 is a table with compounds as rows and flag_outlier## as columns,
-    where the ## is incremented for each pairwise comparison between samples.
-    Table2 can then be used to relate sample to its corresponding flags.
+    These raw flags can be output by specifying the --flag_table and
+    --flag_design options. flag_table is a table with compounds as rows and
+    flag_outlier## as columns, where the ## is incremented for each pairwise
+    comparison between samples. flag_design can then be used to relate sample
+    to its corresponding flags.
 
-    This script can also output a filtered dataset removing problematic data
-    points by specifying --filter_criteria and --out. The Filter Criteria
-    determines how to remove problematic data points. There are three methods:
+    The script always outputs a summary of the flags, where the flags for each
+    sample is summed across all comparisons.
 
-        (1) accrossAll: Drops entire rows if any sample contained an outlier.
-            This is probably want you want.
-
-        (2) bygroup: For each group, determine if a compound has an outlier and
-            set group values to missing. This may be useful if you have many groups
-            and are only interested in specific comparisons.
-
-        (3) sample: For each compound that a sample was an outlier, set that value
-                to missing.
+    Two sets of plots are output: (1) Bland-Altman plots for pairwise
+    comparisons are saved to a pdf specified by (--ba). (2) Bar graphs of
+    summarized flags are saved by (--flag_summary).
 
     """
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
-    parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
-    parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument("--group", dest="group", action='store', default=False, required=False, help="Group/treatment identifier in design file.")
+    group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
+    group1.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
+    group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
+    group1.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
+    group1.add_argument("--group", dest="group", action='store', default=False, required=False, help="Group/treatment identifier in design file.")
 
-    parser.add_argument("--fig", dest="figName", action='store', required=True, help="Name of the output PDF for plots.")
+    group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
+    group2.add_argument("--ba", dest="baName", action='store', required=True, help="Name of the output PDF for plots.")
+    group2.add_argument("--flag_dist", dest="distName", action='store', required=True, help="Name of the output PDF for plots.")
+    group2.add_argument("--flag_summary", dest="flagSummary", action='store', required=True, help="Output table summarizing flags.")
 
-    parser.add_argument("--filter_cutoff", dest="cutoff", action='store', default=3, required=False, help="Cutoff value for flagging outliers. [default=3]")
-    parser.add_argument("--filter_criteria", dest="criteria", choices=['acrossAll', 'bygroup', 'sample'], action='store', required=False, help="Name of the output PDF")
-    parser.add_argument("--out", dest="oname", action='store', required=False, help="Output wide formatted table with outliers removed using '--filter_criteria'. [Optional]")
+    group3 = parser.add_argument_group(title='Optional Settings')
+    group3.add_argument("--process_only", dest="processOnly", action='store', nargs='+', default=False, required=False, help="Only process the given groups (list groups separated by spaces).")
+    group3.add_argument("--filter_cutoff", dest="cutoff", action='store', default=3, required=False, help="Cutoff value for flagging outliers. [default=3]")
+    group3.add_argument("--flag_table", dest="flagTable", action='store', required=False, help="Output pairwise flags in Tabular format")
+    group3.add_argument("--flag_design", dest="flagDesign", action='store', required=False, help="Output table relating pairwise flags back to sample ID.")
 
-    parser.add_argument("--table1", dest="tname1", action='store', required=False, help="Output pairwise flags in Tabular format")
-    parser.add_argument("--table2", dest="tname2", action='store', required=False, help="Output table relating pairwise flags back to sample ID.")
+    group4 = parser.add_argument_group(title='Development Settings')
+    group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 
-    parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 #     args = parser.parse_args()
     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
                               '--ID', 'Name',
                               '--group', 'treatment',
-                              '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-                              '--out', '/home/jfear/sandbox/secim/data/test.tsv',
-                              '--filter_criteria', 'acrossAll',
-                              '--table1', '/home/jfear/sandbox/secim/data/test_table1.tsv',
-                              '--table2', '/home/jfear/sandbox/secim/data/test_table2.tsv',
+                              '--ba', '/home/jfear/sandbox/secim/data/test_ba.pdf',
+                              '--flag_dist', '/home/jfear/sandbox/secim/data/test_dist.pdf',
+                              '--flag_summary', '/home/jfear/sandbox/secim/data/test_flag_summary.tsv',
+                              '--process_only', '02_uM_palmita',
                               '--debug'])
 
     # Check mutually inclusive options
-    if (args.criteria and not args.oname) or (args.oname and not args.criteria):
-        parser.error('--filter_criteria and --out are both needed if you want to output filtered datasets.')
-
-    if (args.tname1 and not args.tname2) or (args.tname2 and not args.tname1):
-        parser.error('--table1 and --table2 are both needed if you want to output pairwise flags.')
-
-    if args.criteria == 'bygroup' and not args.group:
-        parser.error('--filter_criteria bygroup requires that you also specify --group.')
+    if (args.flagTable and not args.flagDesign) or (args.flagDesign and not args.flagTable):
+        parser.error('--flag_table and --flag_design are both needed if you want to output raw pairwise flags.')
 
     return(args)
 
@@ -122,7 +114,7 @@ class FlagOutlier:
 
         """
         self.cnt = 0
-        self.flag_outlier = pd.DataFrame(index=index)
+        self.flag_outlier = pd.DataFrame(index=index, dtype='int64')
         self.design = pd.DataFrame(index=[0], columns=('cbn1', 'cbn2'))
 
     def updateOutlier(self, c1, c2, outlierMask):
@@ -151,85 +143,16 @@ class FlagOutlier:
         self.design.loc[self.cnt, 'cbn2'] = c2
         self.cnt += 1
 
-    def dropOutlier(self, data, group, how='acrossAll'):
-        """ Drop rows based on outlier values.
-
-        Outlier flags are used to identify rows X samples that should be
-        removed from data set. Depending on the situation you may want to use
-        different filtering criteria. Here there are three criteria:
-
-        acrossAll: Drop entire row if contains outlier. Look at each compound
-            (row) and determine if there was an outlier. If there is at least 1
-            sample that is an outlier, then delete the entire row.
-
-        bygroup: For each group, determine if a compound has an outlier and set
-            group values to missing. This may be useful if you have many groups
-            and are only interested in specific comparisons.
-
-        sample: For each compound that a sample was an outlier, set that value
-            to missing.
-
-        Args:
-            data (pd.DataFrame): Data frame containing data in wide format compound
-                as rows and samples as columns.
-
-            group (str): Default is None if there are no groups. Otherwise it is
-                the name of the current group.
-
-            how (str): when equal to acrossAll then do 'acrossAll' filtering.
-                When equal to bygroup then do 'bygroup' filtering. When equal to
-                sample then do 'sample' filtering.
-
-        Returns:
-            clean (pd.DataFrame): Data frame containing data in wide format compound
-                as rows and samples as columns after removing outliers.
-
-        """
-        if how == 'acrossAll':
-            # Keep rows that are not flagged in any sample.
-            clean = data[self.flag_outlier.apply(lambda x: ~x.any(), axis=1)]
-        elif (how == 'bygroup') and (group):
-            # Set values for entire group to NaN if flag is present in any
-            # sample within a group.
-            grp = data.groupby(group)
-            for i, val in grp:
-                # Get list of samples in current group
-                samples = val.index
-
-                # Which pairwise flags correspond to the current set of samples
-                pflag = (self.design['cbn1'].isin(samples)) | (self.design['cbn2'].isin(samples))
-
-                # Pull flag_outlier columns that correspond to sample
-                cols = self.flag_outlier.columns[pflag]
-                currFlags = self.flag_outlier[cols]
-
-                # If there are any samples in the group that have an outlier
-                # than set all to NaN
-                clean = data.copy()
-                clean.ix[currFlags.apply(lambda x: x.any(), axis=1), samples] = np.nan
-        elif how == 'sample':
-            # Set values to NaN if they were flagged.
-            ## Iterate over samples
-            for sample in data.columns:
-                # Which pairwise flags correspond to the current sample
-                pflag = (self.design['cbn1'] == sample) | (self.design['cbn2'] == sample)
-
-                # Pull flag_outlier columns that correspond to sample
-                cols = self.flag_outlier.columns[pflag]
-                currFlags = self.flag_outlier[cols]
-
-                # If sample is ever flagged as outlier set it to NaN
-                clean = data.copy()
-                clean.ix[currFlags.apply(lambda x: x.any(), axis=1), sample] = np.nan
-        else:
-            raise ValueError
-
-        return clean
-
     def summarizeSampleFlags(self, data):
         """ Summarize flag_outlier to the sample level for easy qc.
 
         Args:
+            data (pd.DataFrame): Wide formatted dataframe that is used to get
+                row and column labels for flag summary.
+
+        Returns:
+            summary (pd.DataFrame): Dataframe where values are the sum of flags
+                for pairwise comparison.
 
         """
 
@@ -284,21 +207,30 @@ def iterateCombo(data, combos, out, flags, cutoff, group=None):
             outlier flags.
 
     """
+    # How many rows are there in total
+    rows = data.shape[0]
+
     # Grab global counter
     for combo in combos:
+        subset = data.ix[:, [combo[0], combo[1]]]
+
+        # Drop missing value
+        subset.dropna(inplace=True)
+        missing = rows - subset.shape[0]
+
         # Set up figure with 2 subplots
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), dpi=300)
         fig.subplots_adjust(wspace=0.4)
 
         # Scatter Plot
-        ax1 = makeScatter(data[combo[0]], data[combo[1]], ax1)
+        ax1 = makeScatter(subset.iloc[:, 0], subset.iloc[:, 1], ax1)
 
         # BA plot
-        ax2, outlier = makeBA(data[combo[0]], data[combo[1]], ax2, cutoff)
+        ax2, outlier = makeBA(subset.iloc[:, 0], subset.iloc[:, 1], ax2, cutoff)
 
         # Add plot title
-        title = buildTitle(combo[0], combo[1], group)
-        plt.suptitle(title, fontsize=18)
+        title = buildTitle(combo[0], combo[1], group, missing)
+        plt.suptitle(title, fontsize=14)
         plt.tight_layout(rect=[0, 0.03, 1, 0.90])
 
         # Output figure to pdf
@@ -410,7 +342,7 @@ def makeBA(x, y, ax, cutoff):
     # Plot
     ax.scatter(x=mean[~mask], y=diff[~mask])
     ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Outliers (sdtDev > {}).'.format(cutoff))
-    ax.legend(fontsize=10)
+    ax.legend(loc='center left', bbox_to_anchor=(1, 1), fontsize=10)
 
     #ax.plot(mean, lower, 'r:')
     ax.plot(mean, fitted, 'r')
@@ -427,14 +359,14 @@ def makeBA(x, y, ax, cutoff):
     return ax, mask
 
 
-def buildTitle(xname, yname, group):
+def buildTitle(xname, yname, group, missing):
     """ Build plot title.
     Args:
         xname (str): String containing the sampleID for x
 
         yname (str): String containing the sampleID for y
 
-        gropu (str): String containing the group information. If no group then
+        group (str): String containing the group information. If no group then
             None.
 
     """
@@ -443,14 +375,28 @@ def buildTitle(xname, yname, group):
     else:
         title = '{0} vs {1}'.format(xname, yname)
 
+    # Add on missing information if there are any missing values.
+    if missing == 1:
+        title = title + '\n1 missing value'
+    elif missing > 0:
+        title = title + '\n{} missing values'.format(missing)
+
     return title
 
 
-def plotFlagDist(data, flags, out):
-    """ """
-    # Summarize flag counts
-    summary = flags.summarizeSampleFlags(data)
+def plotFlagDist(summary, out):
+    """ Plot the distribution of flags.
 
+    Sum outlier flags over samples and compounds and graph distribution.
+
+    Args:
+        summary (pd.DataFrame): DataFrame of flags summarized to sample level.
+
+        out (str): Filename of pdf to save plots.
+    Returns:
+        Saves two bar plots to pdf.
+
+    """
     # Sum flags across samples
     col_sum = summary.sum(axis=0)
     col_sum.sort(ascending=False)
@@ -462,51 +408,63 @@ def plotFlagDist(data, flags, out):
     # How many flags could I have
     row_max, col_max = summary.shape
 
-    # Plot samples
-    col_sum.plot(kind='bar', ylim=(0, col_max), figsize=(20, 10))
-    out.savefig(plt.gcf(), bbox_inches='tight')
+    # Make Plots
+    ## Open pdf for plotting
+    ppFlag = PdfPages(out)
 
-    # Plot compounds
-    row_sum[row_sum > 0].plot(kind='bar', ylim=(0, row_max), figsize=(20, 10))
-    out.savefig(plt.gcf(), bbox_inches='tight')
+    ## Plot samples
+    col_sum.plot(kind='bar', figsize=(10, 5))
+    ppFlag.savefig(plt.gcf(), bbox_inches='tight')
+
+    ## Plot compounds
+    row_sum[row_sum > 0].plot(kind='bar', figsize=(10, 5))
+    ppFlag.savefig(plt.gcf(), bbox_inches='tight')
+
+    ## Close pdf
+    ppFlag.close()
 
 
 def main(args):
     # Import data
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
-    wide = dat.wide[dat.sampleIDs]
+    if args.processOnly:
+        dat.design = dat.design[dat.design[args.group].isin(args.processOnly)]
+        toProcess = dat.design.index
+        dat.sampleIDs = toProcess.tolist()
+    else:
+        # Process everything
+        toProcess = dat.sampleIDs
+
+    wide = dat.wide[toProcess]
 
     # Create a FlagOutlier object to store all flags
     flags = FlagOutlier(dat.wide.index)
 
     # Open a multiple page PDF for plots
-    pp = PdfPages(args.figName)
+    ppBA = PdfPages(args.baName)
 
     # If group is given, only do within group pairwise combinations
     if args.group:
         for i, val in dat.design.groupby(dat.group):
             combos = list(combinations(val.index, 2))
-            iterateCombo(wide, combos, pp, flags, args.cutoff, group=i)
+            iterateCombo(wide, combos, ppBA, flags, args.cutoff, group=i)
     else:
         # Get all pairwise combinations for all samples
         combos = list(combinations(dat.sampleIDs, 2))
-        iterateCombo(wide, combos, pp, flags, args.cutoff, group=None)
-
-    # Summarize flags
-    plotFlagDist(wide, flags, pp)
+        iterateCombo(wide, combos, ppBA, flags, args.cutoff, group=None)
 
     # Close PDF with plots
-    pp.close()
+    ppBA.close()
 
-    # Drop outliers
-    if args.criteria and args.oname:
-        clean = flags.dropOutlier(wide, args.group, how=args.criteria)
-        clean.to_csv(args.oname, sep='\t')
+    # Summarize flags
+    summary = flags.summarizeSampleFlags(wide)
+    plotFlagDist(summary, args.distName)
+    summary.to_csv(args.flagSummary, sep='\t')
 
-    # Output Flags
-    if args.tname1 and args.tname2:
-        flags.flag_outlier.to_csv(args.tname1, sep='\t')
-        flags.design.to_csv(args.tname2, sep='\t')
+    # Output Raw Flags
+    if args.flagTable and args.flagDesign:
+        flags.flag_outlier.to_csv(args.flagTable, sep='\t')
+        flags.design.to_csv(args.flagDesign, sep='\t')
 
 
 if __name__ == '__main__':
