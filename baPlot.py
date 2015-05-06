@@ -26,7 +26,7 @@ global DEBUG
 DEBUG = False
 
 
-def getOptions():
+def getOptions(myopts=None):
     """ Function to pull in arguments """
     description = """ The Bland-Altman plot (BA-plot) is commonly used to look
     at concordance of data between samples. It is especially useful for looking
@@ -74,7 +74,11 @@ def getOptions():
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 
-    args = parser.parse_args()
+    if not myopts:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(myopts)
+
 #     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
 #                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
 #                               '--ID', 'Name',
@@ -466,8 +470,9 @@ def plotFlagDist(summary, out):
     ppFlag.savefig(plt.gcf(), bbox_inches='tight')
 
     ## Plot compounds
-    row_sum[row_sum > 0].plot(kind='bar', figsize=(10, 5))
-    ppFlag.savefig(plt.gcf(), bbox_inches='tight')
+    if np.any(row_sum > 0):
+        row_sum[row_sum > 0].head(30).plot(kind='bar', figsize=(10, 5))
+        ppFlag.savefig(plt.gcf(), bbox_inches='tight')
 
     ## Close pdf
     ppFlag.close()
@@ -483,7 +488,10 @@ def convertToInt(x):
 
 def main(args):
     # Import data
+    logger.info('Importing Data')
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
+
+    # Keep only columns that are specified by processOnly group, or sampleIDs
     if args.processOnly:
         dat.design = dat.design[dat.design[args.group].isin(args.processOnly)]
         toProcess = dat.design.index
@@ -502,10 +510,12 @@ def main(args):
 
     # If group is given, only do within group pairwise combinations
     if args.group:
+        logger.info('Only doing within group, pairwise comparisons.')
         for i, val in dat.design.groupby(dat.group):
             combos = list(combinations(val.index, 2))
             iterateCombo(wide, combos, ppBA, flags, args.cutoff, group=i)
     else:
+        logger.info('Doing all pairwise comparisons. This could take a while!')
         # Get all pairwise combinations for all samples
         combos = list(combinations(dat.sampleIDs, 2))
         iterateCombo(wide, combos, ppBA, flags, args.cutoff, group=None)
@@ -514,6 +524,7 @@ def main(args):
     ppBA.close()
 
     # Summarize flags
+    logger.info('Summarizing outlier flags.')
     summary = flags.summarizeSampleFlags(wide)
     plotFlagDist(summary, args.distName)
 
@@ -522,6 +533,7 @@ def main(args):
 
     # Output Raw Flags
     if args.flagTable and args.flagDesign:
+        logger.info('Outputing raw outlier flags.')
         flags.flag_outlier.apply(convertToInt)
         flags.flag_outlier.to_csv(args.flagTable, sep='\t')
         flags.design.to_csv(args.flagDesign, sep='\t')
