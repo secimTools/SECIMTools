@@ -21,6 +21,10 @@ from statsmodels.sandbox.regression.predstd import wls_prediction_std
 from interface import wideToDesign
 import logger as sl
 
+# Globals
+global DEBUG
+DEBUG = False
+
 
 def getOptions():
     """ Function to pull in arguments """
@@ -216,7 +220,7 @@ def iterateCombo(data, combos, out, flags, cutoff, group=None):
 
     # Grab global counter
     for combo in combos:
-        subset = data.ix[:, [combo[0], combo[1]]]
+        subset = data.loc[:, [combo[0], combo[1]]]
 
         # Drop missing value
         subset.dropna(inplace=True)
@@ -243,6 +247,14 @@ def iterateCombo(data, combos, out, flags, cutoff, group=None):
 
         # Update Flags
         flags.updateOutlier(combo[0], combo[1], outlier)
+
+
+def plotLeverageDensity(infl):
+    """ For debugging we want to look at density of leverage """
+    cnt = 0
+    fig = infl['cooks_pval'].plot(kind='kde')
+    plt.savefig('/home/jfear/tmp/density{}.pdf'.format(cnt))
+    cnt += 1
 
 
 def runRegression(x, y):
@@ -279,6 +291,10 @@ def runRegression(x, y):
     presid = pd.Series(results.resid_pearson, index=results.resid.index)
     resid = pd.concat([results.resid, presid], axis=1)
     resid.columns = pd.Index(['resid', 'resid_pearson'])
+
+    # Plot density of stats if debug
+    if DEBUG:
+        plotLeverageDensity(influence)
 
     # Get 95% CI
     prstd, lower, upper = wls_prediction_std(results)
@@ -508,6 +524,7 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel='debug')
+        DEBUG = True
     else:
         sl.setLogger(logger)
 
