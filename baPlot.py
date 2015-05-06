@@ -85,6 +85,15 @@ def getOptions():
 #                               '--process_only', '02_uM_palmita',
 #                               '--debug'])
 
+#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/BR1_FTA_43_peak_intensity_data_log.tsv',
+#                               '--design', '/home/jfear/sandbox/secim/data/BR1_FTA_43_design.tsv',
+#                               '--ID', 'ppm',
+#                               '--group', 'groupID',
+#                               '--ba', '/home/jfear/sandbox/secim/data/test_ba.pdf',
+#                               '--flag_dist', '/home/jfear/sandbox/secim/data/test_dist.pdf',
+#                               '--flag_summary', '/home/jfear/sandbox/secim/data/test_flag_summary.tsv',
+#                               '--debug'])
+
     # Check mutually inclusive options
     if (args.flagTable and not args.flagDesign) or (args.flagDesign and not args.flagTable):
         parser.error('--flag_table and --flag_design are both needed if you want to output raw pairwise flags.')
@@ -252,10 +261,9 @@ def iterateCombo(data, combos, out, flags, cutoff, group=None):
 def plotLeverageDensity(infl):
     """ For debugging we want to look at density of leverage """
     fig, ax = plt.subplots(1, 1, figsize=(10, 7))
-    cnt = 0
     infl['cooks_pval'].plot(kind='kde', ax=ax)
-    plt.savefig('/home/jfear/tmp/density{}.pdf'.format(cnt))
-    cnt += 1
+    plt.savefig('/home/jfear/tmp/density.pdf')
+    plt.close(fig)
 
 
 def runRegression(x, y):
@@ -323,6 +331,7 @@ def makeScatter(x, y, ax):
     xname = x.name
     yname = y.name
 
+    #logger.debug('{0}, {1}'.format(x.name, y.name))
     # Get Upper and Lower CI
     lower, upper, fitted, resid, infl = runRegression(x, y)
 
