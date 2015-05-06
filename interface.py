@@ -86,7 +86,7 @@ class wideToDesign:
 
             for sample in self.design.index.tolist():
                 if str(sample) in self.wide.columns:
-                    self.sampleIDs.append(sample)
+                    self.sampleIDs.append(str(sample))
         except:
             print "Please make sure that your design file has a column called 'sampleID'."
             raise ValueError
