@@ -49,6 +49,7 @@ def main(args):
 
     # write normalized table
     norm = norm.apply(lambda x: x.round(4))
+    norm.replace([np.inf, -np.inf], np.nan, inplace=True)   # Treat inf as NaN
     norm.to_csv(args.oname, sep="\t")
 
 if __name__ == '__main__':
