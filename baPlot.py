@@ -31,8 +31,8 @@ def getOptions():
     it will only report pairwise combinations within the group.
 
     A linear regression is also performed on the BA-plots to identify samples
-    whoes residuals are beyond a cutoff. For each compound (row) in the
-    dataset, a sample is flagged as an outlier if the pearson normalized
+    whose residuals are beyond a cutoff. For each compound (row) in the
+    dataset, a sample is flagged as an outlier if the Pearson normalized
     residuals are greater than a cutoff (--filter_cutoff).
 
     These raw flags can be output by specifying the --flag_table and
@@ -54,10 +54,10 @@ def getOptions():
     group1.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
     group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     group1.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    group1.add_argument("--group", dest="group", action='store', default=False, required=False, help="Group/treatment identifier in design file.")
+    group1.add_argument("--group", dest="group", action='store', default=False, required=False, help="Group/treatment identifier in design file [Optional].")
 
     group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
-    group2.add_argument("--ba", dest="baName", action='store', required=True, help="Name of the output PDF for plots.")
+    group2.add_argument("--ba", dest="baName", action='store', required=True, help="Name of the output PDF for Bland-Altman plots.")
     group2.add_argument("--flag_dist", dest="distName", action='store', required=True, help="Name of the output PDF for plots.")
     group2.add_argument("--flag_summary", dest="flagSummary", action='store', required=True, help="Output table summarizing flags.")
 
@@ -70,16 +70,16 @@ def getOptions():
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 
-#     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
-                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
-                              '--ID', 'Name',
-                              '--group', 'treatment',
-                              '--ba', '/home/jfear/sandbox/secim/data/test_ba.pdf',
-                              '--flag_dist', '/home/jfear/sandbox/secim/data/test_dist.pdf',
-                              '--flag_summary', '/home/jfear/sandbox/secim/data/test_flag_summary.tsv',
-                              '--process_only', '02_uM_palmita',
-                              '--debug'])
+    args = parser.parse_args()
+#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
+#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
+#                               '--ID', 'Name',
+#                               '--group', 'treatment',
+#                               '--ba', '/home/jfear/sandbox/secim/data/test_ba.pdf',
+#                               '--flag_dist', '/home/jfear/sandbox/secim/data/test_dist.pdf',
+#                               '--flag_summary', '/home/jfear/sandbox/secim/data/test_flag_summary.tsv',
+#                               '--process_only', '02_uM_palmita',
+#                               '--debug'])
 
     # Check mutually inclusive options
     if (args.flagTable and not args.flagDesign) or (args.flagDesign and not args.flagTable):
