@@ -63,7 +63,7 @@ def getOptions():
 
     group3 = parser.add_argument_group(title='Optional Settings')
     group3.add_argument("--process_only", dest="processOnly", action='store', nargs='+', default=False, required=False, help="Only process the given groups (list groups separated by spaces).")
-    group3.add_argument("--filter_cutoff", dest="cutoff", action='store', default=3, required=False, help="Cutoff value for flagging outliers. [default=3]")
+    group3.add_argument("--filter_cutoff", dest="cutoff", action='store', default=3, type=int, required=False, help="Cutoff value for flagging outliers. [default=3]")
     group3.add_argument("--flag_table", dest="flagTable", action='store', required=False, help="Output pairwise flags in Tabular format")
     group3.add_argument("--flag_design", dest="flagDesign", action='store', required=False, help="Output table relating pairwise flags back to sample ID.")
 
