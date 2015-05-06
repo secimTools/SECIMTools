@@ -251,8 +251,9 @@ def iterateCombo(data, combos, out, flags, cutoff, group=None):
 
 def plotLeverageDensity(infl):
     """ For debugging we want to look at density of leverage """
+    fig, ax = plt.subplots(1, 1, figsize=(10, 7))
     cnt = 0
-    fig = infl['cooks_pval'].plot(kind='kde')
+    infl['cooks_pval'].plot(kind='kde', ax=ax)
     plt.savefig('/home/jfear/tmp/density{}.pdf'.format(cnt))
     cnt += 1
 
