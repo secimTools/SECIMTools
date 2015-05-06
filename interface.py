@@ -96,6 +96,10 @@ class wideToDesign:
             for sample in self.design.index.tolist():
                 if sample in self.wide.columns:
                     self.sampleIDs.append(sample)
+
+            # Drop design rows that are not in the wide dataset
+            self.design = self.design[self.design.index.isin(self.sampleIDs)]
+
         except:
             print "Please make sure that your design file has a column called 'sampleID'."
             raise ValueError
