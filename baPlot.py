@@ -134,9 +134,13 @@ class FlagOutlier:
 
         """
 
-        # Update flag table
-        self.flag_outlier.loc[outlierMask, 'flag_outlier{}'.format(self.cnt)] = 1
-        self.flag_outlier.loc[~outlierMask, 'flag_outlier{}'.format(self.cnt)] = 0
+        # Convert outlierMask to dataframe
+        outlierMask.name = 'flag_outlier{}'.format(self.cnt)
+        oDF = pd.DataFrame(outlierMask, dtype=int)
+
+        # Merge to flag table
+        self.flag_outlier = self.flag_outlier.join(oDF, how='outer')
+        self.flag_outlier.fillna(0)
 
         # Update design table
         self.design.loc[self.cnt, 'cbn1'] = c1
@@ -219,7 +223,7 @@ def iterateCombo(data, combos, out, flags, cutoff, group=None):
         missing = rows - subset.shape[0]
 
         # Set up figure with 2 subplots
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), dpi=300)
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 7), dpi=300)
         fig.subplots_adjust(wspace=0.4)
 
         # Scatter Plot
@@ -341,7 +345,7 @@ def makeBA(x, y, ax, cutoff):
 
     # Plot
     ax.scatter(x=mean[~mask], y=diff[~mask])
-    ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Outliers (sdtDev > {}).'.format(cutoff))
+    ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Outliers (abs(residual) > {}).'.format(cutoff))
     ax.legend(loc='center left', bbox_to_anchor=(1, 1), fontsize=10)
 
     #ax.plot(mean, lower, 'r:')
@@ -351,7 +355,7 @@ def makeBA(x, y, ax, cutoff):
 
     # Adjust axis
     ax.set_xlabel('Mean\n{0} & {1}'.format(x.name, y.name))
-    ax.set_ylabel('Difference\n{0} - {1}'.format(x.name, y.name))
+    ax.set_ylabel('Difference\n{0} - {1}'.format(x.name, y.name), fontsize=8)
     ax.set_title('Bland-Altman Plot')
     labels = ax.get_xmajorticklabels()
     plt.setp(labels, rotation=45)
