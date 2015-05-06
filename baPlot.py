@@ -268,6 +268,12 @@ def runRegression(x, y):
     model = sm.OLS(y, x)
     results = model.fit()
     fitted = results.fittedvalues
+    infl = results.get_influence()
+    CD = infl.cooks_distance
+    (dffits, thresh) = infl.dffits
+    DF = dffits > thresh
+
+    influence = pd.DataFrame({'cooksD': CD[0], 'cooks_pval': CD[1], 'dffits': DF}, index=fitted.index)
 
     # Pull Residuals
     presid = pd.Series(results.resid_pearson, index=results.resid.index)
@@ -277,7 +283,7 @@ def runRegression(x, y):
     # Get 95% CI
     prstd, lower, upper = wls_prediction_std(results)
 
-    return lower, upper, fitted, resid
+    return lower, upper, fitted, resid, influence
 
 
 def makeScatter(x, y, ax):
@@ -301,7 +307,7 @@ def makeScatter(x, y, ax):
     yname = y.name
 
     # Get Upper and Lower CI
-    lower, upper, fitted, resid = runRegression(x, y)
+    lower, upper, fitted, resid, infl = runRegression(x, y)
 
     # Plot
     ax.plot(x, y, 'o')
@@ -340,12 +346,25 @@ def makeBA(x, y, ax, cutoff):
     mean = (x + y) / 2
 
     # Get Upper and Lower CI
-    lower, upper, fitted, resid = runRegression(mean, diff)
-    mask = abs(resid['resid_pearson']) > cutoff
+    lower, upper, fitted, resid, infl = runRegression(mean, diff)
+    mask1 = abs(resid['resid_pearson']) > cutoff
+    mask2 = infl['cooks_pval'] <= 0.5
+    mask3 = infl['dffits']
+    mask = mask1 | mask2 | mask3
+    maskC12 = mask1 & mask2
+    maskC13 = mask1 & mask3
+    maskC23 = mask2 & mask3
+    maskC123 = mask1 & mask2 & mask3
 
     # Plot
     ax.scatter(x=mean[~mask], y=diff[~mask])
-    ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Outliers (abs(residual) > {}).'.format(cutoff))
+    ax.scatter(x=mean[mask1], y=diff[mask1], color='r', label='Outliers [abs(residual) > {}]'.format(cutoff))
+    ax.scatter(x=mean[mask2], y=diff[mask2], color='g', label='Leverage [cooksD p-val > 0.5)')
+    ax.scatter(x=mean[mask3], y=diff[mask3], color='k', label='Dffits')
+    ax.scatter(x=mean[maskC12], y=diff[maskC12], color='c', label='Both Outlier and Cooks')
+    ax.scatter(x=mean[maskC13], y=diff[maskC13], color='m', label='Both Outlier and Dffits')
+    ax.scatter(x=mean[maskC23], y=diff[maskC23], color='y', label='Both Cooks and Dffits')
+    ax.scatter(x=mean[maskC123], y=diff[maskC123], color='r', marker='s', s=50, label='Outlier, Cooks, and Dffits')
     ax.legend(loc='center left', bbox_to_anchor=(1, 1), fontsize=10)
 
     #ax.plot(mean, lower, 'r:')
