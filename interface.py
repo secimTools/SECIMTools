@@ -109,6 +109,9 @@ class wideToDesign:
                 self.group = group
 
             self.design = self.design[[self.group, ]]   # Only keep group columns in the design file
+            self.design[self.group] = self.design[self.group].astype(str)   # Make sure groups are strings
+
+            # Create list of group levels
             grp = self.design.groupby(self.group)
             self.levels = sorted(grp.groups.keys())  # Get a list of group levels
 
