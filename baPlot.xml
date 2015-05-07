@@ -25,8 +25,12 @@
     <data format="pdf" name="ba_plots" />
     <data format="pdf" name="outlier_dist_plots" />
     <data format="tabular" name="flag_outlier_summary"/>
-    <data format="tabular" name="flag_outlier_raw"/>
-    <data format="tabular" name="flag_outlier_design"/>
+    <data format="tabular" name="flag_outlier_raw">
+        <filter>raw=="yes"</filter>
+    </data>
+    <data format="tabular" name="flag_outlier_design">
+        <filter>raw=="yes"</filter>
+    </data>
   </outputs>
   <requirements>
     <requirement type="python-module">numpy</requirement>
