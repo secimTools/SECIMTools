@@ -66,10 +66,10 @@ def getOptions(myopts=None):
     group2.add_argument("--flag_summary", dest="flagSummary", action='store', required=True, help="Output table summarizing flags.")
 
     group3 = parser.add_argument_group(title='Optional Settings')
-    group3.add_argument("--process_only", dest="processOnly", action='store', nargs='+', default=False, required=False, help="Only process the given groups (list groups separated by spaces).")
-    group3.add_argument("--filter_cutoff", dest="cutoff", action='store', default=3, type=int, required=False, help="Cutoff value for flagging outliers. [default=3]")
-    group3.add_argument("--flag_table", dest="flagTable", action='store', required=False, help="Output pairwise flags in Tabular format")
-    group3.add_argument("--flag_design", dest="flagDesign", action='store', required=False, help="Output table relating pairwise flags back to sample ID.")
+    group3.add_argument("--process_only", dest="processOnly", action='store', nargs='+', default=False, required=False, help="Only process the given groups (list groups separated by spaces) [Optional].")
+    group3.add_argument("--filter_cutoff", dest="cutoff", action='store', default=3, type=int, required=False, help="Cutoff value for flagging outliers [default=3].")
+    group3.add_argument("--flag_table", dest="flagTable", action='store', required=False, help="Output pairwise flags in Tabular format [Optional].")
+    group3.add_argument("--flag_design", dest="flagDesign", action='store', required=False, help="Output table relating pairwise flags back to sample ID [Optional].")
 
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")

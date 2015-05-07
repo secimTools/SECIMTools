@@ -1,0 +1,134 @@
+<tool id="baPlot" name="Bland-Altman Plot">
+  <description>Create pairwise BA plots to identify outliers.</description>
+  <command interpreter="python">baPlot.py --input $input --design $design --ID $uniqID --ba $ba_plots --flag_dist $outlier_dist_plots --flag_summary $flag_outlier_summary
+      #if $group
+      --group $group
+      #endif
+      #if $raw=="yes"
+        --flag_table $flag_outlier_raw --flag_design $flag_outlier_design
+      #endif
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="cutoff" size="30" type="text" value="3" label="Filter Cutoff" help="Residual cutoff value, this value will flag samples whose residuals are ≥ to cutoff value."/>
+    <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
+    <param name="processOnly" size="30" type="text" value="" optional="true" label="Group ID [Optional]" help="Name of the group(s) that you want to process. Separate multiple groupIDs with spaces. Leave blank to process all groups. Requires the group parameter."/>
+    <param name="raw" size="30" type="select" display="radio" value="no" label="Output Raw Flag Counts" help="Do you want to output raw flag files. Summary of flags is always output.">
+        <option value="no"> Do not output raw flag file </option>
+        <option value="yes"> Output raw flag file </option>
+    </param>
+  </inputs>
+  <outputs>
+    <data format="pdf" name="ba_plots" />
+    <data format="pdf" name="outlier_dist_plots" />
+    <data format="tabular" name="flag_outlier_summary"/>
+    <data format="tabular" name="flag_outlier_raw"/>
+    <data format="tabular" name="flag_outlier_design"/>
+  </outputs>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">statsmodels</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
+  <!-- TODO: uncomment the following test when we have tools.update_state() working for 
+       multiple dependents with the same dependency.
+  <tests>
+    <test>
+      <param name="input" value="scatterplot_in1.tabular" ftype="tabular"/>
+      <param name="col1" value="2"/>
+      <param name="col2" value="3"/>
+      <param name="title" value="Scatterplot"/>
+      <param name="xlab" value="V1"/>
+      <param name="ylab" value="V2"/>
+      <output name="out_file1" file="scatterplot_out1.png" />
+    </test>
+  </tests>
+  -->
+  <help>
+
+.. class:: infomark
+
+**TIP:** 
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+.. class:: warningmark
+
+**WARNING: This script automatically removes spaces and special characters from strings.**
+Also if a compound names start with a number it will prepend an '_'.
+
+--------------------------------------------------------------------------------
+
+**Syntax**
+
+This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected groups. 
+
+- Two input datasets are required. 
+
+    **Wide Fromated Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    Extra columns will automatically be ignored.
+
+
+    **Design File:**
+    A design file relating samples to various groups/treatment.::
+
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1  | g1     |
+        | sample2  | g1     |
+        | sample3  | g1     |
+        | sample4  | g2     |
+        | sample5  | g2     |
+        | sample6  | g2     |
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+- In addition to your datasets, you need to provide:
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*.
+
+    **Group/Treatment**
+
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group1*.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+This tool outputs 3 different files.
+
+    - **results_table** is a `TSV` table that contains the One-Way-ANOVA results and analysis of means.
+
+    - **qq_plots** is a `PDF` that contains q-q plots from the ANOVA.
+
+    - **volcano_plots** is a `PDF` that contains the volcano plots comparing the differences between group means.
+
+</help>
+</tool>
+
