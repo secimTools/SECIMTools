@@ -4,6 +4,7 @@
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
+import os
 
 # Add-on packages
 import matplotlib
@@ -17,7 +18,7 @@ from interface import wideToDesign
 import logger as sl
 
 
-def getOptions():
+def getOptions(myopts=None):
     """ Function to pull in arguments """
     description = """ One-Way ANOVA """
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
@@ -26,10 +27,15 @@ def getOptions():
     parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
     parser.add_argument("--noZero", dest="zero", action='store_true', required=False, help="Flag to ignore zeros.")
     parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name for counts table.")
-    parser.add_argument("--summary", dest="sname", action='store', required=True, help="Output file name for summary table.")
+    parser.add_argument("--summary", dest="sname", action='store', required=False, help="Output file name for summary table.")
     parser.add_argument("--fig", dest="figname", action='store', required=True, help="Name of output figure name.")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-    args = parser.parse_args()
+
+    if myopts:
+        args = parser.parse_args(myopts)
+    else:
+        args = parser.parse_args()
+
 #     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015.tsv',
 #                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
 #                               '--ID', 'Name',
@@ -47,6 +53,19 @@ def splitDigit(x):
     else:
         cnt = len(str(x).split('.')[0])
     return cnt
+
+
+def galaxySavefig(fig, fname):
+    """ Take galaxy DAT file and save as fig """
+
+    png_out = fname + '.png'
+    fig.savefig(png_out)
+
+    # shuffle it back and clean up
+    data = file(png_out, 'rb').read()
+    with open(fname, 'wb') as fp:
+        fp.write(data)
+    os.remove(png_out)
 
 
 def main(args):
@@ -67,27 +86,36 @@ def main(args):
     cnt['argMin'] = cnt[dat.sampleIDs].apply(np.argmin, axis=1)
 
     # wite output
-    cnt.to_csv(args.oname)
+    cnt.to_csv(args.oname, sep='\t')
 
     # Make distribution plot of differences
-    fig, ax = plt.subplots(figsize=(8, 8))
-    cnt['diff'].plot(kind='kde', ax=ax, title='Distribution of difference between min and max across compounds')
-    ax.set_xlabel('Difference (max - min)')
-    plt.tight_layout()
-    plt.savefig(args.figname)
+    if cnt['diff'].any():
+        fig, ax = plt.subplots(figsize=(8, 8))
+        cnt['diff'].plot(kind='kde', ax=ax, title='Distribution of difference between min and max across compounds')
+        ax.set_xlabel('Difference (max - min)')
+
+        # If using in Galaxy names always end with 'dat', which does not play
+        # nicely with matplotlib.
+        if args.figname.endswith('dat'):
+            galaxySavefig(fig, args.figname)
+        else:
+            fig.savefig(args.figname, bbox_inches='tight')
+    else:
+        logger.warn('There were no differences in digit counts, no plot will be generated')
 
     # Summarize the number of times a smaple had the most of fewest digits
-    maxSample = cnt['argMax'].value_counts()
-    minSample = cnt['argMin'].value_counts()
-    maxSample.name = 'max_num'
-    minSample.name = 'min_num'
-    summary = pd.concat((maxSample, minSample), axis=1)
-    summary.fillna(0, inplace=True)
-    summary.sort(columns='min_num', inplace=True, ascending=False)
-    summary[['max_num', 'min_num']] = summary[['max_num', 'min_num']].astype(int)
+    if args.sname:
+        maxSample = cnt['argMax'].value_counts()
+        minSample = cnt['argMin'].value_counts()
+        maxSample.name = 'max_num'
+        minSample.name = 'min_num'
+        summary = pd.concat((maxSample, minSample), axis=1)
+        summary.fillna(0, inplace=True)
+        summary.sort(columns='min_num', inplace=True, ascending=False)
+        summary[['max_num', 'min_num']] = summary[['max_num', 'min_num']].astype(int)
 
-    # wite output
-    summary.to_csv(args.sname)
+        # wite output
+        summary.to_csv(args.sname, sep='\t')
 
 
 if __name__ == '__main__':
