@@ -4,6 +4,7 @@
     <tool file="secimtools/distribution.xml" />
     <tool file="secimtools/log_transform.xml" />
     <tool file="secimtools/mean_standardize.xml" />
+    <tool file="secimtools/baPlot.xml" />
     <tool file="secimtools/anova.xml" />
     <tool file="secimtools/hierarchical-cluster-heatmap_amm.xml" />
     <tool file="secimtools/pca-load-png.xml" />
