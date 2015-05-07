@@ -149,7 +149,7 @@ compounds/peaks with many outlying points.
 
     **ba_plots** is a PDF of pairwise scatter plots and BA-plots.
 
-    .. image:: ${static_path}/images/ba_plot.png
+    .. image:: ${static_path}/images/secim/ba_plot.png
         :height: 300
         :width: 600
 
@@ -170,7 +170,7 @@ compounds/peaks with many outlying points.
     compounds/peaks showing the number of data points that they had flagged as
     an outlier.
 
-    .. image:: ${static_path}/images/ba_plot_outlier_dist.png
+    .. image:: ${static_path}/images/secim/ba_plot_outlier_dist.png
         :height: 300
         :width: 600
 
