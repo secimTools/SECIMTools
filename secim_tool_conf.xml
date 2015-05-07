@@ -2,8 +2,9 @@
 <toolbox>
   <section id="secim" name="SECIM Tools">
     <tool file="secimtools/distribution.xml" />
-    <tool file="secimtools/log_normalize.xml" />
+    <tool file="secimtools/log_transform.xml" />
     <tool file="secimtools/mean_standardize.xml" />
+    <tool file="secimtools/baPlot.xml" />
     <tool file="secimtools/anova.xml" />
     <tool file="secimtools/hierarchical-cluster-heatmap_amm.xml" />
     <tool file="secimtools/pca-load-png.xml" />
@@ -12,5 +13,6 @@
     <tool file="secimtools/RandomForest.xml" />
     <tool file="secimtools/scatterplot-png.xml" />
     <tool file="secimtools/scatterplot-3d-png.xml" />
+    <tool file="secimtools/SVM_classifier.xml" />
   </section>
 </toolbox>

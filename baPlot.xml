@@ -1,0 +1,234 @@
+<tool id="baPlot" name="Bland-Altman Plot">
+  <description>Create pairwise BA plots to identify outliers.</description>
+  <command interpreter="python">baPlot.py --input $input --design $design --ID $uniqID --ba $ba_plots --flag_dist $outlier_dist_plots --flag_summary $flag_outlier_summary
+      #if $group:
+          --group $group
+      #end if
+
+      #if $raw=="yes":
+        --flag_table $flag_outlier_raw --flag_design $flag_outlier_design
+      #end if
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="cutoff" size="30" type="text" value="3" label="Filter Cutoff" help="Residual cutoff value, this value will flag samples whose residuals are ≥ to cutoff value."/>
+    <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
+    <param name="processOnly" size="30" type="text" value="" optional="true" label="Group ID [Optional]" help="Name of the group(s) that you want to process. Separate multiple groupIDs with spaces. Leave blank to process all groups. Requires the group parameter."/>
+    <param name="raw" size="30" type="select" display="radio" value="no" label="Output Raw Flag Counts" help="Do you want to output raw flag files. Summary of flags is always output.">
+        <option value="no"> Do not output raw flag file </option>
+        <option value="yes"> Output raw flag file </option>
+    </param>
+  </inputs>
+  <outputs>
+    <data format="pdf" name="ba_plots" />
+    <data format="pdf" name="outlier_dist_plots" />
+    <data format="tabular" name="flag_outlier_summary"/>
+    <data format="tabular" name="flag_outlier_raw">
+        <filter>raw=="yes"</filter>
+    </data>
+    <data format="tabular" name="flag_outlier_design">
+        <filter>raw=="yes"</filter>
+    </data>
+  </outputs>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">statsmodels</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
+  <help>
+
+.. class:: infomark
+
+**TIP:** 
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+The Bland-Altman plot BA-Plot_ is commonly used to look at concordance of data
+between samples. It is especially useful for looking at variability between
+replicates. This script will generate BA-plots for all pairwise combinations of
+samples, or if group information is provided it will only report pairwise
+combinations within the group.
+
+.. _BA-Plot: http://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot
+
+A linear regression is performed on the BA-plots to identify samples whose
+residuals are beyond a cutoff. For each compound (row) in the dataset, a sample
+is flagged as an outlier if the Pearson normalized residuals are greater than a
+cutoff.
+
+Raw flags can be output by specifying the "Output Raw Flag Counts".
+*flag_outlier_raw* is a table with compounds as rows and flag_outlier## as
+columns, where the ## is incremented for each pairwise comparison between
+samples. *flag_outlier_design* can then be used to relate sample to its
+corresponding flags.
+
+The script outputs a summary of the flags *flag_outlier_summary*, where the
+flags for each sample is summed across all comparisons.
+
+Two sets of plots are output: (ba_plots) Bland-Altman plots for pairwise
+comparisons, and (outlier_dist_plots) Bar graphs of summarized flags which
+allow for the identification of samples with many outlying data points or
+compounds/peaks with many outlying points.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required. 
+
+    **Wide Fromated Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    Extra columns will automatically be ignored.
+
+
+    **Design File:**
+    A design file relating samples to various groups/treatment.::
+
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1  | g1     |
+        | sample2  | g1     |
+        | sample3  | g1     |
+        | sample4  | g2     |
+        | sample5  | g2     |
+        | sample6  | g2     |
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+- In addition to your datasets, you need to provide:
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*.
+
+- If you only want to do within group comparisons (**suggested**) then you need
+  to specify:
+
+    **Group/Treatment**
+
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group1*.
+
+    **Group ID**
+
+    - This option allows you to specify which groups to analyze (i.e., qc
+      samples). Multiple group IDs can be specified by separating them with
+      spaces. This option requires that **Group/Treatment** is also specified.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- This tool always outputs 3 different files.
+
+    **ba_plots** is a PDF of pairwise scatter plots and BA-plots.
+
+    .. image:: ${static_path}/images/ba_plot.png
+        :height: 300
+        :width: 600
+
+    The left panel is a scatter plot comparing the two samples. Solid red line
+    is a regression line and dotted lines are 95% CI. The right panel is a
+    BA-plot where the x-axis is the mean between the two samples and y-axis is
+    the difference. You expect to see a CIGAR shape centered at 0. Data
+    highlighted in red indicate outliers. An data point was considered an
+    outlier if it was flagged by any of 3 criteria. 
+
+        * Regression Residuals were greater than the specified cutoff
+
+        * Cook's D statistic was significant at a P-value cutoff of 0.5
+
+        * DFFITS values exceeded then threshold value.
+
+    **outlier_dist_plots** is a PDF of bar graphs for samples and
+    compounds/peaks showing the number of data points that they had flagged as
+    an outlier.
+
+    .. image:: ${static_path}/images/ba_plot_outlier_dist.png
+        :height: 300
+        :width: 600
+
+    The left panel shows the number of outliers for each sample. The right
+    panel shows the number of outliers for each compound. Only samples and
+    compounds that have outlier data points are plotted.
+
+    **flag_outlier_summary** is a TSV containing the sum of pairwise falgs, summarized to sample level.
+
+    +----------+-------+-------+-------+-----+
+    | compound | as101 | as102 | as103 | ... |
+    +==========+=======+=======+=======+=====+
+    | one      | 1     | 1     | 0     | ... |
+    +----------+-------+-------+-------+-----+
+    | two      | 2     | 0     | 7     | ... |
+    +----------+-------+-------+-------+-----+
+    | three    | 0     | 0     | 0     | ... |
+    +----------+-------+-------+-------+-----+
+    | four     | 0     | 0     | 0     | ... |
+    +----------+-------+-------+-------+-----+
+    | ...      | ...   | ...   | ...   | ... |
+    +----------+-------+-------+-------+-----+
+
+- This tool can output 3 addtitional files.
+
+    **flag_outlier_raw** is a TSV containing outlier flags for each pairwise comparison.
+
+    +----------+---------------+---------------+---------------+-----+
+    | compound | flag_outlier1 | flag_outlier2 | flag_outlier3 | ... |
+    +==========+===============+===============+===============+=====+
+    | one      | 0             | 1             | 0             | ... |
+    +----------+---------------+---------------+---------------+-----+
+    | two      | 0             | 1             | 1             | ... |
+    +----------+---------------+---------------+---------------+-----+
+    | three    | 0             | 0             | 0             | ... |
+    +----------+---------------+---------------+---------------+-----+
+    | four     | 0             | 0             | 0             | ... |
+    +----------+---------------+---------------+---------------+-----+
+    | ...      | ...           | ...           | ...           | ... |
+    +----------+---------------+---------------+---------------+-----+
+
+
+    **flag_outlier_design** is a TSV containing relating outlier flags back to individual samples.
+
+    +--------------+-------+-------+
+    | flag_outlier | cbn1  | cbn2  |
+    +==============+=======+=======+
+    | 1            | as101 | as102 |
+    +--------------+-------+-------+
+    | 2            | as101 | as103 |
+    +--------------+-------+-------+
+    | 3            | as101 | as104 |
+    +--------------+-------+-------+
+    | 4            | as102 | as103 |
+    +--------------+-------+-------+
+    | ...          | ...   | ...   |
+    +--------------+-------+-------+
+
+</help>
+</tool>
+

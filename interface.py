@@ -71,6 +71,11 @@ class wideToDesign:
             self.wide = pd.read_table(wide)
             if clean_string:
                 self.wide[self.uniqID] = self.wide[self.uniqID].apply(lambda x: self._cleanStr(x))
+
+            # Make sure index is a string and not numeric
+            self.wide[self.uniqID] = self.wide[self.uniqID].astype(str)
+
+            # Set index to uniqID column
             self.wide.set_index(self.uniqID, inplace=True)
         except:
             print "Please make sure that your data file has a column called '{0}'.".format(uniqID)
@@ -78,7 +83,11 @@ class wideToDesign:
 
         # Import design file
         try:
-            self.design = pd.read_table(design, index_col='sampleID')
+            self.design = pd.read_table(design)
+
+            # Make sure index is a string and not numeric
+            self.design['sampleID'] = self.design['sampleID'].astype(str)
+            self.design.set_index('sampleID', inplace=True)
 
             # Create a list of sampleIDs, but first check that they are present
             # in the wide data.
@@ -87,6 +96,10 @@ class wideToDesign:
             for sample in self.design.index.tolist():
                 if sample in self.wide.columns:
                     self.sampleIDs.append(sample)
+
+            # Drop design rows that are not in the wide dataset
+            self.design = self.design[self.design.index.isin(self.sampleIDs)]
+
         except:
             print "Please make sure that your design file has a column called 'sampleID'."
             raise ValueError
@@ -100,6 +113,9 @@ class wideToDesign:
                 self.group = group
 
             self.design = self.design[[self.group, ]]   # Only keep group columns in the design file
+            self.design[self.group] = self.design[self.group].astype(str)   # Make sure groups are strings
+
+            # Create list of group levels
             grp = self.design.groupby(self.group)
             self.levels = sorted(grp.groups.keys())  # Get a list of group levels
 

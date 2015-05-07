@@ -1,2 +1,4 @@
 *.pyc
 ~*
+*.pkl
+notebook/.ipynb_checkpoints/*
