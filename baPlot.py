@@ -467,8 +467,9 @@ def plotFlagDist(summary, out):
     ppFlag = PdfPages(out)
 
     ## Plot samples
-    col_sum.plot(kind='bar', figsize=(10, 5))
-    ppFlag.savefig(plt.gcf(), bbox_inches='tight')
+    if np.any(col_sum > 0):
+        col_sum[col_sum > 0].plot(kind='bar', figsize=(10, 5))
+        ppFlag.savefig(plt.gcf(), bbox_inches='tight')
 
     ## Plot compounds
     if np.any(row_sum > 0):
