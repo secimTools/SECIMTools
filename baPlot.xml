@@ -166,6 +166,14 @@ compounds/peaks with many outlying points.
     compounds/peaks showing the number of data points that they had flagged as
     an outlier.
 
+    .. image:: ${static_path}/images/ba_plot_outlier_dist.png
+        :height: 300
+        :width: 600
+
+    The left panel shows the number of outliers for each sample. The right
+    panel shows the number of outliers for each compound. Only samples and
+    compounds that have outlier data points are plotted.
+
     **flag_outlier_summary** is a TSV containing the sum of pairwise falgs, summarized to sample level.
 
     +----------+-------+-------+-------+-----+
