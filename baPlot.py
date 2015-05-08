@@ -153,7 +153,7 @@ class FlagOutlier:
 
         # Convert outlierMask to dataframe
         outlierMask.name = 'flag_outlier{}'.format(self.cnt)
-        oDF = pd.DataFrame(outlierMask, dtype=int)
+        oDF = pd.DataFrame(outlierMask, dtype='int64')
 
         # Merge to flag table
         self.flag_outlier = self.flag_outlier.join(oDF, how='outer')
@@ -489,6 +489,7 @@ def convertToInt(x):
 
 
 def main(args):
+    print args
     # Import data
     logger.info('Importing Data')
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
@@ -530,14 +531,15 @@ def main(args):
     summary = flags.summarizeSampleFlags(wide)
     plotFlagDist(summary, args.distName)
 
-    summary.apply(convertToInt)
-    summary.to_csv(args.flagSummary, sep='\t')
+    summary2 = summary.astype('int64')
+    summary2.to_csv(args.flagSummary, sep='\t')
 
     # Output Raw Flags
     if args.flagTable and args.flagDesign:
         logger.info('Outputing raw outlier flags.')
-        flags.flag_outlier.apply(convertToInt)
-        flags.flag_outlier.to_csv(args.flagTable, sep='\t')
+        flags.flag_outlier.fillna(0, inplace=True)
+        flag_outlier = flags.flag_outlier.astype('int64')
+        flag_outlier.to_csv(args.flagTable, sep='\t')
         flags.design.to_csv(args.flagDesign, sep='\t')
 
 
