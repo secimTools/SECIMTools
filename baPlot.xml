@@ -1,7 +1,7 @@
 <tool id="baPlot" name="Bland-Altman Plot">
   <description>Create pairwise BA plots to identify outliers.</description>
   <command interpreter="python">baPlot.py --input $input --design $design --ID $uniqID --ba $ba_plots --flag_dist $outlier_dist_plots --flag_summary $flag_outlier_summary
-      #if $group:
+      #if $group
           --group $group
 
           #if $processOnly:
@@ -10,9 +10,10 @@
 
       #end if
 
-      #if $raw=="yes":
+      #if str( $raw ) == 'yes'
         --flag_table $flag_outlier_raw --flag_design $flag_outlier_design
       #end if
+
   </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
@@ -21,8 +22,8 @@
     <param name="cutoff" size="30" type="text" value="3" label="Filter Cutoff" help="Residual cutoff value, this value will flag samples whose residuals are ≥ to cutoff value."/>
     <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
     <param name="processOnly" size="30" type="text" value="" optional="true" label="Group ID [Optional]" help="Name of the group(s) that you want to process. Separate multiple groupIDs with spaces. Leave blank to process all groups. Requires the group parameter."/>
-    <param name="raw" size="30" type="select" display="radio" value="no" label="Output Raw Flag Counts" help="Do you want to output raw flag files. Summary of flags is always output.">
-        <option value="no"> Do not output raw flag file </option>
+    <param name="raw" size="30" type="select" display="radio" label="Output Raw Flag Counts" help="Do you want to output raw flag files. Summary of flags is always output.">
+        <option value="no" selected="true"> Do not output raw flag file </option>
         <option value="yes"> Output raw flag file </option>
     </param>
   </inputs>
