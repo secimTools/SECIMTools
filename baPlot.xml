@@ -3,6 +3,11 @@
   <command interpreter="python">baPlot.py --input $input --design $design --ID $uniqID --ba $ba_plots --flag_dist $outlier_dist_plots --flag_summary $flag_outlier_summary
       #if $group:
           --group $group
+
+          #if $processOnly:
+            --process_only $processOnly
+          #end if
+
       #end if
 
       #if $raw=="yes":
