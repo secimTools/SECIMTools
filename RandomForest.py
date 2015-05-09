@@ -13,7 +13,7 @@ from interface import wideToDesign
 import logger as sl
 
 
-def getOptions():
+def getOptions(myopts=None):
     """ Function to pull in arguments """
     description = """ One-Way ANOVA """
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
@@ -25,41 +25,66 @@ def getOptions():
     parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
     parser.add_argument("--out2", dest="oname2", action='store', required=True, help="Output file name.")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-#     args = parser.parse_args()
-    args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015.tsv',
-                              '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
-                              '--ID', 'Name',
-                              '--group', 'treatment',
-                              '--num', '10',
-                              '--out', '/home/jfear/sandbox/secim/data/test.csv',
-                              '--out2', '/home/jfear/sandbox/secim/data/test2.csv',
-                              '--debug'])
+
+    if myopts:
+        args = parser.parse_args(myopts)
+    else:
+        args = parser.parse_args()
+
     return(args)
 
 
 def main(args):
-    # Import data
+    # Import data and transpose
     logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}\n\tGroup Column: {3}'.format(args.fname, args.dname, args.uniqID, args.group))
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group, clean_string=True)
-    trans = dat.transpose()
+    data = dat.transpose()
 
+    # Pull classifications out of dataset
+    classes = data[dat.group].copy()
+    data.drop(dat.group, axis=1, inplace=True)
+
+    # Build Random Forest classifier
+    logger.info('Creating classifier')
     model = RandomForestClassifier(n_estimators=args.num)
-    import ipdb; ipdb.set_trace()
-    model.fit(trans[dat.wide.index], trans[dat.group])
+    model.fit(data, classes)
 
-    importance = pd.DataFrame([trans.columns, model.feature_importances_]).T.sort(columns=1, ascending=False)
-    importance.to_csv(args.oname2, index=False, header=False, sep='\t')
+    # Identify features
+    importance = pd.DataFrame([data.columns, model.feature_importances_]).T.sort(columns=1, ascending=False)
 
-    data = data[importance.ix[:,0].tolist()]
-    selected_data = DF(model.transform(data, threshold=0))
-    selected_data.columns = data.columns
-    selected_data[class_column_name] = classes
-    selected_data.to_csv(args.oname, index=False, sep='\t')
+    # Export features ranked by importance
+    logger.info('Exporting features')
+    rev = importance.applymap(lambda x: dat.revertStr(x))
+    rev.columns = ('feature', 'ranked_importance')
+    rev.to_csv(args.oname2, index=False, sep='\t')
+
+    # Select data based on features
+    data = data[importance.ix[:, 0].tolist()]
+    selected_data = pd.DataFrame(model.transform(data, threshold=0))
+    selected_data.columns = [dat.revertStr(x) for x in data.columns]
+
+    # Merge on classes and export
+    logger.info('Exporting transformed data')
+    clDf = pd.DataFrame(classes)
+    clDf.reset_index(inplace=True)
+    out = clDf.join(selected_data)
+    out.to_csv(args.oname, index=False, sep='\t', float_format="%.4f")
+
 
 if __name__ == '__main__':
+   # myopts = ['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
+   #           '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
+   #           '--ID', 'Name',
+   #           '--group', 'treatment',
+   #           '--num', '10',
+   #           '--out', '/home/jfear/sandbox/secim/data/test.tsv',
+   #           '--out2', '/home/jfear/sandbox/secim/data/test2.tsv',
+   #           '--debug']
+
     # Command line options
     args = getOptions()
 
+    # Activate Logger
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel='debug')
