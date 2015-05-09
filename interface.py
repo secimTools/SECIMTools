@@ -9,7 +9,7 @@ import pandas as pd
 
 class wideToDesign:
     """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, wide, design, uniqID, group=False, clean_string=False):
+    def __init__(self, wide, design, uniqID, group=False, anno=False, clean_string=False):
         """ Import and set-up data.
 
         Import data both wide formated data and a design file. Set-up basic
@@ -42,6 +42,9 @@ class wideToDesign:
             clean_string (bool): If True remove special characters from strings
                 in dataset.
 
+            anno (list): A list of additional annotations that can be used to group
+                items.
+
         Returns:
             **Attribute**
 
@@ -58,6 +61,9 @@ class wideToDesign:
 
             self.group (list): A list of column names in self.design that give
                 group information. For example: treatment, tissue
+
+            anno (list): A list of additional annotations that can be used to group
+                items.
 
             self.levels (list): A list of levels in self.group. For example:
                 trt1, tr2, control.
@@ -104,6 +110,9 @@ class wideToDesign:
             print "Please make sure that your design file has a column called 'sampleID'."
             raise ValueError
 
+        # Save annotations
+        self.anno = anno
+
         # Set up group information
         if group:
             if clean_string:
@@ -112,7 +121,13 @@ class wideToDesign:
             else:
                 self.group = group
 
-            self.design = self.design[[self.group, ]]   # Only keep group columns in the design file
+            # combine group and anno
+            if self.anno:
+                keep = [self.group, ] + self.anno
+            else:
+                keep = [self.group, ]
+
+            self.design = self.design[keep]   # Only keep group columns in the design file
             self.design[self.group] = self.design[self.group].astype(str)   # Make sure groups are strings
 
             # Create list of group levels
