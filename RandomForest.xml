@@ -1,6 +1,6 @@
 <tool id="random-forest" name="Random Forest">
     <description> for feature selection.</description>
-    <command interpreter="python">RandomForest.py --input $input --design $design --ID $uniqID --num $number_of_estimators --out1 $outfile1 --out2 $outfile2 </command>
+    <command interpreter="python">RandomForest.py --input $input --design $design --ID $uniqID --group $group --num $number_of_estimators --out $outfile1 --out2 $outfile2 </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
@@ -22,15 +22,12 @@
 
     **TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
-     --------------------------------------------------------------------------------
 
     **Syntax**
 
     This tool uses the Random forest algorithm to select the important features that the groups/classes differentiate the most based on.
 
     - Two sets of results are displayed in the resulting history item.
-
-    --------------------------------------------------------------------------------
 
     **Input**
 
@@ -40,54 +37,56 @@
 
         A wide formatted dataset that contains measurements for each sample.::
 
-        +----------+---------+---------+---------+-----+
-        | Compound | sample1 | sample2 | sample3 | ... |
-        +==========+=========+=========+=========+=====+
-        | one      | 10      | 20      | 10      | ... |
-        | two      | 5       | 22      | 30      | ... |
-        | three    | 30      | 27      | 2       | ... |
-        | four     | 32      | 17      | 8       | ... |
-        | ...      | ...     | ...     | ...     | ... |
-        +----------+---------+---------+---------+-----+
+            +----------+---------+---------+---------+-----+
+            | Compound | sample1 | sample2 | sample3 | ... |
+            +==========+=========+=========+=========+=====+
+            | one      | 10      | 20      | 10      | ... |
+            | two      | 5       | 22      | 30      | ... |
+            | three    | 30      | 27      | 2       | ... |
+            | four     | 32      | 17      | 8       | ... |
+            | ...      | ...     | ...     | ...     | ... |
+            +----------+---------+---------+---------+-----+
 
-        **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-        Extra columns will automatically be ignored.
+            **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+            Extra columns will automatically be ignored.
 
 
-        **Design File:**
-        A design file relating samples to various groups/treatment.::
+            **Design File:**
+            A design file relating samples to various groups/treatment.::
 
-        +----------+--------+
-        | sampleID | group1 |
-        +==========+========+
-        | sample1  | g1     |
-        | sample2  | g1     |
-        | sample3  | g1     |
-        | sample4  | g2     |
-        | sample5  | g2     |
-        | sample6  | g2     |
-        | ...      | ...    |
-        +----------+--------+
+            +----------+--------+
+            | sampleID | group1 |
+            +==========+========+
+            | sample1  | g1     |
+            | sample2  | g1     |
+            | sample3  | g1     |
+            | sample4  | g2     |
+            | sample5  | g2     |
+            | sample6  | g2     |
+            | ...      | ...    |
+            +----------+--------+
 
-        **NOTE: You must have a column named *sampleID***
-        and the values in this column must match the columns names in the wide
-        formatted dataset. Extra columns will be ignored.
+            **NOTE: You must have a column named *sampleID***
+            and the values in this column must match the columns names in the wide
+            formatted dataset. Extra columns will be ignored.
 
     - In addition to your datasets, you need to provide:
 
         **Unique Compound ID**
 
         - The column name in your wide dataset that contains the unique IDs for
-        your compounds. In our example dataset you would input *Compound*.
+          your compounds. In our example dataset you would input *Compound*.
 
         **Group/Treatment**
 
         - The column name in your design file that contains group information. In
-        our example design file we would put *group1*.
+          our example design file we would put *group1*.
 
        **Number of Trees in the Forest**
 
-        - Typical number of trees are 10 or 100. One would increase the number of trees in the forest if upon multiple rerunning of the algorithm, the order of importance of features changes significantly.
+        - Typical number of trees are 10 or 100. One would increase the number
+          of trees in the forest if upon multiple rerunning of the algorithm,
+          the order of importance of features changes significantly.
 
     **Example output**
 
@@ -105,7 +104,7 @@
         | ...      | ...      | ...      | ...      | ...      |
         +----------+----------+----------+----------+----------+
 
-    -- output 2: rank-order list of features and their relative importance ::
+    - output 2: rank-order list of features and their relative importance ::
 
         +----------+------+
         | feature1 | 0.45 |
@@ -114,8 +113,6 @@
         +----------+------+
         | feature2 | 0.22 |
         +----------+------+
-
-    --------------------------------------------------------------------------------
 
     **Next Step**
 
