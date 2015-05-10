@@ -78,12 +78,16 @@ def makeScatter(row, pdf):
     # Get 95% CI
     prstd, lower, upper = wls_prediction_std(res)
 
+    # Sort CIs for Plotting
+    toPlot = pd.DataFrame({'x': x, 'lower': lower, 'upper': upper})
+    toPlot.sort(columns='x', inplace=True)
+
     # Plot
     fig, ax = plt.subplots(1, 1, figsize=(8, 5))
     ax.scatter(x, y)
-    ax.plot(x, lower, 'r-')
+    ax.plot(toPlot['x'], toPlot['lower'], 'r-')
     ax.plot(x, fitted, 'c-')
-    ax.plot(x, upper, 'r-')
+    ax.plot(toPlot['x'], toPlot['upper'], 'r-')
     ax.set_xlabel('Run Order')
     ax.set_ylabel('Value')
     ax.set_title(u'{}\nScatter plot'.format(name))
