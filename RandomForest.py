@@ -39,10 +39,12 @@ def main(args):
     logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}\n\tGroup Column: {3}'.format(args.fname, args.dname, args.uniqID, args.group))
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group, clean_string=True)
     data = dat.transpose()
+    data.dropna(axis=1, inplace=True)
 
     # Pull classifications out of dataset
     classes = data[dat.group].copy()
     data.drop(dat.group, axis=1, inplace=True)
+    #TODO: Random forest does not handle NaNs, need to figure out the proper way to impute values.
 
     # Build Random Forest classifier
     logger.info('Creating classifier')
@@ -72,15 +74,6 @@ def main(args):
 
 
 if __name__ == '__main__':
-   # myopts = ['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
-   #           '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
-   #           '--ID', 'Name',
-   #           '--group', 'treatment',
-   #           '--num', '10',
-   #           '--out', '/home/jfear/sandbox/secim/data/test.tsv',
-   #           '--out2', '/home/jfear/sandbox/secim/data/test2.tsv',
-   #           '--debug']
-
     # Command line options
     args = getOptions()
 
