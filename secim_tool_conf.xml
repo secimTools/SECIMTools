@@ -6,6 +6,7 @@
     <tool file="secimtools/log_transform.xml" />
     <tool file="secimtools/mean_standardize.xml" />
     <tool file="secimtools/baPlot.xml" />
+    <tool file="secimtools/runOrderRegression.xml" />
     <tool file="secimtools/hierarchical-cluster-heatmap_amm.xml" />
     <tool file="secimtools/pca-load-png.xml" />
     <tool file="secimtools/pca-scores-png.xml" />

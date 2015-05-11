@@ -125,11 +125,11 @@ significance.
     is the regression with a slope of 0.193 and an R^2 0.165. Red lines are the
     confidence interval from the regression.
 
-    This script only outputs plots where the p-value was <= 0.05. We expect to
-    see no linear association of run order vs value (i.e., slope = 0), a
-    significant p-value indicates that this compound linearly increases in peak
-    area as the machine was run. In some situation you will want to remove this
-    compound from further analysis.
+    This script only outputs plots where the p-value was less than 0.05. We
+    expect to see no linear association of run order vs value (i.e., slope =
+    0), a significant p-value indicates that this compound linearly increases
+    in peak area as the machine was run. In some situation you will want to
+    remove this compound from further analysis.
 
     **order_summary** is a TSV containing the regression summary.::
 
