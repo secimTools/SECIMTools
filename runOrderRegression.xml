@@ -1,0 +1,151 @@
+<tool id="runOrder" name="Run Order Regression">
+  <description>Look for linear relationships with run order.</description>
+  <command interpreter="python">runOrderRegression.py
+      --input $input
+      --design $design
+      --ID $uniqID
+      --group $group
+      --order $order
+      --fig $order_plots
+      --table $order_summary
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+    <param name="order" size="30" type="text" value="" label="Run Order ID" help="Name of the column in your Design File that contains run order."/>
+  </inputs>
+  <outputs>
+    <data format="pdf" name="order_plots" />
+    <data format="tabular" name="order_summary"/>
+  </outputs>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">statsmodels</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
+  <help>
+
+.. class:: infomark
+
+**TIP:** 
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+Uses linear regression to identify relationships between run order and values.
+If there is a linear relationship with run order, then the compound/peak may
+need to be removed from analysis. This script runs the linear regression on all
+compounds/peaks, then outputs regression plots for any compound/peak that had a
+slope different from zero at a nominal p-value of 0.5.
+
+A table is also created with slope, p-value, rsquared, and two flags indicating
+significance. 
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required. 
+
+    **Wide Fromated Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    Extra columns will automatically be ignored.
+
+
+    **Design File:**
+    A design file relating samples to various groups/treatment.::
+
+        +----------+--------+----------+
+        | sampleID | group1 | runOrder |
+        +==========+========+==========+
+        | sample1  | g1     | 1        |
+        | sample2  | g1     | 2        |
+        | sample3  | g1     | 3        |
+        | sample4  | g2     | 4        |
+        | sample5  | g2     | 5        |
+        | sample6  | g2     | 6        |
+        | ...      | ...    | ...      |
+        +----------+--------+----------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+- In addition to your datasets, you need to provide:
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*.
+
+    **Group/Treatment**
+
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group1*.
+
+    **Run Order ID**
+
+    - The column name in your design file that contains run order information. In
+      our example design file we would put *runOrder*.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- This tool always outputs 2 different files.
+
+    **order_plots** is a PDF of regression plots with x-axis as run order and
+        y-axis as value.
+
+    .. image:: ${static_path}/images/secim/runOrder_plot.png
+        :height: 300
+        :width: 600
+
+    The regression for Tyrosine is shown above. The x-axis is run order and they
+    y-axis is value. Each sample is plotted as a blue data point. They cyan line
+    is the regression with a slope of 0.193 and an R^2 0.165. Red lines are the
+    confidence interval from the regression.
+
+    This script only outputs plots where the p-value was <= 0.05. We expect to
+    see no linear association of run order vs value (i.e., slope = 0), a
+    significant p-value indicates that this compound linearly increases in peak
+    area as the machine was run. In some situation you will want to remove this
+    compound from further analysis.
+
+    **order_summary** is a TSV containing the regression summary.::
+
+        +----------+--------+-------+----------+-----------------------+-----------------------+
+        | compound | slope  | pval  | rSquared | flag_runOrder_pval_01 | flag_runOrder_pval_05 |
+        +==========+========+=======+==========+=======================+=======================+
+        | one      | -0.006 | 0.128 | .089     | 0                     | 0                     |
+        +----------+--------+-------+----------+-----------------------+-----------------------+
+        | two      | 0.0193 | 0.03  | 0.16     | 0                     | 1                     |
+        +----------+--------+-------+----------+-----------------------+-----------------------+
+        | ...      | ...    | ...   | ...      | ...                   | ...                   |
+        +----------+--------+-------+----------+-----------------------+-----------------------+
+
+    This table includes regression results and two flags when the regression
+    was significant at a nominal p-value of 0.01 (flag_runOrder_pval_01) or
+    0.05 (flag_runOrder_pval_05)
+
+</help>
+</tool>
