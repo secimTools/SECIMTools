@@ -5,7 +5,6 @@ from __future__ import division
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
-from itertools import combinations
 
 # Add-on packages
 import pandas as pd
@@ -67,15 +66,16 @@ def main(args):
     rprincomp = r.princomp
     rsummary = r.summary
 
+    # Run PCA
     try:
         if args.method == "cor":
             pc = rprincomp(rNA(df), cor=ri.TRUE)
         elif args.method == "cov":
             pc = rprincomp(rNA(df), cor=ri.FALSE)
-        elif args.method=="svd":
-            pc = rprcomp(rNA(df), center=center, scale=scale)
+        elif args.method == "svd":
+            pc = rprincomp(rNA(df), center=center, scale=scale)
     except:
-        print "AHHHHH"
+        logger.error('R principal components failed to run, check rpy2.')
 
     # Summarize PCA
     summary = rsummary(pc, loadings=ri.TRUE)
@@ -105,7 +105,6 @@ def main(args):
     score_out.to_csv(args.sname, sep='\t', header=False)
 
 
-
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
@@ -113,8 +112,11 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel='debug')
+        global DEBUG
         DEBUG = True
     else:
         sl.setLogger(logger)
+        global DEBUG
+        DEBUG = False
 
     main(args)
