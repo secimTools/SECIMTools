@@ -65,7 +65,8 @@ def heatmap(group, cmpd, a_col, anno, design, x, row_header, column_header, row_
             find_ID = row["sampleID"]
             find_group = row[group]
             groups.append(row[group])
-	    IDs[row['sampleID']] = row[group]
+            IDs[row['sampleID']] = row[group]
+#        print IDs
         design_groups = set(groups)     # unique list of groups
         num_groups = len(design_groups)  # how many different groups
 
@@ -74,8 +75,8 @@ def heatmap(group, cmpd, a_col, anno, design, x, row_header, column_header, row_
         with open(anno) as A:
             ANNO=csv.DictReader(A,delimiter="\t")
             find_aID = None
-	    find_agroup = None
-	    agroups = list()
+            find_agroup = None
+            agroups = list()
             aIDs = dict()
             for row in ANNO:
                 find_aID = row[cmpd]
@@ -87,9 +88,9 @@ def heatmap(group, cmpd, a_col, anno, design, x, row_header, column_header, row_
     except:
         design_agroups = ["A"] 
 	num_agroups = 1
-        	
-#    print num_agroups
-#    print design_agroups
+    print num_agroups
+          	
+
 
     ### Define the color gradient to use based on the provided name
 
@@ -203,10 +204,10 @@ def heatmap(group, cmpd, a_col, anno, design, x, row_header, column_header, row_
     xt = x
     if column_method != None:
         idx2 = Z2['leaves'] ### apply the clustering for the array-dendrograms to the actual matrix data
-#        print idx2  ### ALISON ADDED
         xt = xt[:,idx2]
-        ind2 = [ind2[i] for i in idx2]
-        ## Commented out by Sergio due to error with version of numpy >= 1.8 ind2 = ind2[:,idx2] ### reorder the flat cluster to match the order of the leaves the dendrogram
+	ind2 = [ind2[i] for i in idx2]
+        #ind2 = ind2[:,idx2]
+         ## Commented out by Sergio due to error with version of numpy >= 1.8 ind2 = ind2[:,idx2] ### reorder the flat cluster to match the order of the leaves the dendrogram
     if row_method != None:
         idx1 = Z1['leaves'] ### apply the clustering for the gene-dendrograms to the actual matrix data
         xt = xt[idx1,:]   # xt is transformed x
@@ -241,10 +242,8 @@ def heatmap(group, cmpd, a_col, anno, design, x, row_header, column_header, row_
     # axc --> axes for column side colorbar
     if column_method != None:
         gps = list()
-#	print idx2
         for i in idx2:
-	    gps.append(IDs[new_column_header[i]])
-	
+	    gps.append(IDs[column_header[i]])
         dummy = dict()
         cnt = 1
         for val in gps:
@@ -539,4 +538,5 @@ if __name__ == '__main__':
                 heatmap(group, cmpd, a_col, anno, design, matrix, row_header, column_header, row_method, column_method, row_metric, column_metric, color_gradient, filename, out_fname1)
             except IOError:
                 print 'Error with clustering encountered'
+
 
