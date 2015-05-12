@@ -65,7 +65,7 @@ def princomp(data, args, cor=True):
     scores = summary.rx2('scores')
 
     # Create output data sets
-    components = pd.DataFrame({'#Component': ['PC'+str(x) for x in range(1, len(sdev) + 1)]})
+    components = pd.DataFrame({'sampleID': ['PC'+str(x) for x in range(1, len(sdev) + 1)]})
     sd = pd.DataFrame({'#Std. deviation': [x for x in sdev]})
     prop = sd.apply(lambda x: x**2 / np.sum(sd**2), axis=1)
     prop.columns = ['#Proportion of variance explained', ]
@@ -76,12 +76,12 @@ def princomp(data, args, cor=True):
         load_index = load_index.apply(cleanR)
     load_df = pandas2ri.ri2py_dataframe(loadings)
     load_df.index = load_index
-    load_out = pd.concat([components.T, sd.T, prop.T, load_df])
+    load_out = pd.concat([sd.T, prop.T, components.T, load_df])
 
-    score_index = pd.DataFrame({'#Scores': [x for x in scores.names[0]]})
+    score_index = pd.DataFrame({args.uniqID: [x for x in scores.names[0]]})
     score_df = pandas2ri.ri2py_dataframe(scores)
     score_df.index = [str(x) for x in scores.names[0]]
-    score_out = pd.concat([components.T, sd.T, prop.T, score_df])
+    score_out = pd.concat([sd.T, prop.T, components.T, score_df])
 
     # Write output
     load_out.to_csv(args.lname, sep='\t', header=False)
@@ -105,14 +105,14 @@ def svd(data, args, svdOpt):
     loadings = summary.rx2('rotation')
 
     # Create output data sets
-    components = pd.DataFrame({'#Component': ['PC'+str(x) for x in range(1, len(sdev) + 1)]})
+    components = pd.DataFrame({'sampleID': ['PC'+str(x) for x in range(1, len(sdev) + 1)]})
     header = pandas2ri.ri2py_dataframe(summary.rx2('importance'))[:-1]      # drop last row
     header.index = ['#Std. deviation', '#Proportion of variance explained']
 
     load_index = pd.Series([x for x in loadings.names[0]], name='#Loadings')
     load_df = pandas2ri.ri2py_dataframe(loadings)
     load_df.index = load_index
-    load_out = pd.concat([components.T, header, load_df])
+    load_out = pd.concat([header, components.T, load_df])
 
     # Write output
     load_out.to_csv(args.lname, sep='\t', header=False)
