@@ -16,5 +16,6 @@
     <tool file="secimtools/scatterplot-3d-png.xml" />
     <tool file="secimtools/anova.xml" />
     <tool file="secimtools/SVM_classifier.xml" />
+    <tool file="secimtools/pca.xml" />
   </section>
 </toolbox>

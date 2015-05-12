@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from galaxy import eggs
+# from galaxy import eggs
 import sys, string
 from rpy import *
 import numpy

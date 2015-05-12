@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import rpy2.robjects as ro
 import rpy2.rinterface as ri
+from rpy2.robjects.packages import importr
 from rpy2.robjects import pandas2ri
 pandas2ri.activate()
 
@@ -26,7 +27,6 @@ def getOptions(myopts=None):
     group1.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
     group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     group1.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    group1.add_argument("--group", dest="group", action='store', default=False, required=False, help="Group/treatment identifier in design file [Optional].")
 
     group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
     group2.add_argument("--method", dest="method", action='store', choices=['cov', 'cor', 'svd'], required=True, help="Name of the output PDF for Bland-Altman plots.")
@@ -44,66 +44,92 @@ def getOptions(myopts=None):
     return(args)
 
 
-def main(args):
-    # Import data
-    logger.info('Importing Data')
-    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
-    df = dat.wide.copy()
+def cleanR(x):
+    """ Helper function to remove X's if variable names start with x. """
+    if x.startswith('X'):
+        return x[1:]
+    else:
+        return x
 
-    # Select Method
-    if args.method == 'svd':
-        scale = center = ri.FALSE
-        if args.svd == 'both':
-            scale = center = ri.TRUE
-        elif args.svd == 'center':
-            center = ri.TRUE
-        elif args.svd == 'scale':
-            scale = ri.TRUE
 
-    # Set up R commands
-    r = ro.r
-    rNA = r['na.exclude']
-    rprincomp = r.princomp
-    rsummary = r.summary
+def princomp(data, args, cor=True):
+    stats = importr('stats')
 
     # Run PCA
-    try:
-        if args.method == "cor":
-            pc = rprincomp(rNA(df), cor=ri.TRUE)
-        elif args.method == "cov":
-            pc = rprincomp(rNA(df), cor=ri.FALSE)
-        elif args.method == "svd":
-            pc = rprincomp(rNA(df), center=center, scale=scale)
-    except:
-        logger.error('R principal components failed to run, check rpy2.')
+    pc = stats.princomp(stats.na_exclude(data), cor=cor)
 
     # Summarize PCA
-    summary = rsummary(pc, loadings=ri.TRUE)
-    summary.rx2('sdev')
+    summary = stats.summary_princomp(pc, loadings=True)
     sdev = summary.rx2('sdev')
     loadings = summary.rx2('loadings')
     scores = summary.rx2('scores')
 
     # Create output data sets
-    components = pd.DataFrame({'#Component': [x.split('.')[1] for x in sdev.names]})
+    components = pd.DataFrame({'#Component': ['PC'+str(x) for x in range(1, len(sdev) + 1)]})
     sd = pd.DataFrame({'#Std. deviation': [x for x in sdev]})
     prop = sd.apply(lambda x: x**2 / np.sum(sd**2), axis=1)
     prop.columns = ['#Proportion of variance explained', ]
 
     load_index = pd.Series([x for x in loadings.names[0]], name='#Loadings')
+    if load_index.str.startswith('X', na=False).all():
+        #TODO: If sampleIDs are int, then R returns sample ID as X + int. This hack removes 'X' for now.
+        load_index = load_index.apply(cleanR)
     load_df = pandas2ri.ri2py_dataframe(loadings)
     load_df.index = load_index
     load_out = pd.concat([components.T, sd.T, prop.T, load_df])
 
     score_index = pd.DataFrame({'#Scores': [x for x in scores.names[0]]})
     score_df = pandas2ri.ri2py_dataframe(scores)
-    score_df.index = score_index
+    score_df.index = [str(x) for x in scores.names[0]]
     score_out = pd.concat([components.T, sd.T, prop.T, score_df])
 
     # Write output
     load_out.to_csv(args.lname, sep='\t', header=False)
     score_out.to_csv(args.sname, sep='\t', header=False)
 
+def svd(data, args, svdOpt):
+    stats = importr('stats')
+
+    if svdOpt == 'both':
+        myopts = {'scale.': True, 'center': True}
+    elif svdOpt == 'center':
+        myopts = {'scale.': False, 'center': True}
+    elif svdOpt == 'scale.':
+        myopts = {'scale.': True, 'center': False}
+    else:
+        myopts = {'scale.': False, 'center': False}
+
+    pc = stats.prcomp(stats.na_exclude(data), **myopts)
+    summary = stats.summary_prcomp(pc)
+    sdev = summary.rx2('sdev')
+    loadings = summary.rx2('rotation')
+
+    # Create output data sets
+    components = pd.DataFrame({'#Component': ['PC'+str(x) for x in range(1, len(sdev) + 1)]})
+    header = pandas2ri.ri2py_dataframe(summary.rx2('importance'))[:-1]      # drop last row
+    header.index = ['#Std. deviation', '#Proportion of variance explained']
+
+    load_index = pd.Series([x for x in loadings.names[0]], name='#Loadings')
+    load_df = pandas2ri.ri2py_dataframe(loadings)
+    load_df.index = load_index
+    load_out = pd.concat([components.T, header, load_df])
+
+    # Write output
+    load_out.to_csv(args.lname, sep='\t', header=False)
+
+def main(args):
+    # Import data
+    logger.info('Importing Data')
+    dat = wideToDesign(args.fname, args.dname, args.uniqID, clean_string=True)
+    df = dat.wide.copy()
+
+    # Run PCA
+    if args.method == "cor":
+        princomp(df, args, cor=True)
+    elif args.method == "cov":
+        princomp(df, args, cor=False)
+    elif args.method == "svd":
+        svd(df, args, args.svd)
 
 if __name__ == '__main__':
     # Command line options
@@ -112,11 +138,7 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel='debug')
-        global DEBUG
-        DEBUG = True
     else:
         sl.setLogger(logger)
-        global DEBUG
-        DEBUG = False
 
     main(args)
