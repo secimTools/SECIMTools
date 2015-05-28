@@ -3,3 +3,4 @@
 *.pkl
 notebook/.ipynb_checkpoints/*
 .idea/workspace.xml
+.idea
