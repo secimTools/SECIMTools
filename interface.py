@@ -54,7 +54,7 @@ class wideToDesign:
             self.wide (pd.DataFrame): A wide formatted table with compound/gene
                 as row and sample as columns.
 
-            self.sampleIDs (list): An list of sampleIDs. These will correspond
+            self.sampleIDs (list): A list of sampleIDs. These will correspond
                 to columns in self.wide.
 
             self.design (pd.DataFrame): A table relating sampleID to groups.
