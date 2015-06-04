@@ -89,7 +89,7 @@ compounds/peaks with many outlying points.
 
 - Two input datasets are required. 
 
-    **Wide Fromated Dataset:**
+    **Wide Formatted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample.::
 
