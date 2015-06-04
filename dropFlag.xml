@@ -1,0 +1,134 @@
+<tool id="dropFlag" name="Drop-Flag from TSV">
+    <description>Drop flagged values from data</description>
+    <command interpreter="python">dropFlags.py --input $input --design $design --ID $uniqID --tsvout $tsvOut --flags
+        $flags
+        #if $group
+        --group $group
+        #end if
+
+        #if str( $drop ) == 'row'
+        --row
+        #end if
+        #if str( $drop ) == 'column'
+        --column
+        #end if
+
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset"
+               help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File"
+               help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID"
+               help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <!--cutoff?-->
+        <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment [Optional]"
+               help="Name of the column in your Design File that contains group classifications."/>
+        <param name="flags" type="data" format="tabular" label="Flag File"
+               help="Input flagged dataset containing the flag value for each compound"/>
+        <param name="cutoff" size="30" type="text" value="" label="Cutoff Value"
+               help="All flag sums greater than this value will be deleted"/>
+        <param name="drop" size="30" type="radio" value="" label="Drop rows or columns"
+               help="Choose whether to drop rows or columns">
+            <option value="row" selected="true">Drop the row value</option>
+            <option value="column">Drop the column value</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="dropped_flags"/>
+    </outputs>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+    </requirements>
+    <help>
+
+        .. class:: infomark
+
+        **TIP:**
+        If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+        --------------------------------------------------------------------------------
+
+        **What it does**
+
+        This tool takes in a Wide formatted dataset, a Design formatted dataset and
+        corresponding flag values. With the inputted user cutoff value the flag values
+        are summed and the sums that are greater than the cutoff value are dropped. If
+        rows are the specified attribute to drop then the return will be a new Wide file
+        but if columns are dropped then a new Wide file and Design file will be created
+        because changes will have occurred in each file.
+
+        --------------------------------------------------------------------------------
+        **Input**
+
+        - Three input datasets are required.
+
+        **Wide Formatted Dataset:**
+
+        A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one | 10 | 20 | 10 | ... |
+        | two | 5 | 22 | 30 | ... |
+        | three | 30 | 27 | 2 | ... |
+        | four | 32 | 17 | 8 | ... |
+        | ... | ... | ... | ... | ... |
+        +----------+---------+---------+---------+-----+
+
+        **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+        Extra columns will automatically be ignored.
+
+
+        **Design File:**
+        A design file relating samples to various groups/treatment.::
+
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1 | g1 |
+        | sample2 | g1 |
+        | sample3 | g1 |
+        | sample4 | g2 |
+        | sample5 | g2 |
+        | sample6 | g2 |
+        | ... | ... |
+        +----------+--------+
+
+        **NOTE: You must have a column named *sampleID***
+        and the values in this column must match the columns names in the wide
+        formatted dataset. Extra columns will be ignored.
+
+
+        **Flags File:**
+        A flag file corresponding to flagged values of of the wide and design files
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one | 0 | 0 | 10 | ... |
+        | two | 5 | 0 | 30 | ... |
+        | three | 0 | 12 | 2 | ... |
+        | four | 32 | 11 | 8 | ... |
+        | ... | ... | ... | ... | ... |
+        +----------+---------+---------+---------+-----+
+
+
+        - In addition to your datasets, you need to provide:
+
+        **Unique Compound ID**
+
+        - The column name in your wide dataset that contains the unique IDs for
+        your compounds. In our example dataset you would input *Compound*.
+
+        --------------------------------------------------------------------------------
+
+        **Output Files**
+
+        - If rows were dropped the output will be the changed Wide file
+
+        - If columns were dropped the output will be both the changed Wide and Design Files
+    </help>
+</tool>
