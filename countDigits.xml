@@ -35,8 +35,8 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 **What it does**
 
 For a quick QC, this script allows you to look and see if values are not
-drastically different orders of magnitude. A consitant difference in magnitude
-may indicate there is something wrong with a sample. For exaple, if you have a
+      drastically different orders of magnitude. A constant difference in magnitude
+      may indicate there is something wrong with a sample. For example, if you have a
 sample that is routinely in the three digit range (100) while all other samples
 are in the size digit range (10000).
 
@@ -46,9 +46,9 @@ This script counts the number of digits before the decimal place.
 
 **Input**
 
-- Two input datasets are required. 
+- Two input datasets are required.
 
-    **Wide Fromated Dataset:**
+      **Wide Formatted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample.::
 
