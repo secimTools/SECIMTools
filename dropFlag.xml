@@ -28,7 +28,7 @@
                help="Input flagged dataset containing the flag value for each compound"/>
         <param name="cutoff" size="30" type="text" value="" label="Cutoff Value"
                help="All flag sums greater than this value will be deleted"/>
-        <param name="drop" size="30" type="radio" value="" label="Drop rows or columns"
+        <param name="drop" size="30" type="select" value="" label="Drop rows or columns"
                help="Choose whether to drop rows or columns">
             <option value="row" selected="true">Drop the row value</option>
             <option value="column">Drop the column value</option>
@@ -59,7 +59,7 @@
         but if columns are dropped then a new Wide file and Design file will be created
         because changes will have occurred in each file.
 
-        --------------------------------------------------------------------------------
+
         **Input**
 
         - Three input datasets are required.
@@ -103,7 +103,7 @@
 
 
         **Flags File:**
-        A flag file corresponding to flagged values of of the wide and design files
+        A flag file corresponding to flagged values of of the wide and design files::
 
         +----------+---------+---------+---------+-----+
         | Compound | sample1 | sample2 | sample3 | ... |
@@ -117,8 +117,7 @@
 
 
         - In addition to your datasets, you need to provide:
-
-        **Unique Compound ID**
+        *Unique Compound ID*
 
         - The column name in your wide dataset that contains the unique IDs for
         your compounds. In our example dataset you would input *Compound*.
@@ -130,5 +129,7 @@
         - If rows were dropped the output will be the changed Wide file
 
         - If columns were dropped the output will be both the changed Wide and Design Files
+
+
     </help>
 </tool>
