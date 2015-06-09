@@ -14,5 +14,6 @@
         <tool file="secimtools/anova.xml"/>
         <tool file="secimtools/RandomForest.xml"/>
         <tool file="secimtools/SVM_classifier.xml"/>
+        <tool file="secimtools/dropFlag.xml"/>
     </section>
 </toolbox>
