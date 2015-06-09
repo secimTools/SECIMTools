@@ -26,7 +26,6 @@ def getOptions():
                         help="Group/treatment identifier in design file [Optional].")
     group1.add_argument("--flags", dest="flagFile", action='store', required=True, help="Input flag file")
 
-
     group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
     group2.add_argument("--cutoff", dest="cutoff", action='store', type=int, required=True,
                         help="Cutoff value for dropping. Any flag sum value greater than this number will be dropped")
@@ -62,15 +61,15 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
     Returns: Wide DataFrame with dropped rows
 
     """
-
-
-    # This method will create a sum column and then create a mask to delete the flagged values from the original data
+    # This method will create a sum column and then create a mask to delete the
+    # flagged values from the original data
 
     # Create a sum column and add to the end of the flag file
     sumColumn = df_flags.sum(numeric_only=True, axis=1)
     df_flags['sum'] = sumColumn
 
     # Only keep the rows in the original data that the user specified
+    # TODO: Should this be >= cutoff value?
     df_flags = df_flags.loc[df_flags['sum'] == cutoffValue]
 
     # Create a mask over the original data to determine what to delete
@@ -80,7 +79,7 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
     df_wide = df_wide[mask]
 
     # What should I name them?
-    df_wide.to_csv(args.wideOut)
+    df_wide.to_csv(args.wideOut, sep='\t')
 
 
 def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
@@ -135,15 +134,14 @@ def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
             # df_design = df_design.loc[designIndex]
             df_design = df_design.drop(designIndex, axis=0)
 
-
     # Sort tables before exporting
     df_wide = df_wide.sort(axis=1)
     df_flags = df_flags.sort(axis=1)
     df_design = df_design.sort(axis=0)
 
     # Export the files
-    df_wide.to_csv(args.wideOut)
-    df_design.to_csv(args.designOut)
+    df_wide.to_csv(args.wideOut, sep='\t')
+    df_design.to_csv(args.designOut, sep='\t')
 
 
 def main(args):
