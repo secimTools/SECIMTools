@@ -29,8 +29,8 @@ def getOptions():
     group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
     group2.add_argument("--cutoff", dest="cutoff", action='store', type=int, required=True,
                         help="Cutoff value for dropping. Any flag sum value greater than this number will be dropped")
-    group1.add_argument("--wideOut", dest="wideOut", action='store', required=True, help="Output Wide Dataset")
-    group1.add_argument("--designOut", dest="designOut", action='store', required=False,
+    group2.add_argument("--wideOut", dest="wideOut", action='store', required=True, help="Output Wide Dataset")
+    group2.add_argument("--designOut", dest="designOut", action='store', required=False,
                         help="Output Design Dataset. Only required when columns are wanted to be dropped.")
 
     group3 = parser.add_mutually_exclusive_group(required=True)
