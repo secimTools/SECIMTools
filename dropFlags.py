@@ -24,11 +24,15 @@ def getOptions():
                         help="Name of the column with unique identifiers.")
     group1.add_argument("--group", dest="group", action='store', default=False, required=False,
                         help="Group/treatment identifier in design file [Optional].")
+    group1.add_argument("--flags", dest="flagFile", action='store', required=True, help="Input flag file")
+
 
     group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
-    group2.add_argument("--flags", dest="flagFile", action='store', required=True, help="Name of the TSV flag file")
     group2.add_argument("--cutoff", dest="cutoff", action='store', type=int, required=True,
                         help="Cutoff value for dropping. Any flag sum value greater than this number will be dropped")
+    group1.add_argument("--wideOut", dest="wideOut", action='store', required=True, help="Output Wide Dataset")
+    group1.add_argument("--designOut", dest="designOut", action='store', required=False,
+                        help="Output Design Dataset. Only required when columns are wanted to be dropped.")
 
     group3 = parser.add_mutually_exclusive_group(required=True)
     group3.add_argument("--row", dest="dropRow", action="store_true", help="Drop rows.")
@@ -38,7 +42,7 @@ def getOptions():
     return args
 
 
-def dropRows(df_wide, df_flags, cutoffValue):
+def dropRows(df_wide, df_flags, cutoffValue, args):
     """ Drop rows in a log file based on its flag file and the specified flag values to keep.
 
     Arguments:
@@ -76,10 +80,10 @@ def dropRows(df_wide, df_flags, cutoffValue):
     df_wide = df_wide[mask]
 
     # What should I name them?
-    df_wide.to_csv('Dropped_wide')
+    df_wide.to_csv(args.wideOut)
 
 
-def dropColumns(df_wide, df_design, df_flags, cutoffValue):
+def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
     """ Drop columns in both the wide and design files based on the sampleID's flag sums.
 
     Arguments:
@@ -138,8 +142,8 @@ def dropColumns(df_wide, df_design, df_flags, cutoffValue):
     df_design = df_design.sort(axis=0)
 
     # Export the files
-    df_wide.to_csv('Dropped_Wide')
-    df_design.to_csv('Dropped_Design')
+    df_wide.to_csv(args.wideOut)
+    df_design.to_csv(args.designOut)
 
 
 def main(args):
@@ -151,12 +155,12 @@ def main(args):
 
     # If the user specified rows, run dropRows
     if args.dropRow:
-        dropRows(df_wide=formatted_data.wide, df_flags=df_flags, cutoffValue=args.cutoff)
+        dropRows(df_wide=formatted_data.wide, df_flags=df_flags, cutoffValue=args.cutoff, args=args)
 
     # If the user specified columns, run dropColumns
     else:  # (if args.dropColumn:)
         dropColumns(df_wide=formatted_data.wide, df_design=formatted_data.design, df_flags=df_flags,
-                    cutoffValue=args.cutoff)
+                    cutoffValue=args.cutoff, args=args)
 
 
 if __name__ == '__main__':

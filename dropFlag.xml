@@ -1,7 +1,7 @@
 <tool id="dropFlag" name="Drop-Flag from TSV">
     <description>Drop flagged values from data</description>
-    <command interpreter="python">dropFlags.py --input $input --design $design --ID $uniqID --tsvout $tsvOut --flags
-        $flags
+    <command interpreter="python">dropFlags.py --input $input --design $design --ID $uniqID --wideOut $wideOut --flags
+        $flags --cutoff $cutoff
         #if $group
         --group $group
         #end if
@@ -10,7 +10,7 @@
         --row
         #end if
         #if str( $drop ) == 'column'
-        --column
+        --column --designOut $designOut
         #end if
 
     </command>
@@ -21,21 +21,23 @@
                help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID"
                help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-        <!--cutoff?-->
         <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment [Optional]"
                help="Name of the column in your Design File that contains group classifications."/>
         <param name="flags" type="data" format="tabular" label="Flag File"
                help="Input flagged dataset containing the flag value for each compound"/>
         <param name="cutoff" size="30" type="text" value="" label="Cutoff Value"
                help="All flag sums greater than this value will be deleted"/>
-        <param name="drop" size="30" type="select" value="" label="Drop rows or columns"
+        <param name="drop" size="30" type="select" display="radio" value="" label="Drop rows or columns"
                help="Choose whether to drop rows or columns">
             <option value="row" selected="true">Drop the row value</option>
             <option value="column">Drop the column value</option>
         </param>
     </inputs>
     <outputs>
-        <data format="tabular" name="dropped_flags"/>
+        <data format="tabular" name="wideOut" label="DroppedWide"/>
+        <data format="tabular" name="designOut" label="DroppedDesign">
+            <filter>drop=='column'</filter>
+        </data>
     </outputs>
     <requirements>
         <requirement type="python-module">numpy</requirement>
