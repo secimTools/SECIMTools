@@ -45,7 +45,6 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
     """ Drop rows in a log file based on its flag file and the specified flag values to keep.
 
     Arguments:
-
         :type df_wide: pandas.DataFrame
         :param df: A data frame in wide format
 
@@ -58,7 +57,13 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
         :param integer cutoffValue: The int value of the cutoff for which flags to keep.
             All flag sums per row greater than this number will cause the row to be deleted
 
-    Returns: Wide DataFrame with dropped rows
+        :type args: argparse.ArgumentParser
+        :param args: Command line arguments.
+
+    Returns:
+        :rtype: pandas.DataFrame
+        :returns: Updates the wide DataFrame with dropped rows and writes to a
+            TSV.
 
     """
     # This method will create a sum column and then create a mask to delete the
@@ -77,7 +82,6 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
     # Use mask to drop values form original data
     df_wide = df_wide[mask]
 
-    # What should I name them?
     df_wide.to_csv(args.wideOut, sep='\t')
 
 
@@ -98,17 +102,20 @@ def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
         :param int cutoffValue: The integer value of the cutoff for which flags to keep.
             All flag sums per column greater than this number will cause that corresponding column to be deleted
 
-    Returns: Both wide and design files with dropped columns
+        :type args: argparse.ArgumentParser
+        :param args: Command line arguments.
+
+    Returns:
+        :rtype: pandas.DataFrame
+        :returns: Both wide and design files with dropped columns
     """
 
     # Sum the Columns
-    sumRow = {col: df_flags[col].sum() for col in df_flags}
-
-    # Turn the sums into a DataFrame with one row with an index of 'Total'
-    sumDf = pd.DataFrame(sumRow, index=['Total'])
+    sumRow = df_flags.sum(axis=0)
+    sumRow.name = 'Total'
 
     # Append the rows to the flag data
-    df_flags = df_flags.append(sumDf)
+    df_flags = df_flags.append(sumRow)
 
     # Only keep the columns in the original data that the user specified
 
