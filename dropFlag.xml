@@ -1,6 +1,6 @@
 <tool id="dropFlag" name="Drop-Flag from TSV">
     <description>Drop flagged values from data</description>
-    <command interpreter="python">dropFlags.py --input $input --design $design --ID $uniqID --wideOut $wideOut --flags
+    <command interpreter="python">dropFlag.py --input $input --design $design --ID $uniqID --wideOut $wideOut --flags
         $flags --cutoff $cutoff
         #if $group
         --group $group
