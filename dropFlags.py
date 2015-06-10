@@ -110,31 +110,26 @@ def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
         :returns: Both wide and design files with dropped columns
     """
 
-    # Sum the Columns
+    # Sum the Columns and create new row at the bottom named Total
     df_flags.loc['Total', :] = df_flags.sum(axis=0)
 
-    # Only keep the columns in the original data that the user specified
+    # Create list of sampleIDs that are greater than or equal to the cutoff
+    df_flaggedIDs = df_flags.columns[df_flags.loc['Total', :] >= cutoffValue]
 
-    # Get the names of the compounds from the df_wide file into a list to loop through. These column values are
-    # located as the column values in the flags DataFrame
-    sampleIDList = df_wide.columns
+    # Create list of sampleIDs to keep in wide DataFrame.
+    #
+    # NOTE: the ~ inverts boolean values.
+    #
+    # Take the list of values to drop 'df_flaggedIDs', see if df_wide column
+    # headers are in this list. Invert the boolean to keep headers that are not
+    # in the list.
+    keepSampleIDs = df_wide.columns[~df_wide.columns.isin(df_flaggedIDs)]
 
-    # Delete from the df_flags the totals that are greater than the cutoff value
-    for sampleID in sampleIDList:
-        if df_flags[sampleID]['Total'] > cutoffValue:  # If each columns total is greater than one of the flag values
-            del df_flags[sampleID]
+    # Pull out columns from wide
+    df_wide = df_wide[keepSampleIDs]
 
-    # Now that the df_flags has dropped its sampleID columns, match the df_with's columns with the flags by comparing
-    # the columns and droping the columns from df_wide that are not in df_flags
-    for wideColumn in df_wide.columns:
-        if wideColumn not in df_flags.columns:
-            del df_wide[wideColumn]
-
-    # Complete same action with the df_design file so all of the sampleID's are the same in all 3 files
-    for designIndex in df_design.index:
-        if designIndex not in df_flags.columns:
-            # df_design = df_design.loc[designIndex]
-            df_design = df_design.drop(designIndex, axis=0)
+    # Pull out rows from design file
+    df_design[df_design['sampleID'].isin(keepSampleIDs)]
 
     # Sort tables before exporting
     df_wide = df_wide.sort(axis=1)
