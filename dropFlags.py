@@ -69,8 +69,7 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
     df_flags['sum'] = sumColumn
 
     # Only keep the rows in the original data that the user specified
-    # TODO: Should this be >= cutoff value?
-    df_flags = df_flags.loc[df_flags['sum'] == cutoffValue]
+    df_flags = df_flags.loc[df_flags['sum'] <= cutoffValue]
 
     # Create a mask over the original data to determine what to delete
     mask = df_wide.index.isin(df_flags.index)
