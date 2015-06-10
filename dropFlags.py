@@ -74,7 +74,7 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
     df_flags['sum'] = sumColumn
 
     # Only keep the rows in the original data that the user specified
-    df_flags = df_flags.loc[df_flags['sum'] <= cutoffValue]
+    df_flags = df_flags.loc[df_flags['sum'] < cutoffValue]
 
     # Create a mask over the original data to determine what to delete
     mask = df_wide.index.isin(df_flags.index)
@@ -129,11 +129,10 @@ def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
     df_wide = df_wide[keepSampleIDs]
 
     # Pull out rows from design file
-    df_design[df_design['sampleID'].isin(keepSampleIDs)]
+    df_design = df_design[df_design.index.isin(keepSampleIDs)]
 
     # Sort tables before exporting
     df_wide = df_wide.sort(axis=1)
-    df_flags = df_flags.sort(axis=1)
     df_design = df_design.sort(axis=0)
 
     # Export the files
