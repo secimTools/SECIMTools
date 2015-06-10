@@ -111,11 +111,7 @@ def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
     """
 
     # Sum the Columns
-    sumRow = df_flags.sum(axis=0)
-    sumRow.name = 'Total'
-
-    # Append the rows to the flag data
-    df_flags = df_flags.append(sumRow)
+    df_flags.loc['Total', :] = df_flags.sum(axis=0)
 
     # Only keep the columns in the original data that the user specified
 
