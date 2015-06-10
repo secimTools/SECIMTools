@@ -23,14 +23,14 @@ def getOptions():
     group1.add_argument("--input", dest="wide", action='store', required=True, help="Dataset in Wide format")
 
     group2 = parser.add_argument_group(description="Output Files")
-    group2.add_argument("-o", dest="plot", action='store', required=True, help="Output of mahalanobis distanace plot")
+    group2.add_argument("-o", dest="plot", action='store', required=True, help="Output of Mahalanobis distance plot")
 
     args = parser.parse_args()
     return(args)
 
 
 def mahalnobisDistance(wide):
-    """ Calculate the Mahalanobis istance and return an array of distances.
+    """ Calculate the Mahalanobis distance and return an array of distances.
 
     Arguments:
         :type wide: pandas.DataFrame
@@ -68,27 +68,37 @@ def plotMahalanobis(MD):
 
     Returns:
         :return: Returns a figure object.
-        :rtype: matplotlib.figure
+        :rtype: matplotlib.pyplot.Figure.figure
+
     """
     # Create figure object with a single axis
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+    fig.suptitle('Mahalanobis Distance')
 
     # Plot MD as scatter plot
     ax.scatter(x=range(len(MD)), y=MD)
+    ax.set_xlabel('Mean')
+    ax.set_ylabel('Difference')
 
     # Add a horizontal line above 95% of the data
-    ax.axhline(np.percentile(MD, 95), ls='--', lw=2)
+    ax.axhline(np.percentile(MD, 95), color='r', ls='--', lw=2)
 
     return fig
 
 
 def main(args):
     """ Main Script """
-    # Convert inputted wide file to dataframe
-    wideDataFrame = pd.DataFrame.from_csv(args.wide)
-    figure = mahalnobisDistance(wideDataFrame)
 
-    figure.savefig(args.plot)
+    # TODO: May want to use the wideToDesign class. I know it seems like
+    # overkill for this particular case, but I cannot guarantee that wide
+    # datasets will never have additional columns (i.e., not just sampleIDs).
+    # Perhaps we should talk with Morse and get her opinion.
+
+    # Convert inputted wide file to dataframe
+    df_wide = pd.DataFrame.from_csv(args.wide, sep='\t')
+    figure = mahalnobisDistance(df_wide)
+
+    figure.savefig(args.plot, bbox_inches='tight')
 
 if __name__ == '__main__':
     # Turn on Logging if option -g was given
