@@ -1,0 +1,128 @@
+<tool id="pca" name="Principal Component Analysis" version="1.0.2">
+    <description></description>
+    <command interpreter="python">
+        pypca.py --input $input --design $design --ID $uniqID --load_out $loadings --score_out $scores
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="loadings" label="${tool.name} on ${on_string}: loadings"/>
+        <data format="tabular" name="scores" label="${tool.name} on ${on_string}: scores"/>
+    </outputs>
+    <requirements>
+        <requirement type="python-module">sklearn</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">numpy</requirement>
+    </requirements>
+    <help>
+
+.. class:: infomark
+
+**TIP:** If your data is not TAB delimited, use *Edit Datasets-&gt;Convert characters*
+
+--------------------------------------------------------------------------------
+
+.. class:: infomark
+
+**What it does**
+
+This tool performs Principal Component Analysis on the given numeric
+input data using a singular value decomposition based solution.
+
+--------------------------------------------------------------------------------
+
+.. class:: warningmark
+
+**Note**
+
+- This tool currently treats all variables as continuous numeric
+  variables. Running the tool on categorical variables might result in
+  incorrect results. Rows containing non-numeric (or missing) data in any
+  of the chosen columns will be skipped from the analysis.
+
+- The summary statistics in the output are described below:
+
+- Std. deviation: Standard deviations of the principal components
+- Proportion of variance explained by each principal component
+- Loadings: a list of eigen-vectors/variable loadings
+- Scores: Scores of the input data on the principal components
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required.
+
+**Wide Fromated Dataset:**
+
+A wide formatted dataset that contains measurements for each sample.::
+
+    +----------+---------+---------+---------+-----+
+    | Compound | sample1 | sample2 | sample3 | ... |
+    +==========+=========+=========+=========+=====+
+    | one      | 10      | 20      | 10      | ... |
+    | two      | 5       | 22      | 30      | ... |
+    | three    | 30      | 27      | 2       | ... |
+    | four     | 32      | 17      | 8       | ... |
+    | ...      | ...     | ...     | ...     | ... |
+    +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+    Extra columns will automatically be ignored.
+
+
+**Design File:**
+A design file relating samples to various groups/treatment.::
+
+    +----------+--------+
+    | sampleID | group1 |
+    +==========+========+
+    | sample1  | g1     |
+    | sample2  | g1     |
+    | sample3  | g1     |
+    | sample4  | g2     |
+    | sample5  | g2     |
+    | sample6  | g2     |
+    | ...      | ...    |
+    +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+- In addition to your datasets, you need to provide:
+
+**Unique Compound ID**
+
+- The column name in your wide dataset that contains the unique IDs for
+  your compounds. In our example dataset you would input *Compound*.
+
+- If you only want to do within group comparisons (**suggested**) then you need
+  to specify:
+
+**Group/Treatment**
+
+- The column name in your design file that contains group information. In
+  our example design file we would put *group1*.
+
+**Group ID**
+
+- This option allows you to specify which groups to analyze (i.e., qc
+  samples). Multiple group IDs can be specified by separating them with
+  spaces. This option requires that **Group/Treatment** is also specified.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- This tool always outputs 2 files.
+
+**loadings** is a TSV containing eigen-vectors/variable loadings.
+
+**scores** is a TSV containing scores of input data on principal components.
+
+    </help>
+</tool>
