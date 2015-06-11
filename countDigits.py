@@ -37,6 +37,7 @@ def getOptions(myopts=None):
     parser.add_argument("--group", dest="group", action='store', required=False, default=False, help="Add the option to separate sample IDs by treatement name. ")
     parser.add_argument("--html", dest="html", action='store', required=False, help="Html file output name")
     parser.add_argument("--html_path", dest="htmlPath", action='store', required=True, help="Path to save created files and html file")
+    parser.add_argument("--noZip", dest="noZip", action='store_true', required=False, default=False, help="If running from command line use --noZip to skip the zip creation. This stops the command line from freezing")
 
 
     if myopts:
@@ -195,7 +196,9 @@ def main(args):
         countDigits(args, wide, dat, dir=directory)
 
     # Create a zip archive with the inputted zip file name of the temp file
-    shutil.make_archive(directory + '/Archive_of_Results', 'zip', directory)
+    if args.noZip: pass
+    else:
+    	shutil.make_archive(directory + '/Archive_of_Results', 'zip', directory)
 
 
     # Add zip of all the files to the list
