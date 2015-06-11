@@ -1,0 +1,115 @@
+<tool id="countDigits2" name="Count Digits2">
+  <description>Count the number of digits before the period.</description>
+  <command interpreter="python">countDigits2.py --html $html --html_path "$html.files_path" --input $input --design $design --ID $uniqID
+      #if $nozero:
+          --noZero
+      #end if
+      #if $group:
+	    --group $group
+      #end if
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="nozero" size="30" type="select" display="radio" value="yes" label="Remove zeros before processing" help="If you do not remove zeros before processing, otherwise a zero will skew results.">
+        <option value="yes">Remove zeros</option>
+        <option value="no">Do not remove zeros</option>
+    </param>
+    <param name="group" size="30" type="text" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sorry by groups in a column in the design file, enter the column name. Spelling and capitalization must be exact" />
+  </inputs>
+  <outputs>
+    <data format="html" name="html"  label="CountsFilesList.html" />
+  </outputs>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
+  <help>
+
+.. class:: infomark
+
+**TIP:** 
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+For a quick QC, this script allows you to look and see if values are not
+      drastically different orders of magnitude. A constant difference in magnitude
+      may indicate there is something wrong with a sample. For example, if you have a
+      sample that is routinely in the three digit range (100) while all other samples
+      are in the size digit range (10000).
+
+This script counts the number of digits before the decimal place.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required.
+
+      **Wide Formatted Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    Extra columns will automatically be ignored.
+
+
+    **Design File:**
+    A design file relating samples to various groups/treatment.::
+
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1  | g1     |
+        | sample2  | g1     |
+        | sample3  | g1     |
+        | sample4  | g2     |
+        | sample5  | g2     |
+        | sample6  | g2     |
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+- In addition to your datasets, you need to provide:
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*
+
+- An optional input is to separate the results by groups (column names in the design file)
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- This tool always outputs an html page containing the files created. (Separated by group if specified)
+
+    **Counts_table** is a TSV with compound as row and sample as column. Values
+    are the number of digits that sample had for a given compound.
+
+    **Figure** is a plot of the differences between the max and min.
+
+    **Summary** is a TSV that shows the number of times a sample has either the most or the fewest number of digits
+
+</help>
+</tool>
+
