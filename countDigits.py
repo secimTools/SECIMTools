@@ -129,7 +129,7 @@ def countDigits(args, wide, dat, dir, groupName=''):
 
     if cnt['diff'].any():
         fig, ax = plt.subplots(figsize=(8, 8))
-        cnt['diff'].plot(kind='kde', ax=ax, title=title)
+        cnt['diff'].plot(kind='hist', ax=ax, title=title)
         ax.set_xlabel('difference (max - min)')
 
         # Save figure into archive
