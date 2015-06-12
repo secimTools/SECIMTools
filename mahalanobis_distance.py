@@ -4,6 +4,7 @@
 import argparse
 from argparse import RawDescriptionHelpFormatter
 import logging
+import os
 
 # Add-on packages
 import numpy as np
@@ -81,6 +82,17 @@ def plotMahalanobis(MD):
 
     return fig
 
+def galaxySavefig(fig, fname):
+    """ Take galaxy DAT file and save as fig """
+
+    png_out = fname + '.png'
+    fig.savefig(png_out)
+
+    # shuffle it back and clean up
+    data = file(png_out, 'rb').read()
+    with open(fname, 'wb') as fp:
+        fp.write(data)
+    os.remove(png_out)
 
 def main(args):
     """ Main Script """
@@ -89,7 +101,8 @@ def main(args):
     df_wide = pd.DataFrame.from_csv(args.wide, sep='\t')
     figure = mahalnobisDistance(df_wide)
 
-    figure.savefig(args.plot, bbox_inches='tight')
+    galaxySavefig(fig=figure, fname=args.plot)
+    # figure.savefig(args.plot + '.png', bbox_inches='tight')
 
 if __name__ == '__main__':
     # Turn on Logging if option -g was given
