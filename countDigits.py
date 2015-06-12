@@ -19,12 +19,6 @@ import pandas as pd
 from interface import wideToDesign
 import logger as sl
 
-
-## New Goal ##
-# Output an html list that points to the files in the files directory of galaxy
-# First item of list will be a link to the zip file for easy downloading
-# Add pretty html option with bootstrap
-
 def getOptions(myopts=None):
     """ Function to pull in arguments """
     description = """ One-Way ANOVA """
