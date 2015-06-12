@@ -1,0 +1,73 @@
+<tool id="mahalanobis_distance" name="Mahalanobis Distance">
+    <description>Use mahalanobis distance formula to create mahalanobis figure</description>
+    <command interpreter="python">mahalanobis_distance.py --input $input -o $output  </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset"
+               help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    </inputs>
+    <outputs>
+        <data format="png" name="output" label="Mahalanobis Figure"/>
+    </outputs>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+    </requirements>
+    <help>
+
+.. class:: infomark
+
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+Mahalanobis Distance (MD; http://en.wikipedia.org/wiki/Mahalanobis_distance) is a method used to measure the
+distance between a point and the center of a distribution of points. For metabolomics, MD can be used to
+identify multivariate outliers by comparing samples and looking for outlying compounds after accounting
+for the correlation structure in the data.
+
+        Mi=(Yi−Y¯)TS−1(Yi−Y¯)
+
+        where:
+
+        - Yi is the data for the ith row
+        - Y is the row of means
+        - S is the estimated covariance matrix for the data
+
+
+        This program calculates the Mahalanobis Distance, then generates a plot showing each compound (x-axis) and its
+        distance (y-axis). A threshold is plotted where 95% of the data is located below the line.
+
+
+
+**Input**
+
+- One input dataset is required.
+
+**Wide Formatted Dataset:**
+
+A wide formatted dataset that contains measurements for each sample.::
+
+ +----------+---------+---------+---------+-----+
+ | Compound | sample1 | sample2 | sample3 | ... |
+ +==========+=========+=========+=========+=====+
+ | one      | 10      | 20      | 10      | ... |
+ | two      | 5       | 22      | 30      | ... |
+ | three    | 30      | 27      | 2       | ... |
+ | four     | 32      | 17      | 8       | ... |
+ | ...      | ...     | ...     | ...     | ... |
+ +----------+---------+---------+---------+-----+
+
+
+--------------------------------------------------------------------------------
+
+**Output File**
+
+- Mahalanobis figure in the format of a png
+
+
+    </help>
+</tool>
