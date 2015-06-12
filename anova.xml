@@ -53,7 +53,7 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
 
 - Two input datasets are required. 
 
-    **Wide Fromated Dataset:**
+    **Wide Formatted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample.::
 

@@ -50,7 +50,7 @@ This tool mean standardize your samples.
 
 - Two input datasets are required. 
 
-    **Wide Formated Dataset:**
+    **Wide Formatted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample.::
 

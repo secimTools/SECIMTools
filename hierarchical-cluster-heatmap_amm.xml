@@ -46,7 +46,7 @@
 
 This tool Generates a Hierarchical Cluster Heatmap from (1) a Wide Formated (side-by-side) Dataset, (2) a Design File and (3) an optional Annotation File.  
     
-**Wide Formated Dataset:**
+**Wide Formetted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample::
 

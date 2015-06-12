@@ -90,7 +90,7 @@ Austria. ISBN 3-900051-07-0, URL http://www.R-project.org.*
 
 - Two input datasets are required.
 
-**Wide Fromated Dataset:**
+**Wide Formatted Dataset:**
 
 A wide formatted dataset that contains measurements for each sample.::
 
