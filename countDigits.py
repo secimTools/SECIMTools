@@ -49,7 +49,16 @@ def getOptions(myopts=None):
 
 
 def splitDigit(x):
-    """ Function to split digits by decimal """
+    """ Function to split digits by decimal
+        Arguments:
+            :param integer x: Digit to split
+
+        Returns:
+            :rtype: integer
+            :returns: integer that is split by the decial
+
+    """
+
     if x == 0:
         cnt = np.nan
     else:
@@ -59,7 +68,14 @@ def splitDigit(x):
 
 
 class FileName:
+    """ Class to create a file name for accurate location in the Galaxy file system """
     def __init__(self, text, fileType, groupName=''):
+        """ Constructor
+            Arguments:
+                :param string text: Text of the file name
+                :param string fileType: '.tsv', '.txt', '.csv'
+                :param string groupName: If using groups to separate data, the group name will be added to the file name
+        """
         self.text = str(text)  # Must convert all to string just in case of numbers as names
         self.fileType = str(fileType)
         self.groupName = str(groupName)
@@ -80,6 +96,21 @@ class FileName:
 
 
 def countDigitsByGroups(args, wide, dat, dir):
+    """ If the group option is selected this function is called to split by groups. The function calls the countDigits
+        function in a loop that iterates through the groups
+
+        Arguments:
+            :type args: argparse.ArgumentParser
+            :param args: Command line arguments
+
+            :type wide: pandas.DataFrame
+            :param wide: A data frame in wide format
+
+            :type dat: pandas.DataFrame
+            :param dat: A data frame in design format
+
+            :param string dir: String of the directory name for storing files in galaxy
+    """
 
     # Split Design file by treatment group
     try:
@@ -91,7 +122,7 @@ def countDigitsByGroups(args, wide, dat, dir):
             # Change dat.sampleIDs to match the design file
             dat.sampleIDs = group.index
 
-            countDigits(args, currentFrame, dat, dir=dir, groupName=title)
+            countDigits(currentFrame, dat, dir=dir, groupName=title)
     except KeyError as e:
         logger.error("{} is not a column name in the design file.".format(args.group))
     except Exception as e:
@@ -100,7 +131,19 @@ def countDigitsByGroups(args, wide, dat, dir):
 
 
 
-def countDigits(args, wide, dat, dir, groupName=''):
+def countDigits(wide, dat, dir, groupName=''):
+    """ Function to create and export the counts, figure, and summary files
+        Arguments:
+            :type wide: pandas.DataFrame
+            :param wide: A data frame in wide format
+
+            :type dat: pandas.DataFrame
+            :param dat: A data frame in design format
+
+            :param string dir: String of the directory name for storing files in galaxy
+
+            :param string groupName: Name of the group if using thre group option. Set to an empty stirng by default
+    """
 
     # Count the number of digits before decimal and get basic distribution info
     cnt = wide.applymap(lambda x: splitDigit(x))
@@ -161,7 +204,6 @@ def countDigits(args, wide, dat, dir, groupName=''):
 
 
 def main(args):
-    """ """
     # Create a directory in galaxy to hold the files created
     directory = args.htmlPath
     try: # for test - needs this done
@@ -193,12 +235,12 @@ def main(args):
         countDigitsByGroups(args, wide, dat, dir=directory)
 
     else:
-        countDigits(args, wide, dat, dir=directory)
+        countDigits(wide, dat, dir=directory)
 
     # Create a zip archive with the inputted zip file name of the temp file
     if args.noZip: pass
     else:
-    	shutil.make_archive(directory + '/Archive_of_Results', 'zip', directory)
+        shutil.make_archive(directory + '/Archive_of_Results', 'zip', directory)
 
 
     # Add zip of all the files to the list
