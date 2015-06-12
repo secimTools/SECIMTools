@@ -10,10 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# McLab packages
-# import mclib
-
-
 def getOptions():
     """ Function to pull in arguments """
     description = """ """
@@ -88,11 +84,6 @@ def plotMahalanobis(MD):
 
 def main(args):
     """ Main Script """
-
-    # TODO: May want to use the wideToDesign class. I know it seems like
-    # overkill for this particular case, but I cannot guarantee that wide
-    # datasets will never have additional columns (i.e., not just sampleIDs).
-    # Perhaps we should talk with Morse and get her opinion.
 
     # Convert inputted wide file to dataframe
     df_wide = pd.DataFrame.from_csv(args.wide, sep='\t')
