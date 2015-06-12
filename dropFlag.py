@@ -66,9 +66,6 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
             TSV.
 
     """
-    # This method will create a sum column and then create a mask to delete the
-    # flagged values from the original data
-
     # Create a sum column and add to the end of the flag file
     sumColumn = df_flags.sum(numeric_only=True, axis=1)
     df_flags['sum'] = sumColumn
@@ -82,6 +79,7 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
     # Use mask to drop values form original data
     df_wide = df_wide[mask]
 
+    # Export
     df_wide.to_csv(args.wideOut, sep='\t')
 
 
