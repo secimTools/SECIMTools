@@ -21,7 +21,7 @@
         <requirement type="python-module">interface</requirement>
         <requirement type="python-module">logger</requirement>
     </requirements>
-    
+
     <help>
 
 .. class:: infomark
