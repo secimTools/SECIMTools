@@ -506,7 +506,7 @@ def main(args):
 
     # Output Raw Flags
     if args.flagTable and args.flagDesign:
-        logger.info('Outputing raw outlier flags.')
+        logger.info('Outputting raw outlier flags.')
         flags.flag_outlier.fillna(0, inplace=True)
         flag_outlier = flags.flag_outlier.astype('int64')
         flag_outlier.to_csv(args.flagTable, sep='\t')
