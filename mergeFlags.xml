@@ -1,0 +1,107 @@
+<tool id="mergeFlags" name="Merge Flags">
+    <description>Merge flags with same index together</description>
+    <command interpreter="python">mergeFlags.py --input $input --output $output </command>
+    <inputs>
+        <param name="input" format="tabular" type="data"  label="Wide Dataset" multiple="true"
+               help="Input dataset in wide format and tab separated. If not tab separated see TIP below." >
+        </param>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="output" label="MergedFlags"/>
+    </outputs>
+    <requirements>
+        <requirement type="python-module">pandas</requirement>
+    </requirements>
+    <help>
+
+.. class:: infomark
+
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+This tool takes in a Wide formatted dataset, a Design formatted dataset and
+corresponding flag values. With the inputted user cutoff value the flag values
+are summed and the sums that are greater than the cutoff value are dropped. If
+rows are the specified attribute to drop then the return will be a new Wide file
+but if columns are dropped then a new Wide file and Design file will be created
+because changes will have occurred in each file.
+
+
+**Input**
+
+ - Three input datasets are required.
+
+ **Wide Formatted Dataset:**
+
+ A wide formatted dataset that contains measurements for each sample.::
+
+ +----------+---------+---------+---------+-----+
+ | Compound | sample1 | sample2 | sample3 | ... |
+ +==========+=========+=========+=========+=====+
+ | one      | 10      | 20      | 10      | ... |
+ | two      | 5       | 22      | 30      | ... |
+ | three    | 30      | 27      | 2       | ... |
+ | four     | 32      | 17      | 8       | ... |
+ | ...      | ...     | ...     | ...     | ... |
+ +----------+---------+---------+---------+-----+
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
+
+
+**Design File:**
+A design file relating samples to various groups/treatment.::
+
++----------+--------+
+| sampleID | group1 |
++==========+========+
+| sample1  | g1     |
+| sample2  | g1     |
+| sample3  | g1     |
+| sample4  | g2     |
+| sample5  | g2     |
+| sample6  | g2     |
+| ...      | ...    |
++----------+--------+
+
+**NOTE: You must have a column named *sampleID***
+and the values in this column must match the columns names in the wide
+formatted dataset. Extra columns will be ignored.
+
+
+**Flags File:**
+A flag file corresponding to flagged values of of the wide and design files::
+
++----------+---------+---------+---------+-----+
+| Compound | sample1 | sample2 | sample3 | ... |
++==========+=========+=========+=========+=====+
+| one      | 0       | 0       | 10      | ... |
+| two      | 5       | 0       | 30      | ... |
+| three    | 0       | 12      | 2       | ... |
+| four     | 32      | 11      | 8       | ... |
+| ...      | ...     | ...     | ...     | ... |
++----------+---------+---------+---------+-----+
+
+
+- In addition to your datasets, you need to provide:
+
+*Unique Compound ID*
+
+- The column name in your wide dataset that contains the unique IDs for
+your compounds. In our example dataset you would input *Compound*.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- If rows were dropped the output will be the changed Wide file
+
+- If columns were dropped the output will be both the changed Wide and Design Files
+
+
+    </help>
+</tool>
