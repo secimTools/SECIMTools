@@ -3,7 +3,7 @@
     <command interpreter="python">mergeFlags.py --input $input --output $output </command>
     <inputs>
         <param name="input" format="tabular" type="data"  label="Wide Dataset" multiple="true"
-               help="Input dataset in wide format and tab separated. If not tab separated see TIP below." >
+               help="Input dataset in wide format and tab separated.CTRL+CLICK to select multiple. If not tab separated see TIP below." >
         </param>
     </inputs>
     <outputs>
@@ -18,7 +18,8 @@
 
 **TIP:**
 If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
-Data sets also must have the same index!
+
+ Data sets also must have the same index!
 
 --------------------------------------------------------------------------------
 
