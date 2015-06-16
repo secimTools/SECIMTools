@@ -10,6 +10,8 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import scipy.stats as stats
+
 
 def getOptions():
     """ Function to pull in arguments """
@@ -53,10 +55,10 @@ def mahalnobisDistance(wide):
     MD = np.diag(np.sqrt(np.dot(np.dot(center.T, covHatInv), center)))
 
     # TODO: Maybe output the MD file in the future?
-    return plotMahalanobis(MD)
+    return plotMahalanobis(MD, numParam=wide.shape[1])
 
 
-def plotMahalanobis(MD):
+def plotMahalanobis(MD, numParam):
     """ Plot the Mahalanobis distance plot.
 
     Arguments:
@@ -78,9 +80,12 @@ def plotMahalanobis(MD):
     ax.set_ylabel('Difference')
 
     # Add a horizontal line above 95% of the data
-    ax.axhline(np.percentile(MD, 95), color='r', ls='--', lw=2)
-
+    ax.axhline(np.sqrt(stats.chi2.ppf(0.995, numParam)), color='r', ls='--', lw=2, label='99.5% $\chi^2$'.format(numParam))
+    ax.axhline(np.sqrt(stats.chi2.ppf(0.975, numParam)), color='y', ls='--', lw=2, label='97.5% $\chi^2$'.format(numParam))
+    ax.axhline(np.sqrt(stats.chi2.ppf(0.95, numParam)), color='c', ls='--', lw=2, label='95% $\chi^2$'.format(numParam))
+    plt.legend()
     return fig
+
 
 def galaxySavefig(fig, fname):
     """ Take galaxy DAT file and save as fig """
@@ -94,6 +99,7 @@ def galaxySavefig(fig, fname):
         fp.write(data)
     os.remove(png_out)
 
+
 def main(args):
     """ Main Script """
 
@@ -103,6 +109,7 @@ def main(args):
 
     galaxySavefig(fig=figure, fname=args.plot)
     # figure.savefig(args.plot + '.png', bbox_inches='tight')
+
 
 if __name__ == '__main__':
     # Turn on Logging if option -g was given
