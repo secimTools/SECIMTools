@@ -1,11 +1,3 @@
-## Goal ##
-# need a script that can merge all of your flag files together by index
-# Add logic to check if the indexs dont match and throw an error if they do not
-
-
-# parser.add_argument('--foo', nargs="+") '+' means one or more while '*' means any number
-# Add try catch and documentation
-
 # Author: Jonathan Poisson | poissonj@ufl.edu
 
 # Built-in packages
@@ -30,6 +22,15 @@ def getOptions():
     return args
 
 def mergeFlags(args):
+    """
+    Arguments:
+        :type args: argparse.ArgumentParser
+        :param args: Command line arguments
+
+    Returns:
+        :rtype: .tsv
+        :returns: Merged flags tsv file
+    """
     # Need to take each arg and turn into data frame and add to new list
     flagDataFrameList = []
     logger.info("Importing data")
@@ -44,16 +45,18 @@ def mergeFlags(args):
 
     logger.info("Checking all indexes are the same")
     counter = 0
-    while counter < len(flagDataFrameList) - 1:
-        if flagDataFrameList[counter].index.equals(flagDataFrameList[counter + 1].index):
-            counter += 1
-        else:
-            logger.error("Not all indexes the same")
-            counter += 1
+    try:
+        while counter < len(flagDataFrameList) - 1:
+            if flagDataFrameList[counter].index.equals(flagDataFrameList[counter + 1].index):
+                counter += 1
+            else:
+                raise IOError
+    except IOError:
+        logger.error("Not all indexes are the same")
+        raise SystemExit
 
     mergedFlags = pd.concat(flagDataFrameList, axis=1)
-    # mergedFlags.to_csv(args.mergedFile, sep='\t')
-    print mergedFlags.head()
+    mergedFlags.to_csv(args.mergedFile, sep='\t')
 def main(args):
     mergeFlags(args)
 
