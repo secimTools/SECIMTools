@@ -8,6 +8,8 @@ import os
 
 # Add-on packages
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as stats
@@ -54,16 +56,25 @@ def mahalnobisDistance(wide):
     # Calculate the mahalanobis distance sqrt{(Yi - Ybar)^T Sigma^-1 (Yi - Ybar)}
     MD = np.diag(np.sqrt(np.dot(np.dot(center.T, covHatInv), center)))
 
+    # Calculate cutoffs
+    numParam = wide.shape[1]
+    c99 = np.sqrt(stats.chi2.ppf(0.995, numParam))
+    c97 = np.sqrt(stats.chi2.ppf(0.975, numParam))
+    c95 = np.sqrt(stats.chi2.ppf(0.95, numParam))
+    cutoffs = (('99.5%', c99), ('97.5%', c97), ('95.0%', c95))
+
     # TODO: Maybe output the MD file in the future?
-    return plotMahalanobis(MD, numParam=wide.shape[1])
+    return plotMahalanobis(MD, cutoffs)
 
 
-def plotMahalanobis(MD, numParam):
+def plotMahalanobis(MD, cutoffs):
     """ Plot the Mahalanobis distance plot.
 
     Arguments:
         :type MD: numpy.array
         :param MD: An array of distances.
+
+        :param tuple cutoffs: A tuple with label and cutoff. Used a tuple so that sort order would be maintained.
 
     Returns:
         :return: Returns a figure object.
@@ -80,9 +91,9 @@ def plotMahalanobis(MD, numParam):
     ax.set_ylabel('Difference')
 
     # Add a horizontal line above 95% of the data
-    ax.axhline(np.sqrt(stats.chi2.ppf(0.995, numParam)), color='r', ls='--', lw=2, label='99.5% $\chi^2$'.format(numParam))
-    ax.axhline(np.sqrt(stats.chi2.ppf(0.975, numParam)), color='y', ls='--', lw=2, label='97.5% $\chi^2$'.format(numParam))
-    ax.axhline(np.sqrt(stats.chi2.ppf(0.95, numParam)), color='c', ls='--', lw=2, label='95% $\chi^2$'.format(numParam))
+    colors = ['r', 'y', 'c', 'b', 'k', 'm', 'g']
+    for i, val in enumerate(cutoffs):
+        ax.axhline(val[1], color=colors[i], ls='--', lw=2, label='{} $\chi^2$'.format(val[0]))
     plt.legend()
     return fig
 
@@ -104,8 +115,8 @@ def main(args):
     """ Main Script """
 
     # Convert inputted wide file to dataframe
-    df_wide = pd.DataFrame.from_csv(args.wide, sep='\t')
-    figure = mahalnobisDistance(df_wide)
+    df_trans = pd.DataFrame.from_csv(args.wide, sep='\t').T
+    figure = mahalnobisDistance(df_trans)
 
     galaxySavefig(fig=figure, fname=args.plot)
     # figure.savefig(args.plot + '.png', bbox_inches='tight')
