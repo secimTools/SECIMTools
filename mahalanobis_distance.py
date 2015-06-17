@@ -63,7 +63,7 @@ def mahalnobisDistance(wide):
     c95 = np.sqrt(stats.chi2.ppf(0.95, numParam))
     cutoffs = (('99.5%', c99), ('97.5%', c97), ('95.0%', c95))
 
-    # TODO: Maybe output the MD file in the future?
+    # TODO: Create a flag based on values greater than one of the cutoffs.
     return plotMahalanobis(MD, cutoffs)
 
 
