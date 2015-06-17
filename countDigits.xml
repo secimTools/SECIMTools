@@ -1,6 +1,6 @@
 <tool id="countDigits" name="Count Digits">
   <description>Count the number of digits before the period.</description>
-  <command interpreter="python">countDigits2.py --html $html --html_path "$html.files_path" --input $input --design $design --ID $uniqID
+  <command interpreter="python">countDigits.py --html $html --html_path "$html.files_path" --input $input --design $design --ID $uniqID
       #if $nozero:
           --noZero
       #end if

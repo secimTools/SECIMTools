@@ -1,0 +1,62 @@
+<tool id="mergeFlags" name="Merge Flags">
+    <description>Merge flags with same index together</description>
+    <command interpreter="python">mergeFlags.py --input $input --output $output </command>
+    <inputs>
+        <param name="input" format="tabular" type="data"  label="Wide Dataset" multiple="true"
+               help="Input dataset in wide format and tab separated.CTRL+CLICK to select multiple.
+               If not tab separated see TIP below." >
+        </param>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="output" label="MergedFlags"/>
+    </outputs>
+    <requirements>
+        <requirement type="python-module">pandas</requirement>
+    </requirements>
+    <help>
+
+.. class:: infomark
+
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+ Data sets also must have the same index!
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+This tool takes in any number of flag files with the same index and merges them
+together into one easy to read table
+
+
+**Input**
+
+
+
+
+ **Flags File:**
+ A flag file corresponding to flagged values of of the wide and design files::
+
+  +----------+---------+---------+---------+-----+
+  | Compound | sample1 | sample2 | sample3 | ... |
+  +==========+=========+=========+=========+=====+
+  | one      | 0       | 0       | 10      | ... |
+  | two      | 5       | 0       | 30      | ... |
+  | three    | 0       | 12      | 2       | ... |
+  | four     | 32      | 11      | 8       | ... |
+  |  ...     | ...     | ...     | ...     | ... |
+  +----------+---------+---------+---------+-----+
+
+ - Indexes must be the same for the data sets
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- .tsv of merged flag data sets
+
+
+
+    </help>
+</tool>

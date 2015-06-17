@@ -79,25 +79,6 @@ def getOptions(myopts=None):
     else:
         args = parser.parse_args(myopts)
 
-#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_log.tsv',
-#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design.tsv',
-#                               '--ID', 'Name',
-#                               '--group', 'treatment',
-#                               '--ba', '/home/jfear/sandbox/secim/data/test_ba.pdf',
-#                               '--flag_dist', '/home/jfear/sandbox/secim/data/test_dist.pdf',
-#                               '--flag_summary', '/home/jfear/sandbox/secim/data/test_flag_summary.tsv',
-#                               '--process_only', '02_uM_palmita',
-#                               '--debug'])
-
-#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/BR1_FTA_43_peak_intensity_data_log.tsv',
-#                               '--design', '/home/jfear/sandbox/secim/data/BR1_FTA_43_design.tsv',
-#                               '--ID', 'ppm',
-#                               '--group', 'groupID',
-#                               '--ba', '/home/jfear/sandbox/secim/data/test_ba.pdf',
-#                               '--flag_dist', '/home/jfear/sandbox/secim/data/test_dist.pdf',
-#                               '--flag_summary', '/home/jfear/sandbox/secim/data/test_flag_summary.tsv',
-#                               '--debug'])
-
     # Check mutually inclusive options
     if (args.flagTable and not args.flagDesign) or (args.flagDesign and not args.flagTable):
         parser.error('--flag_table and --flag_design are both needed if you want to output raw pairwise flags.')
@@ -381,21 +362,10 @@ def makeBA(x, y, ax, cutoff):
     mask2 = infl['cooks_pval'] <= 0.5
     mask3 = infl['dffits']
     mask = mask1 | mask2 | mask3
-    #maskC12 = mask1 & mask2
-    #maskC13 = mask1 & mask3
-    #maskC23 = mask2 & mask3
-    #maskC123 = mask1 & mask2 & mask3
 
     # Plot
     ax.scatter(x=mean[~mask], y=diff[~mask])
     ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Outliers'.format(cutoff))
-    #ax.scatter(x=mean[mask1], y=diff[mask1], color='r', label='Outliers [abs(residual) > {}]'.format(cutoff))
-    #ax.scatter(x=mean[mask2], y=diff[mask2], color='g', label='Leverage [cooksD p-val > 0.5)')
-    #ax.scatter(x=mean[mask3], y=diff[mask3], color='k', label='Dffits')
-    #ax.scatter(x=mean[maskC12], y=diff[maskC12], color='c', label='Both Outlier and Cooks')
-    #ax.scatter(x=mean[maskC13], y=diff[maskC13], color='m', label='Both Outlier and Dffits')
-    #ax.scatter(x=mean[maskC23], y=diff[maskC23], color='y', label='Both Cooks and Dffits')
-    #ax.scatter(x=mean[maskC123], y=diff[maskC123], color='r', marker='s', s=50, label='Outlier, Cooks, and Dffits')
     ax.legend(loc='center left', bbox_to_anchor=(1, 1), fontsize=10)
 
     #ax.plot(mean, lower, 'r:')
