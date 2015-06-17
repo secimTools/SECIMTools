@@ -1,13 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <toolbox>
     <section id="secim" name="SECIM Tools">
-        <tool file="secimtools/countDigits.xml"/>
-        <tool file="secimtools/distribution.xml"/>
-        <tool file="secimtools/dropFlag.xml"/>
         <tool file="secimtools/log_transform.xml"/>
         <tool file="secimtools/mean_standardize.xml"/>
+        <tool file="secimtools/countDigits.xml"/>
+        <tool file="secimtools/distribution.xml"/>
         <tool file="secimtools/mahalanobis_distance.xml"/>
         <tool file="secimtools/baPlot.xml"/>
+        <tool file="secimtools/mergeFlags.xml"/>
+        <tool file="secimtools/dropFlag.xml"/>
         <tool file="secimtools/pca.xml"/>
         <tool file="secimtools/scatterPlot.xml"/>
         <tool file="secimtools/scatterPlot3D.xml"/>
@@ -16,6 +17,5 @@
         <tool file="secimtools/anova.xml"/>
         <tool file="secimtools/RandomForest.xml"/>
         <tool file="secimtools/SVM_classifier.xml"/>
-        <tool file="secimtools/mergeFlags.xml"/>
     </section>
 </toolbox>
