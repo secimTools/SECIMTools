@@ -7,6 +7,7 @@ from argparse import RawDescriptionHelpFormatter
 import tempfile
 import shutil
 import os
+from math import log, floor
 
 # Add-on packages
 import matplotlib
@@ -35,9 +36,9 @@ def getOptions(myopts=None):
     parser.add_argument("--pctl", dest = "p90p10", action = 'store_true', required = False, default = False, help = "The difference is calculated by 95th percentile and 5th percentile by default. If you add this argument, it uses 90th percentile and 10th percentile. [optional]")
     parser.add_argument("--html", dest = "html", action = 'store', required = False, default = False, help = "Html file outut name. Do not use for cammand line use. [optional]")
     parser.add_argument("--htmlPath", dest = "htmlPath", action = 'store', required = True, help = "Path to save created files and html file")
-    parser.add_argument("--RTflag", dest = "outfile", action = 'store', required = True, help = "Output filename of RT flags.")
+    parser.add_argument("--RTflagOutFile", dest = "outfile", action = 'store', required = False, default = 'RTflag', help = "Output filename of RT flags. The default is [RTflag]. [optional]")
     parser.add_argument("--CVcutoff", dest = "CVcutoff", action = 'store', required = False, default = False, help = "The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here. [optional]")
-    parser.add_argument("--CVplot", dest = "CVplot", action = 'store', required = True, help = "Output filename of CV plot.")
+    parser.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = False, default = False, help = "Output filename of CV plot. If you do not need a plot of CV, do not use this argument. [optional]")
 
     if myopts:
         args = parser.parse_args(myopts)
@@ -108,17 +109,19 @@ def setRTflag(args, wide, dat, dir, groupName = ''):
     # Set RT flags
     RTflag = pd.DataFrame(index=RTround.index)
     if args.p90p10:
-        RTflag['flag_RT_Q90Q10_outlier'] = RTstat['p90p10'] > 0.2
+        RTflag['flag_RT_Q90Q10_outlier'] = (RTstat['p90p10'] > 0.2)
     else:
-        RTflag['flag_RT_Q95Q05_outlier'] = RTstat['p95p05'] > 0.2
-    RTflag['flag_RT_max_gt_threshold'] = RTstat['max'] - RTstat['median'] > 0.1
-    RTflag['flag_RT_min_lt_threshold'] = RTstat['min'] - RTstat['median'] < -0.1
-    RTflag['flag_RT_min_max_outlier'] = (RTstat['max']-RTstat['mean']>3*RTstat['std']) | (RTstat['min']-RTstat['mean']<-3*RTstat['std'])
+        RTflag['flag_RT_Q95Q05_outlier'] = (RTstat['p95p05'] > 0.2)
+    RTflag['flag_RT_max_gt_threshold'] = (RTstat['max'] - RTstat['median'] > 0.1)
+    RTflag['flag_RT_min_lt_threshold'] = (RTstat['min'] - RTstat['median'] < -0.1)
+    RTflag['flag_RT_min_max_outlier'] = ((RTstat['max']-RTstat['mean']>3*RTstat['std']) | (RTstat['min']-RTstat['mean']<-3*RTstat['std']))
     if not args.CVcutoff:
         CVcutoff = np.percentile(RTstat['cv'].values, q=90)
+        CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
     else:
         CVcutoff = args.CVcutoff
-    RTflag['flag_RT_big_CV'] = RTstat['cv'] > CVcutoff
+    RTflag['flag_RT_big_CV'] = (RTstat['cv'] > CVcutoff)
+    RTflag = RTflag.applymap(lambda x: int(x))
 
     # Output flags
     RTflagFileName = FileName(text = args.outfile, fileType = '.tsv', groupName = groupName)
@@ -129,16 +132,22 @@ def setRTflag(args, wide, dat, dir, groupName = ''):
         htmlContents.append('<li style=\"margin-bottom:1.5%;\"><a href="{}">{}</a></li>'.format(RTflagFileName.fileName, groupName + ' RTflag'))
         
     # Plot RT CVs
-    fig, ax = plt.subplots()
-    ax.set_xlim(-np.percentile(RTstat['cv'].values,99)*0.5, np.percentile(RTstat['cv'].values,99)*1.5)
-    RTstat['cv'].plot(kind='hist', ax=ax)
-    hist, bins = np.histogram(RTstat['cv'])
-    ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum(), width = np.percentile(RTstat['cv'].values,99) / 100, color = 'grey')
-    RTstat['cv'].plot(kind='kde', title="Density Plot of Coefficients of Variation of the Retention Time", ax=ax)
-    plt.axvline(x=CVcutoff, color = 'red')
-    CVplotFileName = FileName(text = args.CVplot, fileType = '.pdf', groupName = groupName)
-    CVplotFileNameWithDir = dir + CVplotFileName.fileNameWithSlash
-    plt.savefig(CVplotFileNameWithDir, format='pdf')
+    if args.CVplot:
+        fig, ax = plt.subplots()
+        xmin, xmax = ax.get_xlim()
+        xmin = -np.percentile(RTstat['cv'].values,99)*0.2
+        xmax = min(xmax, np.percentile(RTstat['cv'].values,99)*1.5)
+        ax.set_xlim(xmin, xmax)
+        #RTstat['cv'].plot(kind='hist', ax=ax)
+        #hist, bins = np.histogram(RTstat['cv'], range = (xmin, xmax), bins = 20)
+        #ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum() * 100, width = bins[1] - bins[0], color = 'grey')
+        plt.hist(RTstat['cv'], range = (xmin, xmax), bins = 15, normed = 1, color = 'grey')
+        RTstat['cv'].plot(kind='kde', title="Density Plot of Coefficients of Variation of the Retention Time", ax=ax, label = "CV density")
+        plt.axvline(x=CVcutoff, color = 'red', linestyle = 'dashed', label = "Cutoff at: {0}".format(CVcutoff))
+        plt.legend()
+        CVplotFileName = FileName(text = args.CVplot, fileType = '.pdf', groupName = groupName)
+        CVplotFileNameWithDir = dir + CVplotFileName.fileNameWithSlash
+        plt.savefig(CVplotFileNameWithDir, format='pdf')
 
 def main(args):
     """ """

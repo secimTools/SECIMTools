@@ -7,7 +7,7 @@ from argparse import RawDescriptionHelpFormatter
 import tempfile
 import shutil
 import os
-from math import log
+from math import log, floor
 
 # Add-on packages
 import matplotlib
@@ -31,14 +31,15 @@ def getOptions(myopts=None):
     parser.add_argument("--input", dest = "fname", action = 'store', required = True, help = "Input dataset in wide format.")
     parser.add_argument("--design", dest = "dname", action = 'store', required = True, help = "Design file.")
     parser.add_argument("--ID", dest = "uniqID", action = 'store', required = True, help = "Name of the column with unique identifiers.")
+    parser.add_argument("--log", dest = "log", action = 'store_true', required = False, default = False, help = "Put this argument if the data needs rounding to 3 significant digits and a log transformation (Usually for peak area and peak height). [option]")
     parser.add_argument("--debug", dest = "debug", action = 'store_true', required = False, help = "Add debugging log output. [optional]")
     parser.add_argument("--group", dest = "group", action = 'store', required = False, default = False, help = "Add option to separate sample IDs by treatment name. [optional]")
     parser.add_argument("--html", dest = "html", action = 'store', required = False, default = False, help = "Html file outut name. Do not use for cammand line use. [optional]")
     parser.add_argument("--htmlPath", dest = "htmlPath", action = 'store', required = True, help = "Path to save created files and html file")
-    parser.add_argument("--CVflag", dest = "outfile", action = 'store', required = True, help = "Output filename of CV flags.")
-    parser.add_argument("--CVtype", dest = "CVtype", action = 'store', required = False, default = False, help = "Only for the use of flag name. E.g. if you put PA, the name of the flag is flag_PA_big_CV. If leave it empty, the name is flag_big_CV. [optional]")
+    parser.add_argument("--CVflag", dest = "outfile", action = 'store', required = False, default = False, help = "Output filename of CV flags. The default is [CVflag]. [optional]")
+    parser.add_argument("--CVtype", dest = "CVtype", action = 'store', required = False, default = False, help = "Only for the use of flag name. E.g. if you put PA, the name of the flag is flag_PA_big_CV. If leave it empty, the name is flag_big_CV as default. [optional]")
     parser.add_argument("--CVcutoff", dest = "CVcutoff", action = 'store', required = False, default = False, help = "The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here. [optional]")
-    parser.add_argument("--CVplot", dest = "CVplot", action = 'store', required = False, default = False, help = "Output filename of CV plot. [optional]")
+    parser.add_argument("--CVplot", dest = "CVplot", action = 'store', required = False, default = False, help = "Output filename of CV plot. If you do not need a plot of CV, do not use this argument. [optional]")
 
     if myopts:
         args = parser.parse_args(myopts)
@@ -89,7 +90,9 @@ def setCVflagByGroup(args, wide, dat, dir):
 def setCVflag(args, wide, dat, dir, groupName = ''):
     
     # Round all values to 3 significant digits
-    DATround = wide.applymap(lambda x: round(x, int(log(abs(x), 10)) - 3))
+    DATround = wide.applymap(lambda x: x)
+    if args.log:
+        DATround = DATround.applymap(lambda x: log(round(x, -int(floor(log(abs(x), 10))) + 2)))
     
     # Get std, mean and calculate CV
     DATstat = pd.DataFrame(index=DATround.index)
@@ -101,13 +104,18 @@ def setCVflag(args, wide, dat, dir, groupName = ''):
     CVflag = pd.DataFrame(index=DATround.index)
     if not args.CVcutoff:
         CVcutoff = np.percentile(DATstat['cv'].values, q=90)
+        CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
     else:
         CVcutoff = args.CVcutoff
-    if groupName == '':
+    if not groupName == '':
         grName = '_' + groupName
+    else:
+        grName = ''
     if args.CVtype:
         CVtype = '_' + args.CVtype
-    flagName = 'flag' + CVtype + groupName + '_big_CV'
+    else:
+        CVtype = ''
+    flagName = 'flag' + CVtype + grName + '_big_CV'
     CVflag[flagName] = DATstat['cv'] > CVcutoff
     CVflag = CVflag.applymap(lambda x: int(x))
 
@@ -123,14 +131,16 @@ def setCVflag(args, wide, dat, dir, groupName = ''):
     if args.CVplot:
         fig, ax = plt.subplots()
         xmin, xmax = ax.get_xlim()
-        xmin = max(xmin, -np.percentile(DATstat['cv'].values,99)*0.5)
-        xmax = min(xmax, np.percentile(DATstat['cv'].values,99)*1.5)
+        xmin = -np.percentile(DATstat['cv'].values,99)*0.2
+        xmax = np.percentile(DATstat['cv'].values,99)*1.5
         ax.set_xlim(xmin, xmax)
         #DATstat['cv'].plot(kind='hist', ax=ax)
-        hist, bins = np.histogram(DATstat['cv'])
-        ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum() * 100, width = (xmax-xmin)/10, color = 'grey')
-        DATstat['cv'].plot(kind='kde', title="Density Plot of Coefficients of Variation", ax=ax)
-        plt.axvline(x=CVcutoff, color = 'red')
+        #hist, bins = np.histogram(DATstat['cv'], range = (xmin, xmax), bins = 20)
+        #ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum() * 100, width = bins[1] - bins[0], color = 'grey')
+        plt.hist(DATstat['cv'], range = (xmin, xmax), bins = 15, normed = 1, color = 'grey')
+        DATstat['cv'].plot(kind='kde', title="Density Plot of Coefficients of Variation", ax=ax, label = "CV density")
+        plt.axvline(x=CVcutoff, color = 'red', linestyle = 'dashed', label = "Cutoff at: {0}".format(CVcutoff))
+        plt.legend()
         CVplotFileName = FileName(text = args.CVplot, fileType = '.pdf', groupName = groupName)
         CVplotFileNameWithDir = dir + CVplotFileName.fileNameWithSlash
         plt.savefig(CVplotFileNameWithDir, format='pdf')
