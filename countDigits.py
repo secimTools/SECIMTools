@@ -107,7 +107,7 @@ def countDigitsByGroups(args, wide, dat, dir):
             :param string dir: String of the directory name for storing files in galaxy
     """
 
-    # Split Design file by treatment group
+    # Split Design file by group
     try:
         for title, group in dat.design.groupby(args.group):
 
@@ -118,7 +118,7 @@ def countDigitsByGroups(args, wide, dat, dir):
             dat.sampleIDs = group.index
 
             countDigits(currentFrame, dat, dir=dir, groupName=title)
-    except KeyError as e:
+    except KeyError:
         logger.error("{} is not a column name in the design file.".format(args.group))
     except Exception as e:
         logger.error("Error. {}".format(e))
