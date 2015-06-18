@@ -97,17 +97,20 @@ class FlagOutlier:
     """
     def __init__(self, index):
         """
-        Args:
-            index (pd.Index): Index containing a list of compounds, will be
+        Arguments:
+            :type index: pandas.Index
+            :param index: Index containing a list of compounds, will be
                 used to create row index for flag table.
 
         Attributes:
-            self.cnt (int): A counter for keep track of pairwise flag names.
+            :param int self.cnt: A counter for keep track of pairwise flag names.
 
-            self.flag_outlier (pd.DataFrame): Data frame containing compound as
-                row and flag name as columns.
+            :type self.flag_outlier: pandas.DataFrame
+            :param self.flag_outlier: Data frame containing compound as row and
+                flag name as columns.
 
-            self.design (pd.DataFrame): Data frame relating flag name back to
+            :type self.design: pandas.DataFrame
+            :param self.design: Data frame relating flag name back to
                 pairwise sample comparisons.
 
         """
@@ -121,14 +124,15 @@ class FlagOutlier:
         Where 0 indicates a compound was not an outlier and 1 indicates that it
         was an outlier.
 
-        Args:
-            outlierMask (bool array-like): This is a boolean array-like object
+        Arguments:
+            :type outlierMask: pandas.Series
+            :param outlierMask: This is a boolean array-like object
                 (i.e., pandas series) that is True for compounds that are outliers
                 and False for compounds that are not outliers.
 
-        Returns:
-            self.flag_outlier: Updates self.flag_outlier with 0|1 flags.
-            self.cnt: increments self.cnt by 1
+        Attributes:
+            :param int self.flag_outlier: Updates self.flag_outlier with 0|1 flags.
+            :param int self.cnt: increments self.cnt by 1
 
         """
 
@@ -148,16 +152,16 @@ class FlagOutlier:
     def summarizeSampleFlags(self, data):
         """ Summarize flag_outlier to the sample level for easy qc.
 
-        Args:
-            data (pd.DataFrame): Wide formatted dataframe that is used to get
+        Arguments:
+            :type data: pandas.DataFrame
+            :param data: Wide formatted dataframe that is used to get
                 row and column labels for flag summary.
 
-        Returns:
-            summary (pd.DataFrame): Dataframe where values are the sum of flags
-                for pairwise comparison.
+        :rtype: pandas.DataFrame
+        :returns: Dataframe where values are the sum of flags for pairwise
+            comparison.
 
         """
-
         # Create a new dataframe to hold summarized flags
         summary = pd.DataFrame(index=data.index)
 
@@ -188,25 +192,29 @@ def iterateCombo(data, combos, out, flags, cutoff, group=None):
     This is a wrapper function to iterate over pairwise combinations and
     generate plots.
 
-    Args:
-        data (pd.DataFrame): Data frame containing data in wide format compound
+    Arguments:
+        :type data: pandas.DataFrame
+        :param data: Data frame containing data in wide format compound
             as rows and samples as columns.
 
-        combos (list): List of tuples of pairwise combinations of samples.
+        :param list combos: List of tuples of pairwise combinations of samples.
 
-        out (PdfPages): Handler for multi-page PDF that will contain all plots.
+        :type out: PdfPages
+        :param out: Handler for multi-page PDF that will contain all plots.
 
-        flags (FlagOutlier): FlagOutlier object.
+        :type flags: FlagOutlier
+        :param flags: FlagOutlier object.
 
-        group (str): Default is None if there are no groups. Otherwise it is
+        :param str group: Default is None if there are no groups. Otherwise it is
             the name of the current group. This value will be used in plot
             titles if present.
 
-    Returns:
-        out (PdfPages): A multi-page PDF containing scatter and BA plots.
+    Updates:
+        :type out: PdfPages
+        :param out: Handler for multi-page PDF that will contain all plots.
 
-        flags (FlagOutlier): Updated FlagOutlier object containing a table of
-            outlier flags.
+        :type flags: FlagOutlier
+        :param flags: FlagOutlier object.
 
     """
     # How many rows are there in total
@@ -254,10 +262,12 @@ def plotLeverageDensity(infl):
 def runRegression(x, y):
     """ Run a linear regression.
 
-    Args:
-        x (pd.Series): Series of first sample, treated as independent variable.
+    Arguments:
+        :type x: pandas.Series
+        :param x: Series of first sample, treated as independent variable.
 
-        y (pd.Series): Series of second sample, treated as dependent variables.
+        :type y: pandas.Series
+        :param y: Series of second sample, treated as dependent variables.
 
     Returns:
         lower (pd.Series): Series of values for lower confidence interval.
@@ -299,15 +309,19 @@ def runRegression(x, y):
 def makeScatter(x, y, ax):
     """ Plot a scatter plot of x vs y.
 
-    Args:
-        x (pd.Series): Series of first sample, treated as independent variable.
+    Arguments:
+        :type x: pandas.Series
+        :param x: Series of first sample, treated as independent variable.
 
-        y (pd.Series): Series of second sample, treated as dependent variables.
+        :type y: pandas.Series
+        :param y: Series of second sample, treated as dependent variables.
 
-        ax (matplotlib axis): Axis which to plot.
+        :type ax: matplotlib.axis
+        :param ax: Axis which to plot.
 
     Returns:
-        ax (mapltolib axis): Axis with a scatter plot comparing x vs y with a
+        :rtype: matplotlib.axis
+        :returns: Axis with a scatter plot comparing x vs y with a
             regression line of fitted values (black) and the upper and lower
             confidence intervals (red).
 
@@ -335,21 +349,27 @@ def makeScatter(x, y, ax):
 def makeBA(x, y, ax, cutoff):
     """ Function to make BA Plot comparing x vs y.
 
-    Args:
-        x (pd.Series): Series of first sample, treated as independent variable.
+    Arguments:
+        :type x: pandas.Series
+        :param x: Series of first sample, treated as independent variable.
 
-        y (pd.Series): Series of second sample, treated as dependent variables.
+        :type y: pandas.Series
+        :param y: Series of second sample, treated as dependent variables.
 
-        ax (matplotlib axis): Axis which to plot.
+        :type ax: matplotlib.axis
+        :param ax: Axis which to plot.
 
     Returns:
-        ax (mapltolib axis): Axis with a Bland-Altman plot comparing x vs y with a
-            horizontal line at y = 0 (black) and the upper and lower
-            confidence intervals (red).
+        :rtype: tuple of (matplotlib.axis, pandas.Series)
+        :returns: tuple
 
-        mask (pd.Series BOOL): Series containing Boolean values with True
-            indicating a value is more extreme than CI and should be an outlier and
-            False indicating a value falls inside CI.
+            - *ax* is an axis with a Bland-Altman plot comparing x vs y with a
+              horizontal line at y = 0 (black) and the upper and lower
+              confidence intervals (red).
+
+            - *mask* is a series containing Boolean values with True
+              indicating a value is more extreme than CI and should be an
+              outlier and False indicating a value falls inside CI.
 
     """
     # Make BA plot
@@ -385,12 +405,13 @@ def makeBA(x, y, ax, cutoff):
 
 def buildTitle(xname, yname, group, missing):
     """ Build plot title.
-    Args:
-        xname (str): String containing the sampleID for x
 
-        yname (str): String containing the sampleID for y
+    Arguments:
+        :param str xname: String containing the sampleID for x
 
-        group (str): String containing the group information. If no group then
+        :param str yname: String containing the sampleID for y
+
+        :param str group: String containing the group information. If no group then
             None.
 
     """
@@ -413,12 +434,15 @@ def plotFlagDist(summary, out):
 
     Sum outlier flags over samples and compounds and graph distribution.
 
-    Args:
-        summary (pd.DataFrame): DataFrame of flags summarized to sample level.
+    Arguments:
+        :type summary: pandas.DataFrame
+        :param summary: DataFrame of flags summarized to sample level.
 
-        out (str): Filename of pdf to save plots.
+        :param str out: Filename of pdf to save plots.
+
     Returns:
-        Saves two bar plots to pdf.
+        :rtype: PdfPages
+        :returns: Saves two bar plots to pdf.
 
     """
     # Sum flags across samples
