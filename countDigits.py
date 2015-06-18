@@ -32,6 +32,7 @@ def getOptions(myopts=None):
     parser.add_argument("--html", dest="html", action='store', required=False, help="Html file output name")
     parser.add_argument("--html_path", dest="htmlPath", action='store', required=True, help="Path to save created files and html file")
     parser.add_argument("--noZip", dest="noZip", action='store_true', required=False, default=False, help="If running from command line use --noZip to skip the zip creation. This stops the command line from freezing")
+    parser.add_argument("--flags", dest="flags", action='store', required=True, help="Flag file output")
 
 
     if myopts:
@@ -123,8 +124,6 @@ def countDigitsByGroups(args, wide, dat, dir):
         logger.error("Error. {}".format(e))
 
 
-
-
 def countDigits(wide, dat, dir, groupName=''):
     """ Function to create and export the counts, figure, and summary files
         Arguments:
@@ -136,8 +135,9 @@ def countDigits(wide, dat, dir, groupName=''):
 
             :param string dir: String of the directory name for storing files in galaxy
 
-            :param string groupName: Name of the group if using thre group option. Set to an empty stirng by default
+            :param string groupName: Name of the group if using the group option. Set to an empty stirng by default
     """
+
 
     # Count the number of digits before decimal and get basic distribution info
     cnt = wide.applymap(lambda x: splitDigit(x))
@@ -146,6 +146,11 @@ def countDigits(wide, dat, dir, groupName=''):
     cnt['diff'] = cnt['max'] - cnt['min']
     cnt['argMax'] = cnt[dat.sampleIDs].apply(np.argmax, axis=1)
     cnt['argMin'] = cnt[dat.sampleIDs].apply(np.argmin, axis=1)
+
+    # Create mask of differences. If the difference is greater than 1 a flag needs to be made
+    mask = cnt['diff'] >= 2
+    # Update the global flag file with mask
+    df_flags[mask] = 1
 
     # write output
     cntFileName = FileName(text='counts', fileType='.tsv', groupName=groupName)
@@ -224,7 +229,14 @@ def main(args):
     # Only interested in samples
     wide = dat.wide[dat.sampleIDs]
 
-    # Use group separation or not depending on user input
+    # Global flag file
+    global df_flags
+    df_flags = pd.DataFrame(index=wide.index, columns=['flag_feature_count_digits'])
+    # Set values equal to 0
+    df_flags.fillna(0, inplace=True)
+
+
+# Use group separation or not depending on user input
     if args.group:
         countDigitsByGroups(args, wide, dat, dir=directory)
 
@@ -248,6 +260,9 @@ def main(args):
     htmlFile.write("\n".join(htmlContents))
     htmlFile.write("\n")
     htmlFile.close()
+
+    # Output flag file
+    df_flags.to_csv(args.flags, sep="\t")
 
 
 if __name__ == '__main__':
