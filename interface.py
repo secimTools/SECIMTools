@@ -242,13 +242,81 @@ class wideToDesign:
             self.uniqID (str): The name of the unique identifier column in 'wide'
                 (i.e. The column with compound/gene names).
 
-            ID (str): A string refering to a uniqID in the dataset.
+            ID (str): A string referring to a uniqID in the dataset.
 
         Returns:
             (pd.DataFrame): with only the corresponding rows from the uniqID.
 
         """
         return self.wide[self.wide[self.uniqID] == ID]
+
+
+class Flags():
+    def __init__(self, index, column):
+        """
+        This class  creates an empty dataframe to hold the flag values for a dataset. The dataframe is created
+        through instantiation and filled with 0's.
+
+        Arguments:
+
+            :param index: List of values to be used as the index of the data frame
+            :type index: list
+
+            :param column: Column name for the dataframe
+            :type column: string
+
+        """
+        # Create DataFrame from index and columns
+        self.df_flags = pd.DataFrame(index=index, columns=[column])
+
+        # Set DF values equal to 0
+        self.df_flags.fillna(0, inplace=True)
+
+    def update(self, mask):
+        """
+        Update the dataframe with 1's if the mask value is true
+
+        Arguments:
+            :param list mask: List of mask values. Must follow same structure as instantiated flag dataframe
+            :type mask: list
+
+        Returns:
+            Updated instance of the flag dataframe. The dataframe can be accessed through '.df_flags'.
+        """
+
+        # Update the values to 1's if they are true in the mask
+        self.df_flags[mask] = 1
+
+    @staticmethod
+    def merge(flags):
+        """
+        Merge a list of DataFrames. This method will check to make sure all of the indices are the same for each
+        DataFrame and will then return one merged DataFrame.
+
+        Arguments:
+
+            :param flags: List of DataFrames
+            :type flags: list
+
+        Returns:
+
+            :return: DataFrame of merged flags
+            :rtype: pandas.DataFrame
+        """
+        # Check the index of each dataframe before trying to merge
+        counter = 0
+        while counter < len(flags) - 1:
+            if flags[counter].index.equals(flags[counter + 1].index):
+                counter += 1
+            else:
+                print "Not all indexes are the same"
+                raise SystemExit
+
+        # Merge all flags together
+        df_mergedFlags = pd.concat(flags, axis=1)
+
+        # Return merged flag file
+        return df_mergedFlags
 
 if __name__ == '__main__':
     pass

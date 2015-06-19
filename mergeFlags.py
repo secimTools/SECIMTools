@@ -9,6 +9,7 @@ import pandas as pd
 
 # Local Packages
 import logger as sl
+from interface import Flags
 
 def getOptions():
     """ Function to pull in arguments """
@@ -45,20 +46,10 @@ def mergeFlags(args):
         flagDataFrameList.append(dataFrame)
 
     logger.info("Checking all indexes are the same")
-    counter = 0
-    try:
-        while counter < len(flagDataFrameList) - 1:
-            # Check the index of a dataframe compared to the rest of the dataframe's indexes
-            if flagDataFrameList[counter].index.equals(flagDataFrameList[counter + 1].index):
-                counter += 1
-            else:
-                raise IOError
-    except IOError:
-        logger.error("Not all indexes are the same")
-        raise SystemExit
 
-    # Merge flags together
-    mergedFlags = pd.concat(flagDataFrameList, axis=1)
+    # Merge flags using Flags class
+    mergedFlags = Flags.merge(flagDataFrameList)
+
     # Export merged flags
     mergedFlags.to_csv(args.mergedFile, sep='\t')
 
