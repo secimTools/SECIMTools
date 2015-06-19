@@ -528,6 +528,16 @@ def main(args):
     summary2 = summary.astype('int64')
     summary2.to_csv(args.flagSummary, sep='\t')
 
+    # Create metabolite level flags
+    flag_metabolite = pd.DataFrame((summary2.sum(axis=1) > 1).astype(int))
+    flag_metabolite.columns = ['flag_feature_BA_outlier']
+    flag_metabolite.to_csv('/home/jfear/tmp/flag_met.csv')
+
+    # Create sample level flags
+    flag_sample = pd.DataFrame((summary2.sum(axis=0) > 1).astype(int))
+    flag_sample.columns = ['flag_sample_BA_outlier']
+    flag_sample.to_csv('/home/jfear/tmp/flag_sample.csv')
+
     # Output Raw Flags
     if args.flagTable and args.flagDesign:
         logger.info('Outputting raw outlier flags.')
