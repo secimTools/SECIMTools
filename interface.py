@@ -251,7 +251,7 @@ class wideToDesign:
         return self.wide[self.wide[self.uniqID] == ID]
 
 
-class Flags():
+class Flags:
     def __init__(self, index, column):
         """
         This class  creates an empty dataframe to hold the flag values for a dataset. The dataframe is created
