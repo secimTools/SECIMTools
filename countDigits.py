@@ -17,6 +17,7 @@ import pandas as pd
 
 # Local Packages
 from interface import wideToDesign
+from interface import Flags
 import logger as sl
 
 def getOptions(myopts=None):
@@ -150,7 +151,7 @@ def countDigits(wide, dat, dir, groupName=''):
     # Create mask of differences. If the difference is greater than 1 a flag needs to be made
     mask = cnt['diff'] >= 2
     # Update the global flag file with mask
-    df_flags[mask] = 1
+    flag.update(mask)
 
     # write output
     cntFileName = FileName(text='counts', fileType='.tsv', groupName=groupName)
@@ -230,10 +231,8 @@ def main(args):
     wide = dat.wide[dat.sampleIDs]
 
     # Global flag file
-    global df_flags
-    df_flags = pd.DataFrame(index=wide.index, columns=['flag_feature_count_digits'])
-    # Set values equal to 0
-    df_flags.fillna(0, inplace=True)
+    global flag
+    flag = Flags(index=wide.index, column=['flag_feature_count_digits'])
 
 
 # Use group separation or not depending on user input
@@ -262,7 +261,7 @@ def main(args):
     htmlFile.close()
 
     # Output flag file
-    df_flags.to_csv(args.flags, sep="\t")
+    flag.df_flags.to_csv(args.flags, sep="\t")
 
 
 if __name__ == '__main__':
