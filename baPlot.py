@@ -19,6 +19,7 @@ from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
 # Local Packages
 from interface import wideToDesign
+from interface import Flags
 import logger as sl
 
 # Globals
@@ -74,10 +75,7 @@ def getOptions(myopts=None):
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 
-    if not myopts:
-        args = parser.parse_args()
-    else:
-        args = parser.parse_args(myopts)
+    args = parser.parse_args()
 
     # Check mutually inclusive options
     if (args.flagTable and not args.flagDesign) or (args.flagDesign and not args.flagTable):
@@ -186,7 +184,7 @@ class FlagOutlier:
         return summary
 
 
-def iterateCombo(data, combos, out, flags, cutoff, group=None):
+def iterateCombo(data, combos, out, flags, group=None):
     """ Iterate over pairwise combinations and generate plots.
 
     This is a wrapper function to iterate over pairwise combinations and
@@ -236,7 +234,7 @@ def iterateCombo(data, combos, out, flags, cutoff, group=None):
         ax1 = makeScatter(subset.iloc[:, 0], subset.iloc[:, 1], ax1)
 
         # BA plot
-        ax2, outlier = makeBA(subset.iloc[:, 0], subset.iloc[:, 1], ax2, cutoff)
+        ax2, outlier = makeBA(subset.iloc[:, 0], subset.iloc[:, 1], ax2)
 
         # Add plot title
         title = buildTitle(combo[0], combo[1], group, missing)
@@ -346,7 +344,7 @@ def makeScatter(x, y, ax):
     return ax
 
 
-def makeBA(x, y, ax, cutoff):
+def makeBA(x, y, ax):
     """ Function to make BA Plot comparing x vs y.
 
     Arguments:
@@ -483,7 +481,6 @@ def convertToInt(x):
 
 
 def main(args):
-    print args
     # Import data
     logger.info('Importing Data')
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
@@ -508,14 +505,14 @@ def main(args):
     # If group is given, only do within group pairwise combinations
     if args.group:
         logger.info('Only doing within group, pairwise comparisons.')
-        for i, val in dat.design.groupby(dat.group):
-            combos = list(combinations(val.index, 2))
-            iterateCombo(wide, combos, ppBA, flags, args.cutoff, group=i)
+        for groupName, dfGroup in dat.design.groupby(dat.group):
+            combos = list(combinations(dfGroup.index, 2))
+            iterateCombo(wide, combos, ppBA, flags, group=groupName)
     else:
         logger.info('Doing all pairwise comparisons. This could take a while!')
         # Get all pairwise combinations for all samples
         combos = list(combinations(dat.sampleIDs, 2))
-        iterateCombo(wide, combos, ppBA, flags, args.cutoff, group=None)
+        iterateCombo(wide, combos, ppBA, flags, group=None)
 
     # Close PDF with plots
     ppBA.close()
@@ -550,6 +547,10 @@ def main(args):
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
+
+    # Expose cutoff as global
+    global cutoff
+    cutoff = args.cutoff
 
     logger = logging.getLogger()
     if args.debug:
