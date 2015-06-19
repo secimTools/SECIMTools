@@ -25,8 +25,8 @@ class ColorMarker:
 
         """
         comb = list()
-        for i in self._markers:
-            for j in self._colors:
-                comb.append((j, i))
+        for marker in self._markers:
+            for color in self._colors:
+                comb.append((color, marker))
 
         return comb
