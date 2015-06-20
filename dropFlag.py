@@ -37,8 +37,7 @@ def getOptions():
     group3.add_argument("--row", dest="dropRow", action="store_true", help="Drop rows.")
     group3.add_argument("--column", dest="dropColumn", action="store_true", help="Drop columns.")
 
-    args = parser.parse_args()
-    return args
+    args = parser.parse_args() return args
 
 
 def dropRows(df_wide, df_flags, cutoffValue, args):
@@ -160,3 +159,4 @@ if __name__ == '__main__':
     args = getOptions()
     # Run the main function with data from wideToDesign and the flag file
     main(args)
+
