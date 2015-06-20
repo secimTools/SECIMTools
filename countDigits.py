@@ -235,7 +235,7 @@ def main(args):
     flag = Flags(index=wide.index, column=['flag_feature_count_digits'])
 
 
-# Use group separation or not depending on user input
+    # Use group separation or not depending on user input
     if args.group:
         countDigitsByGroups(args, wide, dat, dir=directory)
 
@@ -276,3 +276,4 @@ if __name__ == '__main__':
         sl.setLogger(logger)
 
     main(args)
+
