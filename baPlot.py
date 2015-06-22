@@ -9,7 +9,6 @@ from itertools import combinations
 
 # Add-on packages
 import pandas as pd
-import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -24,10 +23,9 @@ import logger as sl
 
 # Globals
 global DEBUG
-DEBUG = False
 
 
-def getOptions(myopts=None):
+def getOptions():
     """ Function to pull in arguments """
     description = """ The Bland-Altman plot (BA-plot) is commonly used to look
     at concordance of data between samples. It is especially useful for looking
@@ -81,180 +79,115 @@ def getOptions(myopts=None):
     if (args.flagTable and not args.flagDesign) or (args.flagDesign and not args.flagTable):
         parser.error('--flag_table and --flag_design are both needed if you want to output raw pairwise flags.')
 
-    return(args)
+    return args
 
 
-class FlagOutlier:
-    """ Object for handling flags for outliers.
-
-    Iterate over pairwise combinations of samples and create BA
-    plots. If a sample falls outside of a 95% CI then flag the sample as an
-    outlier. This class is used to store flag information an provides a few
-    basic methods for interacting with flags.
-
+def summarizeFlags(dat, dfFlags, combos):
     """
-    def __init__(self, index):
-        """
-        Arguments:
-            :type index: pandas.Index
-            :param index: Index containing a list of compounds, will be
-                used to create row index for flag table.
+    :type dat: wideToDesign
+    :param dat:
+    :type flags: pandas.DataFrame
+    :param flags:
+    :rtype: pandas.DataFrame
+    :return:
+    """
 
-        Attributes:
-            :param int self.cnt: A counter for keep track of pairwise flag names.
+    # Create a data frame that is the same dimensions as wide. Each cell will be the sum of flags.
+    flagSum = pd.DataFrame(index=dat.wide.index, columns=dat.wide.columns)
+    flagSum.fillna(0)
 
-            :type self.flag_outlier: pandas.DataFrame
-            :param self.flag_outlier: Data frame containing compound as row and
-                flag name as columns.
+    # Create a data frame to hold total possible for each cell.
+    flagTotal = pd.DataFrame(index=dat.wide.index, columns=dat.wide.columns)
+    flagTotal.fillna(0)
 
-            :type self.design: pandas.DataFrame
-            :param self.design: Data frame relating flag name back to
-                pairwise sample comparisons.
+    # Iterate over sampleIDs and sum flags
+    for sampleID in dat.sampleIDs:
+        # Get list of flags that contain the current sampleID
+        flagList = ['flag_{0}_{1}'.format(c[0], c[1]) for c in combos if sampleID in c]
 
-        """
-        self.cnt = 0
-        self.flag_outlier = pd.DataFrame(index=index, dtype='int64')
-        self.design = pd.DataFrame(index=[0], columns=('cbn1', 'cbn2'))
+        # Sum the flags in dfFlags for the current sampleID
+        flagSum[:, sampleID] = dfFlags[flagList].sum(axis=1)
 
-    def updateOutlier(self, c1, c2, outlierMask):
-        """ Update the flag_outlier object with a 0|1.
+        # Get the totals of possible flags in dfFlags for the current sampleID
+        flagTotal[:, sampleID] = dfFlags[flagList].count(axis=1)
 
-        Where 0 indicates a compound was not an outlier and 1 indicates that it
-        was an outlier.
+    # Calculate the proportion of samples and features using the marginal sums.
+    propSample = flagSum.sum(axis=0) / flagTotal.sum(axis=0)
+    propFeature = flagSum.sum(axis=1) / flagTotal.sum(axis=1)
 
-        Arguments:
-            :type outlierMask: pandas.Series
-            :param outlierMask: This is a boolean array-like object
-                (i.e., pandas series) that is True for compounds that are outliers
-                and False for compounds that are not outliers.
-
-        Attributes:
-            :param int self.flag_outlier: Updates self.flag_outlier with 0|1 flags.
-            :param int self.cnt: increments self.cnt by 1
-
-        """
-
-        # Convert outlierMask to dataframe
-        outlierMask.name = 'flag_outlier{}'.format(self.cnt)
-        oDF = pd.DataFrame(outlierMask, dtype='int64')
-
-        # Merge to flag table
-        self.flag_outlier = self.flag_outlier.join(oDF, how='outer')
-        self.flag_outlier.fillna(0)
-
-        # Update design table
-        self.design.loc[self.cnt, 'cbn1'] = c1
-        self.design.loc[self.cnt, 'cbn2'] = c2
-        self.cnt += 1
-
-    def summarizeSampleFlags(self, data):
-        """ Summarize flag_outlier to the sample level for easy qc.
-
-        Arguments:
-            :type data: pandas.DataFrame
-            :param data: Wide formatted dataframe that is used to get
-                row and column labels for flag summary.
-
-        :rtype: pandas.DataFrame
-        :returns: Dataframe where values are the sum of flags for pairwise
-            comparison.
-
-        """
-        # Create a new dataframe to hold summarized flags
-        summary = pd.DataFrame(index=data.index)
-
-        ## Iterate over samples
-        for sample in data.columns:
-            # Which pairwise flags correspond to the current sample
-            pflag = (self.design['cbn1'] == sample) | (self.design['cbn2'] == sample)
-
-            # Pull flag_outlier columns that correspond to sample
-            cols = self.flag_outlier.columns[pflag]
-            currFlags = self.flag_outlier[cols]
-
-            # Sum across columns
-            sums = currFlags.apply(np.sum, axis=1)
-            sums.name = sample
-
-            # Update summary dataset
-            summary = summary.join(sums)
-
-        summary.fillna(0, inplace=True)
-
-        return summary
+    return propSample, propFeature
 
 
-def iterateCombo(data, combos, out, flags, group=None):
-    """ Iterate over pairwise combinations and generate plots.
+def plotFlagDist(propSample, propFeature, pdf):
+    """ Plot the distribution of flags.
 
-    This is a wrapper function to iterate over pairwise combinations and
-    generate plots.
+    Sum outlier flags over samples and compounds and graph distribution.
 
     Arguments:
-        :type data: pandas.DataFrame
-        :param data: Data frame containing data in wide format compound
-            as rows and samples as columns.
+        :type summary: pandas.DataFrame
+        :param summary: DataFrame of flags summarized to sample level.
 
-        :param list combos: List of tuples of pairwise combinations of samples.
+        :param str out: Filename of pdf to save plots.
 
-        :type out: PdfPages
-        :param out: Handler for multi-page PDF that will contain all plots.
-
-        :type flags: FlagOutlier
-        :param flags: FlagOutlier object.
-
-        :param str group: Default is None if there are no groups. Otherwise it is
-            the name of the current group. This value will be used in plot
-            titles if present.
-
-    Updates:
-        :type out: PdfPages
-        :param out: Handler for multi-page PDF that will contain all plots.
-
-        :type flags: FlagOutlier
-        :param flags: FlagOutlier object.
+    Returns:
+        :rtype: PdfPages
+        :returns: Saves two bar plots to pdf.
 
     """
-    # How many rows are there in total
-    rows = data.shape[0]
+    # sort samples
+    propSample.sort(ascending=False)
 
-    # Grab global counter
-    for combo in combos:
-        subset = data.loc[:, [combo[0], combo[1]]]
+    # sort compounds
+    propFeature.sort(ascending=False)
 
-        # Drop missing value
-        subset.dropna(inplace=True)
-        missing = rows - subset.shape[0]
+    # How many flags could I have
+    nSample = propSample.shape[0]
+    nFeature = propFeature.shape[0]
 
-        # Set up figure with 2 subplots
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 7), dpi=300)
-        fig.subplots_adjust(wspace=0.4)
+    # Make Plots
+    ## Open pdf for plotting
+    ppFlag = PdfPages(pdf)
 
-        # Scatter Plot
-        ax1 = makeScatter(subset.iloc[:, 0], subset.iloc[:, 1], ax1)
+    ## Plot samples
+    propSample.head(30).plot(kind='bar', figsize=(10, 5))
+    ppFlag.savefig(plt.gcf(), bbox_inches='tight')
 
-        # BA plot
-        ax2, outlier = makeBA(subset.iloc[:, 0], subset.iloc[:, 1], ax2)
+    ## Plot compounds
+    propFeature.head(30).plot(kind='bar', figsize=(10, 5))
+    ppFlag.savefig(plt.gcf(), bbox_inches='tight')
 
-        # Add plot title
-        title = buildTitle(combo[0], combo[1], group, missing)
-        plt.suptitle(title, fontsize=14)
-        plt.tight_layout(rect=[0, 0.03, 1, 0.90])
-
-        # Output figure to pdf
-        out.savefig(fig, bbox_inches='tight')
-        plt.close(fig)
-
-        # Update Flags
-        flags.updateOutlier(combo[0], combo[1], outlier)
+    ## Close pdf
+    ppFlag.close()
 
 
-def plotLeverageDensity(infl):
-    """ For debugging we want to look at density of leverage """
-    fig, ax = plt.subplots(1, 1, figsize=(10, 7))
-    infl['cooks_pval'].plot(kind='kde', ax=ax)
-    plt.savefig('/home/jfear/tmp/density.pdf')
-    plt.close(fig)
+def buildTitle(dat, xName, yName):
+    """ Build plot title.
+
+    Arguments:
+        :type dat: interface.wideToDesign
+        :param dat: A wide to design object
+
+        :param str xName: String containing the sampleID for x
+
+        :param str yName: String containing the sampleID for y
+
+    """
+    if dat.design.loc[xName, :] == dat.design.loc[yName, :]:
+        group = dat.design.loc[xName, :].values[0]
+        title = '{0}\n{1} vs {2}'.format(group, xName, yName)
+    else:
+        title = '{0} vs {1}'.format(xName, yName)
+
+    # Add on missing information if there are any missing values.
+    try:
+        if dat.missing == 1:
+            title = title + '\n1 missing value'
+        elif dat.missing > 0:
+            title = title + '\n{} missing values'.format(dat.missing)
+    except:
+        pass
+
+    return title
 
 
 def runRegression(x, y):
@@ -294,54 +227,10 @@ def runRegression(x, y):
     resid = pd.concat([results.resid, presid], axis=1)
     resid.columns = pd.Index(['resid', 'resid_pearson'])
 
-    # Plot density of stats if debug
-    if DEBUG:
-        plotLeverageDensity(influence)
-
     # Get 95% CI
     prstd, lower, upper = wls_prediction_std(results)
 
     return lower, upper, fitted, resid, influence
-
-
-def makeScatter(x, y, ax):
-    """ Plot a scatter plot of x vs y.
-
-    Arguments:
-        :type x: pandas.Series
-        :param x: Series of first sample, treated as independent variable.
-
-        :type y: pandas.Series
-        :param y: Series of second sample, treated as dependent variables.
-
-        :type ax: matplotlib.axis
-        :param ax: Axis which to plot.
-
-    Returns:
-        :rtype: matplotlib.axis
-        :returns: Axis with a scatter plot comparing x vs y with a
-            regression line of fitted values (black) and the upper and lower
-            confidence intervals (red).
-
-    """
-    # Get Names of the combo
-    xname = x.name
-    yname = y.name
-
-    #logger.debug('{0}, {1}'.format(x.name, y.name))
-    # Get Upper and Lower CI
-    lower, upper, fitted, resid, infl = runRegression(x, y)
-
-    # Plot
-    ax.plot(x, y, 'o')
-    ax.plot(x, lower, 'r:')
-    ax.plot(x, fitted, 'r-')
-    ax.plot(x, upper, 'r:')
-    ax.set_xlabel(xname)
-    ax.set_ylabel(yname)
-    ax.set_title('Scatter plot')
-
-    return ax
 
 
 def makeBA(x, y, ax):
@@ -358,14 +247,8 @@ def makeBA(x, y, ax):
         :param ax: Axis which to plot.
 
     Returns:
-        :rtype: tuple of (matplotlib.axis, pandas.Series)
-        :returns: tuple
-
-            - *ax* is an axis with a Bland-Altman plot comparing x vs y with a
-              horizontal line at y = 0 (black) and the upper and lower
-              confidence intervals (red).
-
-            - *mask* is a series containing Boolean values with True
+        :rtype: pandas.Series
+        :returns: A a series containing Boolean values with True
               indicating a value is more extreme than CI and should be an
               outlier and False indicating a value falls inside CI.
 
@@ -381,103 +264,123 @@ def makeBA(x, y, ax):
     mask3 = infl['dffits']
     mask = mask1 | mask2 | mask3
 
-    # Plot
+    # Create BA plot
     ax.scatter(x=mean[~mask], y=diff[~mask])
     ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Outliers'.format(cutoff))
     ax.legend(loc='center left', bbox_to_anchor=(1, 1), fontsize=10)
 
-    #ax.plot(mean, lower, 'r:')
+    # Plot regression lines
+    ax.plot(mean, lower, 'r:')
     ax.plot(mean, fitted, 'r')
     ax.axhline(0, color='k')
-    #ax.plot(mean, upper, 'r:')
+    ax.plot(mean, upper, 'r:')
 
-    # Adjust axis
+    # Adjust axes
     ax.set_xlabel('Mean\n{0} & {1}'.format(x.name, y.name))
     ax.set_ylabel('Difference\n{0} - {1}'.format(x.name, y.name), fontsize=8)
     ax.set_title('Bland-Altman Plot')
     labels = ax.get_xmajorticklabels()
     plt.setp(labels, rotation=45)
 
-    return ax, mask
+    return mask
 
 
-def buildTitle(xname, yname, group, missing):
-    """ Build plot title.
-
-    Arguments:
-        :param str xname: String containing the sampleID for x
-
-        :param str yname: String containing the sampleID for y
-
-        :param str group: String containing the group information. If no group then
-            None.
-
-    """
-    if group:
-        title = '{0}\n{1} vs {2}'.format(group, xname, yname)
-    else:
-        title = '{0} vs {1}'.format(xname, yname)
-
-    # Add on missing information if there are any missing values.
-    if missing == 1:
-        title = title + '\n1 missing value'
-    elif missing > 0:
-        title = title + '\n{} missing values'.format(missing)
-
-    return title
-
-
-def plotFlagDist(summary, out):
-    """ Plot the distribution of flags.
-
-    Sum outlier flags over samples and compounds and graph distribution.
+def makeScatter(x, y, ax):
+    """ Plot a scatter plot of x vs y.
 
     Arguments:
-        :type summary: pandas.DataFrame
-        :param summary: DataFrame of flags summarized to sample level.
+        :type x: pandas.Series
+        :param x: Series of first sample, treated as independent variable.
 
-        :param str out: Filename of pdf to save plots.
+        :type y: pandas.Series
+        :param y: Series of second sample, treated as dependent variables.
 
-    Returns:
-        :rtype: PdfPages
-        :returns: Saves two bar plots to pdf.
+        :type ax: matplotlib.axis
+        :param ax: Axis which to plot.
 
     """
-    # Sum flags across samples
-    col_sum = summary.sum(axis=0)
-    col_sum.sort(ascending=False)
+    # Get Names of the combo
+    xname = x.name
+    yname = y.name
 
-    # Sum flags across compounds
-    row_sum = summary.sum(axis=1)
-    row_sum.sort(ascending=False)
+    #logger.debug('{0}, {1}'.format(x.name, y.name))
+    # Get Upper and Lower CI
+    lower, upper, fitted, resid, infl = runRegression(x, y)
 
-    # How many flags could I have
-    row_max, col_max = summary.shape
+    # Plot scatter
+    ax.scatter(x, y)
 
-    # Make Plots
-    ## Open pdf for plotting
-    ppFlag = PdfPages(out)
+    # Plot regression lines
+    ax.plot(x, lower, 'r:')
+    ax.plot(x, fitted, 'r-')
+    ax.plot(x, upper, 'r:')
 
-    ## Plot samples
-    if np.any(col_sum > 0):
-        col_sum[col_sum > 0].plot(kind='bar', figsize=(10, 5))
-        ppFlag.savefig(plt.gcf(), bbox_inches='tight')
-
-    ## Plot compounds
-    if np.any(row_sum > 0):
-        row_sum[row_sum > 0].head(30).plot(kind='bar', figsize=(10, 5))
-        ppFlag.savefig(plt.gcf(), bbox_inches='tight')
-
-    ## Close pdf
-    ppFlag.close()
+    # Adjust plot
+    ax.set_xlabel(xname)
+    ax.set_ylabel(yname)
+    ax.set_title('Scatter plot')
 
 
-def convertToInt(x):
-    """ Convert to integer before export """
-    try:
-        return x.astype(int)
-    except:
-        return x
+def iterateCombo(dat, combo, pdf):
+    """ Iterate over pairwise combinations and generate plots.
+
+    This is a wrapper function to iterate over pairwise combinations and
+    generate plots.
+
+    Arguments:
+        :type data: pandas.DataFrame
+        :param data: Data frame containing data in wide format compound
+            as rows and samples as columns.
+
+        :param list combos: List of tuples of pairwise combinations of samples.
+
+        :type out: PdfPages
+        :param out: Handler for multi-page PDF that will contain all plots.
+
+        :type flags: FlagOutlier
+        :param flags: FlagOutlier object.
+
+        :param str group: Default is None if there are no groups. Otherwise it is
+            the name of the current group. This value will be used in plot
+            titles if present.
+
+    Updates:
+        :type out: PdfPages
+        :param out: Handler for multi-page PDF that will contain all plots.
+
+        :type flags: FlagOutlier
+        :param flags: FlagOutlier object.
+
+    """
+
+    # Current combinations
+    c1 = combo[0]
+    c2 = combo[1]
+
+    # Set up figure with 2 subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 7), dpi=300)
+    fig.subplots_adjust(wspace=0.4)
+
+    # Scatter Plot of c1 vs c2
+    makeScatter(dat.wide.loc[:, c1], dat.wide.loc[:, c2], ax1)
+
+    # BA plot of c1 vs c2
+    outlier = makeBA(dat.wide.loc[:, c1], dat.wide.loc[:, c2], ax2)
+
+    # Add plot title
+    title = buildTitle(dat, c1, c2)
+    plt.suptitle(title, fontsize=14)
+    plt.tight_layout(rect=[0, 0.03, 1, 0.90])
+
+    # Output figure to pdf
+    pdf.savefig(fig, bbox_inches='tight')
+    plt.close(fig)
+
+    # Create flags
+    flag = Flags(dat.wide.index, 'flag_{0}_{1}'.format(c1, c2))
+    flag.update(outlier)
+
+    return flag
 
 
 def main(args):
@@ -485,7 +388,7 @@ def main(args):
     logger.info('Importing Data')
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
 
-    # Keep only columns that are specified by processOnly group, or sampleIDs
+    # Get a list of samples to process, if processOnly is specified only analyze this group.
     if args.processOnly:
         dat.design = dat.design[dat.design[args.group].isin(args.processOnly)]
         toProcess = dat.design.index
@@ -494,54 +397,63 @@ def main(args):
         # Process everything
         toProcess = dat.sampleIDs
 
-    wide = dat.wide[toProcess]
+    # Create dataframe with sampleIDs that are to be analyzed.
+    #: :type wide: pandas.DataFrame
+    dat.keep_sample(toProcess)
 
-    # Create a FlagOutlier object to store all flags
-    flags = FlagOutlier(dat.wide.index)
+    # TODO: Add better missing data handling.
+    # Drop rows with missing data
+    rowNum = dat.wide.shape[0]
+    dat.wide.dropna(inplace=True)
+    dat.missing = rowNum - dat.wide.shape[0]
+    logger.warn(""" There were {} rows with missing data, please
+                    make sure you have run missing data script
+                    before running baPlot. """.format(dat.missing))
+
+    # Get list of pairwise combinations. If group is specified, only do within group combinations.
+    combos = list()
+    if args.group:
+        # If group is given, only do within group pairwise combinations
+        logger.info('Only doing within group, pairwise comparisons.')
+        for groupName, dfGroup in dat.design.groupby(dat.group):
+            combos.append(list(combinations(dfGroup.index, 2)))
+    else:
+        logger.info('Doing all pairwise comparisons. This could take a while!')
+        # Get all pairwise combinations for all samples
+        combos.append(list(combinations(dat.sampleIDs, 2)))
 
     # Open a multiple page PDF for plots
     ppBA = PdfPages(args.baName)
 
-    # If group is given, only do within group pairwise combinations
-    if args.group:
-        logger.info('Only doing within group, pairwise comparisons.')
-        for groupName, dfGroup in dat.design.groupby(dat.group):
-            combos = list(combinations(dfGroup.index, 2))
-            iterateCombo(wide, combos, ppBA, flags, group=groupName)
-    else:
-        logger.info('Doing all pairwise comparisons. This could take a while!')
-        # Get all pairwise combinations for all samples
-        combos = list(combinations(dat.sampleIDs, 2))
-        iterateCombo(wide, combos, ppBA, flags, group=None)
+    # Loop over combinations and generate plots and return a list of flags.
+    # Also generates several figures that are output to the multi-page pdf.
+    flags = map(lambda combo: iterateCombo(dat, combo, ppBA), combos)
 
     # Close PDF with plots
     ppBA.close()
 
+    # Merge flags
+    merged = Flags.merge(flags)
+
     # Summarize flags
     logger.info('Summarizing outlier flags.')
-    summary = flags.summarizeSampleFlags(wide)
-    plotFlagDist(summary, args.distName)
-
-    summary2 = summary.astype('int64')
-    summary2.to_csv(args.flagSummary, sep='\t')
+    propSample, propFeature = summarizeFlags(dat, merged, combos)
+    plotFlagDist(propSample, propFeature, args.distName)
 
     # Create metabolite level flags
-    flag_metabolite = pd.DataFrame((summary2.sum(axis=1) > 1).astype(int))
-    flag_metabolite.columns = ['flag_feature_BA_outlier']
+    flag_metabolite = Flags(dat.wide.index, 'flag_feature_BA_outlier')
+    flag_metabolite.update((propFeature >= .5))
     flag_metabolite.to_csv('/home/jfear/tmp/flag_met.csv')
 
     # Create sample level flags
-    flag_sample = pd.DataFrame((summary2.sum(axis=0) > 1).astype(int))
-    flag_sample.columns = ['flag_sample_BA_outlier']
-    flag_sample.to_csv('/home/jfear/tmp/flag_sample.csv')
+    flag_sample = Flags(dat.wide.index, 'flag_sample_BA_outlier')
+    flag_sample.update((propSample >= .5))
+    flag_sample.to_csv('/home/jfear/tmp/flag_met.csv')
 
     # Output Raw Flags
     if args.flagTable and args.flagDesign:
         logger.info('Outputting raw outlier flags.')
-        flags.flag_outlier.fillna(0, inplace=True)
-        flag_outlier = flags.flag_outlier.astype('int64')
-        flag_outlier.to_csv(args.flagTable, sep='\t')
-        flags.design.to_csv(args.flagDesign, sep='\t')
+        merged.to_csv(args.flagTable, sep='\t')
 
 
 if __name__ == '__main__':
@@ -557,6 +469,7 @@ if __name__ == '__main__':
         sl.setLogger(logger, logLevel='debug')
         DEBUG = True
     else:
+        DEBUG = False
         sl.setLogger(logger)
 
     main(args)
