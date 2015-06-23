@@ -57,10 +57,15 @@ def getOptions():
     group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
     group2.add_argument("--ba", dest="baName", action='store', required=True, help="Name of the output PDF for Bland-Altman plots.")
     group2.add_argument("--flag_dist", dest="distName", action='store', required=True, help="Name of the output PDF for plots.")
+    group2.add_argument("--flag_sample", dest="flagSample", action='store', required=True, help="Name of the output TSV for sample flags.")
+    group2.add_argument("--flag_feature", dest="flagFeature", action='store', required=True, help="Name of the output TSV for feature flags.")
 
     group3 = parser.add_argument_group(title='Optional Settings')
     group3.add_argument("--process_only", dest="processOnly", action='store', nargs='+', default=False, required=False, help="Only process the given groups (list groups separated by spaces) [Optional].")
-    group3.add_argument("--filter_cutoff", dest="cutoff", action='store', default=3, type=int, required=False, help="Cutoff value for flagging outliers [default=3].")
+    group3.add_argument("--resid_cutoff", dest="residCutoff", action='store', default=3, type=int, required=False, help="Cutoff value for flagging outliers [default=3].")
+
+    group3.add_argument("--sample_flag_cutoff", dest="sampleCutoff", action='store', default=.1, type=float, required=False, help="Proportion cutoff value when flagging samples [default=0.1].")
+    group3.add_argument("--feature_flag_cutoff", dest="featureCutoff", action='store', default=.3, type=float, required=False, help="Proportion cutoff value when flagging features [default=0.3].")
 
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
@@ -89,23 +94,23 @@ def summarizeFlags(dat, dfFlags, combos):
     """
     # Create a data frame that is the same dimensions as wide. Where each cell
     # will be the sum of flags.
-    flagSum = pd.DataFrame(index=dat.wide.index, columns=dat.wide.columns)
-    flagSum.fillna(0)
+    flagSum = pd.DataFrame(index=dfFlags.index, columns=dat.wide.columns)
+    flagSum.fillna(0, inplace=True)
 
     # Create a data frame that is the same dimensions as wide. Where each cell
     # is the total number of comparisons.
-    flagTotal = pd.DataFrame(index=dat.wide.index, columns=dat.wide.columns)
-    flagTotal.fillna(0)
+    flagTotal = pd.DataFrame(index=dfFlags.index, columns=dat.wide.columns)
+    flagTotal.fillna(0, inplace=True)
 
     for sampleID in dat.sampleIDs:
         # Get list of flags that contain the current sampleID
         flagList = ['flag_{0}_{1}'.format(c[0], c[1]) for c in combos if sampleID in c]
 
         # Sum the flags in dfFlags for the current sampleID
-        flagSum[:, sampleID] = dfFlags[flagList].sum(axis=1)
+        flagSum.ix[:, sampleID] = dfFlags[flagList].sum(axis=1).values
 
         # Get the totals of possible flags in dfFlags for the current sampleID
-        flagTotal[:, sampleID] = dfFlags[flagList].count(axis=1)
+        flagTotal.ix[:, sampleID] = dfFlags[flagList].count(axis=1).values
 
     # Calculate the proportion of samples and features using the marginal sums.
     propSample = flagSum.sum(axis=0) / flagTotal.sum(axis=0)
@@ -139,22 +144,21 @@ def plotFlagDist(propSample, propFeature, pdf):
     # sort compounds
     propFeature.sort(ascending=False)
 
-    # How many flags could I have
-    nSample = propSample.shape[0]
-    nFeature = propFeature.shape[0]
-
     # Make Plots
     ## Open pdf for plotting
     ppFlag = PdfPages(pdf)
 
     ## Plot samples
     ax = propSample.head(30).plot(kind='bar', figsize=(10, 5))
-    ax.set_ylim(0, nSample)
+    ax.set_ylabel('Proportion of features that were outliers.')
+    ax.set_xlabel('Sample ID')
     ppFlag.savefig(plt.gcf(), bbox_inches='tight')
 
     ## Plot features
     ax = propFeature.head(30).plot(kind='bar', figsize=(10, 5))
-    ax.set_ylim(0, nFeature)
+    ax.set_ylim(0, 1.0)
+    ax.set_ylabel('Proportion of samples that a feature was an outlier.')
+    ax.set_xlabel('Feature ID')
     ppFlag.savefig(plt.gcf(), bbox_inches='tight')
 
     ## Close pdf
@@ -380,7 +384,7 @@ def iterateCombo(dat, combo, pdf):
     flag = Flags(dat.wide.index, 'flag_{0}_{1}'.format(c1, c2))
     flag.update(outlier)
 
-    return flag
+    return flag.df_flags
 
 
 def main(args):
@@ -439,14 +443,14 @@ def main(args):
     plotFlagDist(propSample, propFeature, args.distName)
 
     # Create sample level flags
-    flag_sample = Flags(dat.wide.index, 'flag_sample_BA_outlier')
-    flag_sample.update((propSample >= .5))
-    flag_sample.to_csv('/home/jfear/tmp/flag_met.csv')
+    flag_sample = Flags(dat.sampleIDs, 'flag_sample_BA_outlier')
+    flag_sample.update((propSample >= args.sampleCutoff))
+    flag_sample.df_flags.to_csv(args.flagSample, sep='\t')
 
     # Create metabolite level flags
     flag_metabolite = Flags(dat.wide.index, 'flag_feature_BA_outlier')
-    flag_metabolite.update((propFeature >= .5))
-    flag_metabolite.to_csv('/home/jfear/tmp/flag_met.csv')
+    flag_metabolite.update((propFeature >= args.featureCutoff))
+    flag_metabolite.df_flags.to_csv(args.flagFeature, sep='\t')
 
 
 if __name__ == '__main__':
@@ -455,7 +459,7 @@ if __name__ == '__main__':
 
     # Expose cutoff as global
     global cutoff
-    cutoff = args.cutoff
+    cutoff = args.residCutoff
 
     # Set up logging
     logger = logging.getLogger()
