@@ -32,13 +32,13 @@ def getOptions(myopts=None):
     parser.add_argument("--design", dest = "dname", action = 'store', required = True, help = "Design file.")
     parser.add_argument("--ID", dest = "uniqID", action = 'store', required = True, help = "Name of the column with unique identifiers.")
     parser.add_argument("--debug", dest = "debug", action = 'store_true', required = False, help = "Add debugging log output. [optional]")
-    parser.add_argument("--group", dest = "group", action = 'store', required = False, default = False, help = "Add option to separate sample IDs by treatment name. [optional]")
+    #parser.add_argument("--group", dest = "group", action = 'store', required = False, default = False, help = "Add option to separate sample IDs by treatment name. [optional]")
     parser.add_argument("--pctl", dest = "p90p10", action = 'store_true', required = False, default = False, help = "The difference is calculated by 95th percentile and 5th percentile by default. If you add this argument, it uses 90th percentile and 10th percentile. [optional]")
-    parser.add_argument("--html", dest = "html", action = 'store', required = False, default = False, help = "Html file outut name. Do not use for cammand line use. [optional]")
-    parser.add_argument("--htmlPath", dest = "htmlPath", action = 'store', required = True, help = "Path to save created files and html file")
+    #parser.add_argument("--html", dest = "html", action = 'store', required = False, default = False, help = "Html file outut name. Do not use for cammand line use. [optional]")
+    parser.add_argument("--outPath", dest = "outPath", action = 'store', required = True, help = "Path to save output files")
     parser.add_argument("--RTflagOutFile", dest = "outfile", action = 'store', required = False, default = 'RTflag', help = "Output filename of RT flags. The default is [RTflag]. [optional]")
     parser.add_argument("--CVcutoff", dest = "CVcutoff", action = 'store', required = False, default = False, help = "The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here. [optional]")
-    parser.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = False, default = False, help = "Output filename of CV plot. If you do not need a plot of CV, do not use this argument. [optional]")
+    parser.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = False, default = 'CVplot', help = "Output filename of CV plot. The default is [CVplot]. [optional]")
 
     if myopts:
         args = parser.parse_args(myopts)
@@ -47,26 +47,26 @@ def getOptions(myopts=None):
 
     return(args)
 
-class FileName:
+"""class FileName:
     def __init__(self, text, fileType, groupName=''):
         self.text = str(text)   # Convert all to string in case of numbers as names
         self.fileType = str(fileType)
-        self.groupName = str(groupName)
+        #self.groupName = str(groupName)
         self._createFileName()
         self._createFileNameWithSlash()
         
     def _createFileName(self):
-        if self.groupName == '':
+        #if self.groupName == '':
             self.fileName = self.text + self.fileType
-        else:
-            self.fileName = self.groupName + '_' + self.text + self.fileType
+        #else:
+        #    self.fileName = self.groupName + '_' + self.text + self.fileType
             
     def _createFileNameWithSlash(self):
         if self.groupName == '':
             self.fileNameWithSlash = '/' + self.text + self.fileType
         else:
-            self.fileNameWithSlash = '/' + self.groupName + '_' + self.text + self.fileType
-
+            self.fileNameWithSlash = '/' + self.groupName + '_' + self.text + self.fileType"""
+"""
 def setRTflagByGroup(args, wide, dat, dir):
 
     # Split design file by treatment group
@@ -84,9 +84,9 @@ def setRTflagByGroup(args, wide, dat, dir):
     except KeyError as e:
         logger.error("{} is not a column name in the design file.".format(args.group))
     except Exception as e:
-        logger.error("Error. {}".format(e))
+        logger.error("Error. {}".format(e))"""
 
-def setRTflag(args, wide, dat, dir, groupName = ''):
+def setRTflag(args, wide, dat, dir):
     
     # Round retention time to 2 decimals
     RTround = wide.applymap(lambda x: round(x, 2))
@@ -124,41 +124,39 @@ def setRTflag(args, wide, dat, dir, groupName = ''):
     RTflag = RTflag.applymap(lambda x: int(x))
 
     # Output flags
-    RTflagFileName = FileName(text = args.outfile, fileType = '.tsv', groupName = groupName)
-    RTflagFile = open(dir + RTflagFileName.fileNameWithSlash, 'w')
+    RTflagFileName = args.outfile + '.tsv'
+    RTflagFile = open(dir + '/' + RTflagFileName, 'w')
     RTflagFile.write(RTflag.to_csv(sep='\t'))
     RTflagFile.close()
-    if args.html:
-        htmlContents.append('<li style=\"margin-bottom:1.5%;\"><a href="{}">{}</a></li>'.format(RTflagFileName.fileName, groupName + ' RTflag'))
+    """if args.html:
+        htmlContents.append('<li style=\"margin-bottom:1.5%;\"><a href="{}">{}</a></li>'.format(RTflagFileName.fileName, groupName + ' RTflag'))"""
         
     # Plot RT CVs
-    if args.CVplot:
-        fig, ax = plt.subplots()
-        xmin, xmax = ax.get_xlim()
-        xmin = -np.percentile(RTstat['cv'].values,99)*0.2
-        xmax = min(xmax, np.percentile(RTstat['cv'].values,99)*1.5)
-        ax.set_xlim(xmin, xmax)
-        #RTstat['cv'].plot(kind='hist', ax=ax)
-        #hist, bins = np.histogram(RTstat['cv'], range = (xmin, xmax), bins = 20)
-        #ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum() * 100, width = bins[1] - bins[0], color = 'grey')
-        plt.hist(RTstat['cv'], range = (xmin, xmax), bins = 15, normed = 1, color = 'grey')
-        RTstat['cv'].plot(kind='kde', title="Density Plot of Coefficients of Variation of the Retention Time", ax=ax, label = "CV density")
-        plt.axvline(x=CVcutoff, color = 'red', linestyle = 'dashed', label = "Cutoff at: {0}".format(CVcutoff))
-        plt.legend()
-        CVplotFileName = FileName(text = args.CVplot, fileType = '.pdf', groupName = groupName)
-        CVplotFileNameWithDir = dir + CVplotFileName.fileNameWithSlash
-        plt.savefig(CVplotFileNameWithDir, format='pdf')
+    fig, ax = plt.subplots()
+    #xmin, xmax = ax.get_xlim()
+    xmin = -np.percentile(RTstat['cv'].values,99)*0.2
+    xmax = np.percentile(RTstat['cv'].values,99)*1.5
+    ax.set_xlim(xmin, xmax)
+    #plt.hist(RTstat['cv'], range = (xmin, xmax), bins = 15, normed = 1, color = 'grey')
+    RTstat['cv'].plot(kind='hist', range = (xmin, xmax), bins = 15, normed = 1, color = 'grey', ax=ax, label = "CV histogram")
+    RTstat['cv'].plot(kind='kde', title="Density Plot of Coefficients of Variation of the Retention Time", ax=ax, label = "CV density")
+    plt.axvline(x=CVcutoff, color = 'red', linestyle = 'dashed', label = "Cutoff at: {0}".format(CVcutoff))
+    plt.legend()
+    CVplotFileName = args.CVplot + '.pdf'
+    CVplotFileNameWithDir = dir + '/' + CVplotFileName
+    plt.savefig(CVplotFileNameWithDir, format='pdf')
+    plt.close(fig)
 
 def main(args):
     """ """
-    directory = args.htmlPath
+    directory = args.outPath
     # create a directory in galaxy to hold the files created
     try: # Copied from countDigits.py
-        os.makedirs(args.htmlPath)
+        os.makedirs(args.outPath)
     except Exception, e:
         logger.error("Error. {}".format(e))
 
-    if args.html:
+    """if args.html:
         htmlFile = file(args.html, 'w')
 
         global htmlContents
@@ -167,23 +165,20 @@ def main(args):
         htmlContents.append('<div style=\"background-color:black; color:white; text-align:center; margin-bottom:5% padding:4px;\">'
                         '<h1>Output</h1>'
                         '</div>')
-        htmlContents.append('<ul style=\"text-align:left; margin-left:5%;\">')
+        htmlContents.append('<ul style=\"text-align:left; margin-left:5%;\">')"""
     
     # Import data
-    logger.info(u'html system path: {}'.format(args.htmlPath))
-    logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}'.format(args.fname, args.dname, args.uniqID))
+    #logger.info(u'html system path: {}'.format(args.outPath))
+    #logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}'.format(args.fname, args.dname, args.uniqID))
     dat = wideToDesign(args.fname, args.dname, args.uniqID)
 
     # Only interested in samples
     wide = dat.wide[dat.sampleIDs]
 
-    # Use group separation or not depending on user input
-    if args.group:
-        setRTflagByGroup(args, wide, dat, dir = directory)
-    else:
-        setRTflag(args, wide, dat, dir = directory)
+    # Set RT flags
+    setRTflag(args, wide, dat, dir = directory)
 
-    if args.html:
+    """if args.html:
         # Create a zip archive with the inputted zip file name of the temp file
         shutil.make_archive(directory + '/Archive_of_Results', 'zip', directory)
 
@@ -195,7 +190,7 @@ def main(args):
 
         htmlFile.write("\n".join(htmlContents))
         htmlFile.write("\n")
-        htmlFile.close()
+        htmlFile.close()"""
 
 if __name__ == '__main__':
 

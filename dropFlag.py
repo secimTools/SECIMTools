@@ -160,3 +160,4 @@ if __name__ == '__main__':
     args = getOptions()
     # Run the main function with data from wideToDesign and the flag file
     main(args)
+
