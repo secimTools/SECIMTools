@@ -103,7 +103,7 @@ class wideToDesign:
                 if sample in self.wide.columns:
                     self.sampleIDs.append(sample)
 
-            # Drop design rows that are not in the wide dataset
+            # Drop design rows that are not in the wide data set
             self.design = self.design[self.design.index.isin(self.sampleIDs)]
 
         except:
@@ -250,6 +250,20 @@ class wideToDesign:
         """
         return self.wide[self.wide[self.uniqID] == ID]
 
+    def keep_sample(self, sampleIDs):
+        """ Keep only the given sampleIDs in the wide and design file.
+
+        Arguments:
+            :param list sampleIDs: A list of sampleIDs to keep.
+
+        Returns:
+            :rtype: wideToDesign
+            :return: Updates the wideToDesign object to only have those sampleIDs.
+
+        """
+        self.sampleIDs = sampleIDs
+        self.wide = self.wide[self.sampleIDs]
+        self.design = self.design[self.design.index.isin(self.sampleIDs)]
 
 class Flags:
     def __init__(self, index, column):
