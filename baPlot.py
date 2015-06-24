@@ -64,8 +64,8 @@ def getOptions():
     group3.add_argument("--process_only", dest="processOnly", action='store', nargs='+', default=False, required=False, help="Only process the given groups (list groups separated by spaces) [Optional].")
     group3.add_argument("--resid_cutoff", dest="residCutoff", action='store', default=3, type=int, required=False, help="Cutoff value for flagging outliers [default=3].")
 
-    group3.add_argument("--sample_flag_cutoff", dest="sampleCutoff", action='store', default=.1, type=float, required=False, help="Proportion cutoff value when flagging samples [default=0.1].")
-    group3.add_argument("--feature_flag_cutoff", dest="featureCutoff", action='store', default=.3, type=float, required=False, help="Proportion cutoff value when flagging features [default=0.3].")
+    group3.add_argument("--sample_flag_cutoff", dest="sampleCutoff", action='store', default=.20, type=float, required=False, help="Proportion cutoff value when flagging samples [default=0.20].")
+    group3.add_argument("--feature_flag_cutoff", dest="featureCutoff", action='store', default=.05, type=float, required=False, help="Proportion cutoff value when flagging features [default=0.05].")
 
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
@@ -276,14 +276,14 @@ def makeBA(x, y, ax):
 
     # Create BA plot
     ax.scatter(x=mean[~mask], y=diff[~mask])
-    ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Outliers'.format(cutoff))
+    ax.scatter(x=mean[mask], y=diff[mask], color='r', label='Leverage Points'.format(cutoff))
     ax.legend(loc='center left', bbox_to_anchor=(1, 1), fontsize=10)
 
     # Plot regression lines
-    #ax.plot(mean, lower, 'r:')
+    ax.plot(mean, lower, 'r:')
     ax.plot(mean, fitted, 'r')
     ax.axhline(0, color='k')
-    #ax.plot(mean, upper, 'r:')
+    ax.plot(mean, upper, 'r:')
 
     # Adjust axes
     ax.set_xlabel('Mean\n{0} & {1}'.format(x.name, y.name))
