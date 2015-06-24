@@ -280,10 +280,10 @@ def makeBA(x, y, ax):
     ax.legend(loc='center left', bbox_to_anchor=(1, 1), fontsize=10)
 
     # Plot regression lines
-    ax.plot(mean, lower, 'r:')
+    #ax.plot(mean, lower, 'r:')
     ax.plot(mean, fitted, 'r')
     ax.axhline(0, color='k')
-    ax.plot(mean, upper, 'r:')
+    #ax.plot(mean, upper, 'r:')
 
     # Adjust axes
     ax.set_xlabel('Mean\n{0} & {1}'.format(x.name, y.name))
