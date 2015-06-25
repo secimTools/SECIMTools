@@ -407,9 +407,10 @@ def main(args):
     rowNum = dat.wide.shape[0]
     dat.wide.dropna(inplace=True)
     dat.missing = rowNum - dat.wide.shape[0]
-    logger.warn(""" There were {} rows with missing data, please
-                    make sure you have run missing data script
-                    before running baPlot. """.format(dat.missing))
+    if dat.missing > 0:
+        logger.warn(""" There were {} rows with missing data, please
+                        make sure you have run missing data script
+                        before running baPlot. """.format(dat.missing))
 
     # Get list of pairwise combinations. If group is specified, only do within group combinations.
     combos = list()
