@@ -51,7 +51,7 @@ def splitDigit(x):
 
         Returns:
             :rtype: integer
-            :returns: integer that is split by the decial
+            :returns: integer that is split by the decimal
 
     """
 
