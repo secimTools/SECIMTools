@@ -72,6 +72,12 @@ def getOptions():
 
     args = parser.parse_args()
 
+    if (args.sampleCutoff > 1) | (args.sampleCutoff < 0):
+        parser.error('sample_flag_cutoff must be a number between 0 and 1')
+
+    if (args.featureCutoff > 1) | (args.featureCutoff < 0):
+        parser.error('feature_flag_cutoff must be a number between 0 and 1')
+
     return args
 
 
