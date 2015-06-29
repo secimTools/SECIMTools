@@ -4,7 +4,6 @@
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
-import tempfile
 import shutil
 import os
 
