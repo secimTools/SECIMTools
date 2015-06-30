@@ -51,7 +51,7 @@
 
 **SVM classifier**
 
-This is a support vector machine(SVM) classification tool. The inputs are two datasets, training and target dataset, as well as other parameters for the SVM algorithm. The trainig set contains a column which is the class label (the name of this column is an input in this tool, i.e. class column name) and the target set does not have such column. The tool returns the classified taget set (adds a column containing predicted class labels) as well as the accuracy of the trained SVM on the training set. It is important to note that the two dataset, training and target, must have identical structure (expect for the trainig set having an extra column containing the class labels).
+This is a support vector machine(SVM) classification tool. The inputs are two datasets, training and target dataset, as well as other parameters for the SVM algorithm. The training set contains a column which is the class label (the name of this column is an input in this tool, i.e. class column name) and the target set does not have such column. The tool returns the classified taget set (adds a column containing predicted class labels) as well as the accuracy of the trained SVM on the training set. It is important to note that the two dataset, training and target, must have identical structure (expect for the trainig set having an extra column containing the class labels).
 
 -----
 
