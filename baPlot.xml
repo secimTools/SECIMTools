@@ -1,17 +1,23 @@
 <tool id="baPlot" name="Bland-Altman Plot">
   <description>Create pairwise BA plots to identify outliers.</description>
-  <command interpreter="python">baPlot.py --input $input --design $design --ID $uniqID --ba $ba_plots --flag_dist $outlier_dist_plots --flag_summary $flag_outlier_summary
+  <command interpreter="python">baPlot.py 
+      --input $input 
+      --design $design 
+      --ID $uniqID 
+      --ba $ba_plots 
+      --flag_dist $outlier_dist_plots 
+      --flag_sample $flag_sample
+      --flag_sample $flag_feature
+      --resid_cutoff $resid_cutoff
+      --sample_flag_cutoff $sample_cutoff
+      --feature_flag_cutoff $feature_cutoff
+
       #if $group
           --group $group
 
           #if $processOnly:
             --process_only $processOnly
           #end if
-
-      #end if
-
-      #if str( $raw ) == 'yes'
-        --flag_table $flag_outlier_raw --flag_design $flag_outlier_design
       #end if
 
   </command>
@@ -19,24 +25,17 @@
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-    <param name="cutoff" size="30" type="text" value="3" label="Filter Cutoff" help="Residual cutoff value, this value will flag samples whose residuals are ≥ to cutoff value."/>
+    <param name="resid_cutoff" size="30" type="text" value="3" label="Outlier Cutoff" help="Residual cutoff value, this value will flag samples whose residuals are ≥ to cutoff value."/>
+    <param name="sample_cutoff" size="30" type="text" value="0.2" label="Sample Flag Cutoff" help="Flag a sample as 1, if the proportion of features within a sample that are outliers exceeds this cutoff.[Number between 0-1]"/>
+    <param name="feature_cutoff" size="30" type="text" value="0.05" label="Feature Flag Cutoff" help="Flag a feature, if the proportion of times this feature was identified as an outlier exceeds this cutoff.[Number between 0-1]"/>
     <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
     <param name="processOnly" size="30" type="text" value="" optional="true" label="Group ID [Optional]" help="Name of the group(s) that you want to process. Separate multiple groupIDs with spaces. Leave blank to process all groups. Requires the group parameter."/>
-    <param name="raw" size="30" type="select" display="radio" label="Output Raw Flag Counts" help="Do you want to output raw flag files. Summary of flags is always output.">
-        <option value="no" selected="true"> Do not output raw flag file </option>
-        <option value="yes"> Output raw flag file </option>
-    </param>
   </inputs>
   <outputs>
     <data format="pdf" name="ba_plots" />
     <data format="pdf" name="outlier_dist_plots" />
-    <data format="tabular" name="flag_outlier_summary"/>
-    <data format="tabular" name="flag_outlier_raw">
-        <filter>raw=="yes"</filter>
-    </data>
-    <data format="tabular" name="flag_outlier_design">
-        <filter>raw=="yes"</filter>
-    </data>
+    <data format="tabular" name="flag_sample"/>
+    <data format="tabular" name="flag_feature"/>
   </outputs>
   <requirements>
     <requirement type="python-module">numpy</requirement>
@@ -133,6 +132,36 @@ compounds/peaks with many outlying points.
     - The column name in your wide dataset that contains the unique IDs for
       your compounds. In our example dataset you would input *Compound*.
 
+    **Outlier Cutoff**
+
+    - Here we use several measures to identify features that are outliers or
+    leverage points.
+        - If the magnitude of the residuals from the linear regression on the
+          BA-plot exceeds this threshold then a features is flagged as an
+          outlier. This cutoff can be adjusted.
+        - In addition, if a feature is identified as a leverage point using
+          DFFITS or Cook's D then it is also flagged. This cannot be adjusted.
+
+    **Sample Cutoff**
+
+    - This cutoff sets the level to flag a sample. 
+        - Using the above *Outlier Cutoff*, we identify samples that have a
+          large number of features that are flagged as an outlier. The *Sample
+          Cutoff* value, is the proportion of features within a sample that
+          need to be flagged as outliers, for the sample to be flagged (1). The
+          default value is 0.2, meaning that 20% of features need to be found
+          as outliers for the sample to be flagged.
+
+    **Feature Cutoff**
+
+    - This cutoff sets the level to flag a feature. 
+        - Using the above *Outlier Cutoff*, we identify features that are
+          identified as outliers in the majority of samples. The *Feature
+          Cutoff* value, is the proportion of samples a features needs to be
+          found as an outlier for that that feature to be flagged (1). The
+          default value is 0.05, meaning that a feature needs to be found
+          as an outlier in 5% of samples to be flagged.
+
 - If you only want to do within group comparisons (**suggested**) then you need
   to specify:
 
@@ -151,7 +180,7 @@ compounds/peaks with many outlying points.
 
 **Output Files**
 
-- This tool always outputs 3 different files.
+- This tool outputs 4 different files.
 
     **ba_plots** is a PDF of pairwise scatter plots and BA-plots.
 
@@ -176,64 +205,50 @@ compounds/peaks with many outlying points.
     compounds/peaks showing the number of data points that they had flagged as
     an outlier.
 
-    .. image:: ${static_path}/images/secim/ba_plot_outlier_dist.png
+    .. image:: ${static_path}/images/secim/ba_plot_outlier_dist_sample.png
         :height: 300
         :width: 600
 
-    The left panel shows the number of outliers for each sample. The right
-    panel shows the number of outliers for each compound. Only samples and
-    compounds that have outlier data points are plotted.
+    .. image:: ${static_path}/images/secim/ba_plot_outlier_dist_feature.png
+        :height: 300
+        :width: 600
 
-    **flag_outlier_summary** is a TSV containing the sum of pairwise falgs, summarized to sample level.
+    The top panel shows the proportion of features that were outliers for each
+    sample. The bottom panel shows the proportion of samples a feature was an
+    outlier in. 
 
-    +----------+-------+-------+-------+-----+
-    | compound | as101 | as102 | as103 | ... |
-    +==========+=======+=======+=======+=====+
-    | one      | 1     | 1     | 0     | ... |
-    +----------+-------+-------+-------+-----+
-    | two      | 2     | 0     | 7     | ... |
-    +----------+-------+-------+-------+-----+
-    | three    | 0     | 0     | 0     | ... |
-    +----------+-------+-------+-------+-----+
-    | four     | 0     | 0     | 0     | ... |
-    +----------+-------+-------+-------+-----+
-    | ...      | ...   | ...   | ...   | ... |
-    +----------+-------+-------+-------+-----+
+    **flag_sample** is a TSV containing a 0|1 flag for sample. If a sample is 1
+    you should consider removing this sample.
 
-- This tool can output 3 addtitional files.
+    +----------+------------------------+
+    | sampleID | flag_sample_BA_outlier |
+    +==========+========================+
+    | as101    | 0                      |
+    +----------+------------------------+
+    | as102    | 0                      |
+    +----------+------------------------+
+    | as103    | 1                      |
+    +----------+------------------------+
+    | ...      | ...                    |
+    +----------+------------------------+
 
-    **flag_outlier_raw** is a TSV containing outlier flags for each pairwise comparison.
+    **flag_feature** is a TSV containing a 0|1 flag for each feature. If a feature is 1
+    you should consider removing this feature.
 
-    +----------+---------------+---------------+---------------+-----+
-    | compound | flag_outlier1 | flag_outlier2 | flag_outlier3 | ... |
-    +==========+===============+===============+===============+=====+
-    | one      | 0             | 1             | 0             | ... |
-    +----------+---------------+---------------+---------------+-----+
-    | two      | 0             | 1             | 1             | ... |
-    +----------+---------------+---------------+---------------+-----+
-    | three    | 0             | 0             | 0             | ... |
-    +----------+---------------+---------------+---------------+-----+
-    | four     | 0             | 0             | 0             | ... |
-    +----------+---------------+---------------+---------------+-----+
-    | ...      | ...           | ...           | ...           | ... |
-    +----------+---------------+---------------+---------------+-----+
+    +----------+-------------------------+
+    | compound | flag_feature_BA_outlier |
+    +==========+=========================+
+    | one      | 0                       |
+    +----------+-------------------------+
+    | two      | 1                       |
+    +----------+-------------------------+
+    | three    | 0                       |
+    +----------+-------------------------+
+    | four     | 0                       |
+    +----------+-------------------------+
+    | ...      | ...                     |
+    +----------+-------------------------+
 
-
-    **flag_outlier_design** is a TSV containing relating outlier flags back to individual samples.
-
-    +--------------+-------+-------+
-    | flag_outlier | cbn1  | cbn2  |
-    +==============+=======+=======+
-    | 1            | as101 | as102 |
-    +--------------+-------+-------+
-    | 2            | as101 | as103 |
-    +--------------+-------+-------+
-    | 3            | as101 | as104 |
-    +--------------+-------+-------+
-    | 4            | as102 | as103 |
-    +--------------+-------+-------+
-    | ...          | ...   | ...   |
-    +--------------+-------+-------+
 
 </help>
 </tool>

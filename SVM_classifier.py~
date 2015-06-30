@@ -42,6 +42,8 @@ for i in target.columns:
     if i not in train.columns:
         del target[i]
 
+#print 'ali', train['treatment'].dtype
+
 ######################  trainig the SVM  #######################################
 class_column_name = args.class_column_name
 classes=train[class_column_name].copy()

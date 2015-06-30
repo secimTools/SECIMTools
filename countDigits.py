@@ -4,7 +4,6 @@
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
-import tempfile
 import shutil
 import os
 
@@ -46,12 +45,13 @@ def getOptions(myopts=None):
 
 def splitDigit(x):
     """ Function to split digits by decimal
-        Arguments:
+
+        :Arguments:
             :param integer x: Digit to split
 
-        Returns:
+        :Returns:
             :rtype: integer
-            :returns: integer that is split by the decial
+            :returns: integer that is split by the decimal
 
     """
 
@@ -67,7 +67,8 @@ class FileName:
     """ Class to create a file name for accurate location in the Galaxy file system """
     def __init__(self, text, fileType, groupName=''):
         """ Constructor
-            Arguments:
+
+            :Arguments:
                 :param string text: Text of the file name
                 :param string fileType: '.tsv', '.txt', '.csv'
                 :param string groupName: If using groups to separate data, the group name will be added to the file name
@@ -95,7 +96,7 @@ def countDigitsByGroups(args, wide, dat, dir):
     """ If the group option is selected this function is called to split by groups. The function calls the countDigits
         function in a loop that iterates through the groups
 
-        Arguments:
+        :Arguments:
             :type args: argparse.ArgumentParser
             :param args: Command line arguments
 
@@ -127,7 +128,8 @@ def countDigitsByGroups(args, wide, dat, dir):
 
 def countDigits(wide, dat, dir, groupName=''):
     """ Function to create and export the counts, figure, and summary files
-        Arguments:
+
+        :Arguments:
             :type wide: pandas.DataFrame
             :param wide: A data frame in wide format
 

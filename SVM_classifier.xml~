@@ -2,12 +2,11 @@
   <description> for classification.</description>
   <command interpreter="python">SVM_classifier.py --train_wide $train_wide --train_design $train_design --test_wide $test_wide --test_design $test_design --class_column_name $class_column_name --ID $uniqID --kernel $kernel --degree $degree --C $C --a $a --b $b --outfile1 $outfile1 --accuracy_on_training $accuracy_on_training </command>
   <inputs>
-    <param name="train_wide" type="data" format="tabular" label="Training Wide Dataset" help="Dataset missing? See TIP below"/>
-    <param name="train_design" type="data" format="tabular" label="Training Design Dataset" help="Dataset missing? See TIP below"/>
-    <param name="test_wide" type="data" format="tabular" label="Target Wide Dataset" help="Dataset missing? See TIP below"/>
-    <param name="test_design" type="data" format="tabular" label="Target Design Dataset" help="Dataset missing? See TIP below"/>
+    <param name="train_wide" type="data" format="tabular" label="Training Dataset" help="Dataset missing? See TIP below"/>
+    <param name="train_design" type="data" format="tabular" label="Training Dataset" help="Dataset missing? See TIP below"/>
+    <param name="test_wide" type="data" format="tabular" label="Target Dataset" help="Dataset missing? See TIP below"/>
+    <param name="test_design" type="data" format="tabular" label="Target Dataset" help="Dataset missing? See TIP below"/>
     <param name="class_column_name" size="30" type="text" value="class" label="Column name for the class"/>
-    <param name="uniqID" size="30" type="text" value="Name" label="Name of IDs"/>
     <param name="kernel" size="30" type="select" display="radio" value="rbf" label="SVM kernel function">
         <option value="rbf">Radial Basis function (Gaussians)</option>
         <option value="linear">Linear</option>
