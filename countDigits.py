@@ -21,18 +21,23 @@ import logger as sl
 
 def getOptions(myopts=None):
     """ Function to pull in arguments """
-    description = """ One-Way ANOVA """
-    parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
-    parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
-    parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument("--noZero", dest="zero", action='store_true', required=False, help="Flag to ignore zeros.")
-    parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
-    parser.add_argument("--group", dest="group", action='store', required=False, default=False, help="Add the option to separate sample IDs by treatement name. ")
-    parser.add_argument("--html", dest="html", action='store', required=False, help="Html file output name")
-    parser.add_argument("--html_path", dest="htmlPath", action='store', required=True, help="Path to save created files and html file")
-    parser.add_argument("--noZip", dest="noZip", action='store_true', required=False, default=False, help="If running from command line use --noZip to skip the zip creation. This stops the command line from freezing")
-    parser.add_argument("--flags", dest="flags", action='store', required=True, help="Flag file output")
+    description = """ Count the digits in data to determine possible outliers
+                      or discrepancies"""
+    parser = argparse.ArgumentParser(description=description)
+
+    requiredInput = parser.add_argument_group(description="Required input")
+    requiredInput.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
+    requiredInput.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
+    requiredInput.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
+    requiredInput.add_argument("--html_path", dest="htmlPath", action='store', required=True, help="Path to save created files and html file")
+    requiredInput.add_argument("--flags", dest="flags", action='store', required=True, help="Flag file output")
+
+    optionalInput= parser.add_argument_group(description="Optional input")
+    optionalInput.add_argument("--noZero", dest="zero", action='store_true', required=False, help="Flag to ignore zeros.")
+    optionalInput.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
+    optionalInput.add_argument("--group", dest="group", action='store', required=False, default=False, help="Add the option to separate sample IDs by treatement name. ")
+    optionalInput.add_argument("--html", dest="html", action='store', required=False, help="Html file output name")
+    optionalInput.add_argument("--noZip", dest="noZip", action='store_true', required=False, default=False, help="If running from command line use --noZip to skip the zip creation. This stops the command line from freezing")
 
 
     if myopts:
@@ -41,6 +46,7 @@ def getOptions(myopts=None):
         args = parser.parse_args()
 
     return(args)
+
 
 
 def splitDigit(x):
@@ -58,7 +64,12 @@ def splitDigit(x):
     if x == 0:
         cnt = np.nan
     else:
-        cnt = len(str(x).split('.')[0])
+        # Bug fixer of scientific notation (Very large and very small numbers)
+        x = str('%f' % x)
+
+        # Split x at the decimal point and then take the length of the string
+        # Before the decimal point
+        cnt = len(x.split('.')[0])
     return cnt
 
 
@@ -160,6 +171,7 @@ def countDigits(wide, dat, dir, groupName=''):
     cntFile = open(dir + cntFileName.fileNameWithSlash, 'w')
     cntFile.write(cnt.to_csv(sep='\t'))
     cntFile.close()
+     
     htmlContents.append('<li style=\"margin-bottom:1.5%;\"><a href="{}">{}</a></li>'.format(cntFileName.fileName, groupName + ' Counts'))
 
     # Make distribution plot of differences
