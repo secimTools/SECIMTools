@@ -15,7 +15,17 @@ from interface import wideToDesign
 
 def getOptions():
     """ Function to pull in arguments """
-    parser = argparse.ArgumentParser(description="", formatter_class=RawDescriptionHelpFormatter)
+    description = """
+    This tool takes in a Wide formatted dataset, a Design
+    formatted dataset and corresponding flag values. With the inputted user
+    cutoff value the flag values are summed and the sums that are greater than
+    the cutoff value are dropped. If rows are the specified attribute to drop
+    then the return will be a new Wide file but if columns are dropped then a
+    new Wide file and Design file will be created because changes will have
+    occurred in each file."""
+
+
+    parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
 
     group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
     group1.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
