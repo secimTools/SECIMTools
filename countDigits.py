@@ -158,8 +158,6 @@ def countDigits(wide, dat, dir, groupName=''):
     cnt['min'] = cnt.apply(np.min, axis=1)
     cnt['max'] = cnt.apply(np.max, axis=1)
     cnt['diff'] = cnt['max'] - cnt['min']
-    cnt['argMax'] = cnt[dat.sampleIDs].apply(np.argmax, axis=1)
-    cnt['argMin'] = cnt[dat.sampleIDs].apply(np.argmin, axis=1)
 
     # Create mask of differences. If the difference is greater than 1 a flag needs to be made
     mask = cnt['diff'] >= 2
@@ -188,7 +186,8 @@ def countDigits(wide, dat, dir, groupName=''):
     if cnt['diff'].any():
         fig, ax = plt.subplots(figsize=(8, 8))
         cnt['diff'].plot(kind='hist', ax=ax, title=title)
-        ax.set_xlabel('difference (max - min)')
+        ax.set_xlabel('Difference in Number of Digits (max - min)')
+        ax.set_ylabel('Number of Features')
 
         # Save figure into archive
         figureFileName = FileName(text='difference(Max-Min)', fileType='.png', groupName=groupName)
@@ -198,25 +197,7 @@ def countDigits(wide, dat, dir, groupName=''):
     else:
         logger.warn('There were no differences in digit counts, no plot will be generated')
 
-    # Summarize the number of times a sample had the most of fewest digits
-    maxSample = cnt['argMax'].value_counts()
-    minSample = cnt['argMin'].value_counts()
-    maxSample.name = 'max_num'
-    minSample.name = 'min_num'
-    summary = pd.concat((maxSample, minSample), axis=1)
-    summary.fillna(0, inplace=True)
-    summary.sort(columns='min_num', inplace=True, ascending=False)
-    summary[['max_num', 'min_num']] = summary[['max_num', 'min_num']].astype(int)
-
-    # write output
-    summaryFileName = FileName(text='summary', fileType='.tsv', groupName=groupName)
-    summaryFile = open(dir + summaryFileName.fileNameWithSlash, 'w')
-    summaryFile.write(summary.to_csv(sep='\t'))
-    summaryFile.close()
-    htmlContents.append('<li style=\"margin-bottom:1.5%;\">'
-                        '<a href="{}">{}</a></li><hr><br>'.format(summaryFileName.fileName, groupName + ' Summary'))
-
-
+    
 def main(args):
     # Create a directory in galaxy to hold the files created
     directory = args.htmlPath
