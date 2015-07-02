@@ -266,7 +266,7 @@ class wideToDesign:
         self.design = self.design[self.design.index.isin(self.sampleIDs)]
 
 class Flags:
-    def __init__(self, index, column):
+    def __init__(self, index, column=''):
         """
         This class  creates an empty dataframe to hold the flag values for a dataset. The dataframe is created
         through instantiation and filled with 0's.
@@ -281,25 +281,49 @@ class Flags:
 
         """
         # Create DataFrame from index and columns
-        self.df_flags = pd.DataFrame(index=index, columns=[column])
+        self.df_flags = pd.DataFrame(index=index)
+        if len(column) > 0:
+            self.addColumn(column)
 
         # Set DF values equal to 0
         self.df_flags.fillna(0, inplace=True)
 
-    def update(self, mask):
+    def update(self, mask, column=''):
         """
         Update the dataframe with 1's if the mask value is true
 
-        Arguments:
-            :param list mask: List of mask values. Must follow same structure as instantiated flag dataframe
+        :Arguments:
+            :param mask: List of mask values. Must follow same structure as instantiated flag dataframe
             :type mask: list
 
-        Returns:
+            :param column: Column name to update in the flag frame. Not required
+            :type column: String
+
+        :Returns:
             Updated instance of the flag dataframe. The dataframe can be accessed through '.df_flags'.
         """
 
         # Update the values to 1's if they are true in the mask
-        self.df_flags[mask] = 1
+        if len(column) > 0:
+            self.df_flags.loc[mask, column] = 1
+        else:
+            self.df_flags[mask] = 1
+    def addColumn(self, column, mask=[]):
+        """
+        Add a column to the flag DataFrame
+
+        :Arguments:
+            :param column: Name of the column to add to the DataFrame
+            :type column: string | list of strings
+
+            :param mask: List of True and False values corresponding to flag 
+                         values. OPTIONAL
+            :type mask: list
+
+        """
+        self.df_flags[column] = 0
+        if len(mask) > 0:
+            self.update(mask=mask, column=column)
 
     @staticmethod
     def merge(flags):
