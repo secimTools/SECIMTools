@@ -387,7 +387,7 @@ def iterateCombo(dat, combo, pdf):
     plt.close(fig)
 
     # Create flags
-    flag = Flags(dat.wide.index, 'flag_{0}_{1}'.format(c1, c2))
+    flag = Flags(index=dat.wide.index, column='flag_{0}_{1}'.format(c1, c2))
     flag.update(outlier)
 
     return flag.df_flags
