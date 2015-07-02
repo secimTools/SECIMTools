@@ -75,3 +75,4 @@ def accuracy(data):
 
 accuracy=str(accuracy(train)*100)+' percent'
 os.system("echo %s > %s"%(accuracy,args.accuracy_on_training))
+
