@@ -30,13 +30,13 @@ def getOptions(myopts=None):
     requiredInput.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     requiredInput.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
     requiredInput.add_argument("--html_path", dest="htmlPath", action='store', required=True, help="Path to save created files and html file")
+    requiredInput.add_argument("--html", dest="html", action='store', required=True, help="Html file output name")
     requiredInput.add_argument("--flags", dest="flags", action='store', required=True, help="Flag file output")
 
     optionalInput= parser.add_argument_group(description="Optional input")
     optionalInput.add_argument("--noZero", dest="zero", action='store_true', required=False, help="Flag to ignore zeros.")
     optionalInput.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
     optionalInput.add_argument("--group", dest="group", action='store', required=False, default=False, help="Add the option to separate sample IDs by treatement name. ")
-    optionalInput.add_argument("--html", dest="html", action='store', required=False, help="Html file output name")
     optionalInput.add_argument("--noZip", dest="noZip", action='store_true', required=False, default=False, help="If running from command line use --noZip to skip the zip creation. This stops the command line from freezing")
 
 
@@ -161,6 +161,7 @@ def countDigits(wide, dat, dir, groupName=''):
 
     # Create mask of differences. If the difference is greater than 1 a flag needs to be made
     mask = cnt['diff'] >= 2
+
     # Update the global flag file with mask
     flag.update(mask)
 
@@ -169,7 +170,7 @@ def countDigits(wide, dat, dir, groupName=''):
     cntFile = open(dir + cntFileName.fileNameWithSlash, 'w')
     cntFile.write(cnt.to_csv(sep='\t'))
     cntFile.close()
-     
+
     htmlContents.append('<li style=\"margin-bottom:1.5%;\"><a href="{}">{}</a></li>'.format(cntFileName.fileName, groupName + ' Counts'))
 
     # Make distribution plot of differences
@@ -197,7 +198,7 @@ def countDigits(wide, dat, dir, groupName=''):
     else:
         logger.warn('There were no differences in digit counts, no plot will be generated')
 
-    
+
 def main(args):
     # Create a directory in galaxy to hold the files created
     directory = args.htmlPath
@@ -227,7 +228,7 @@ def main(args):
 
     # Global flag file
     global flag
-    flag = Flags(index=wide.index, column=['flag_feature_count_digits'])
+    flag = Flags(index=wide.index, column='flag_feature_count_digits')
 
 
     # Use group separation or not depending on user input
