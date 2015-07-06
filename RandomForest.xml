@@ -6,7 +6,7 @@
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
         <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
-        <param name="number_of_estimators" size="30" type="text" value="" label="Number of trees in the forest"/>
+        <param name="number_of_estimators" size="30" type="text" value="" default=1000 label="Number of trees in the forest"/>
     </inputs>
     <outputs>
         <data format="csv" name="outfile1" label="Transformed Data"/>
@@ -84,9 +84,9 @@
 
        **Number of Trees in the Forest**
 
-        - Typical number of trees are 10 or 100. One would increase the number
-          of trees in the forest if upon multiple rerunning of the algorithm,
-          the order of importance of features changes significantly.
+       - Typical number of trees is at least 1,000. This script defaults to 1,000.
+         One would increase the number of trees in the forest if upon multiple
+         rerunning of the algorithm, the order of importance of features changes significantly.
 
     **Example output**
 
