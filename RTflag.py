@@ -47,6 +47,18 @@ def getOptions(myopts=None):
 
     return(args)
 
+def galaxySavefig(fig, fname):
+    """ Take galaxy DAT file and save as fig """
+
+    png_out = fname + '.png'
+    fig.savefig(png_out)
+
+    # shuffle it back and clean up
+    data = file(png_out, 'rb').read()
+    with open(fname, 'wb') as fp:
+        fp.write(data)
+    os.remove(png_out)
+
 
 def setRTflag(args, wide, dat, dir):
 
@@ -113,8 +125,9 @@ def setRTflag(args, wide, dat, dir):
     plt.axvline(x=CVcutoff, color = 'red', linestyle = 'dashed', label = "Cutoff at: {0}".format(CVcutoff))
     plt.legend()
 
-    plt.savefig(args.CVplot, format='pdf')
-    plt.close(fig)
+    galaxySavefig(fig, args.CVplot)
+    #plt.savefig(args.CVplot, format='pdf')
+    #plt.close(fig)
 
 def main(args):
     """ """
