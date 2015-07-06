@@ -35,7 +35,6 @@ def getOptions(myopts=None):
     group1.add_argument("--ID", dest = "uniqID", action = 'store', required = True, help = "Name of the column with unique identifiers.")
     group1.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = True, default = 'CVplot', help = "Name of the output PDF for CV plots.")
     group1.add_argument("--RTflagOutFile", dest = "RTflag", action = 'store', required = True, default = 'RTflag', help = "Name of the output TSV for RT flags.")
-    #group1.add_argument("--outPath", dest = "outPath", action = 'store', required = True, help = "Path to save created files. Example: ~/Desktop/output/  The output folder must have been created already.")
 
     group2 = parser.add_argument_group(title='Optional input', description='Optional input for SECIM tools.')
     group2.add_argument("--pctl", dest = "p90p10", action = 'store_true', required = False, default = False, help = "The difference is calculated by 95th percentile and 5th percentile by default. If you add this argument, it uses 90th percentile and 10th percentile. [optional]")
