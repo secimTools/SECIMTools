@@ -33,12 +33,12 @@ def getOptions(myopts=None):
     group1.add_argument("--input", dest = "fname", action = 'store', required = True, help = "Input dataset in wide format.")
     group1.add_argument("--design", dest = "dname", action = 'store', required = True, help = "Design file.")
     group1.add_argument("--ID", dest = "uniqID", action = 'store', required = True, help = "Name of the column with unique identifiers.")
-    group1.add_argument("--outPath", dest = "outPath", action = 'store', required = True, help = "Path to save output files")
-    #group1.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = False, default = 'CVplot', help = "Output filename of CV plot. The default is [CVplot]. [optional]")
+    group1.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = True, default = 'CVplot', help = "Name of the output PDF for CV plots.")
+    group1.add_argument("--RTflagOutFile", dest = "RTflag", action = 'store', required = True, default = 'RTflag', help = "Name of the output TSV for RT flags.")
+    #group1.add_argument("--outPath", dest = "outPath", action = 'store', required = True, help = "Path to save created files. Example: ~/Desktop/output/  The output folder must have been created already.")
 
     group2 = parser.add_argument_group(title='Optional input', description='Optional input for SECIM tools.')
     group2.add_argument("--pctl", dest = "p90p10", action = 'store_true', required = False, default = False, help = "The difference is calculated by 95th percentile and 5th percentile by default. If you add this argument, it uses 90th percentile and 10th percentile. [optional]")
-    #group2.add_argument("--RTflagOutFile", dest = "outfile", action = 'store', required = False, default = 'RTflag', help = "Output filename of RT flags. The default is [RTflag]. [optional]")
     group2.add_argument("--CVcutoff", dest = "CVcutoff", action = 'store', required = False, default = False, help = "The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here. [optional]")
 
     if myopts:
@@ -98,8 +98,7 @@ def setRTflag(args, wide, dat, dir):
                     mask   = (RTstat['cv'] > CVcutoff).values)
 
     # Output flags
-    RTflag.df_flags.to_csv(args.outPath, sep="\t")
-
+    RTflag.df_flags.to_csv(args.RTflag, sep="\t")
 
     # Plot RT CVs
     fig, ax = plt.subplots()
@@ -120,7 +119,7 @@ def setRTflag(args, wide, dat, dir):
 
 def main(args):
     """ """
-    directory = args.outPath
+    directory = args.RTflag
 
     # Import data
     dat = wideToDesign(args.fname, args.dname, args.uniqID)

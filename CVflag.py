@@ -34,7 +34,9 @@ def getOptions(myopts=None):
     group1.add_argument("--input", dest = "fname", action = 'store', required = True, help = "Input dataset in wide format.")
     group1.add_argument("--design", dest = "dname", action = 'store', required = True, help = "Design file.")
     group1.add_argument("--ID", dest = "uniqID", action = 'store', required = True, help = "Name of the column with unique identifiers.")
-    group1.add_argument("--outPath", dest = "outPath", action = 'store', required = True, help = "Path to save created files. Example: ~/Desktop/output/  The output folder must have been created already.")
+    #group1.add_argument("--outPath", dest = "outPath", action = 'store', required = True, help = "Path to save created files. Example: ~/Desktop/output/  The output folder must have been created already.")
+    group1.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = True, default = 'CVplot', help = "Name of the output PDF for CV plots.")
+    group1.add_argument("--CVflagOutFile", dest = "CVflag", action = 'store', required = True, default = 'RTflag', help = "Name of the output TSV for CV flags.")
 
     group2 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
     group2.add_argument("--group", dest = "group", action = 'store', required = False, default = False, help = "Add option to separate sample IDs by treatment name. [optional]")
@@ -48,7 +50,7 @@ def setCVflagByGroup(args, wide, dat):
 
     # Split design file by treatment group
 
-    pdfOut = PdfPages(args.outPath + '/CVplot_by_' + args.group + '.pdf')
+    pdfOut = PdfPages(args.CVplot)
     CV = pd.DataFrame(index=wide.index)
     for title, group in dat.design.groupby(args.group):
 
@@ -122,8 +124,8 @@ def setCVflag(args, wide, dat, groupName = ''):
         plt.legend()
 
         # Set file name of pdf and export
-        CVplotFileName = args.outPath + '/CVplot.pdf'
-        plt.savefig(CVplotFileName, format='pdf')
+        #CVplotFileName = args.CVplot
+        plt.savefig(args.CVplot, format='pdf')
         plt.close(fig)
 
     return DATstat['cv'], CVcutoff
@@ -139,10 +141,10 @@ def main(args):
     # Use group separation or not depending on user input
     if not args.group:
         DATstat, CVcutoff = setCVflag(args, wide, dat)
-        CVflagFileName = 'CVflag'
+        #CVflagFileName = 'CVflag'
     else:
         DATstat, CVcutoff = setCVflagByGroup(args, wide, dat)
-        CVflagFileName = 'CVflag_by_' + args.group
+        #CVflagFileName = 'CVflag_by_' + args.group
 
     #Create CVflag DataFrame
     CVflag = Flags(index=DATstat.index)
@@ -151,7 +153,7 @@ def main(args):
     CVflag.addColumn(column = 'flag_big_CV', mask = DATstat > CVcutoff)
 
     #Set the file name and export
-    CVflag.df_flags.to_csv(args.outPath + CVflagFileName + '.tsv', sep='\t')
+    CVflag.df_flags.to_csv(args.CVflag, sep='\t')
 
 if __name__ == '__main__':
 
