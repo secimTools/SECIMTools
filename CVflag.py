@@ -34,17 +34,29 @@ def getOptions(myopts=None):
     group1.add_argument("--input", dest = "fname", action = 'store', required = True, help = "Input dataset in wide format.")
     group1.add_argument("--design", dest = "dname", action = 'store', required = True, help = "Design file.")
     group1.add_argument("--ID", dest = "uniqID", action = 'store', required = True, help = "Name of the column with unique identifiers.")
-    #group1.add_argument("--outPath", dest = "outPath", action = 'store', required = True, help = "Path to save created files. Example: ~/Desktop/output/  The output folder must have been created already.")
     group1.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = True, default = 'CVplot', help = "Name of the output PDF for CV plots.")
     group1.add_argument("--CVflagOutFile", dest = "CVflag", action = 'store', required = True, default = 'RTflag', help = "Name of the output TSV for CV flags.")
 
-    group2 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
+    group2 = parser.add_argument_group(title='Optional input', description='Optional input for SECIM tools.')
     group2.add_argument("--group", dest = "group", action = 'store', required = False, default = False, help = "Add option to separate sample IDs by treatment name. [optional]")
     group2.add_argument("--CVcutoff", dest = "CVcutoff", action = 'store', required = False, default = False, help = "The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here. [optional]")
 
     args = parser.parse_args()
 
     return(args)
+
+def galaxySavefig(fig, fname):
+    """ Take galaxy DAT file and save as fig """
+
+    png_out = fname + '.png'
+    fig.savefig(png_out)
+
+    # shuffle it back and clean up
+    data = file(png_out, 'rb').read()
+    with open(fname, 'wb') as fp:
+        fp.write(data)
+    os.remove(png_out)
+
 
 def setCVflagByGroup(args, wide, dat):
 
