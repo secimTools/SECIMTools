@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 # Built-in packages
-import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 import tempfile
@@ -22,8 +21,6 @@ from interface import wideToDesign
 from interface import Flags
 
 # Glocals
-global DEBUG
-DEBUG = False
 
 def getOptions(myopts=None):
     """Function to pull in arguments"""
