@@ -20,7 +20,6 @@ import pandas as pd
 from interface import wideToDesign
 from interface import Flags
 
-# Glocals
 
 def getOptions(myopts=None):
     """Function to pull in arguments"""
