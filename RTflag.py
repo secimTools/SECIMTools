@@ -33,7 +33,7 @@ def getOptions(myopts=None):
     group1.add_argument("--input", dest = "fname", action = 'store', required = True, help = "Input dataset in wide format.")
     group1.add_argument("--design", dest = "dname", action = 'store', required = True, help = "Design file.")
     group1.add_argument("--ID", dest = "uniqID", action = 'store', required = True, help = "Name of the column with unique identifiers.")
-    group1.add_argument("--CVplotOutFile", dest = "CVplot", action = 'store', required = True, default = 'CVplot', help = "Name of the output PDF for CV plots.")
+    group1.add_argument("--RTplotOutFile", dest = "RTplot", action = 'store', required = True, default = 'CVplot', help = "Name of the output PDF for CV plots.")
     group1.add_argument("--RTflagOutFile", dest = "RTflag", action = 'store', required = True, default = 'RTflag', help = "Name of the output TSV for RT flags.")
 
     group2 = parser.add_argument_group(title='Optional input', description='Optional input for SECIM tools.')
@@ -134,7 +134,7 @@ def setRTflag(args, wide, dat, dir):
     plt.axvline(x=CVcutoff, color = 'red', linestyle = 'dashed', label = "Cutoff at: {0}".format(CVcutoff))
     plt.legend()
 
-    galaxySavefig(fig, args.CVplot)
+    galaxySavefig(fig, args.RTplot)
     #plt.savefig(args.CVplot, format='pdf')
     #plt.close(fig)
 

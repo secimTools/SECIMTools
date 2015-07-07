@@ -1,6 +1,6 @@
-<tool id="RTflag" name="RT flags">
+<tool id="CVflag" name="CV flags">
   <description>Calculate CV flags</description>
-  <command interpreter="python">RTflag.py --input $input --design $design --ID $uniqID --RTplotOutFile $RTplot --RTflagOutFile $RTflag
+  <command interpreter="python">CVflag.py --input $input --design $design --ID $uniqID --CVplotOutFile $CVplot --CVflagOutFile $CVflag
       #if $group:
           --group $group
       #end if
@@ -13,11 +13,11 @@
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
     <param name="CVcutoff" optional="true" type="integer" value="" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
-    <param name="pctl" size="30" type="boolean" label="90th percentile [OPTIONAL]" help="Check this box to use a 90th percentile. The default is a 95th percentile. [OPTIONAL]" />
+    <param name="group" size="30" type="text" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by groups in a column in the design file, enter the column name. Spelling and capitalization must be exact" />
   </inputs>
   <outputs>
-    <data format="png" name="CVplot"  label="RTplot" />
-    <data format="tabular" name="RTflag"  label="RTflag" />
+    <data format="pdf" name="CVplot"  label="CVplot" />
+    <data format="tabular" name="CVflag"  label="CVflag" />
   </outputs>
   <requirements>
     <requirement type="python-module">numpy</requirement>
