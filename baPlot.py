@@ -234,7 +234,7 @@ def runRegression(x, y):
     infl = results.get_influence()
     CD = infl.cooks_distance
     (dffits, thresh) = infl.dffits
-    DF = dffits > thresh
+    DF = abs(dffits) > thresh
 
     influence = pd.DataFrame({'cooksD': CD[0], 'cooks_pval': CD[1], 'dffits': DF}, index=fitted.index)
 
