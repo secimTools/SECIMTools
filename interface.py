@@ -169,7 +169,7 @@ class wideToDesign:
     def revertStr(self, x):
         """ Revert strings back to their original value so they behave well.
 
-        Clean strings may need to be revertd back to original values for
+        Clean strings may need to be reverted back to original values for
         convience.
 
         Args:
