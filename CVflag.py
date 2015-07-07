@@ -64,14 +64,14 @@ def setCVflagByGroup(args, wide, dat):
 
     CV['cv'] = CV.apply(np.max, axis=1)
     if not args.CVcutoff:
-        CVcutoff = np.percentile(CV['cv'].values, q=90)
+        CVcutoff = np.nanpercentile(CV['cv'].values, q=90)
         CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
     else:
         CVcutoff = args.CVcutoff
     for title, group in dat.design.groupby(args.group):
         fig, ax = plt.subplots()
-        xmin = -np.percentile(CV['cv_'+title].values,99)*0.2
-        xmax = np.percentile(CV['cv_'+title].values,99)*1.5
+        xmin = -np.nanpercentile(CV['cv_'+title].values,99)*0.2
+        xmax = np.nanpercentile(CV['cv_'+title].values,99)*1.5
         ax.set_xlim(xmin, xmax)
         CV['cv_'+title].plot(kind='hist', range = (xmin, xmax), bins = 15, normed = 1, color = 'grey', label = "CV histogram")
         CV['cv_'+title].plot(kind='kde', title="Density Plot of Coefficients of Variation in " + args.group + " " + title, ax=ax, label = "CV density")
@@ -81,8 +81,8 @@ def setCVflagByGroup(args, wide, dat):
         plt.close(fig)
 
     fig, ax = plt.subplots()
-    xmin = -np.percentile(CV['cv'].values,99)*0.2
-    xmax = np.percentile(CV['cv'].values,99)*1.5
+    xmin = -np.nanpercentile(CV['cv'].values,99)*0.2
+    xmax = np.nanpercentile(CV['cv'].values,99)*1.5
     ax.set_xlim(xmin, xmax)
     for title, group in dat.design.groupby(args.group):
         CV['cv_'+title].plot(kind='kde', title="Density Plot of Coefficients of Variation by " + args.group, ax=ax, label = "CV density in group "+title)
@@ -107,7 +107,7 @@ def setCVflag(args, wide, dat, groupName = ''):
     DATstat['cv']   = DATstat['std'] / DATstat['mean']
 
     if not args.CVcutoff:
-        CVcutoff = np.percentile(DATstat['cv'].values, q=90)
+        CVcutoff = np.nanpercentile(DATstat['cv'].values, q=90)
         CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
     else:
         CVcutoff = args.CVcutoff
@@ -115,8 +115,8 @@ def setCVflag(args, wide, dat, groupName = ''):
     # Plot CVs
     if groupName == '':
         fig, ax = plt.subplots()
-        xmin = -np.percentile(DATstat['cv'].values,99)*0.2
-        xmax = np.percentile(DATstat['cv'].values,99)*1.5
+        xmin = -np.nanpercentile(DATstat['cv'].values,99)*0.2
+        xmax = np.nanpercentile(DATstat['cv'].values,99)*1.5
         ax.set_xlim(xmin, xmax)
         DATstat['cv'].plot(kind='hist', range = (xmin, xmax), bins = 15, normed = 1, color = 'grey', ax = ax, label = "CV histogram")
         DATstat['cv'].plot(kind='kde', title="Density Plot of Coefficients of Variation", ax=ax, label = "CV density")
@@ -141,16 +141,14 @@ def main(args):
     # Use group separation or not depending on user input
     if not args.group:
         DATstat, CVcutoff = setCVflag(args, wide, dat)
-        #CVflagFileName = 'CVflag'
     else:
         DATstat, CVcutoff = setCVflagByGroup(args, wide, dat)
-        #CVflagFileName = 'CVflag_by_' + args.group
 
     #Create CVflag DataFrame
     CVflag = Flags(index=DATstat.index)
 
     # Fill in DataFrame values
-    CVflag.addColumn(column = 'flag_big_CV', mask = DATstat > CVcutoff)
+    CVflag.addColumn(column = 'flag_big_CV', mask = (DATstat > CVcutoff) | DATstat.isnull())
 
     #Set the file name and export
     CVflag.df_flags.to_csv(args.CVflag, sep='\t')

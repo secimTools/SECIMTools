@@ -47,6 +47,14 @@ def getOptions(myopts=None):
 
     return(args)
 
+def ifZero(x):
+
+    if x == 0:
+        value = np.nan
+    else:
+        value = x
+    return x
+
 def galaxySavefig(fig, fname):
     """ Take galaxy DAT file and save as fig """
 
@@ -63,16 +71,17 @@ def galaxySavefig(fig, fname):
 def setRTflag(args, wide, dat, dir):
 
     # Round retention time to 2 decimals
-    RTround = wide.applymap(lambda x: round(x, 2))
+    RTround = wide.applymap(lambda x: ifZero(x))
+    RTround = RTround.applymap(lambda x: round(x, 2))
 
     # Get percentiles, min, max, mean, median
     RTstat = pd.DataFrame(index=RTround.index)
     RTstat['min']    = RTround.apply(np.min, axis=1)
     RTstat['max']    = RTround.apply(np.max, axis=1)
-    RTstat['p95']    = RTround.apply(np.percentile, q=95, axis=1)
-    RTstat['p90']    = RTround.apply(np.percentile, q=90, axis=1)
-    RTstat['p10']    = RTround.apply(np.percentile, q=10, axis=1)
-    RTstat['p05']    = RTround.apply(np.percentile, q= 5, axis=1)
+    RTstat['p95']    = RTround.apply(np.nanpercentile, q=95, axis=1)
+    RTstat['p90']    = RTround.apply(np.nanpercentile, q=90, axis=1)
+    RTstat['p10']    = RTround.apply(np.nanpercentile, q=10, axis=1)
+    RTstat['p05']    = RTround.apply(np.nanpercentile, q= 5, axis=1)
     RTstat['std']    = RTround.apply(np.std, axis=1)
     RTstat['mean']   = RTround.apply(np.mean, axis=1)
     RTstat['median'] = RTround.apply(np.median, axis=1)
@@ -101,7 +110,7 @@ def setRTflag(args, wide, dat, dir):
                               (RTstat['min']-RTstat['mean']<-3*RTstat['std']).values))
 
     if not args.CVcutoff:
-        CVcutoff = np.percentile(RTstat['cv'].values, q=90)
+        CVcutoff = np.nanpercentile(RTstat['cv'].values, q=90)
         CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
     else:
         CVcutoff = args.CVcutoff
@@ -115,8 +124,8 @@ def setRTflag(args, wide, dat, dir):
     fig, ax = plt.subplots()
 
     #xmin, xmax = ax.get_xlim()
-    xmin = -np.percentile(RTstat['cv'].values,99)*0.2
-    xmax = np.percentile(RTstat['cv'].values,99)*1.5
+    xmin = -np.nanpercentile(RTstat['cv'].values,99)*0.2
+    xmax = np.nanpercentile(RTstat['cv'].values,99)*1.5
     ax.set_xlim(xmin, xmax)
 
     RTstat['cv'].plot(kind='hist', range = (xmin, xmax), bins = 15, normed = 1, color = 'grey', ax=ax, label = "CV histogram")
