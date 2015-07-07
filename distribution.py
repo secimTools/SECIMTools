@@ -22,21 +22,17 @@ def getOptions():
     """ Function to pull in arguments """
     description = """ Distribution Analysis: Plot sample distrubtions. """
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
-    parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
-    parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument("--group", dest="group", action='store', required=False, help="Name of column in design file with Group/treatment information.")
-    parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name [pdf].")
-    parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name [html].")
-    parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
+
+    group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
+    group1.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
+    group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
+    group1.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
+    group1.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name [pdf].")
+    group1.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name [html].")
+
+    group2 = parser.add_argument_group(title='Optional input', description='Optional input for districution script.')
+    group2.add_argument("--group", dest="group", action='store', required=False, help="Name of column in design file with Group/treatment information.")
     args = parser.parse_args()
-#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/ST000015_AN000032_v2.tsv',
-#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
-#                               '--ID', 'Name',
-#                               '--group', 'treatment',
-#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-#                               '--fig2', '/home/jfear/sandbox/secim/data/test2.html',
-#                               '--debug'])
     return(args)
 
 
@@ -137,9 +133,6 @@ if __name__ == '__main__':
     args = getOptions()
 
     logger = logging.getLogger()
-    if args.debug:
-        sl.setLogger(logger, logLevel='debug')
-    else:
-        sl.setLogger(logger)
+    sl.setLogger(logger)
 
     main(args)
