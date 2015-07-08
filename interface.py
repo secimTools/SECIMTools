@@ -265,6 +265,7 @@ class wideToDesign:
         self.wide = self.wide[self.sampleIDs]
         self.design = self.design[self.design.index.isin(self.sampleIDs)]
 
+
 class Flags:
     def __init__(self, index, column=''):
         """
@@ -287,6 +288,24 @@ class Flags:
 
         # Set DF values equal to 0
         self.df_flags.fillna(0, inplace=True)
+
+    def _testIfIndexesMatch(self, mask):
+        """
+        Before laying a mask over the Flags DataFrame, test if the mask's
+        indexes match to avoid errors.
+
+        :Arguments:
+            :param mask: List of True and False values corresponding to flag
+                         values.
+            :type mask: list
+
+        :Returns:
+            :type boolean: True or false if the indexes match
+
+        """
+
+        result = self.df_flags.index.isin(mask.index).any()
+        return result
 
     def update(self, mask, column=''):
         """
@@ -312,6 +331,7 @@ class Flags:
         else:
             #self.df_flags[mask] = 1
             self.df_flags.loc[mask.index] = mask.astype(int)
+
     def addColumn(self, column, mask=[]):
         """
         Add a column to the flag DataFrame
@@ -331,7 +351,7 @@ class Flags:
         if len(mask) > 0:
             if _testIfIndexesMatch(mask):
              #self.update(mask=mask, column=column)
-             self.df_flags.loc[mask.index, column] = mask.astype(int)
+                self.df_flags.loc[mask.index, column] = mask.astype(int)
 
     def fillNa(self):
         """
@@ -339,25 +359,7 @@ class Flags:
         """
 
         # Fill the 0's with numpy.nan
-        self.df_flags.replace() = (0,np.nan, inplace=True)
-
-    def _testIfIndexesMatch(self, mask):
-        """
-        Before laying a mask over the Flags DataFrame, test if the mask's
-        indexes match to avoid errors.
-
-        :Arguments:
-            :param mask: List of True and False values corresponding to flag
-                         values.
-            :type mask: list
-
-        :Returns:
-            :type boolean: True or false if the indexes match
-
-        """
-
-        result = self.df_flags.index.isin(mask.index).any()
-        return result
+        self.df_flags.replace(0, np.nan, inplace=True)
 
     @staticmethod
     def merge(flags):
