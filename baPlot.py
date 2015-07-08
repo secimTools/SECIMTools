@@ -21,9 +21,6 @@ from interface import wideToDesign
 from interface import Flags
 import logger as sl
 
-# Globals
-global DEBUG
-
 
 def getOptions():
     """ Function to pull in arguments """
@@ -463,9 +460,7 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel='debug')
-        DEBUG = True
     else:
-        DEBUG = False
         sl.setLogger(logger)
 
     main(args)
