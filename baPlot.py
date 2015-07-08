@@ -226,7 +226,8 @@ def runRegression(x, y):
 
     """
     # Fit linear regression
-    model = sm.OLS(y, x)
+    # Drop missing values for the regression
+    model = sm.OLS(y, x, missing='drop')
     results = model.fit()
 
     # Get fit and influence stats
@@ -407,16 +408,6 @@ def main(args):
     # Create dataframe with sampleIDs that are to be analyzed.
     #: :type wide: pandas.DataFrame
     dat.keep_sample(dat.sampleIDs)
-
-    # TODO: Add better missing data handling.
-    # Drop rows with missing data
-    rowNum = dat.wide.shape[0]
-    dat.wide.dropna(inplace=True)
-    dat.missing = rowNum - dat.wide.shape[0]
-    if dat.missing > 0:
-        logger.warn(""" There were {} rows with missing data, please
-                        make sure you have run missing data script
-                        before running baPlot. """.format(dat.missing))
 
     # Get list of pairwise combinations. If group is specified, only do within group combinations.
     combos = list()
