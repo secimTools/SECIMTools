@@ -3,7 +3,6 @@
 # Built-in packages
 import logging
 import argparse
-from argparse import RawDescriptionHelpFormatter
 import shutil
 import os
 
@@ -19,6 +18,7 @@ from interface import wideToDesign
 from interface import Flags
 import logger as sl
 
+
 def getOptions(myopts=None):
     """ Function to pull in arguments """
     description = """ Count the digits in data to determine possible outliers
@@ -33,12 +33,11 @@ def getOptions(myopts=None):
     requiredInput.add_argument("--html", dest="html", action='store', required=True, help="Html file output name")
     requiredInput.add_argument("--flags", dest="flags", action='store', required=True, help="Flag file output")
 
-    optionalInput= parser.add_argument_group(description="Optional input")
+    optionalInput = parser.add_argument_group(description="Optional input")
     optionalInput.add_argument("--noZero", dest="zero", action='store_true', required=False, help="Flag to ignore zeros.")
     optionalInput.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
     optionalInput.add_argument("--group", dest="group", action='store', required=False, default=False, help="Add the option to separate sample IDs by treatement name. ")
     optionalInput.add_argument("--noZip", dest="noZip", action='store_true', required=False, default=False, help="If running from command line use --noZip to skip the zip creation. This stops the command line from freezing")
-
 
     if myopts:
         args = parser.parse_args(myopts)
@@ -46,7 +45,6 @@ def getOptions(myopts=None):
         args = parser.parse_args()
 
     return(args)
-
 
 
 def splitDigit(x):
@@ -71,7 +69,6 @@ def splitDigit(x):
         # Before the decimal point
         cnt = len(x.split('.')[0])
     return cnt
-
 
 
 class FileName:
@@ -176,13 +173,12 @@ def countDigits(wide, dat, dir, groupName=''):
     # Make distribution plot of differences
 
     # Set title to default if there is none
-    if groupName: # If a title is set (set a different title for each group and export everything in a zip)
+    if groupName:  # If a title is set (set a different title for each group and export everything in a zip)
         title = 'Distribution of difference between min and max across compounds: ' + str(groupName)
         # shutil.make_archive("CountDigitsArchive", "zip")  # This creates a zip of everything, not good
 
-    else: # groups are not being used
+    else:  # groups are not being used
         title = 'Distribution of difference between min and max across compounds'
-
 
     if cnt['diff'].any():
         fig, ax = plt.subplots(figsize=(8, 8))
@@ -202,7 +198,7 @@ def countDigits(wide, dat, dir, groupName=''):
 def main(args):
     # Create a directory in galaxy to hold the files created
     directory = args.htmlPath
-    try: # for test - needs this done
+    try:  # for test - needs this done
         os.makedirs(args.htmlPath)
     except Exception, e:
         logger.error("Error. {}".format(e))
@@ -249,8 +245,6 @@ def main(args):
 
     # Close html list and contents
     htmlContents.append('</ul></body></html>')
-
-
 
     htmlFile.write("\n".join(htmlContents))
     htmlFile.write("\n")
