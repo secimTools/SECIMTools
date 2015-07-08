@@ -267,7 +267,7 @@ class wideToDesign:
 
 
 class Flags:
-    def __init__(self, index, column=''):
+    def __init__(self, index):
         """
         This class  creates an empty dataframe to hold the flag values for a dataset. The dataframe is created
         through instantiation and filled with 0's.
@@ -283,11 +283,6 @@ class Flags:
         """
         # Create DataFrame from index and columns
         self.df_flags = pd.DataFrame(index=index)
-        if len(column) > 0:
-            self.addColumn(column)
-
-        # Set DF values equal to 0
-        self.df_flags.fillna(0, inplace=True)
 
     def _testIfIndexesMatch(self, mask):
         """
@@ -350,7 +345,7 @@ class Flags:
         # Update the column if a mask is given and the mask matches the index
         if len(mask) > 0:
             if self._testIfIndexesMatch(mask):
-             #self.update(mask=mask, column=column)
+                #self.update(mask=mask, column=column)
                 self.df_flags.loc[mask.index, column] = mask.astype(int)
 
     def fillNa(self):
