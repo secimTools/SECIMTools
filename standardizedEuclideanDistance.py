@@ -15,6 +15,7 @@ import pandas as pd
 import scipy.stats as stats
 from sklearn.neighbors import DistanceMetric
 
+
 def getOptions():
     """ Function to pull in arguments """
     description = """ """
@@ -33,16 +34,15 @@ def getOptions():
 def standardizedEulideanDistance(wide):
     """ Calculate the standardized Euclidean distance and return an array of distances to the center and a matrix of pairewise distances.
 
-    Arguments:
+    :Arguments:
         :type wide: pandas.DataFrame
         :param wide: A wide formatted data frame with samples as columns and compounds as rows.
 
-    Returns:
+    :Returns:
         :return: Return a numpy array with MD values.
         :rtype: numpy.array
     """
-    
-    
+
     # Estimated Variance from the data
     varHat = wide.var(axis=1, ddof=1)
     dist = DistanceMetric.get_metric('seuclidean', V=varHat)
@@ -51,8 +51,8 @@ def standardizedEulideanDistance(wide):
     colMean = wide.mean(axis=1)
 
     # Calculate the standardized Euclidean Distance from all samples to the center
-    SEDtoCenter = dist.pairwise(wide.values.T, pd.DataFrame(colMean).T)
-    
+   SEDtoCenter = dist.pairwise(wide.values.T, pd.DataFrame(colMean).T)
+
     # Calculate the pairwise standardized Euclidean Distance of all samples
     SEDpairwise = dist.pairwise(wide.values.T)
 
@@ -78,13 +78,13 @@ def standardizedEulideanDistance(wide):
 def plotMahalanobis(SEDtoCenter, cutoff1, SEDpairwise, cutoff2):
     """ Plot the standardized Euclidean distance plot.
 
-    Arguments:
+    :Arguments:
         :type MD: numpy.array
         :param MD: An array of distances.
 
         :param tuple cutoffs: A tuple with label and cutoff. Used a tuple so that sort order would be maintained.
 
-    Returns:
+    :Returns:
         :return: Returns a figure object.
         :rtype: matplotlib.pyplot.Figure.figure
 
