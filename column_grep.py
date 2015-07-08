@@ -24,11 +24,11 @@ from tempfile import NamedTemporaryFile
 def getopts(argv):
     opts = {}
     while argv:
-	if argv[0][0] == '-':
-	    opts[argv[0]] = argv[1]
-	    argv = argv[2:]
-	else:
-	    argv = argv[1:]
+        if argv[0][0] == '-':
+            opts[argv[0]] = argv[1]
+	        argv = argv[2:]
+	    else:
+	        argv = argv[1:]
     return opts
 
 def main():
@@ -38,7 +38,7 @@ def main():
         opts = getopts(args)
     except IndexError:
         print "Usage:"
-        print " -i		Input file"
+
         print " -o		Output file"
         print " -pattern	RegEx pattern"
         print " -v		true or false (Invert match)"
@@ -48,7 +48,7 @@ def main():
     if outputfile == None:
         print "No output file specified."
         return -1
-    
+
     inputfile = opts.get("-i")
     if inputfile == None:
         print "No input file specified."
@@ -77,7 +77,7 @@ def main():
                         '{' :'__oc__',
                         '}' :'__cc__'
                     }
-    
+
     # with new sanitizing we only need to replace for single quote,
     # but this needs to remain for backwards compatibility
     for key, value in mapped_chars.items():
@@ -108,7 +108,7 @@ def main():
 
     # set version flag
     versionflag  = "-P"
-    
+
     # MacOS 10.8.2 does not support -P option for perl-regex anymore
     versionmatch = Popen("grep -V | grep 'BSD'", shell=True, stdout=PIPE).communicate()[0];
     if versionmatch:
@@ -118,16 +118,16 @@ def main():
     # by using a file to hold the pattern, we don't have worry about sanitizing grep commandline and can include single quotes in pattern
     pattern_file_name = NamedTemporaryFile().name
     open( pattern_file_name, 'w' ).write( pattern )
-    
+
     # generate grep command
     commandline = "grep %s %s -f %s %s > %s" % ( versionflag, invertflag, pattern_file_name, inputfile, outputfile )
-    
+
     # run grep
     errorcode, stdout = commands.getstatusoutput(commandline)
-    
+
     # remove temp pattern file
     os.unlink( pattern_file_name )
-    
+
     # return error code
     return errorcode
 
