@@ -325,7 +325,7 @@ class Flags:
 
         # Update the values to 1's if they are true in the mask
         if len(column) > 0:
-            if _testIfIndexesMatch(mask):
+            if self._testIfIndexesMatch(mask):
                 self.df_flags.loc[mask.index, column] = mask.astype(int)
                 #self.df_flags.loc[mask, column] = 1
         else:
@@ -349,7 +349,7 @@ class Flags:
 
         # Update the column if a mask is given and the mask matches the index
         if len(mask) > 0:
-            if _testIfIndexesMatch(mask):
+            if self._testIfIndexesMatch(mask):
              #self.update(mask=mask, column=column)
                 self.df_flags.loc[mask.index, column] = mask.astype(int)
 
