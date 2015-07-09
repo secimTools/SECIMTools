@@ -34,8 +34,20 @@ def getOptions():
 
 def checkFor1(row):
     """
-    row is a series
+
+    Check for the occurance of the value 1 and return a 1 if the value 1 is found
+
+    :Arguments:
+        :param row: DataFrame values already of  a row contained in the flags
+                    DataFrame
+        :type row: pandas.Series
+
+    :Returns:
+        :return: Value to be placed in column of DataFrame
+        :type return: int
+
     """
+
     if row.isin([1]).any():
         return 1
     else:
@@ -44,7 +56,20 @@ def checkFor1(row):
 
 def checkForAll1(row):
     """
-    row is a series
+
+    Check for the if all of the values in the row are a 1 and return 1 if this
+    is true. If the mean of the row is equal to 1, all of the values contained
+    are 1.
+
+    :Arguments:
+        :param row: DataFrame values already of  a row contained in the flags
+                    DataFrame
+        :type row: pandas.Series
+
+    :Returns:
+        :return: Value to be placed in column of DataFrame
+        :type return: int
+
     """
     if row.mean() == 1.0:
         return 1
