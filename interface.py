@@ -322,9 +322,7 @@ class Flags:
         if len(column) > 0:
             if self._testIfIndexesMatch(mask):
                 self.df_flags.loc[mask.index, column] = mask.astype(int)
-                #self.df_flags.loc[mask, column] = 1
         else:
-            #self.df_flags[mask] = 1
             self.df_flags.loc[mask.index] = mask.astype(int)
 
     def addColumn(self, column, mask=[]):
@@ -344,9 +342,7 @@ class Flags:
 
         # Update the column if a mask is given and the mask matches the index
         if len(mask) > 0:
-            if self._testIfIndexesMatch(mask):
-                #self.update(mask=mask, column=column)
-                self.df_flags.loc[mask.index, column] = mask.astype(int)
+            self.update(mask=mask, column=column)
 
     def fillNa(self):
         """
