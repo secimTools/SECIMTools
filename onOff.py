@@ -31,6 +31,7 @@ def getOptions():
 
     return(args)
 
+
 def checkFor1(row):
     """
     row is a series
@@ -40,6 +41,7 @@ def checkFor1(row):
     else:
         return 0
 
+
 def checkForAll1(row):
     """
     row is a series
@@ -48,28 +50,18 @@ def checkForAll1(row):
         return 1
     else:
         return 0
+
+
 def main(args):
 
     # Import data
     dat = wideToDesign(args.fname, args.dname, args.uniqID)
 
-    # Create a global instance of flag class
-    #global df_onOffFlags
-    df_cutoffFlags = Flags(index=dat.wide.index)
-    #df_onOffFlags = Flags(index=dat.wide.index)
+    df_onOffFlags = Flags(index=dat.wide.index)
 
-    #df_onOffFlags.addColumn('flag_met_on')
-    #df_onOffFlags.addColumn('flag_met_off')
-
-    # group list for creating flag columns later on
-    columnList = []
     # Iterate through each group to add flags for if a group has over half of
     # its data above the cutoff
     for title, group in dat.design.groupby(args.group):
-
-        #Add group name to list
-        if title not in columnList:
-            columnList.append('flag_' + title + '_on')
 
         # Filter the wide file into a new DataFrame
         currentFrame = dat.wide[group.index]
@@ -84,20 +76,20 @@ def main(args):
         mask['mean'] = mask.apply(np.mean, axis=1)
 
         # Add mean column of boolean values to flags
-        df_cutoffFlags.addColumn(column='flag_' + title + '_on',
-                                 mask=mask['mean'] > 0.5)
+        df_onOffFlags.addColumn(column='flag_' + title + '_on',
+                                mask=mask['mean'] > 0.5)
 
     # flag_met_on column
-    maskFlagMetOn = df_cutoffFlags.df_flags.apply(lambda row: checkFor1(row),
-                                                  axis=1)
-    df_cutoffFlags.addColumn('flag_met_on', maskFlagMetOn)
+    maskFlagMetOn = df_onOffFlags.df_flags.apply(lambda row: checkFor1(row),
+                                                 axis=1)
+    df_onOffFlags.addColumn('flag_met_on', maskFlagMetOn)
 
     # flag_met_all_on column
-    maskFlagMetAllOn = df_cutoffFlags.df_flags.apply(lambda row: checkForAll1(row),
-                                                     axis=1)
-    df_cutoffFlags.addColumn('flag_met_all_on', maskFlagMetAllOn)
+    maskFlagMetAllOn = df_onOffFlags.df_flags.apply(lambda row: checkForAll1(row),
+                                                    axis=1)
+    df_onOffFlags.addColumn('flag_met_all_on', maskFlagMetAllOn)
 
-    df_cutoffFlags.df_flags.to_csv(args.output, sep="\t")
+    df_onOffFlags.df_flags.to_csv(args.output, sep="\t")
 
 if __name__ == "__main__":
 
