@@ -19,5 +19,6 @@
         <tool file="secimtools/RTflag.xml"/>
         <tool file="secimtools/CVflag.xml"/>
         <tool file="secimtools/SVM_classifier.xml"/>
+        <tool file="secimtools/clean.xml"/>
     </section>
 </toolbox>
