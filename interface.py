@@ -361,6 +361,19 @@ class Flags:
         # Fill the 0's with numpy.nan
         self.df_flags.replace(0, np.nan, inplace=True)
 
+    def testOverlap(self, indices):
+        """ Test if a list of indeces overlap. """
+
+        # TODO: Trying to figure out the best algorithm to test if indeces are
+        # the sam.
+        for i, index in enumerate(indices):
+            if i == 0:
+                overlap = set(index)
+            else:
+                if overlap.intersection(set(index)):
+                    overlap = overlap.union(set(index))
+
+
     @staticmethod
     def merge(flags):
         """

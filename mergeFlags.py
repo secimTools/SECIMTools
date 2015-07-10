@@ -15,7 +15,6 @@ from interface import Flags
 def getOptions():
     """ Function to pull in arguments """
     parser = argparse.ArgumentParser()
-
     parser.add_argument("--input", dest="flagFiles", action='store', required=True, nargs="+",
                         help="Input any number of flag files that have the same indexes")
     parser.add_argument('--output', dest="mergedFile", action='store', required=True, help="Output file")
@@ -38,7 +37,8 @@ def mergeFlags(args):
     flagDataFrameList = []
     logger.info("Importing data")
 
-    # Check for commas, commas are used in galaxy. If there are commas separate the list by commas
+    # Check for commas, commas are used in galaxy. If there are commas separate
+    # the list by commas
     if ',' in args.flagFiles[0]:
         args.flagFiles = args.flagFiles[0].split(',')
 
