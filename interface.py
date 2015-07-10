@@ -284,6 +284,9 @@ class Flags:
         # Create DataFrame from index and columns
         self.df_flags = pd.DataFrame(index=index)
 
+        # Create a list to store column names
+        self._columns = list()
+
     def _testIfIndexesMatch(self, mask):
         """
         Before laying a mask over the Flags DataFrame, test if the mask's
@@ -323,7 +326,7 @@ class Flags:
             if self._testIfIndexesMatch(mask):
                 self.df_flags.loc[mask.index, column] = mask.astype(int)
         else:
-            self.df_flags.loc[mask.index] = mask.astype(int)
+            self.df_flags.loc[mask.index, self._columns] = mask.astype(int)
 
     def addColumn(self, column, mask=[]):
         """
@@ -339,6 +342,12 @@ class Flags:
 
         """
         self.df_flags[column] = 0
+
+        # Store column names
+        if isinstance(column, str):
+            self._columns.append(column)
+        else:
+            self._columns.extend(column)
 
         # Update the column if a mask is given and the mask matches the index
         if len(mask) > 0:

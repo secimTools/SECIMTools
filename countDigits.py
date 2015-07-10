@@ -101,8 +101,10 @@ class FileName:
 
 
 def countDigitsByGroups(args, wide, dat, dir):
-    """ If the group option is selected this function is called to split by groups. The function calls the countDigits
-        function in a loop that iterates through the groups
+    """ If the group option is selected this function is called to split by groups.
+
+    The function calls the countDigits function in a loop that iterates through
+    the groups
 
         :Arguments:
             :type args: argparse.ArgumentParser
@@ -115,8 +117,8 @@ def countDigitsByGroups(args, wide, dat, dir):
             :param dat: A data frame in design format
 
             :param string dir: String of the directory name for storing files in galaxy
-    """
 
+    """
     # Split Design file by group
     try:
         for title, group in dat.design.groupby(args.group):
@@ -147,6 +149,7 @@ def countDigits(wide, dat, dir, groupName=''):
             :param string dir: String of the directory name for storing files in galaxy
 
             :param string groupName: Name of the group if using the group option. Set to an empty stirng by default
+
     """
     # Count the number of digits before decimal and get basic distribution info
     cnt = wide.applymap(lambda x: splitDigit(x))
@@ -188,7 +191,6 @@ def countDigits(wide, dat, dir, groupName=''):
         figureFileName = FileName(text='difference(Max-Min)', fileType='.png', groupName=groupName)
         fig.savefig(dir + figureFileName.fileNameWithSlash, bbox_inches='tight')
         htmlContents.append('<li style=\"margin-bottom:1.5%;\"><a href="{}">{}</a></li>'.format(figureFileName.fileName, groupName + ' Figure'))
-
     else:
         logger.warn('There were no differences in digit counts, no plot will be generated')
 
@@ -221,12 +223,12 @@ def main(args):
 
     # Global flag file
     global flag
-    flag = Flags(index=wide.index, column='flag_feature_count_digits')
+    flag = Flags(index=wide.index)
+    flag.addColumn(column='flag_feature_count_digits')
 
     # Use group separation or not depending on user input
     if args.group:
         countDigitsByGroups(args, wide, dat, dir=directory)
-
     else:
         countDigits(wide, dat, dir=directory)
 
@@ -251,7 +253,6 @@ def main(args):
 
 
 if __name__ == '__main__':
-
     # Command line options
     args = getOptions()
 
