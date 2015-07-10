@@ -1,4 +1,4 @@
-#! env/usr/bin python
+#!/usr/bin/env python
 
 # Built-in packages
 import argparse
@@ -25,56 +25,11 @@ def getOptions():
     group1.add_argument("--group", dest="group", action='store', required=True, default=None, help="Add the option to separate sample IDs by treatement name. ")
 
     group2 = parser.add_argument_group(title='Optional input', description='Optional input for On/Off tool.')
-    group2.add_argument("--cutoff", dest="cutoff", action='store', default=30000, required=False, help="Cutoff to use for which values to flag. This defaults to 30,000")
+    group2.add_argument("--cutoff", dest="cutoff", action='store', default=30000, type=int, required=False, help="Cutoff to use for which values to flag. This defaults to 30,000")
 
     args = parser.parse_args()
 
     return(args)
-
-
-def checkFor1(row):
-    """
-
-    Check for the occurance of the value 1 and return a 1 if the value 1 is found
-
-    :Arguments:
-        :param row: DataFrame values already of  a row contained in the flags
-                    DataFrame
-        :type row: pandas.Series
-
-    :Returns:
-        :return: Value to be placed in column of DataFrame
-        :type return: int
-
-    """
-
-    if row.isin([1]).any():
-        return 1
-    else:
-        return 0
-
-
-def checkForAll1(row):
-    """
-
-    Check for the if all of the values in the row are a 1 and return 1 if this
-    is true. If the mean of the row is equal to 1, all of the values contained
-    are 1.
-
-    :Arguments:
-        :param row: DataFrame values already of  a row contained in the flags
-                    DataFrame
-        :type row: pandas.Series
-
-    :Returns:
-        :return: Value to be placed in column of DataFrame
-        :type return: int
-
-    """
-    if row.mean() == 1.0:
-        return 1
-    else:
-        return 0
 
 
 def main(args):
@@ -87,31 +42,22 @@ def main(args):
     # Iterate through each group to add flags for if a group has over half of
     # its data above the cutoff
     for title, group in dat.design.groupby(args.group):
-
-        # Filter the wide file into a new DataFrame
-        currentFrame = dat.wide[group.index]
-
-        # Change the dat.sampleIDs to match the design file
-        dat.sampleIDs = group.index
-
         # Create mask of current frame containing True/False values if the
         # values are greater than the cutoff
-        mask = (currentFrame[dat.sampleIDs] > args.cutoff).astype(int)
+        mask = (dat.wide[group.index] > args.cutoff)
+
         # Convert the mean column to a boolean
-        mask['mean'] = mask.apply(np.mean, axis=1)
+        meanOn = mask.mean(axis=1)
 
         # Add mean column of boolean values to flags
-        df_onOffFlags.addColumn(column='flag_' + title + '_on',
-                                mask=mask['mean'] > 0.5)
+        df_onOffFlags.addColumn(column='flag_' + title + '_on', mask=meanOn > 0.5)
 
     # flag_met_on column
-    maskFlagMetOn = df_onOffFlags.df_flags.apply(lambda row: checkFor1(row),
-                                                 axis=1)
+    maskFlagMetOn = df_onOffFlags.df_flags.any(axis=1)
     df_onOffFlags.addColumn('flag_met_on', maskFlagMetOn)
 
     # flag_met_all_on column
-    maskFlagMetAllOn = df_onOffFlags.df_flags.apply(lambda row: checkForAll1(row),
-                                                    axis=1)
+    maskFlagMetAllOn = df_onOffFlags.df_flags.all(axis=1)
     df_onOffFlags.addColumn('flag_met_all_on', maskFlagMetAllOn)
 
     df_onOffFlags.df_flags.to_csv(args.output, sep="\t")
