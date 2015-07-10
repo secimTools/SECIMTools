@@ -148,8 +148,6 @@ def countDigits(wide, dat, dir, groupName=''):
 
             :param string groupName: Name of the group if using the group option. Set to an empty stirng by default
     """
-
-
     # Count the number of digits before decimal and get basic distribution info
     cnt = wide.applymap(lambda x: splitDigit(x))
     cnt['min'] = cnt.apply(np.min, axis=1)
@@ -213,7 +211,6 @@ def main(args):
                         '</div>')
     htmlContents.append('<ul style=\"text-align:left; margin-left:5%;\">')
 
-
     # Import data
     logger.info(u'html system path: {}'.format(args.htmlPath))
     logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}'.format(args.fname, args.dname, args.uniqID))
@@ -226,7 +223,6 @@ def main(args):
     global flag
     flag = Flags(index=wide.index, column='flag_feature_count_digits')
 
-
     # Use group separation or not depending on user input
     if args.group:
         countDigitsByGroups(args, wide, dat, dir=directory)
@@ -235,10 +231,10 @@ def main(args):
         countDigits(wide, dat, dir=directory)
 
     # Create a zip archive with the inputted zip file name of the temp file
-    if args.noZip: pass
+    if args.noZip:
+        pass
     else:
         shutil.make_archive(directory + '/Archive_of_Results', 'zip', directory)
-
 
     # Add zip of all the files to the list
     htmlContents.append('<li><a href="{}">{}</a></li>'.format('Archive_of_Results.zip', 'Zip of Results'))
