@@ -82,6 +82,11 @@ comparisons, and (outlier_dist_plots) Bar graphs of summarized flags which
 allow for the identification of samples with many outlying data points or
 compounds/peaks with many outlying points.
 
+.. class:: infomark
+
+The BA plot requires that there are not missing values. A row will be dropped
+when a pairwise comparison has a missing value.
+
 --------------------------------------------------------------------------------
 
 **Input**
@@ -134,8 +139,7 @@ compounds/peaks with many outlying points.
 
     **Outlier Cutoff**
 
-    - Here we use several measures to identify features that are outliers or
-    leverage points.
+    - Here we use several measures to identify features that are outliers or leverage points.
         - If the magnitude of the residuals from the linear regression on the
           BA-plot exceeds this threshold then a features is flagged as an
           outlier. This cutoff can be adjusted.
@@ -231,6 +235,7 @@ compounds/peaks with many outlying points.
     +----------+------------------------+
     | ...      | ...                    |
     +----------+------------------------+
+
 
     **flag_feature** is a TSV containing a 0|1 flag for each feature. If a feature is 1
     you should consider removing this feature.

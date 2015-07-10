@@ -21,9 +21,6 @@ from interface import wideToDesign
 from interface import Flags
 import logger as sl
 
-# Globals
-global DEBUG
-
 
 def getOptions():
     """ Function to pull in arguments """
@@ -155,13 +152,13 @@ def plotFlagDist(propSample, propFeature, pdf):
     ppFlag = PdfPages(pdf)
 
     ## Plot samples
-    ax = propSample.head(30).plot(kind='bar', figsize=(10, 5))
+    ax = propSample.head(30).plot(kind='bar', figsize=(10, 5), rot=90)
     ax.set_ylabel('Proportion of features that were outliers.')
     ax.set_xlabel('Sample ID')
     ppFlag.savefig(plt.gcf(), bbox_inches='tight')
 
     ## Plot features
-    ax = propFeature.head(30).plot(kind='bar', figsize=(10, 5))
+    ax = propFeature.head(30).plot(kind='bar', figsize=(10, 5), rot=90)
     ax.set_ylim(0, 1.0)
     ax.set_ylabel('Proportion of samples that a feature was an outlier.')
     ax.set_xlabel('Feature ID')
@@ -226,7 +223,8 @@ def runRegression(x, y):
 
     """
     # Fit linear regression
-    model = sm.OLS(y, x)
+    # Drop missing values for the regression
+    model = sm.OLS(y, x, missing='drop')
     results = model.fit()
 
     # Get fit and influence stats
@@ -272,6 +270,10 @@ def makeBA(x, y, ax):
     # Make BA plot
     diff = x - y
     mean = (x + y) / 2
+
+    # Drop missing for current comparison
+    diff.dropna(inplace=True)
+    mean.dropna(inplace=True)
 
     # Get Upper and Lower CI from regression
     lower, upper, fitted, resid, infl = runRegression(mean, diff)
@@ -331,9 +333,12 @@ def makeScatter(x, y, ax):
     ax.scatter(x, y)
 
     # Plot regression lines
-    ax.plot(x, lower, 'r:')
-    ax.plot(x, fitted, 'r-')
-    ax.plot(x, upper, 'r:')
+    # If there are missing data, x and the result vectors won't have the same
+    # dimensions. First filter x by the index of the fitted values then plot.
+    x2 = x.loc[fitted.index]
+    ax.plot(x2, lower, 'r:')
+    ax.plot(x2, fitted, 'r-')
+    ax.plot(x2, upper, 'r:')
 
     # Adjust plot
     ax.set_xlabel(xname)
@@ -387,8 +392,8 @@ def iterateCombo(dat, combo, pdf):
     plt.close(fig)
 
     # Create flags
-    flag = Flags(index=dat.wide.index, column='flag_{0}_{1}'.format(c1, c2))
-    flag.update(outlier)
+    flag = Flags(index=dat.wide.index)
+    flag.addColumn(column='flag_{0}_{1}'.format(c1, c2), mask=outlier)
 
     return flag.df_flags
 
@@ -407,16 +412,6 @@ def main(args):
     # Create dataframe with sampleIDs that are to be analyzed.
     #: :type wide: pandas.DataFrame
     dat.keep_sample(dat.sampleIDs)
-
-    # TODO: Add better missing data handling.
-    # Drop rows with missing data
-    rowNum = dat.wide.shape[0]
-    dat.wide.dropna(inplace=True)
-    dat.missing = rowNum - dat.wide.shape[0]
-    if dat.missing > 0:
-        logger.warn(""" There were {} rows with missing data, please
-                        make sure you have run missing data script
-                        before running baPlot. """.format(dat.missing))
 
     # Get list of pairwise combinations. If group is specified, only do within group combinations.
     combos = list()
@@ -450,13 +445,13 @@ def main(args):
     plotFlagDist(propSample, propFeature, args.distName)
 
     # Create sample level flags
-    flag_sample = Flags(dat.sampleIDs, 'flag_sample_BA_outlier')
-    flag_sample.update((propSample >= args.sampleCutoff))
+    flag_sample = Flags(index=dat.sampleIDs)
+    flag_sample.addColumn(column='flag_sample_BA_outlier', mask=(propSample >= args.sampleCutoff))
     flag_sample.df_flags.to_csv(args.flagSample, sep='\t')
 
     # Create metabolite level flags
-    flag_metabolite = Flags(dat.wide.index, 'flag_feature_BA_outlier')
-    flag_metabolite.update((propFeature >= args.featureCutoff))
+    flag_metabolite = Flags(dat.wide.index)
+    flag_metabolite.addColumn(column='flag_feature_BA_outlier', mask=(propFeature >= args.featureCutoff))
     flag_metabolite.df_flags.to_csv(args.flagFeature, sep='\t')
 
 
@@ -472,9 +467,7 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel='debug')
-        DEBUG = True
     else:
-        DEBUG = False
         sl.setLogger(logger)
 
     main(args)
