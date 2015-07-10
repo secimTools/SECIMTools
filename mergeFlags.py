@@ -11,6 +11,7 @@ import pandas as pd
 import logger as sl
 from interface import Flags
 
+
 def getOptions():
     """ Function to pull in arguments """
     parser = argparse.ArgumentParser()
@@ -22,13 +23,14 @@ def getOptions():
     args = parser.parse_args()
     return args
 
+
 def mergeFlags(args):
     """
-    Arguments:
+    :Arguments:
         :type args: argparse.ArgumentParser
         :param args: Command line arguments
 
-    Returns:
+    :Returns:
         :rtype: .tsv
         :returns: Merged flags tsv file
     """
@@ -53,6 +55,7 @@ def mergeFlags(args):
     # Export merged flags
     mergedFlags.to_csv(args.mergedFile, sep='\t')
 
+
 def main(args):
     # Call mergeFlags function. Main is used for convention
     mergeFlags(args)
@@ -65,3 +68,4 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     sl.setLogger(logger)
     main(args)
+
