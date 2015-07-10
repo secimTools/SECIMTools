@@ -1,4 +1,4 @@
-# Author: Jonathan Poisson | PoissonJ@ufl.edu 
+# Author: Jonathan Poisson | PoissonJ@ufl.edu
 
 # !/usr/bin/env python
 
@@ -22,6 +22,7 @@ def getOptions():
     group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     group1.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
     group1.add_argument("--wideOut", dest="wideOut", action='store', required=True, help="File destination of the cleaned wide file")
+    group1.add_argument("--designOut", dest="designOut", action='store', required=True, help="File destination of the cleaned design file")
 
     args = parser.parse_args()
 
@@ -35,8 +36,8 @@ def main(args):
                                   uniqID=args.uniqID, clean_string=True)
 
     # Export cleaned data
-    df_cleanedData.wide.to_csv(args.wideOut, sep="/t")
-    df_cleanedData.design.to_csv(args.designOut, sep="/t")
+    df_cleanedData.wide.to_csv(args.wideOut, sep="\t")
+    df_cleanedData.design.to_csv(args.designOut, sep="\t")
 
 
 if __name__ == '__main__':
