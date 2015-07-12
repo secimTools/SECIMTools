@@ -1,0 +1,15 @@
+<tool id="onOff" name="On/Off Flags">
+    <description></description>
+    <command interpreter="python">onOff.py --input $input --design $design --ID $uniqID --wideOut $wideOut --designOut $designOut
+    #if $cutoff:
+        --cutoff
+    </command>
+    <inputs>
+    </inputs>
+    <outputs>
+    </outputs>
+    <requirements>
+    </requirements>
+    <help>
+    </help>
+</tool>
