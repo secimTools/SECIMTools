@@ -53,7 +53,10 @@ def mergeFlags(args):
     mergedFlags = Flags.merge(flagDataFrameList)
 
     # Export merged flags
-    mergedFlags.to_csv(args.mergedFile, sep='\t')
+    # NOTE: Pandas cannot store NANs as an int. If there are NANs from the
+    # merge, then the column becomes a float. Here I change the float output to
+    # look like an int.
+    mergedFlags.to_csv(args.mergedFile, float_format='%.0f', sep='\t')
 
 
 def main(args):

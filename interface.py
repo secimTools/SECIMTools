@@ -373,6 +373,36 @@ class Flags:
                 if overlap.intersection(set(index)):
                     overlap = overlap.union(set(index))
 
+    @staticmethod
+    def _mergeIndex(indices):
+        """ Function to check for overlap for a list of indices.
+
+        This function is based on:
+        http://stackoverflow.com/questions/9110837/python-simple-list-merging-based-on-intersections
+
+        :param lst indices: A list of pd.Index
+
+        """
+        # Convert index into set
+        sets = [set(ind) for ind in indices if len(ind)]
+        merged = 1
+        while merged:
+            merged = 0
+            results = []
+            while sets:
+                common, rest = sets[0], sets[1:]
+                sets = []
+                for x in rest:
+                    if x.isdisjoint(common):
+                        # If they don't overlap then append
+                        sets.append(x)
+                    else:
+                        # If they overlap, take the union
+                        merged = 1
+                        common |= x
+                results.append(common)
+            sets = results
+        return sets
 
     @staticmethod
     def merge(flags):
@@ -392,19 +422,21 @@ class Flags:
 
         """
         # Check the index of each dataframe before trying to merge
-        counter = 0
-        while counter < len(flags) - 1:
-            if flags[counter].index.equals(flags[counter + 1].index):
-                counter += 1
-            else:
-                print "Not all indexes are the same"
-                raise SystemExit
+        mergeIndex = Flags._mergeIndex([x.index for x in flags])
 
-        # Merge all flags together
-        df_mergedFlags = pd.concat(flags, axis=1)
+        if len(mergeIndex) == 1:
+            # Merge all flags together
+            # NOTE: Pandas cannot store NAN values as a int. If there are NAN
+            # then the column is converted to a float.
+            df_mergedFlags = pd.concat(flags, axis=1)
 
-        # Return merged flag file
-        return df_mergedFlags
+            # Return merged flag file
+            return df_mergedFlags
+        else:
+            print "Not all indexes overlap. Check that flags are features OR \
+                   samples."
+            raise SystemExit
+
 
 if __name__ == '__main__':
     pass
