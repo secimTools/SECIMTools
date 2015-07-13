@@ -19,5 +19,6 @@
         <tool file="secimtools/scatterPlot3D.xml"/>
         <tool file="secimtools/scatterPlot.xml"/>
         <tool file="secimtools/SVM_classifier.xml"/>
+        <tool file="secimtools/onOff.xml"/>
     </section>
 </toolbox>

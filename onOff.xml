@@ -1,15 +1,24 @@
 <tool id="onOff" name="On/Off Flags">
     <description></description>
-    <command interpreter="python">onOff.py --input $input --design $design --ID $uniqID --wideOut $wideOut --designOut $designOut
+    <command interpreter="python">onOff.py --input $input --design $design --ID $uniqID --output $output --group $group
     #if $cutoff:
         --cutoff
     </command>
     <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <param name="group" size="30" type="text" label="Input group name from design file" help="Insert the group name from the design file to separate the flag file" />
+        <param name="cutoff" optional="true" type="integer" value="" size="4" label="Cutoff [OPTIONAL]" help="Cutoff to use for which values to flag. This defaults to 30,000"/>
     </inputs>
     <outputs>
+        <data format="tabular" name="output" label="On/Off flags" />
     </outputs>
     <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
     </requirements>
     <help>
+        <!--help-->
     </help>
 </tool>
