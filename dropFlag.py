@@ -36,8 +36,8 @@ def getOptions():
     group1.add_argument("--flags", dest="flagFile", action='store', required=True, help="Input flag file")
 
     group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
-    group2.add_argument("--cutoff", dest="cutoff", action='store', type=int, required=True,
-                        help="Cutoff value for dropping. Any flag sum value greater than this number will be dropped")
+    group2.add_argument("--cutoff", dest="cutoff", action='store', type=float, required=True, default=.5,
+                        help="Cutoff value for dropping. Drop row if the porportion is less than this value. The default cutoff is .5")
     group2.add_argument("--wideOut", dest="wideOut", action='store', required=True, help="Output Wide Dataset")
     group2.add_argument("--designOut", dest="designOut", action='store', required=False,
                         help="Output Design Dataset. Only required when columns are wanted to be dropped.")
@@ -47,6 +47,11 @@ def getOptions():
     group3.add_argument("--column", dest="dropColumn", action="store_true", help="Drop columns.")
 
     args = parser.parse_args()
+
+    # Check if cutoff value is a porportion
+    if args.cutoff > 1 or args.cutoff < 0:
+        parser.error("Cutoff value needs to be a porportion")
+
     return args
 
 
@@ -76,11 +81,11 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
 
     """
     # Create a sum column and add to the end of the flag file
-    sumColumn = df_flags.sum(numeric_only=True, axis=1)
-    df_flags['sum'] = sumColumn
+    meanColumn = df_flags.mean(numeric_only=True, axis=1, skipna=True)
+    df_flags['mean'] = meanColumn
 
     # Only keep the rows in the original data that the user specified
-    df_flags = df_flags.loc[df_flags['sum'] < cutoffValue]
+    df_flags = df_flags.loc[df_flags['mean'] < cutoffValue]
 
     # Create a mask over the original data to determine what to delete
     mask = df_wide.index.isin(df_flags.index)
@@ -117,11 +122,11 @@ def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
         :returns: Both wide and design files with dropped columns
     """
 
-    # Sum the Columns and create new row at the bottom named Total
-    df_flags.loc['Total', :] = df_flags.sum(axis=0)
+    # Mean the Columns and create new row at the bottom named Mean
+    df_flags.loc['Mean', :] = df_flags.mean(axis=0)
 
     # Create list of sampleIDs that are greater than or equal to the cutoff
-    df_flaggedIDs = df_flags.columns[df_flags.loc['Total', :] >= cutoffValue]
+    df_flaggedIDs = df_flags.columns[df_flags.loc['Mean', :] >= cutoffValue]
 
     # Create list of sampleIDs to keep in wide DataFrame.
     #
