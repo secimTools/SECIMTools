@@ -241,12 +241,12 @@ def scatterPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
     colors = pd.tools.plotting._get_standard_colors(kGroups)
     groupLabelled = []
     for i in range(pSamples):
-        XY = pd.DataFrame([[i]*pSamples], index=['ind'], columns=SEDpairwise.index).T
+        XY = pd.DataFrame([[i]*pSamples], index=['index'], columns=SEDpairwise.index).T
         XY['SED'] = SEDpairwise.ix[:,i].values
         if (group[i] not in groupLabelled) and ('group' in SEDpairwise.columns):
-            XY.plot(kind='scatter', x='ind', y='SED', marker='+', color=colors[colorindex[i]], label=group[i], ax=ax, rot=getRot(pSamples))
+            XY.plot(kind='scatter', x='index', y='SED', marker='+', color=colors[colorindex[i]], label=group[i], ax=ax, rot=getRot(pSamples))
         else:
-            XY.plot(kind='scatter', x='ind', y='SED', marker='+', color=colors[colorindex[i]], ax=ax, rot=getRot(pSamples))
+            XY.plot(kind='scatter', x='index', y='SED', marker='+', color=colors[colorindex[i]], ax=ax, rot=getRot(pSamples))
         groupLabelled.append(group[i])
         ax.set_ylabel('standardized Euclidean Distance')
         
@@ -265,26 +265,27 @@ def boxPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
         fig.suptitle('Box-plots for pairwise standardized Euclidean Distance from samples {}'.format(groupName))
         kGroups = len(pd.Categorical(SEDpairwise['group']).categories)
         groups = SEDpairwise.groupby('group')
-        colors = pd.tools.plotting._get_standard_colors(kGroups)
+        #colors = pd.tools.plotting._get_standard_colors(kGroups)
+        facecolors = ['lightblue', 'lightcyan', 'lightgreen', 'lightgray', 'lightpink', 'lightsteelblue', 'lightyellow']
         posi = 0
         colorindex = 0
         for name, group in groups:
-            boxplots = group.drop('group',axis=1).T.boxplot(ax=ax, rot=getRot(pSamples), return_type='dict', showmeans=True, positions=range(posi, posi+group.shape[0]), manage_xticks=False, patch_artist=True)
-            for whisker in boxplots['whiskers']:
-                whisker.set(color=colors[colorindex])
+            boxplots = group.drop('group',axis=1).T.boxplot(ax=ax, rot=getRot(pSamples), return_type='dict', showmeans=(pSamples<40), positions=range(posi, posi+group.shape[0]), manage_xticks=False, patch_artist=True)
+            #for whisker in boxplots['whiskers']:
+            #    whisker.set(color=colors[colorindex])
             for box in boxplots['boxes']:
-                box.set(facecolor='w')
-            for cap in boxplots['caps']:
-                cap.set(color=colors[colorindex])
-            for flier in boxplots['fliers']:
-                flier.set(color=colors[colorindex], alpha=0.5)
+                box.set(facecolor=facecolors[colorindex%len(facecolors)])
+            #for cap in boxplots['caps']:
+            #    cap.set(color=colors[colorindex])
+            #for flier in boxplots['fliers']:
+            #    flier.set(color=colors[colorindex], alpha=0.5)
             posi += group.shape[0]
             colorindex += 1
         plt.xticks(range(pSamples), group.drop('group',axis=1).columns)
         ax.set_xlim(-0.5, -0.5+pSamples)
     else:
         fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns, 'Box-plots for pairwise standardized Euclidean Distance from samples {}'.format(groupName))
-        SEDpairwise.boxplot(ax=ax, rot=getRot(pSamples), return_type='dict', showmeans=True, positions=range(0, pSamples), manage_xticks=False)
+        SEDpairwise.boxplot(ax=ax, rot=getRot(pSamples), return_type='dict', showmeans=(pSamples<40), positions=range(0, pSamples), manage_xticks=False)
     
     # Add a horizontal line above 95% of the data
     fig, ax = addCutoff(fig, ax, cutoff, p)
