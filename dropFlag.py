@@ -24,7 +24,6 @@ def getOptions():
     new Wide file and Design file will be created because changes will have
     occurred in each file."""
 
-
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
 
     group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
@@ -54,7 +53,7 @@ def getOptions():
 def dropRows(df_wide, df_flags, cutoffValue, args):
     """ Drop rows in a log file based on its flag file and the specified flag values to keep.
 
-    Arguments:
+    :Arguments:
         :type df_wide: pandas.DataFrame
         :param df: A data frame in wide format
 
@@ -70,7 +69,7 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
         :type args: argparse.ArgumentParser
         :param args: Command line arguments.
 
-    Returns:
+    :Returns:
         :rtype: pandas.DataFrame
         :returns: Updates the wide DataFrame with dropped rows and writes to a
             TSV.
@@ -96,7 +95,7 @@ def dropRows(df_wide, df_flags, cutoffValue, args):
 def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
     """ Drop columns in both the wide and design files based on the sampleID's flag sums.
 
-    Arguments:
+    :Arguments:
 
         :type df_wide: pandas.DataFrame
         :param df_wide: A data frame in wide format
@@ -113,7 +112,7 @@ def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
         :type args: argparse.ArgumentParser
         :param args: Command line arguments.
 
-    Returns:
+    :Returns:
         :rtype: pandas.DataFrame
         :returns: Both wide and design files with dropped columns
     """

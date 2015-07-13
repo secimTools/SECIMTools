@@ -109,16 +109,15 @@ def SEDbyGroup(dat, wide, args):
 def standardizedEulideanDistance(wide, p):
     """ Calculate the standardized Euclidean distance and return an array of distances to the center and a matrix of pairwise distances.
 
-    Arguments:
+    :Arguments:
         :type wide: pandas.DataFrame
         :param wide: A wide formatted data frame with samples as columns and compounds as rows.
 
-    Returns:
+    :Returns:
         :return: Return a numpy array with MD values.
         :rtype: numpy.array
     """
-    
-    
+
     # Estimated Variance from the data
     varHat = wide.var(axis=1, ddof=1)
     dist = DistanceMetric.get_metric('seuclidean', V=varHat)
@@ -127,6 +126,7 @@ def standardizedEulideanDistance(wide, p):
     colMean = wide.mean(axis=1)
 
     # Calculate the standardized Euclidean Distance from all samples to the center
+
     SEDtoCenter = dist.pairwise(wide.values.T, pd.DataFrame(colMean).T)
     SEDtoCenter = pd.DataFrame(SEDtoCenter, columns = ['SED_to_Center'], index = wide.columns)
     
@@ -182,13 +182,13 @@ def figInitiate(figWidth, colNames, figTitle):
 def plotSEDtoCenter(SEDtoCenter, cutoff, groupName, p):
     """ Plot the standardized Euclidean distance plot.
 
-    Arguments:
+    :Arguments:
         :type MD: numpy.array
         :param MD: An array of distances.
 
         :param tuple cutoffs: A tuple with label and cutoff. Used a tuple so that sort order would be maintained.
 
-    Returns:
+    :Returns:
         :return: Returns a figure object.
         :rtype: matplotlib.pyplot.Figure.figure
 

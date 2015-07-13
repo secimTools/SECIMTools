@@ -267,7 +267,7 @@ class wideToDesign:
 
 
 class Flags:
-    def __init__(self, index, column=''):
+    def __init__(self, index):
         """
         This class  creates an empty dataframe to hold the flag values for a dataset. The dataframe is created
         through instantiation and filled with 0's.
@@ -283,11 +283,9 @@ class Flags:
         """
         # Create DataFrame from index and columns
         self.df_flags = pd.DataFrame(index=index)
-        if len(column) > 0:
-            self.addColumn(column)
 
-        # Set DF values equal to 0
-        self.df_flags.fillna(0, inplace=True)
+        # Create a list to store column names
+        self._columns = list()
 
     def _testIfIndexesMatch(self, mask):
         """
@@ -327,10 +325,8 @@ class Flags:
         if len(column) > 0:
             if self._testIfIndexesMatch(mask):
                 self.df_flags.loc[mask.index, column] = mask.astype(int)
-                #self.df_flags.loc[mask, column] = 1
         else:
-            #self.df_flags[mask] = 1
-            self.df_flags.loc[mask.index] = mask.astype(int)
+            self.df_flags.loc[mask.index, self._columns] = mask.astype(int)
 
     def addColumn(self, column, mask=[]):
         """
@@ -347,11 +343,15 @@ class Flags:
         """
         self.df_flags[column] = 0
 
+        # Store column names
+        if isinstance(column, str):
+            self._columns.append(column)
+        else:
+            self._columns.extend(column)
+
         # Update the column if a mask is given and the mask matches the index
         if len(mask) > 0:
-            if self._testIfIndexesMatch(mask):
-             #self.update(mask=mask, column=column)
-                self.df_flags.loc[mask.index, column] = mask.astype(int)
+            self.update(mask=mask, column=column)
 
     def fillNa(self):
         """
@@ -360,6 +360,49 @@ class Flags:
 
         # Fill the 0's with numpy.nan
         self.df_flags.replace(0, np.nan, inplace=True)
+
+    def testOverlap(self, indices):
+        """ Test if a list of indeces overlap. """
+
+        # TODO: Trying to figure out the best algorithm to test if indeces are
+        # the sam.
+        for i, index in enumerate(indices):
+            if i == 0:
+                overlap = set(index)
+            else:
+                if overlap.intersection(set(index)):
+                    overlap = overlap.union(set(index))
+
+    @staticmethod
+    def _mergeIndex(indices):
+        """ Function to check for overlap for a list of indices.
+
+        This function is based on:
+        http://stackoverflow.com/questions/9110837/python-simple-list-merging-based-on-intersections
+
+        :param lst indices: A list of pd.Index
+
+        """
+        # Convert index into set
+        sets = [set(ind) for ind in indices if len(ind)]
+        merged = 1
+        while merged:
+            merged = 0
+            results = []
+            while sets:
+                common, rest = sets[0], sets[1:]
+                sets = []
+                for x in rest:
+                    if x.isdisjoint(common):
+                        # If they don't overlap then append
+                        sets.append(x)
+                    else:
+                        # If they overlap, take the union
+                        merged = 1
+                        common |= x
+                results.append(common)
+            sets = results
+        return sets
 
     @staticmethod
     def merge(flags):
@@ -379,19 +422,21 @@ class Flags:
 
         """
         # Check the index of each dataframe before trying to merge
-        counter = 0
-        while counter < len(flags) - 1:
-            if flags[counter].index.equals(flags[counter + 1].index):
-                counter += 1
-            else:
-                print "Not all indexes are the same"
-                raise SystemExit
+        mergeIndex = Flags._mergeIndex([x.index for x in flags])
 
-        # Merge all flags together
-        df_mergedFlags = pd.concat(flags, axis=1)
+        if len(mergeIndex) == 1:
+            # Merge all flags together
+            # NOTE: Pandas cannot store NAN values as a int. If there are NAN
+            # then the column is converted to a float.
+            df_mergedFlags = pd.concat(flags, axis=1)
 
-        # Return merged flag file
-        return df_mergedFlags
+            # Return merged flag file
+            return df_mergedFlags
+        else:
+            print "Not all indexes overlap. Check that flags are features OR \
+                   samples."
+            raise SystemExit
+
 
 if __name__ == '__main__':
     pass

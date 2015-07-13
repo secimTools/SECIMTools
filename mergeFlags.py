@@ -11,10 +11,10 @@ import pandas as pd
 import logger as sl
 from interface import Flags
 
+
 def getOptions():
     """ Function to pull in arguments """
     parser = argparse.ArgumentParser()
-
     parser.add_argument("--input", dest="flagFiles", action='store', required=True, nargs="+",
                         help="Input any number of flag files that have the same indexes")
     parser.add_argument('--output', dest="mergedFile", action='store', required=True, help="Output file")
@@ -22,13 +22,14 @@ def getOptions():
     args = parser.parse_args()
     return args
 
+
 def mergeFlags(args):
     """
-    Arguments:
+    :Arguments:
         :type args: argparse.ArgumentParser
         :param args: Command line arguments
 
-    Returns:
+    :Returns:
         :rtype: .tsv
         :returns: Merged flags tsv file
     """
@@ -36,7 +37,8 @@ def mergeFlags(args):
     flagDataFrameList = []
     logger.info("Importing data")
 
-    # Check for commas, commas are used in galaxy. If there are commas separate the list by commas
+    # Check for commas, commas are used in galaxy. If there are commas separate
+    # the list by commas
     if ',' in args.flagFiles[0]:
         args.flagFiles = args.flagFiles[0].split(',')
 
@@ -51,7 +53,11 @@ def mergeFlags(args):
     mergedFlags = Flags.merge(flagDataFrameList)
 
     # Export merged flags
-    mergedFlags.to_csv(args.mergedFile, sep='\t')
+    # NOTE: Pandas cannot store NANs as an int. If there are NANs from the
+    # merge, then the column becomes a float. Here I change the float output to
+    # look like an int.
+    mergedFlags.to_csv(args.mergedFile, float_format='%.0f', sep='\t')
+
 
 def main(args):
     # Call mergeFlags function. Main is used for convention
@@ -65,3 +71,4 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     sl.setLogger(logger)
     main(args)
+

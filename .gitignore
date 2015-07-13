@@ -5,3 +5,4 @@ notebook/.ipynb_checkpoints/*
 .idea
 out*
 test*
+.run/
