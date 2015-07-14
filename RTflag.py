@@ -53,7 +53,7 @@ def ifZero(x):
         value = np.nan
     else:
         value = x
-    return x
+    return value
 
 def galaxySavefig(fig, fname):
     """ Take galaxy DAT file and save as fig """
