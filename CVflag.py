@@ -23,7 +23,16 @@ from interface import Flags
 
 def getOptions(myopts=None):
     """Function to pull in arguments"""
-    description = """Retention Time flags are ... """
+    
+    description = """The coefficient of variation (CV) is defined as the ratio
+    of the sample standard deviation to the mean. It’s a method to measure the
+    variations of compounds. The variation of a peak intensity increases as 
+    its CV increases. And adjusted for the sample mean, CV does not have unit;
+    thus, it is a standardized measurement for variation. 
+    
+    A density plot of CVs for all compounds across samples by group is performed.
+    And a set of flags of compounds with large CVs will be output. """
+    
     parser = argparse.ArgumentParser(description = description, formatter_class = RawDescriptionHelpFormatter)
 
     group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
