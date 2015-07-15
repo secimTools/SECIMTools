@@ -270,7 +270,7 @@ def scatterPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
     # Everything is similar as the plot function above
     # Create figure object with a single axis and initiate the fig
     pSamples = SEDpairwise.shape[0]
-    fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns, 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
+    fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns[:-1], 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
     
     # Add a horizontal line above 95% of the data
     fig, ax = addCutoff(fig, ax, cutoff, p)
