@@ -3,10 +3,6 @@
 # Built-in packages
 import argparse
 
-# Add-on packages
-import pandas as pd
-import numpy as np
-
 # Local packages
 from interface import wideToDesign
 from interface import Flags
@@ -14,7 +10,7 @@ from interface import Flags
 
 def getOptions():
     """Function to pull in arguments"""
-    description = """Retention Time flags are ... """
+    description = """"""
     parser = argparse.ArgumentParser(description=description)
 
     group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')

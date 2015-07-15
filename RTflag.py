@@ -26,7 +26,32 @@ global DEBUG
 
 def getOptions(myopts=None):
     """Function to pull in arguments"""
-    description = """Retention Time flags are ... """
+    
+    description = """Retention time (RT) is related to the location of the compound. 
+    Thus, across samples, the retention times for one compound do not vary much 
+    if it's consistent. Therefore, we use various measurements for the variation 
+    of retention times to detect whether the compound is consistent.  
+    
+    Retention time flags include, 
+        flag_RT_Q90Q10_outlier:     Flagged when the difference between the 90th 
+                                    and the 10th percentile of RT of the compound 
+                                    is greater than 0.2.
+        flag_RT_Q95Q05_outlier:     Flagged when the difference between the 95th 
+                                    and the 5th percentile of RT of the compound 
+                                    is greater than 0.2.
+        flag_RT_max_gt_threshold:   Flagged when the difference between the maximum 
+                                    and the median of the RT of the compound is 
+                                    greater than 0.1
+        flag_RT_min_lt_threshold:   Flagged when the difference between the minimum 
+                                    and the median of the RT of the compound is 
+                                    greater than 0.1
+        flag_RT_min_max_outlier:    Flagged when the minimum or the maximum is more 
+                                    than 3 times the standard deviation away from 
+                                    the mean of the RT of the compound
+        flag_RT_big_CV:             A flag for large CV of the RT
+    
+    """
+    
     parser = argparse.ArgumentParser(description = description, formatter_class = RawDescriptionHelpFormatter)
 
     group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
@@ -53,7 +78,7 @@ def ifZero(x):
         value = np.nan
     else:
         value = x
-    return x
+    return value
 
 def galaxySavefig(fig, fname):
     """ Take galaxy DAT file and save as fig """
@@ -94,20 +119,20 @@ def setRTflag(args, wide, dat, dir):
     RTflag = Flags(index=RTround.index)
     if args.p90p10:
         RTflag.addColumn(column = 'flag_RT_Q90Q10_outlier',
-                        mask   = (RTstat['p90p10'] > 0.2).values)
+                        mask   = (RTstat['p90p10'] > 0.2))
     else:
         RTflag.addColumn(column = 'flag_RT_Q95Q05_outlier',
-                        mask   = (RTstat['p95p05'] > 0.2).values)
+                        mask   = (RTstat['p95p05'] > 0.2))
 
     RTflag.addColumn(column = 'flag_RT_max_gt_threshold',
-                    mask   = (RTstat['max'] - RTstat['median'] > 0.1).values)
+                    mask   = (RTstat['max'] - RTstat['median'] > 0.1))
 
     RTflag.addColumn(column = 'flag_RT_min_lt_threshold',
-                    mask   = (RTstat['min'] - RTstat['median'] < -0.1).values)
+                    mask   = (RTstat['min'] - RTstat['median'] < -0.1))
 
     RTflag.addColumn(column = 'flag_RT_min_max_outlier',
-                    mask   = ((RTstat['max']-RTstat['mean']>3*RTstat['std']).values |
-                              (RTstat['min']-RTstat['mean']<-3*RTstat['std']).values))
+                    mask   = ((RTstat['max']-RTstat['mean']>3*RTstat['std']) |
+                              (RTstat['min']-RTstat['mean']<-3*RTstat['std'])))
 
     if not args.CVcutoff:
         CVcutoff = np.nanpercentile(RTstat['cv'].values, q=90)
@@ -115,7 +140,7 @@ def setRTflag(args, wide, dat, dir):
     else:
         CVcutoff = args.CVcutoff
     RTflag.addColumn(column = 'flag_RT_big_CV',
-                    mask   = (RTstat['cv'] > CVcutoff).values)
+                    mask   = (RTstat['cv'] > CVcutoff))
 
     # Output flags
     RTflag.df_flags.to_csv(args.RTflag, sep="\t")
