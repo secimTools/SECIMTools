@@ -66,10 +66,13 @@ def runOrder(col):
     clean = col.dropna().reset_index().convert_objects(convert_numeric=True)
     clean.columns = ['run', 'val']
 
-    # Fit model
-    model = smf.ols(formula='val ~ run', data=clean)
-    results = model.fit()
-    return col.name, clean['run'], clean['val'], results
+    if clean.shape[0] >= 5:
+        # Fit model
+        model = smf.ols(formula='val ~ run', data=clean, missing='drop')
+        results = model.fit()
+        return col.name, clean['run'], clean['val'], results
+    else:
+        logger.warn('{} had fewer than 5 samples without NaNs, it will be ignored.'.format(col.name))
 
 
 def flagPval(val, alpha):
@@ -150,6 +153,7 @@ def main(args):
     # Run each column through regression
     logger.info('Running Regressions')
     res = trans.apply(runOrder, axis=0)
+    res.dropna(inplace=True)        # Drop rows that are missing regression results.
 
     # Plot Results
     # Open a multiple page PDF for plots
