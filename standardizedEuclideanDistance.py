@@ -22,7 +22,23 @@ from interface import Flags
 
 def getOptions():
     """ Function to pull in arguments """
-    description = """ """
+    
+    description = """For mutivariate data, the standardized Euclidean distance 
+    (SED) takes the variance into consideration. If we assume all the vectors 
+    are identically and independent multinormally distributed with a diagonal 
+    covariance matrix (assuming the correlations are 0), the SED follows a 
+    certain distribution associated with the dimension of the vector. Thus, 
+    samples with SEDs higher than the cutoff are dubious and conflict to the 
+    multinormal assumption. 
+    
+    The scripts estimate the variance according to the input data and calculate 
+    the SEDs from all samples to the estimated center and also the sample pairwise 
+    SEDs by group.
+    
+    The output includes 3 plots for each group and 3 plots in the end for all 
+    the samples altogether.
+    """
+    
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
 
     group1 = parser.add_argument_group(description="Required Input")
@@ -355,9 +371,11 @@ def main(args):
     wide = dat.wide[dat.sampleIDs]
     
     # Put warnings and get rid of rows with missing values
-    if any(wide.isnull()):
+    if wide.isnull().sum().sum():
+        nOriginal = wide.shape[0]
         print "Missing values detected. All missing rows removed. "
         wide = wide.dropna()
+        print "Original rows: {0}; # of rows after drop: {1}".format(nOriginal, wide.shape[0])
     
     # Calculate SED by group or not
     SEDbyGroup(dat, wide, args)

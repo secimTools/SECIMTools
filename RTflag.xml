@@ -1,5 +1,5 @@
 <tool id="RTflag" name="RT flags">
-  <description>Calculate CV flags</description>
+  <description>Calculate RT flags</description>
   <command interpreter="python">RTflag.py --input $input --design $design --ID $uniqID --RTplotOutFile $RTplot --RTflagOutFile $RTflag
       #if $group:
           --group $group

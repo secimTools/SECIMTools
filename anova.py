@@ -37,25 +37,21 @@ def getOptions():
     parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
     parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
     args = parser.parse_args()
-#     args = parser.parse_args(['--input', '/home/jfear/sandbox/secim/data/log_ST000015.tsv',
-#                               '--design', '/home/jfear/sandbox/secim/data/ST000015_design_v2.tsv',
-#                               '--ID', 'Name',
-#                               '--group', 'treatment',
-#                               '--out', '/home/jfear/sandbox/secim/data/test.csv',
-#                               '--fig', '/home/jfear/sandbox/secim/data/test.pdf',
-#                               '--fig2', '/home/jfear/sandbox/secim/data/test2.pdf',
-#                               '--debug'])
+
     return(args)
 
 
 def createCbn(dat):
     """ Create all pairwise combinations of treatments
 
-    Args:
-        dat.levels (list): A list of levels in the group.
+    :Arguments:
+        :type dat: interface.wideToDesign
+        :param dat: A wideToDesign object that will be used to get sample and
+            feature information.
 
-    Returns:
-        combo (dict): A dictionary of dictionaries with all possible pairwise
+    :Returns:
+        :rtype: dictionary
+        :return: A dictionary of dictionaries with all possible pairwise
             combinations. Used this to create the various column headers in the
             results table.
 
@@ -80,13 +76,14 @@ def createCbn(dat):
 def initResults(dat):
     """ Initialize the results dataset
 
-    Args:
-        dat.levels (list): A list of levels in the group.
+    :Arguments:
+        :type dat: interface.wideToDesign
+        :param dat: A wideToDesign object that will be used to get sample and
+            feature information.
 
-        dat.wide.index (list): A list of compounds.
-
-    Returns:
-        (pd.DataFrame): Initializes the results table, adding a row for each
+    :Returns:
+        :rtype: pandas.DataFrame
+        :returns: Initializes the results table, adding a row for each
             compound and all column headers.
 
     """
@@ -114,24 +111,27 @@ def oneWay(dat, compound, results):
     Run a simple one-way anova, where compound is the dependent variable and
     group is the independent variable.
 
-    Args:
-        dat.group (str): Column in the design file that contains group information.
+    :Arguments:
+        :type dat: interface.wideToDesign
+        :param dat: A wideToDesign object that will be used to get sample and
+            feature information.
 
-        dat.trans (pd.DataFrame): A table where each row is a sample and each
-            compound is a column. Also contains a column with group information.
+        :type compound: string
+        :param compound: compound (str): The name of the current compound.
 
-        compound (str): The name of the current compound.
-
-        results (pd.DataFrame): The results table, corresponding values will be
+        :type results: pandas.DataFrame
+        :param results: The results table, corresponding values will be
             replaced.
 
-    Returns:
-        results (pd.DataFrame): Updates in place the results table. Adds 'Anova
+    :Returns:
+        :rtype: pandas.DataFrame
+        :returns: Updates in place the results table. Adds 'Anova
             model:...', 'F_T3_treatment', 'PrF_T3_treatment', 'ErrorSS', 'ModelSS',
             'TotalSS', 'MSE', 'NDF_treatment', 'DDF_treatment', 'SampleVariance',
             'RSquare' to results.
 
-        (pd.Series): Pearson normalized residuals. (residuals / sqrt(MSE))
+        :rtype: pandas.Series
+        :returns: Pearson normalized residuals. (residuals / sqrt(MSE))
 
     """
     formula = '{0} ~ {1}'.format(str(compound), str(dat.group))
@@ -154,22 +154,29 @@ def oneWay(dat, compound, results):
 def calcDiff(dat, compound, grpMeans, combo, results):
     """ Calculate group means and the differences between group means.
 
-    Args:
-        dat.levels (list): A list of levels in the group.
+    :Arguments:
+        :type dat: interface.wideToDesign
+        :param dat: A wideToDesign object that will be used to get sample and
+            feature information.
 
-        compound (str): The name of the current compound.
+        :type compound: string
+        :param compound: compound (str): The name of the current compound.
 
-        grpMeans (pd.DataFrame): A table with the overall mean for each group.
+        :type grpMeans: pandas.DataFrame
+        :param grpMeans: A table with the overall mean for each group.
 
-        combo (dict): A dictionary of dictionaries with all possible pairwise
+        :type combo: dictionary
+        :param combo: A dictionary of dictionaries with all possible pairwise
             combinations. Used this to create the various column headers in the
             results table.
 
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
+        :type results: pandas.DataFrame
+        :param results: The results table, corresponding values will be
+        replaced.
 
-    Returns:
-        results (pd.DataFrame): Updates the results table. Adds 'Diff' to results.
+    :Returns:
+        :rtype: pandas.DataFrame
+        :returns: Updates the results table. Adds 'Diff' to results.
 
     """
     for lvl in dat.levels:
@@ -182,21 +189,26 @@ def calcDiff(dat, compound, grpMeans, combo, results):
 def calcDiffSE(dat, compound, combo, results):
     """ Calculate the Standard Error between differences.
 
-    Args:
-        dat.group (str): Name of the column containing group information in the
-            design file.
+    :Arguments:
+        :type dat: interface.wideToDesign
+        :param dat: A wideToDesign object that will be used to get sample and
+            feature information.
 
-        compound (str): The name of the current compound.
+        :type compound: string
+        :param compound: compound (str): The name of the current compound.
 
-        combo (dict): A dictionary of dictionaries with all possible pairwise
+        :type combo: dictionary
+        :param combo: A dictionary of dictionaries with all possible pairwise
             combinations. Used this to create the various column headers in the
             results table.
 
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
+        :type results: pandas.DataFrame
+        :param results: The results table, corresponding values will be
+        replaced.
 
-    Returns:
-        results (pd.DataFrame): Updates the results table. Adds 'StdErr' to results.
+    :Returns:
+        :rtype: pandas.DataFrame
+        :returns: Updated results table. Adds 'StdErr' to results.
 
     """
     # MSE from ANOVA
@@ -217,20 +229,23 @@ def calcDiffSE(dat, compound, combo, results):
 def tTest(compound, combo, results, cutoff=4):
     """ Calculate T-value and T-critical.
 
-    Args:
-        compound (str): The name of the current compound.
+    :Arguments:
+        :type compound: string
+        :param compound: compound (str): The name of the current compound.
 
-        combo (dict): A dictionary of dictionaries with all possible pairwise
-            combinations. Used this to create the various column headers in the
-            results table.
+        :type combo: dictionary
+        :param combo: A dictionary of dictionaries with all possible pairwise
 
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
+        :type results: pandas.DataFrame
+        :param results: The results table, corresponding values will be
 
-        cutoff (int): The cutoff value for significance [default: 4].
+        :type cutoff: int
+        :param cutoff: The cutoff value for significance [default: 4].
 
-    Returns:
-        results (pd.DataFrame): Updates the results table. Adds 'Tval', 'pTval', 'lpTval', 'sTval' to results.
+    :Returns:
+        :rtype: pandas.DataFrame
+        :returns: Updated results table. Adds 'Tval', 'pTval', 'lpTval',
+                  'sTval' to results.
 
     """
     for key in sorted(combo.keys()):
@@ -249,13 +264,16 @@ def qqPlot(resids, fit, oname):
     Output q-q plot, boxplots and distributions of the residuals. These plots
     will be used diagnose if residuals are approximately normal.
 
-    Args:
-        resids (pd.Series): Pearson normalized residuals. (residuals / sqrt(MSE))
+    :Arguments:
+        :type resids: pandas.Series
+        :param resids: Pearson normalized residuals. (residuals / sqrt(MSE))
 
-        oname (str): Name of the output file in pdf format.
+        :type oname: string
+        :param oname: Name of the output file in pdf format.
 
-    Returns:
-        (PDF): Outputs a pdf file containing all plots.
+    :Returns:
+        :rtype: PDF
+        :returns: Outputs a pdf file containing all plots.
 
     """
     with PdfPages(oname) as pdf:
@@ -304,20 +322,22 @@ def volcano(combo, results, oname, cutoff=4):
 
     Creates volcano plots to compare means, for all pairwise differences.
 
-    Args:
-        combo (dict): A dictionary of dictionaries with all possible pairwise
+    :Arguments:
+
+        :type combo: dictionary
+        :param combo: A dictionary of dictionaries with all possible pairwise
             combinations. Used this to create the various column headers in the
             results table.
 
-        results (pd.DataFrame): The results table, corresponding values will be
-            replaced.
+        :type oname: string
+        :param oname: Name of the output file in pdf format.
 
-        oname (str): Name of the output file in pdf format.
+        :type cutoff: int
+        :param cutoff: The cutoff value for significance [default: 4].
 
-        cutoff (int): The cutoff value for significance [default: 4].
-
-    Returns:
-        (PDF): Outputs a pdf file containing all plots.
+    :Returns:
+        :rtype: PD
+        :returns: Outputs a pdf file containing all plots.
 
     """
 

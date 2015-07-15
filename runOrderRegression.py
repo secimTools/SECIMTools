@@ -48,11 +48,11 @@ def getOptions():
 
 def runOrder(col):
     """ Run order regression
-    Args:
+    :Arguments:
         col (pd.Series): A Pandas series with run order ['run'] as the index
             and ['val'] as the value to regressed on.
 
-    Returns:
+    :Returns:
         name (str): Name of the column.
 
         X's (int): Values of X ['run']

@@ -33,11 +33,11 @@ def getOptions():
 def mahalnobisDistance(wide):
     """ Calculate the Mahalanobis distance and return an array of distances.
 
-    Arguments:
+    :Arguments:
         :type wide: pandas.DataFrame
         :param wide: A wide formatted data frame with samples as columns and compounds as rows.
 
-    Returns:
+    :Returns:
         :return: Return a numpy array with MD values.
         :rtype: numpy.array
     """
@@ -70,13 +70,13 @@ def mahalnobisDistance(wide):
 def plotMahalanobis(MD, cutoffs):
     """ Plot the Mahalanobis distance plot.
 
-    Arguments:
+    :Arguments:
         :type MD: numpy.array
         :param MD: An array of distances.
 
         :param tuple cutoffs: A tuple with label and cutoff. Used a tuple so that sort order would be maintained.
 
-    Returns:
+    :Returns:
         :return: Returns a figure object.
         :rtype: matplotlib.pyplot.Figure.figure
 

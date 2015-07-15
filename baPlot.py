@@ -81,7 +81,7 @@ def getOptions():
 def summarizeFlags(dat, dfFlags, combos):
     """ Given a set of flags calculate the proportion of times a feature is flagged.
 
-    Arguments:
+    :Arguments:
         :type dat: interface.wideToDesign
         :param dat: A wideToDesign object that will be used to get sample and
             feature information.
@@ -89,7 +89,7 @@ def summarizeFlags(dat, dfFlags, combos):
         :type flags: pandas.DataFrame
         :param flags: A Dataframe of flags for all pairwise comparisons.
 
-    Returns:
+    :Returns:
         :rtype: tuple of pandas.DataFrame
         :return: Two DataFrames, the first has the proportion of samples that were
             flagged. The second has the proportion of features flagged.
@@ -125,7 +125,7 @@ def summarizeFlags(dat, dfFlags, combos):
 def plotFlagDist(propSample, propFeature, pdf):
     """ Plot the distribution of proportion of samples and features that were outliers.
 
-    Arguments:
+    :Arguments:
         :type propSample: pandas.DataFrame
         :param propSample: Data frame of the proportion of samples flagged as
             an outlier.
@@ -136,7 +136,7 @@ def plotFlagDist(propSample, propFeature, pdf):
 
         :param str pdf: Filename of pdf to save plots.
 
-    Returns:
+    :Returns:
         :rtype: matplotlib.backends.backend_pdf.PdfPages
         :returns: Saves two bar plots to pdf.
 
@@ -171,7 +171,7 @@ def plotFlagDist(propSample, propFeature, pdf):
 def buildTitle(dat, xName, yName):
     """ Build plot title.
 
-    Arguments:
+    :Arguments:
         :type dat: interface.wideToDesign
         :param dat: A wide to design object
 
@@ -179,7 +179,7 @@ def buildTitle(dat, xName, yName):
 
         :param str yName: String containing the sampleID for y
 
-    Returns:
+    :Returns:
         :rtype: str
         :returns: A string containing the plot title.
     """
@@ -205,14 +205,14 @@ def buildTitle(dat, xName, yName):
 def runRegression(x, y):
     """ Run a linear regression.
 
-    Arguments:
+    :Arguments:
         :type x: pandas.Series
         :param x: Series of first sample, treated as independent variable.
 
         :type y: pandas.Series
         :param y: Series of second sample, treated as dependent variables.
 
-    Returns:
+    :Returns:
         :rtype: tuple of pandas.Series and pandas.DataFrame
         :returns: A tuple of Series and data frames:
             * lower (pd.Series): Series of values for lower confidence interval.
@@ -250,7 +250,7 @@ def runRegression(x, y):
 def makeBA(x, y, ax):
     """ Function to make BA Plot comparing x vs y.
 
-    Arguments:
+    :Arguments:
         :type x: pandas.Series
         :param x: Series of first sample, treated as independent variable.
 
@@ -260,7 +260,7 @@ def makeBA(x, y, ax):
         :type ax: matplotlib.axis
         :param ax: Axis which to plot.
 
-    Returns:
+    :Returns:
         :rtype: pandas.Series
         :returns: A Series containing Boolean values with True
               indicating a value is more extreme than CI and False indicating a
@@ -306,7 +306,7 @@ def makeBA(x, y, ax):
 def makeScatter(x, y, ax):
     """ Plot a scatter plot of x vs y.
 
-    Arguments:
+    :Arguments:
         :type x: pandas.Series
         :param x: Series of first sample, treated as independent variable.
 
@@ -316,7 +316,7 @@ def makeScatter(x, y, ax):
         :type ax: matplotlib.axis
         :param ax: Axis which to plot.
 
-    Returns:
+    :Returns:
         :rtype: matplotlib.axis
         :returns: A matplotlib axis with a scatter plot.
 
@@ -349,7 +349,7 @@ def makeScatter(x, y, ax):
 def iterateCombo(dat, combo, pdf):
     """ A function to iterate generate all plots and flags.
 
-    Arguments:
+    :Arguments:
         :type dat: interface.wideToDesign
         :param dat: A wideToDesign object containing wide and design information.
 
@@ -358,11 +358,11 @@ def iterateCombo(dat, combo, pdf):
         :type pdf: matplotlib.backends.backend_pdf.PdfPages
         :param pdf: Handler for multi-page PDF that will contain all plots.
 
-    Updates:
+    :Updates:
         :type pdf: matplotlib.backends.backend_pdf.PdfPages
         :param pdf: Handler for multi-page PDF that will contain all plots.
 
-    Returns:
+    :Returns:
         :rtype flag: interface.Flags
         :param flag: A Flags object with outlier flags.
 

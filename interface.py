@@ -15,7 +15,7 @@ class wideToDesign:
         Import data both wide formated data and a design file. Set-up basic
         attributes.
 
-        Args:
+        :Arguments:
             wide (TSV): A table in wide format with compounds/genes as rows and
                 samples as columns.
 
@@ -45,7 +45,7 @@ class wideToDesign:
             anno (list): A list of additional annotations that can be used to group
                 items.
 
-        Returns:
+        :Returns:
             **Attribute**
 
             self.uniqID (str): The name of the unique identifier column in 'wide'
@@ -141,10 +141,10 @@ class wideToDesign:
         '/', '+', or '()'. For example, statsmodel parses the strings and interprets
         them in the model.
 
-        Args:
+        :Arguments:
             x (str): A string that needs cleaning
 
-        Returns:
+        :Returns:
             x (str): The cleaned string.
 
             self.origString (dict): A dictionary where the key is the new
@@ -172,13 +172,13 @@ class wideToDesign:
         Clean strings may need to be reverted back to original values for
         convience.
 
-        Args:
+        :Arguments:
             x (str): A string that needs cleaning
 
             self.origString (dict): A dictionary where the key is the cleaned
                 string and the value is the original string.
 
-        Returns:
+        :Returns:
             x (str): Original string.
 
         """
@@ -189,7 +189,7 @@ class wideToDesign:
     def melt(self):
         """ Convert a wide formated table to a long formated table.
 
-        Args:
+        :Arguments:
             self.wide (pd.DataFrame): A wide formatted table with compound/gene
                 as row and sample as columns.
 
@@ -199,7 +199,7 @@ class wideToDesign:
             self.sampleIDs (list): An list of sampleIDs. These will correspond
                 to columns in self.wide.
 
-        Returns:
+        :Returns:
             **Attributes**
 
             self.long (pd.DataFrame): Creates a new attribute called self.long
@@ -214,13 +214,13 @@ class wideToDesign:
     def transpose(self):
         """ Transpose the wide table and merge on treatment information.
 
-        Args:
+        :Arguments:
             self.wide (pd.DataFrame): A wide formatted table with compound/gene
                 as row and sample as columns.
 
             self.design (pd.DataFrame): A table relating sampleID to groups.
 
-        Returns:
+        :Returns:
             merged (pd.DataFrame): A wide formatted table with sampleID as row
                 and compound/gene as column. Also has column with group ID.
 
@@ -235,7 +235,7 @@ class wideToDesign:
     def getRow(self, ID):
         """ Get a row corresponding to a uniqID.
 
-        Args:
+        :Arguments:
             self.wide (pd.DataFrame): A wide formatted table with compound/gene
                 as row and sample as columns.
 
@@ -244,7 +244,7 @@ class wideToDesign:
 
             ID (str): A string referring to a uniqID in the dataset.
 
-        Returns:
+        :Returns:
             (pd.DataFrame): with only the corresponding rows from the uniqID.
 
         """
@@ -253,10 +253,10 @@ class wideToDesign:
     def keep_sample(self, sampleIDs):
         """ Keep only the given sampleIDs in the wide and design file.
 
-        Arguments:
+        :Arguments:
             :param list sampleIDs: A list of sampleIDs to keep.
 
-        Returns:
+        :Returns:
             :rtype: wideToDesign
             :return: Updates the wideToDesign object to only have those sampleIDs.
 
@@ -380,7 +380,7 @@ class Flags:
         This function is based on:
         http://stackoverflow.com/questions/9110837/python-simple-list-merging-based-on-intersections
 
-        :param lst indices: A list of pd.Index
+        :param list indices: A list of pd.Index
 
         """
         # Convert index into set
@@ -410,12 +410,12 @@ class Flags:
         Merge a list of DataFrames. This method will check to make sure all of the indices are the same for each
         DataFrame and will then return one merged DataFrame.
 
-        Arguments:
+        :Arguments:
 
             :param flags: List of DataFrames
             :type flags: list
 
-        Returns:
+        :Returns:
 
             :return: DataFrame of merged flags
             :rtype: pandas.DataFrame
