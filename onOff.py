@@ -33,30 +33,30 @@ def main(args):
     # Import data
     dat = wideToDesign(args.fname, args.dname, args.uniqID)
 
-    df_onOffFlags = Flags(index=dat.wide.index)
+    df_offFlags = Flags(index=dat.wide.index)
 
     # Iterate through each group to add flags for if a group has over half of
     # its data above the cutoff
     for title, group in dat.design.groupby(args.group):
         # Create mask of current frame containing True/False values if the
         # values are greater than the cutoff
-        mask = (dat.wide[group.index] > args.cutoff)
+        mask = (dat.wide[group.index] < args.cutoff)
 
         # Convert the mean column to a boolean
         meanOn = mask.mean(axis=1)
 
         # Add mean column of boolean values to flags
-        df_onOffFlags.addColumn(column='flag_' + title + '_on', mask=meanOn > 0.5)
+        df_offFlags.addColumn(column='flag_' + title + '_off', mask=meanOn > 0.5)
 
-    # flag_met_on column
-    maskFlagMetOn = df_onOffFlags.df_flags.any(axis=1)
-    df_onOffFlags.addColumn('flag_met_on', maskFlagMetOn)
+    # flag_met_off column
+    maskFlagMetOff = df_offFlags.df_flags.any(axis=1)
+    df_offFlags.addColumn('flag_met_off', maskFlagMetOff)
 
-    # flag_met_all_on column
-    maskFlagMetAllOn = df_onOffFlags.df_flags.all(axis=1)
-    df_onOffFlags.addColumn('flag_met_all_on', maskFlagMetAllOn)
+    # flag_met_all_off column
+    maskFlagMetAllOff = df_offFlags.df_flags.all(axis=1)
+    df_offFlags.addColumn('flag_met_all_off', maskFlagMetAllOff)
 
-    df_onOffFlags.df_flags.to_csv(args.output, sep="\t")
+    df_offFlags.df_flags.to_csv(args.output, sep="\t")
 
 if __name__ == "__main__":
 
