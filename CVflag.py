@@ -25,7 +25,7 @@ def getOptions(myopts=None):
     """Function to pull in arguments"""
     
     description = """The coefficient of variation (CV) is defined as the ratio
-    of the sample standard deviation to the mean. It’s a method to measure the
+    of the sample standard deviation to the mean. It is a method to measure the
     variations of compounds. The variation of a peak intensity increases as 
     its CV increases. And adjusted for the sample mean, CV does not have unit;
     thus, it is a standardized measurement for variation. 
