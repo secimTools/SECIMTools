@@ -148,6 +148,7 @@ def standardizedEulideanDistance(wide, p):
 
     # Estimated Variance from the data
     varHat = wide.var(axis=1, ddof=1)
+    varHat[varHat==0] = 1
     dist = DistanceMetric.get_metric('seuclidean', V=varHat)
 
     # Column means
@@ -270,7 +271,10 @@ def scatterPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
     # Everything is similar as the plot function above
     # Create figure object with a single axis and initiate the fig
     pSamples = SEDpairwise.shape[0]
-    fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns[:-1], 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
+    if 'group' in SEDpairwise.columns:
+        fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns[:-1], 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
+    else:
+        fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns, 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
     
     # Add a horizontal line above 95% of the data
     fig, ax = addCutoff(fig, ax, cutoff, p)
