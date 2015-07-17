@@ -20,5 +20,6 @@
         <tool file="secimtools/scatterPlot.xml"/>
         <tool file="secimtools/SVM_classifier.xml"/>
         <tool file="secimtools/onOff.xml"/>
+        <tool file="secimtools/standardizedEuclideanDistance.xml"/>
     </section>
 </toolbox>

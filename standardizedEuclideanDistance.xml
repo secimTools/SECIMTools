@@ -1,6 +1,6 @@
-<tool id="standardizedEuclideandistance" name="Euclidean Distance">
+<tool id="standardizedEuclideanDistance" name="Euclidean Distance">
     <description>Calculate the Euclidean distance for a set of multivariate data</description>
-    <command interpreter="python">standardizedEuclideandistance.py --input $fname --design $dname --ID $uniqID --SEDplotOutFile $plot --SEDtoCenter $out1 --SEDpairwide $out2
+    <command interpreter="python">standardizedEuclideanDistance.py --input $input --design $design --ID $uniqID --SEDplotOutFile $plot --SEDtoCenter $out1 --SEDpairwise $out2
         #if $group
             --group
         #end if
