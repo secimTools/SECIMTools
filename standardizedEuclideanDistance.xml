@@ -17,8 +17,8 @@
     </inputs>
     <outputs>
         <data format="PDF" name="plot" label="SEDplot" />
-        <data format="TSV" name="out1" label="SEDtoCenter" />
-        <data format="TSV" name="out2" label="SEDpairwise" />
+        <data format="tabular" name="out1" label="SEDtoCenter" />
+        <data format="tabular" name="out2" label="SEDpairwise" />
     </outputs>
     <requirements>
         <requirement type="python-module">numpy</requirement>
