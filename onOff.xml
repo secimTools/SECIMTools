@@ -3,6 +3,7 @@
     <command interpreter="python">onOff.py --input $input --design $design --ID $uniqID --output $output --group $group
     #if $cutoff:
         --cutoff
+    #end if
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
