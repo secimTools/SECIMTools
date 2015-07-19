@@ -8,6 +8,7 @@ from argparse import RawDescriptionHelpFormatter
 
 # Add-on packages
 import numpy as np
+import pandas as pd
 from sklearn.decomposition import PCA
 
 # Local Packages
@@ -41,6 +42,13 @@ def main(args):
     logger.info('Importing Data')
     dat = wideToDesign(args.fname, args.dname, args.uniqID)
     df_wide = dat.wide[dat.sampleIDs].copy()
+
+    # Drop Missing
+    if np.isnan(df_wide.values).any():
+        nRows = df_wide.shape[0]        # Number of rows before dropping missing
+        df_wide.dropna(inplace=True)    # Drop missing rows in place
+        nRowsNoMiss = df_wide.shape[0]  # Number of rows after dropping missing
+        logger.warn('{} rows were dropped because of missing values.'.format(nRows - nRowsNoMiss))
 
     # Run PCA
     # Initialize PCA class with default values
