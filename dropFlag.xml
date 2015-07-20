@@ -25,7 +25,7 @@
                help="Name of the column in your Design File that contains group classifications."/>
         <param name="flags" type="data" format="tabular" label="Flag File"
                help="Input flagged dataset containing the flag value for each compound"/>
-        <param name="cutoff" size="30" type="text" value="" label="Cutoff Value"
+        <param name="cutoff" size="30" type="float" value=".5" label="Cutoff Value"
                help="All flag sums greater than this value will be deleted"/>
         <param name="drop" size="30" type="select" display="radio" value="" label="Drop rows or columns"
                help="Choose whether to drop rows or columns">
