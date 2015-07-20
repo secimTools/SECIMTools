@@ -2,7 +2,7 @@
     <description></description>
     <command interpreter="python">onOff.py --input $input --design $design --ID $uniqID --output $output --group $group
     #if $cutoff:
-        --cutoff
+        --cutoff $cutoff
     #end if
     </command>
     <inputs>
