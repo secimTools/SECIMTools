@@ -46,15 +46,15 @@ def main(args):
         meanOn = mask.mean(axis=1)
 
         # Add mean column of boolean values to flags
-        df_offFlags.addColumn(column='flag_' + title + '_off', mask=meanOn > 0.5)
+        df_offFlags.addColumn(column='flag_feature_' + title + '_off', mask=meanOn > 0.5)
 
     # flag_met_off column
     maskFlagMetOff = df_offFlags.df_flags.any(axis=1)
-    df_offFlags.addColumn('flag_met_off', maskFlagMetOff)
+    df_offFlags.addColumn('flag_feature_off', maskFlagMetOff)
 
     # flag_met_all_off column
     maskFlagMetAllOff = df_offFlags.df_flags.all(axis=1)
-    df_offFlags.addColumn('flag_met_all_off', maskFlagMetAllOff)
+    df_offFlags.addColumn('flag_feature_all_off', maskFlagMetAllOff)
 
     df_offFlags.df_flags.to_csv(args.output, sep="\t")
 
