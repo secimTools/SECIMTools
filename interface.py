@@ -381,19 +381,19 @@ class Flags:
             :returns: Dictionary of pandas.DataFrame
 
         """
-        # Dictionary to hold dataframes
-        df_dict = []
+        # List to hold dataframes
+        df_list= []
 
         # Loop through columns and build a dataframe
         for column in self._columns:
             exec('df_' + str(column) + '= pd.DataFrame(' +
                     'data=self.df_flags[column], index=self.df_flags.index,' +
-                    'columns=[column]')
+                    'columns=[column])')
             # Add newly created DataFrame to df dictionary
-            exec('df_dict.append(df_' + str(column))
+            exec('df_dict.append(df_' + str(column) + ')')
 
         # Return df_dict
-        return df_dict
+        return df_list
 
     @staticmethod
     def _mergeIndex(indices):
