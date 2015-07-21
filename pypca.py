@@ -26,8 +26,8 @@ def getOptions(myopts=None):
     group1.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
 
     group2 = parser.add_argument_group(title='Required output')
-    group2.add_argument("--load_out", dest="lname", action='store', required=True, help="Name of output file to store loadings.")
-    group2.add_argument("--score_out", dest="sname", action='store', required=True, help="Name of output file to store scores.")
+    group2.add_argument("--load_out", dest="lname", action='store', required=True, help="Name of output file to store loadings. TSV format.")
+    group2.add_argument("--score_out", dest="sname", action='store', required=True, help="Name of output file to store scores. TSV format.")
 
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
