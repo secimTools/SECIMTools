@@ -130,8 +130,8 @@ def makeScatter(row, pdf):
     out = pd.Series({
         'slope': slope,
         'pval': pval,
-        'flag_runOrder_pval_05': flag_runOrder_pval_05,
-        'flag_runOrder_pval_01': flag_runOrder_pval_01,
+        'flag_feature_runOrder_pval_05': flag_runOrder_pval_05,
+        'flag_feature_runOrder_pval_01': flag_runOrder_pval_01,
         'rSquared': rsq
     })
 
@@ -164,9 +164,9 @@ def main(args):
 
     # Write regression results to table
     outTable.index.name = args.uniqID
-    outTable['flag_runOrder_pval_01'] = outTable['flag_runOrder_pval_01'].astype('int32')
-    outTable['flag_runOrder_pval_05'] = outTable['flag_runOrder_pval_05'].astype('int32')
-    outTable[['slope', 'pval', 'rSquared', 'flag_runOrder_pval_01', 'flag_runOrder_pval_05']].to_csv(args.tname, sep='\t', float_format='%.4f')
+    outTable['flag_feature_runOrder_pval_01'] = outTable['flag_feature_runOrder_pval_01'].astype('int32')
+    outTable['flag_feature_runOrder_pval_05'] = outTable['flag_feature_runOrder_pval_05'].astype('int32')
+    outTable[['slope', 'pval', 'rSquared', 'flag_feature_runOrder_pval_01', 'flag_feature_runOrder_pval_05']].to_csv(args.tname, sep='\t', float_format='%.4f')
 
 
 if __name__ == '__main__':
