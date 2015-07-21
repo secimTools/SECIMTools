@@ -373,6 +373,28 @@ class Flags:
                 if overlap.intersection(set(index)):
                     overlap = overlap.union(set(index))
 
+    def splitFlags(self):
+        """ Split large DataFrame into individual DataFrames per column
+
+        :Returns:
+            :rtype: dictionary
+            :returns: Dictionary of pandas.DataFrame
+
+        """
+        # Dictionary to hold dataframes
+        df_dict = []
+
+        # Loop through columns and build a dataframe
+        for column in self._columns:
+            exec('df_' + str(column) + '= pd.DataFrame(' +
+                    'data=self.df_flags[column], index=self.df_flags.index,' +
+                    'columns=[column]')
+            # Add newly created DataFrame to df dictionary
+            exec('df_dict.append(df_' + str(column))
+
+        # Return df_dict
+        return df_dict
+
     @staticmethod
     def _mergeIndex(indices):
         """ Function to check for overlap for a list of indices.
