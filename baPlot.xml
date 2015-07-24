@@ -7,7 +7,7 @@
       --ba $ba_plots 
       --flag_dist $outlier_dist_plots 
       --flag_sample $flag_sample
-      --flag_sample $flag_feature
+      --flag_feature $flag_feature
       --resid_cutoff $resid_cutoff
       --sample_flag_cutoff $sample_cutoff
       --feature_flag_cutoff $feature_cutoff
