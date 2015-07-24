@@ -1,8 +1,6 @@
 <tool id="standardizedEuclideanDistance" name="Euclidean Distance">
     <description>Calculate the Euclidean distance for a set of multivariate data</description>
-    <command interpreter="python">standardizedEuclideanDistance.py --input $input --design $design --ID $uniqID --SEDplotOutFile $plot --SEDtoCenter $out1 --SEDpairwise $out2
-        #if $group
-            --group $group
+    <command interpreter="python">standardizedEuclideanDistance.py --input $input --design $design --ID $uniqID --SEDplotOutFile $plot --SEDtoCenter $out1 --SEDpairwise $out2 --group $group
         #end if
         #if $p
             --p $p
@@ -12,7 +10,7 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-        <param name="group" size="30" type="text" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by groups in a column in the design file, enter the treatment group. Spelling and capitalization must be exact" />
+        <param name="group" size="30" type="text" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact" />
         <param name="p" size="30" type="text" label="Percentile cutoff [OPTIONAL]" help="The percentile cutoff for standard distributions. The default is 0.95. " />
     </inputs>
     <outputs>
