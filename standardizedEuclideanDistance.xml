@@ -16,7 +16,7 @@
         <param name="p" size="30" type="text" label="Percentile cutoff [OPTIONAL]" help="The percentile cutoff for standard distributions. The default is 0.95. " />
     </inputs>
     <outputs>
-        <data format="PDF" name="plot" label="SEDplot" />
+        <data format="pdf" name="plot" label="SEDplot" />
         <data format="tabular" name="out1" label="SEDtoCenter" />
         <data format="tabular" name="out2" label="SEDpairwise" />
     </outputs>
