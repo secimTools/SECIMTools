@@ -1,6 +1,14 @@
 <tool id="mahalanobis_distance" name="Mahalanobis Distance">
     <description>Use mahalanobis distance formula to create mahalanobis figure</description>
-    <command interpreter="python">mahalanobis_distance.py --input $input -o $output  </command>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+    </requirements>
+    <command interpreter="python">mahalanobis_distance.py
+        --input $input
+        -o $output
+    </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset"
                help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
@@ -8,11 +16,6 @@
     <outputs>
         <data format="png" name="output" label="Mahalanobis Figure"/>
     </outputs>
-    <requirements>
-        <requirement type="python-module">numpy</requirement>
-        <requirement type="python-module">pandas</requirement>
-        <requirement type="python-module">matplotlib</requirement>
-    </requirements>
     <help>
 
 .. class:: infomark
