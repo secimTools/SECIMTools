@@ -1,5 +1,9 @@
 <tool id="scatterPlot" name="Scatter Plot">
     <description>Create a 2d scatter plot plots.</description>
+    <requirements>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+    </requirements>
     <command interpreter="python">scatterPlot.py --input $input --ID $uniqID
         #if $design and $group
         --design $design
@@ -25,25 +29,21 @@
     <inputs>
         <param name="input" type="data" format="tabular" label="Stacked Dataset"
                help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="uniqID" size="30" type="text" value="sampleID" label="Sample ID"
+        <param name="uniqID" type="text" size="30" value="sampleID" label="Sample ID"
                help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-        <param name="xaxis" size="30" type="text" value="" label="Column name with X-value"/>
-        <param name="yaxis" size="30" type="text" value="" label="Column name with Y-value"/>
-        <param name="title" size="30" type="text" value="" optional="true" label="Plot title [Optiona]."/>
+        <param name="xaxis" type="text" size="30" value="" label="Column name with X-value"/>
+        <param name="yaxis" type="text" size="30" value="" label="Column name with Y-value"/>
+        <param name="title" type="text" size="30" value="" optional="true" label="Plot title [Optiona]."/>
         <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]."
                help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment [Optional]"
+        <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]"
                help="Name of the column in your Design File that contains group classifications."/>
-        <param name="xname" size="30" type="text" value="" optional="true" label="X-axis label [Optional]."/>
-        <param name="yname" size="30" type="text" value="" optional="true" label="Y-axis label [Optional]."/>
+        <param name="xname" type="text" size="30" value="" optional="true" label="X-axis label [Optional]."/>
+        <param name="yname" type="text" size="30" value="" optional="true" label="Y-axis label [Optional]."/>
     </inputs>
     <outputs>
         <data format="png" name="fig"/>
     </outputs>
-    <requirements>
-        <requirement type="python-module">pandas</requirement>
-        <requirement type="python-module">matplotlib</requirement>
-    </requirements>
     <help>
 
 .. class:: infomark
