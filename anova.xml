@@ -7,7 +7,15 @@
     <requirement type="python-module">statsmodels</requirement>
     <requirement type="python-module">matplotlib</requirement>
   </requirements>
-  <command interpreter="python">anova.py --input $input --design $design --ID $uniqID --group $group --out $results_table --fig $qq_plots --fig2 $volcano_plots</command>
+  <command interpreter="python">anova.py
+      --input $input
+      --design $design
+      --ID $uniqID
+      --group $group
+      --out $results_table
+      --fig $qq_plots
+      --fig2 $volcano_plots
+  </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
@@ -19,7 +27,7 @@
     <data format="pdf" name="qq_plots" />
     <data format="pdf" name="volcano_plots" />
   </outputs>
-  <!-- TODO: uncomment the following test when we have tools.update_state() working for 
+  <!-- TODO: uncomment the following test when we have tools.update_state() working for
        multiple dependents with the same dependency.
   <tests>
     <test>
@@ -37,7 +45,7 @@
 
 .. class:: infomark
 
-**TIP:** 
+**TIP:**
 If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 .. class:: warningmark
