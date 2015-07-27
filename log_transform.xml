@@ -1,6 +1,19 @@
 <tool id="log_transform" name="Log Transformation">
     <description>Transform your data using the log.</description>
-    <command interpreter="python">log_transform.py --input $input --design $design --ID $uniqID --log $log --out $out</command>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">mpld3</requirement>
+        <requirement type="python-module">interface</requirement>
+        <requirement type="python-module">logger</requirement>
+    </requirements>
+    <command interpreter="python">log_transform.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --log $log
+        --out $out
+    </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
@@ -14,14 +27,7 @@
     <outputs>
         <data format="tabular" name="out" />
     </outputs>
-    <requirements>
-        <requirement type="python-module">numpy</requirement>
-        <requirement type="python-module">pandas</requirement>
-        <requirement type="python-module">mpld3</requirement>
-        <requirement type="python-module">interface</requirement>
-        <requirement type="python-module">logger</requirement>
-    </requirements>
-    <!-- TODO: uncomment the following test when we have tools.update_state() working for 
+    <!-- TODO: uncomment the following test when we have tools.update_state() working for
        multiple dependents with the same dependency.
     <tests>
     <test>
