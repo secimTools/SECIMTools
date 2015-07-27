@@ -1,19 +1,5 @@
 <tool id="mean_standardize" name="Mean standardization">
     <description>Standardize the data using various types of mean standadardization.</description>
-    <command interpreter="python">mean_standardize.py --input $input --design $design --ID $uniqID --group $group --std $std --out $out</command>
-    <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-        <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
-        <param name="std" size="30" type="select" value="" label="Mean Standardization" help="Select type of mean standardization.">
-            <option value="STD" selected="true">STD</option>
-            <option value="MEAN" selected="true">MEAN</option>
-        </param>
-    </inputs>
-    <outputs>
-        <data format="tabular" name="out" />
-    </outputs>
     <requirements>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -21,6 +7,27 @@
         <requirement type="python-module">interface</requirement>
         <requirement type="python-module">logger</requirement>
     </requirements>
+    <command interpreter="python">mean_standardize.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --group $group
+        --std $std
+        --out $out
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="std" type="select" size="30" value="" label="Mean Standardization" help="Select type of mean standardization.">
+            <option value="STD" selected="true">STD</option>
+            <option value="MEAN" selected="true">MEAN</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="out" />
+    </outputs>
 
     <help>
 
