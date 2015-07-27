@@ -1,5 +1,9 @@
 <tool id="hierarchical-cluster-heatmap" name="Hierarchical Cluster Heatmap" version="0.0.1">
   <description> </description>
+  <requirements>
+    <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">scipy</requirement>
+  </requirements>
   <command interpreter="python">
     hierarchical-cluster-heatmap_amm.py 
       --i $input1
@@ -21,10 +25,6 @@
   <outputs>
     <data format="png" name="out_file1" />
   </outputs>
-  <requirements>
-    <requirement type="python-module">matplotlib</requirement>
-    <requirement type="python-module">scipy</requirement>
-  </requirements>
   <help>
 
 
