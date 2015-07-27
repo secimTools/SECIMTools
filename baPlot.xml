@@ -1,5 +1,12 @@
 <tool id="baPlot" name="Bland-Altman Plot">
   <description>Create pairwise BA plots to identify outliers.</description>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">statsmodels</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
   <command interpreter="python">baPlot.py 
       --input $input 
       --design $design 
@@ -37,13 +44,6 @@
     <data format="tabular" name="flag_sample"/>
     <data format="tabular" name="flag_feature"/>
   </outputs>
-  <requirements>
-    <requirement type="python-module">numpy</requirement>
-    <requirement type="python-module">scipy</requirement>
-    <requirement type="python-module">pandas</requirement>
-    <requirement type="python-module">statsmodels</requirement>
-    <requirement type="python-module">matplotlib</requirement>
-  </requirements>
   <help>
 
 .. class:: infomark
