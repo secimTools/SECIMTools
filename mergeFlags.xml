@@ -1,6 +1,12 @@
 <tool id="mergeFlags" name="Merge Flags">
     <description>Merge flags with same index together</description>
-    <command interpreter="python">mergeFlags.py --input $input --output $output </command>
+    <requirements>
+        <requirement type="python-module">pandas</requirement>
+    </requirements>
+    <command interpreter="python">mergeFlags.py
+        --input $input
+        --output $output
+    </command>
     <inputs>
         <param name="input" format="tabular" type="data"  label="Wide Dataset" multiple="true"
                help="Input dataset in wide format and tab separated.CTRL+CLICK to select multiple.
@@ -10,9 +16,6 @@
     <outputs>
         <data format="tabular" name="output" label="MergedFlags"/>
     </outputs>
-    <requirements>
-        <requirement type="python-module">pandas</requirement>
-    </requirements>
     <help>
 
 .. class:: infomark
