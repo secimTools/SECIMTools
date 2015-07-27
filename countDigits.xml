@@ -1,6 +1,19 @@
 <tool id="countDigits" name="Count Digits">
   <description>Count the number of digits before the period.</description>
-  <command interpreter="python">countDigits.py --html $html --html_path "$html.files_path" --input $input --design $design --ID $uniqID --flags $flags
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
+  <command interpreter="python">
+      countDigits.py
+      --html $html
+      --html_path "$html.files_path"
+      --input $input
+      --design $design
+      --ID $uniqID
+      --flags $flags
+
       #if $nozero:
           --noZero
       #end if
@@ -11,8 +24,8 @@
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-    <param name="nozero" size="30" type="select" display="radio" value="yes" label="Remove zeros before processing" help="If you do not remove zeros before processing, otherwise a zero will skew results.">
+    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="nozero" type="select" size="30" display="radio" value="yes" label="Remove zeros before processing" help="If you do not remove zeros before processing, otherwise a zero will skew results.">
         <option value="yes">Remove zeros</option>
         <option value="no">Do not remove zeros</option>
     </param>
@@ -22,16 +35,11 @@
     <data format="html" name="html"  label="CountDigits_Output_List.html" />
     <data format="tabular" name="flags" label="CountDigits_Flags" />
   </outputs>
-  <requirements>
-    <requirement type="python-module">numpy</requirement>
-    <requirement type="python-module">pandas</requirement>
-    <requirement type="python-module">matplotlib</requirement>
-  </requirements>
   <help>
 
 .. class:: infomark
 
-**TIP:** 
+**TIP:**
 If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 --------------------------------------------------------------------------------
