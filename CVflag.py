@@ -165,8 +165,9 @@ def main(args):
     CVflag = Flags(index=DATstat.index)
 
     # Fill in DataFrame values
-    CVflag.addColumn(column='flag_feature_big_CV', 
-                     mask=((DATstat > CVcutoff) | DATstat.isnull()))
+    CVflag.addColumn(column='flag_feature_big_CV',
+                     mask=((DATstat.get_values() > CVcutoff) | DATstat.isnull()))
+
 
     #Set the file name and export
     CVflag.df_flags.to_csv(args.CVflag, sep='\t')
