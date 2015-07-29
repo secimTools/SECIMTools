@@ -24,7 +24,7 @@
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-    <param name="CVcutoff"  type="float" optional="true" value=".1" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
+    <param name="CVcutoff"  type="float" optional="true" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
     <param name="group" type="text" size="30" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by groups in a column in the design file, enter the column name. Spelling and capitalization must be exact" />
   </inputs>
   <outputs>

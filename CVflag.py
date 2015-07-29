@@ -84,7 +84,7 @@ def setCVflagByGroup(args, wide, dat):
         CVcutoff = np.nanpercentile(CV['cv'].values, q=90)
         CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
     else:
-        CVcutoff = args.CVcutoff
+        CVcutoff = float(args.CVcutoff)
     for title, group in dat.design.groupby(args.group):
         fig, ax = plt.subplots()
         xmin = -np.nanpercentile(CV['cv_'+title].values,99)*0.2
