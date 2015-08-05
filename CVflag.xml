@@ -4,7 +4,6 @@
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">pandas</requirement>
     <requirement type="python-module">matplotlib</requirement>
-    <requirement type="python-module">scipy</requirement>
   </requirements>
   <command interpreter="python">CVflag.py
       --input $input
@@ -31,6 +30,18 @@
     <data format="pdf" name="CVplot"  label="CVplot" />
     <data format="tabular" name="CVflag"  label="CVflag" />
   </outputs>
-<help>
-</help>
+    <tests>
+        <test>
+            <param name="input" value="ST000015_log.tsv" />
+            <param name="design" value="ST000015_design.tsv" />
+            <param name="ID" value="Name" />
+            <output name="CVplotOutFile" file="CVflag-CVplotOutFile-test" format="pdf" />
+            <output name="CVflagOutFile" file="CVflag-CVflagOutFile-test" format="tabular" />
+            </test>
+    </tests>
+    <macros>
+        <import>help_section_macro.xml</import>
+    </macros>
+        <help>  @HELP_SECTION@ </help>
+
 </tool>
