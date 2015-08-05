@@ -82,7 +82,7 @@ def setCVflagByGroup(args, wide, dat):
     CV['cv'] = CV.apply(np.max, axis=1)
     if not args.CVcutoff:
         CVcutoff = np.nanpercentile(CV['cv'].values, q=90)
-        CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
+        CVcutoff = round(CVcutoff, -int(floor(log(abs(CVcutoff), 10))) + 2)
     else:
         CVcutoff = float(args.CVcutoff)
     for title, group in dat.design.groupby(args.group):
@@ -121,11 +121,11 @@ def setCVflag(args, wide, dat, groupName = ''):
 
     DATstat['std']  = DATround.apply(np.std, axis=1)
     DATstat['mean'] = DATround.apply(np.mean, axis=1)
-    DATstat['cv']   = DATstat['std'] / DATstat['mean']
+    DATstat['cv']   = abs(DATstat['std'] / DATstat['mean'])
 
     if not args.CVcutoff:
         CVcutoff = np.nanpercentile(DATstat['cv'].values, q=90)
-        CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
+        CVcutoff = round(CVcutoff, -int(floor(log(abs(CVcutoff), 10))) + 2)
     else:
         CVcutoff = args.CVcutoff
 
