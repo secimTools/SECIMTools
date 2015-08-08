@@ -101,14 +101,25 @@ def setCVflagByGroup(args, wide, dat):
     xmin = -np.nanpercentile(CV['cv'].values,99)*0.2
     xmax = np.nanpercentile(CV['cv'].values,99)*1.5
     ax.set_xlim(xmin, xmax)
+
+    # Create flag file instance
+    CVflag = Flags(index=CV['cv'].index)
+
     for title, group in dat.design.groupby(args.group):
         CV['cv_'+title].plot(kind='kde', title="Density Plot of Coefficients of Variation by " + args.group, ax=ax, label = "CV density in group "+title)
+
+        # Create new flag row for each group
+        CVflag.addColumn(column='flag_feature_big_CV_' + title,
+                     mask=((CV['cv_'+title].get_values() > CVcutoff) | CV['cv_'+title].isnull()))
+
     plt.axvline(x=CVcutoff, color = 'red', linestyle = 'dashed', label = "Cutoff at: {0}".format(CVcutoff))
     plt.legend()
     pdfOut.savefig(fig, bbox_inches='tight')
     plt.close(fig)
     pdfOut.close()
-    return CV['cv'], CVcutoff
+
+    # Write flag file
+    CVflag.df_flags.to_csv(args.CVflag, sep='\t')
 
 
 def setCVflag(args, wide, dat, groupName = ''):
@@ -145,7 +156,14 @@ def setCVflag(args, wide, dat, groupName = ''):
         plt.savefig(args.CVplot, format='pdf')
         plt.close(fig)
 
-    return DATstat['cv'], CVcutoff
+        # Create flag instance
+        CVflag = Flags(index=DATstat.index)
+
+        # Create new flag column with flags
+        CVflag.addColumn(column='flag_feature_big_CV',
+                     mask=((CV['cv'].get_values() > CVcutoff) | CV['cv'].isnull()))
+
+
 
 def main(args):
 
@@ -157,20 +175,10 @@ def main(args):
 
     # Use group separation or not depending on user input
     if not args.group:
-        DATstat, CVcutoff = setCVflag(args, wide, dat)
+        setCVflag(args, wide, dat)
     else:
-        DATstat, CVcutoff = setCVflagByGroup(args, wide, dat)
+        setCVflagByGroup(args, wide, dat)
 
-    #Create CVflag DataFrame
-    CVflag = Flags(index=DATstat.index)
-
-    # Fill in DataFrame values
-    CVflag.addColumn(column='flag_feature_big_CV',
-                     mask=((DATstat.get_values() > CVcutoff) | DATstat.isnull()))
-
-
-    #Set the file name and export
-    CVflag.df_flags.to_csv(args.CVflag, sep='\t')
 
 if __name__ == '__main__':
 
