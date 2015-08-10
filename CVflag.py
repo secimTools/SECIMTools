@@ -163,6 +163,10 @@ def setCVflag(args, wide, dat, groupName = ''):
         CVflag.addColumn(column='flag_feature_big_CV',
                      mask=((DATstat['cv'].get_values() > CVcutoff) | DATstat['cv'].isnull()))
 
+        # Write output
+        CVflag.df_flags.to_csv(args.CVflag, sep='\t')
+    else:
+        return DATstat['cv'], CVcutoff
 
 
 def main(args):
