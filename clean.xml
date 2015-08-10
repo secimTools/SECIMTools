@@ -14,13 +14,22 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
     </inputs>
     <outputs>
         <data format="tabular" name="wideOut" label="Wide data" />
-        <data format="tabular" name="designOut" label="Design data" />
+        <data format="tabular" name="designOut" label="Metadata" />
     </outputs>
+    <!--<tests>-->
+        <!--<test>-->
+            <!--<param name="input" value="ST000015_log.tsv" />-->
+            <!--<param name="design" value="ST000015_design.tsv" />-->
+            <!--<param name="ID" value="Name" />-->
+            <!--<output name="wideOut" file="clean-wideOut-test" ftype="tabular" />-->
+            <!--<output name="designOut" file="clean-designOut-test" ftype="tabular" />-->
+            <!--</test>-->
+    <!--</tests>-->
     <help>
         <!--help-->
     </help>

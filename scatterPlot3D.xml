@@ -39,10 +39,10 @@
         <param name="yaxis" type="text" size="30" value="" label="Column name with Y-value"/>
         <param name="zaxis" type="text" size="30" value="" label="Column name with Z-value"/>
         <param name="title" type="text" size="30" value="" optional="true" label="Plot title [Optiona]."/>
-        <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]."
-               help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" optional="true" label="Metadata File [Optional]."
+               help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]"
-               help="Name of the column in your Design File that contains group classifications."/>
+               help="Name of the column in your Metadata File that contains group classifications."/>
         <param name="xname" type="text" size="30" value="" optional="true" label="X-axis label [Optional]."/>
         <param name="yname" type="text" size="30" value="" optional="true" label="Y-axis label [Optional]."/>
         <param name="zname" type="text" size="30" value="" optional="true" label="Y-axis label [Optional]."/>

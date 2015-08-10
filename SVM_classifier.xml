@@ -21,9 +21,9 @@
   </command>
   <inputs>
     <param name="train_wide" type="data" format="tabular" label="Training Wide Dataset" help="Dataset missing? See TIP below"/>
-    <param name="train_design" type="data" format="tabular" label="Training Design Dataset" help="Dataset missing? See TIP below"/>
+    <param name="train_design" type="data" format="tabular" label="Training Metadata Dataset" help="Dataset missing? See TIP below"/>
     <param name="test_wide" type="data" format="tabular" label="Target Wide Dataset" help="Dataset missing? See TIP below"/>
-    <param name="test_design" type="data" format="tabular" label="Target Design Dataset" help="Dataset missing? See TIP below"/>
+    <param name="test_design" type="data" format="tabular" label="Target Metadata Dataset" help="Dataset missing? See TIP below"/>
     <param name="class_column_name" size="30" type="text" value="class" label="Column name for the class"/>
     <param name="uniqID" type="text" size="30" value="Name" label="Name of IDs"/>
     <param name="kernel" type="select" size="30" display="radio" value="rbf" label="SVM kernel function">

@@ -17,9 +17,9 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-        <param name="group" type="text" size="30" label="Input group name from design file" help="Insert the group name from the design file to separate the flag file" />
+        <param name="group" type="text" size="30" label="Input group name from Metadata file" help="Insert the group name from the Metadata file to separate the flag file" />
         <param name="cutoff" type="integer" optional="true" size="4" value="30000" label="Cutoff [OPTIONAL]" help="Cutoff to use for which values to flag. This defaults to 30,000"/>
     </inputs>
     <outputs>

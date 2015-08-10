@@ -16,8 +16,8 @@
   </command>
   <inputs>
     <param format="tabular" name="input1" type="data" label="Select wide format data set." help="Dataset missing? See TIP below."/>
-    <param format="tabular" name="design" type="data" label="Select design file." help="Dataset missing? See TIP below."/>
-    <param name="group" type="text" label="Group/Treatment column in Design File to color samples by" help="Name of column in design file containing group categories."/>
+    <param format="tabular" name="design" type="data" label="Select Metadata file." help="Dataset missing? See TIP below."/>
+    <param name="group" type="text" label="Group/Treatment column in Metadata File to color samples by" help="Name of column in Metadata file containing group categories."/>
     <param format="tabular" name="anno" type="data" optional="true" label="Optional - Select Annotation File." help="Dataset missing? See TIP below."/>
     <param name="cmpd" type="text" optional="true" label="Column containing unique Compound IDs in Annotation File" help="Name of column in Annotation File containing unique compound IDs."/>
     <param name="a_col" type="text" optional="true" label="Column containing annotations to color compounds by." help="Name of the column in the annotation data set that contains the annotations for each unique compound/gene ID."/>

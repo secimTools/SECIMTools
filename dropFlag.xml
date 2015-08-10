@@ -26,12 +26,12 @@
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset"
                help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File"
-               help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Metadata File"
+               help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID"
                help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
         <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]"
-               help="Name of the column in your Design File that contains group classifications."/>
+               help="Name of the column in your Metadata File that contains group classifications."/>
         <param name="flags" type="data" format="tabular" label="Flag File"
                help="Input flagged dataset containing the flag value for each compound"/>
         <param name="cutoff" type="float" size="30"  value=".5" label="Cutoff Value"
@@ -44,7 +44,7 @@
     </inputs>
     <outputs>
         <data format="tabular" name="wideOut" label="DroppedWide"/>
-        <data format="tabular" name="designOut" label="DroppedDesign">
+        <data format="tabular" name="designOut" label="DroppedMetadata">
             <filter>drop=='column'</filter>
         </data>
     </outputs>
