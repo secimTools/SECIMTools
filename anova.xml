@@ -23,9 +23,9 @@
     <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
   </inputs>
   <outputs>
-    <data format="tabular" name="results_table"/>
-    <data format="pdf" name="qq_plots" />
-    <data format="pdf" name="volcano_plots" />
+    <data format="tabular" name="results_table" label="Anova_results_table"/>
+    <data format="pdf" name="qq_plots" label="Anova_qq_plots"/>
+    <data format="pdf" name="volcano_plots" label="Anova_volcano_plots"/>
   </outputs>
   <!-- TODO: uncomment the following test when we have tools.update_state() working for
        multiple dependents with the same dependency.
