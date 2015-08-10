@@ -133,6 +133,8 @@ class wideToDesign:
             # Create list of group levels
             grp = self.design.groupby(self.group)
             self.levels = sorted(grp.groups.keys())  # Get a list of group levels
+        else:
+            self.group = None
 
     def _cleanStr(self, x):
         """ Clean strings so they behave.

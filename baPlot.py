@@ -184,7 +184,7 @@ def buildTitle(dat, xName, yName):
         :returns: A string containing the plot title.
     """
     # If groups are the same, add group information to the plot.
-    if dat.design.loc[xName, dat.group] == dat.design.loc[yName, dat.group]:
+    if dat.group and dat.design.loc[xName, dat.group] == dat.design.loc[yName, dat.group]:
         group = dat.design.loc[xName, dat.group]
         title = '{0}\n{1} vs {2}'.format(group, xName, yName)
     else:
