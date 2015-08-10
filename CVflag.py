@@ -161,7 +161,7 @@ def setCVflag(args, wide, dat, groupName = ''):
 
         # Create new flag column with flags
         CVflag.addColumn(column='flag_feature_big_CV',
-                     mask=((CV['cv'].get_values() > CVcutoff) | CV['cv'].isnull()))
+                     mask=((DATstat['cv'].get_values() > CVcutoff) | DATstat['cv'].isnull()))
 
 
 
