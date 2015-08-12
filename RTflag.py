@@ -26,32 +26,32 @@ global DEBUG
 
 def getOptions(myopts=None):
     """Function to pull in arguments"""
-    
-    description = """Retention time (RT) is related to the location of the compound. 
+
+    description = """Retention time (RT) is related to the location of the compound.
     Thus, across samples, the retention times for one compound do not vary much 
-    if it's consistent. Therefore, we use various measurements for the variation 
-    of retention times to detect whether the compound is consistent.  
-    
-    Retention time flags include, 
-        flag_RT_Q90Q10_outlier:     Flagged when the difference between the 90th 
-                                    and the 10th percentile of RT of the compound 
+    if it's consistent. Therefore, we use various measurements for the variation
+    of retention times to detect whether the compound is consistent.
+
+    Retention time flags include,
+        flag_RT_Q90Q10_outlier:     Flagged when the difference between the 90th
+                                    and the 10th percentile of RT of the compound
                                     is greater than 0.2.
-        flag_RT_Q95Q05_outlier:     Flagged when the difference between the 95th 
-                                    and the 5th percentile of RT of the compound 
+        flag_RT_Q95Q05_outlier:     Flagged when the difference between the 95th
+                                    and the 5th percentile of RT of the compound
                                     is greater than 0.2.
-        flag_RT_max_gt_threshold:   Flagged when the difference between the maximum 
+        flag_RT_max_gt_threshold:   Flagged when the difference between the maximum
                                     and the median of the RT of the compound is 
                                     greater than 0.1
-        flag_RT_min_lt_threshold:   Flagged when the difference between the minimum 
+        flag_RT_min_lt_threshold:   Flagged when the difference between the minimum
                                     and the median of the RT of the compound is 
                                     greater than 0.1
-        flag_RT_min_max_outlier:    Flagged when the minimum or the maximum is more 
-                                    than 3 times the standard deviation away from 
+        flag_RT_min_max_outlier:    Flagged when the minimum or the maximum is more
+                                    than 3 times the standard deviation away from
                                     the mean of the RT of the compound
         flag_RT_big_CV:             A flag for large CV of the RT
-    
+
     """
-    
+
     parser = argparse.ArgumentParser(description = description, formatter_class = RawDescriptionHelpFormatter)
 
     group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
@@ -63,7 +63,7 @@ def getOptions(myopts=None):
 
     group2 = parser.add_argument_group(title='Optional input', description='Optional input for SECIM tools.')
     group2.add_argument("--pctl", dest = "p90p10", action = 'store_true', required = False, default = False, help = "The difference is calculated by 95th percentile and 5th percentile by default. If you add this argument, it uses 90th percentile and 10th percentile. [optional]")
-    group2.add_argument("--CVcutoff", dest = "CVcutoff", action = 'store', required = False, default = False, help = "The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here. [optional]")
+    group2.add_argument("--CVcutoff", dest = "CVcutoff", action = 'store', required = False, default = False, type = float, help = "The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here. [optional]")
 
     if myopts:
         args = parser.parse_args(myopts)
