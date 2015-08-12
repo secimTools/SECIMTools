@@ -48,30 +48,37 @@
             <filter>drop=='column'</filter>
         </data>
     </outputs>
-    <help>
+<help>
 
 .. class:: infomark
 
 **TIP:**
 If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
+.. class:: warningmark
+
+**WARNINGS:**
+    - (1) A row will be dropped when a pairwise comparison has a missing value.
+    - (2) This script automatically removes spaces and special characters from strings.
+    - (3) If a compound name starts with a number it will prepend an '_'.
+
 --------------------------------------------------------------------------------
 
 **What it does**
 
-This tool takes in a Wide formatted dataset, a Design formatted dataset and
-corresponding flag values. With the inputted user cutoff value the flag values
-are summed and the sums that are greater than the cutoff value are dropped. If
-rows are the specified attribute to drop then the return will be a new Wide file
-but if columns are dropped then a new Wide file and Design file will be created
-because changes will have occurred in each file.
+This tool takes a Wide formatted dataset, a Metadata dataset and a file containing 0/1 indicator flags
+and drops values based on a user selected cutoff.  For feature  0/1 indicator flags, features are dropped
+from the Wide dataset if the sum of all 0/1 indicator flags for a given feature is greater than a cutoff value input by the user.
+For sample 0/1 indicator flags, samples are dropped form the Wide dataset if the sum of all 0/1 indicator flags for a given sample
+is greater than a cutoff value input by the user.  Note that features and samples are dropped in separate operations.
 
+--------------------------------------------------------------------------------
 
 **Input**
 
-- Three input datasets are required.
+- Two input datasets are required.
 
-    **Wide Formatted Dataset:**
+        **Wide Formatted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample.::
 
@@ -85,12 +92,12 @@ because changes will have occurred in each file.
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
     Extra columns will automatically be ignored.
 
 
-    **Design File:**
-    A design file relating samples to various groups/treatment.::
+    **Metadata File:**
+    A Metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
         | sampleID | group1 |
@@ -108,35 +115,59 @@ because changes will have occurred in each file.
     and the values in this column must match the columns names in the wide
     formatted dataset. Extra columns will be ignored.
 
+    **In addition to your datasets, you need to provide:**
 
-    **Flags File:**
-    A flag file corresponding to flagged values of of the wide and design files::
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*
+
+    **Group/Treatment** [Optional]
+
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group1*. If provided samples will
+      be colored by group.
+
+
+    **Flag 0/1 Indicator File:**
+      A flag indicator file corresponding to flagged (0/1) values for features (shown below) or samples::
 
         +----------+---------+---------+---------+-----+
-        | Compound | sample1 | sample2 | sample3 | ... |
+        | Compound | flag_A | flag_B   | flag_C  | ... |
         +==========+=========+=========+=========+=====+
-        | one      | 0       | 0       | 10      | ... |
-        | two      | 5       | 0       | 30      | ... |
-        | three    | 0       | 12      | 2       | ... |
-        | four     | 32      | 11      | 8       | ... |
+        | one      | 0       | 0       | 0       | ... |
+        | two      | 0       | 1       | 1       | ... |
+        | three    | 0       | 1       | 0       | ... |
+        | four     | 1       | 0       | 0       | ... |
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
 
-    - In addition to your datasets, you need to provide:
+    **Cutoff Value**
+    If the sum of all the flags for a feature or sample is greater than this value, then that feature or sample will be dropped from the wide dataset.
 
-     *Unique Compound ID*
-
-      - The column name in your wide dataset that contains the unique IDs for
-        your compounds. In our example dataset you would input *Compound*.
+    **Drop rows or columns**
+    Select either rows or columns for dropping
 
 --------------------------------------------------------------------------------
 
 **Output Files**
 
-    - If rows were dropped the output will be the changed Wide file
+- If dropping features:
 
-    - If columns were dropped the output will be both the changed Wide and Design Files
+    **modified_wide** file will be created that contains only the features where
+    the sum of all indicator flags for the feature is less than the user given
+    cutoff value.
+
+- If dropping samples:
+
+    **modified_wide** file will be created that contains only the features where
+    the sum of all indicator flags for the feature is less than the user given
+    cutoff value.
+
+    **modified_metadata** file will be created that contains only the samples where
+    the sum of all the indicator flags for the sample is less than the user given
+    cutoff value.
 
 
 </help>
