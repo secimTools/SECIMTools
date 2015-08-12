@@ -112,19 +112,21 @@ half of the data is below a user-input cutoff value or missing.  Default value i
 
     :A set of flags are generated for each feature:
 
-        + For each group, if 50% or more of the values within a group are less than the indicated cutoff value.
-        + If at least 1 of the groups is flagged
-        + If all groups are flagged:
+    ::
 
-            +-------+-----------------+------------------+--------------+------------------+
-            | Cmd   | flag_group1_off | flag_group2_off  | flag_met_off | flag_met_all_off |
-            +=======+=================+==================+==============+==================+
-            | one   | 0               | 0                | 0            | 0                |
-            +-------+-----------------+------------------+--------------+------------------+
-            | two   | 1               | 1                | 1            | 1                |
-            +-------+-----------------+------------------+--------------+------------------+
-            | three | 1               | 0                | 1            | 0                |
-            +-------+-----------------+------------------+--------------+------------------+
+        - For each group, if 50% or more of the values within a group are less than the indicated cutoff value.
+        - If at least 1 of the groups is flagged
+        - If all groups are flagged:
+
+    +-------+-----------------+------------------+--------------+------------------+
+    | Cmd   | flag_group1_off | flag_group2_off  | flag_met_off | flag_met_all_off |
+    +=======+=================+==================+==============+==================+
+    | one   | 0               | 0                | 0            | 0                |
+    +-------+-----------------+------------------+--------------+------------------+
+    | two   | 1               | 1                | 1            | 1                |
+    +-------+-----------------+------------------+--------------+------------------+
+    | three | 1               | 0                | 1            | 0                |
+    +-------+-----------------+------------------+--------------+------------------+
 
 </help>
 </tool>
