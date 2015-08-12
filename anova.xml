@@ -41,21 +41,21 @@
     </test>
   </tests>
   -->
-  <help>
+<help>
 
 .. class:: infomark
 
 **TIP:**
-If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+If your data is not TAB delimited, use *Text Manipulation-&gt; Convert*
 
 .. class:: warningmark
 
-**WARNING: This script automatically removes spaces and special characters from strings.**
-Also if a compound names start with a number it will prepend an '_'.
+**WARNINGS: (1) This script automatically removes spaces and special characters from strings.**
+(2) If a compound name starts with a number it will prepend an '_'. 
 
 --------------------------------------------------------------------------------
 
-**Syntax**
+**What it does**
 
 This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected groups. 
 
@@ -79,8 +79,8 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
     Extra columns will automatically be ignored.
 
 
-    **Design File:**
-    A design file relating samples to various groups/treatment.::
+    **Meatdata File:**
+    A metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
         | sampleID | group1 |
@@ -98,12 +98,15 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
     and the values in this column must match the columns names in the wide
     formatted dataset. Extra columns will be ignored.
 
-- In addition to your datasets, you need to provide:
+
+    **In addition to your datasets, you need to provide:**
+
 
     **Unique Compound ID**
 
     - The column name in your wide dataset that contains the unique IDs for
       your compounds. In our example dataset you would input *Compound*.
+
 
     **Group/Treatment**
 
@@ -116,11 +119,13 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
 
 This tool outputs 3 different files.
 
-    - **results_table** is a `TSV` table that contains the One-Way-ANOVA results and analysis of means.
+    - **(1)  results_table** is a `TSV` table that contains the One-Way-ANOVA results and the analysis of means.  File headers follow the SAS JMP Genomics conventions.
 
-    - **qq_plots** is a `PDF` that contains q-q plots from the ANOVA.
+LINK to JMP help??
 
-    - **volcano_plots** is a `PDF` that contains the volcano plots comparing the differences between group means.
+    - **(2) qq_plots** is a `PDF` file containing, for each sample, various plots of the residuals.  Plots include (i) q-q plots to check for normality and (ii) residuals vs fits plots to verify that the residuals are normally distributed.
+
+    - **(3) volcano_plots** is a `PDF` file containing volcano plots for visualizing data-points with large changes between group means.  The red line shows p = 0.05.   
 
 </help>
 </tool>
