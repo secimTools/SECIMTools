@@ -47,7 +47,7 @@
 <help>
 .. class:: infomark
 
-**TIP:** 
+**TIP:**
 If your data is not TAB delimited, use *Text Manipulation-&gt;Convert.*
 
 .. class:: warningmark
@@ -62,11 +62,11 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert.*
 **What it does**
 
 The Bland-Altman plot (BA-Plot) is commonly used to look at the concordance of data
-between samples, particularly between replicates. This script generates BA-plots for all pairwise combinations of samples, or, if group information is provided, for pairwise combinations within the groups. 
+between samples, particularly between replicates. This script generates BA-plots for all pairwise combinations of samples, or, if group information is provided, for pairwise combinations within the groups.
 
 .. _BA-Plot: http://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot
 
-In addition to generating the BA-plots, a linear regression is performed to identify (flag) any unusual outlying values.  These flags are summarized and used to generate distribution plots and text files for (i) each sample and for (ii) each feature (row).  
+In addition to generating the BA-plots, a linear regression is performed to identify (flag) any unusual outlying values.  These flags are summarized and used to generate distribution plots and text files for (i) each sample and for (ii) each feature (row).
 
 See below for a more in depth description of the output files.
 
@@ -76,7 +76,7 @@ See below for a more in depth description of the output files.
 
 **Input**
 
-- Two input datasets are required. 
+- Two input datasets are required.
 
     **Wide Formatted Dataset:**
 
@@ -92,7 +92,7 @@ See below for a more in depth description of the output files.
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 
@@ -134,14 +134,21 @@ See below for a more in depth description of the output files.
 
     **Sample Flag Cutoff – flagging samples**
 
-    - This cutoff sets the level to flag a sample. 
+    - This cutoff sets the level to flag a sample.
         - Using the above *Outlier Cutoff*, we identify samples that have a
-          large number of outlier values. The *Sample Cutoff* is the                                proportion of values for a sample that need to be flagged for that sample       to be flagged.  The default value is 0.2, meaning that 20% of the values        need to be flagged as outliers for the sample to be flagged as well.
+        large number of outlier values. The *Sample Cutoff* is the proportion
+        of values for a sample that need to be flagged for that sample to be flagged.
+        The default value is 0.2, meaning that 20% of the values need to be flagged as
+        outliers for the sample to be flagged as well.
 
     **Feature Flag Cutoff  – flagging features**
 
-    - This cutoff sets the level to flag a feature. 
-        - Using the above *Outlier Cutoff*, we identify features with a large           number of outlier values.  The *Feature Cutoff*, is the proportion of           values within a feature that need to be flagged for the feature to be           flagged.  The default value is 0.05, meaning that 5% of the values across       a feature need to be flagged as outliers for the feature to be flagged.
+    - This cutoff sets the level to flag a feature.
+    - Using the above *Outlier Cutoff*, we identify features with a large
+      number of outlier values.  The *Feature Cutoff*, is the proportion of values within
+      a feature that need to be flagged for the feature to be flagged. The default value
+      is 0.05, meaning that 5% of the values across a feature need to be flagged as
+      outliers for the feature to be flagged.
 
 - If you only want to do within group comparisons (**suggested**) then you need
   to specify:
@@ -173,7 +180,7 @@ See below for a more in depth description of the output files.
     panel is a BA-plot where the x-axis is the mean between the two samples and y-
     axis is the difference.  Teh solid red line is a regression line and dotted
     lines are 95% confidence intervals. Data highlighted in red are outliers as
-    determined by any of the 3 criteria described above. 
+    determined by any of the 3 criteria described above.
 
     **outlier_dist_plots** is a PDF of bar graphs showing the proportion of values determined to be outliers for samples (top) and features (bottom).
 

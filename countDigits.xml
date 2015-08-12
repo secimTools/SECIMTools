@@ -76,7 +76,7 @@ This tool counts the number of digits before the decimal place for each value. U
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 
@@ -122,7 +122,7 @@ This tool counts the number of digits before the decimal place for each value. U
     **Counts_table** is a TSV file with feature as row and sample as column. Values
     are the number of digits for a given feature-sample combination. The maximum,
     minimum and differences are calculated for each feature.  If groups are given,
-    each groups generates a separate counts_table  
+    each groups generates a separate counts_table
 
     **Figure.png** is a plot of the differences between the maximum and minimum, by
     group if specified.

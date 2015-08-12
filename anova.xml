@@ -58,9 +58,9 @@ If your data is not TAB delimited, use *Text Manipulation-&gt; Convert*
 
 **What it does**
 
-This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected groups. 
+This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected groups.
 
-- Two input datasets are required. 
+- Two input datasets are required.
 
     **Wide Formatted Dataset:**
 
@@ -76,7 +76,7 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 
@@ -126,7 +126,7 @@ LINK to JMP help??
 
     - **(2) qq_plots** is a `PDF` file containing, for each sample, various plots of the residuals.  Plots include (i) q-q plots to check for normality and (ii) residuals vs fits plots to verify that the residuals are normally distributed.
 
-    - **(3) volcano_plots** is a `PDF` file containing volcano plots for visualizing data-points with large changes between group means.  The red line shows p = 0.05.   
+    - **(3) volcano_plots** is a `PDF` file containing volcano plots for visualizing data-points with large changes between group means.  The red line shows p = 0.05.
 
 </help>
 </tool>

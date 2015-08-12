@@ -33,14 +33,14 @@
 <help>
 .. class:: infomark
 
-**TIP:** 
+**TIP:**
 If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 --------------------------------------------------------------------------------
 
 **What it does**
 
-This tool 'cleans' string names to avoid characters that could break one of the SECIM Galaxy Tools.   
+This tool 'cleans' string names to avoid characters that could break one of the SECIM Galaxy Tools.
 
 --------------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ This tool 'cleans' string names to avoid characters that could break one of the 
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 
@@ -97,6 +97,6 @@ This tool 'cleans' string names to avoid characters that could break one of the 
 **Output Files**
 
 - This tool outputs 2 files where common illegal characters (e.g. slashes, spaces, pound, etc.)
-  have been removed from (1) the 'Unique Compound ID' in the wide dataset and (2) the 'sampleID' column in the metadata file. 
+  have been removed from (1) the 'Unique Compound ID' in the wide dataset and (2) the 'sampleID' column in the metadata file.
 </help>
 </tool>
