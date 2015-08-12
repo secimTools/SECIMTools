@@ -52,7 +52,10 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert.*
 
 .. class:: warningmark
 
-**WARNINGS: (1) A row will be dropped when a pairwise comparison has a missing value.**  (2) This script automatically removes spaces and special characters from strings.  (3) If a compound name starts with a number it will prepend an '_'. 
+**WARNINGS:**
+    - (1) A row will be dropped when a pairwise comparison has a missing value.
+    - (2) This script automatically removes spaces and special characters from strings.
+    - (3) If a compound name starts with a number it will prepend an '_'.
 
 --------------------------------------------------------------------------------
 

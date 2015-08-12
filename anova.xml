@@ -50,8 +50,9 @@ If your data is not TAB delimited, use *Text Manipulation-&gt; Convert*
 
 .. class:: warningmark
 
-**WARNINGS: (1) This script automatically removes spaces and special characters from strings.**
-(2) If a compound name starts with a number it will prepend an '_'. 
+**WARNINGS:**
+    - (1) This script automatically removes spaces and special characters from strings.**
+    - (2) If a compound name starts with a number it will prepend an '_'.
 
 --------------------------------------------------------------------------------
 
