@@ -25,7 +25,106 @@
     <outputs>
         <data format="tabular" name="output" label="On/Off flags" />
     </outputs>
-    <help>
-        <!--help-->
-    </help>
+<help>
+
+.. class:: infomark
+
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+Data sets also must have the same index!
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+This tool generates a flag for each feature if, in any of the indicated treatment goups,
+half of the data is below a user-input cutoff value or missing.  Default value is 30,000.
+
+--------------------------------------------------------------------------------
+
+
+**Input**
+
+- Two input datasets are required.
+
+    **Wide Formatted Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
+    Extra columns will automatically be ignored.
+
+
+    **Metadata File:**
+    A Metadata file relating samples to various groups/treatment.::
+
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1  | g1     |
+        | sample2  | g1     |
+        | sample3  | g1     |
+        | sample4  | g2     |
+        | sample5  | g2     |
+        | sample6  | g2     |
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+    **In addition to your datasets, you need to provide:**
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*
+
+
+    **In addition to your datasets, you need to provide:**
+
+    **Input group name from Metadata file**
+
+    - The column name in your Metadata file that contains the group/treatment information.  In the above example, you would input *group*.
+
+
+- In addition to your datasets, you can specify a lower cutoff:
+
+    **Cutoff** [Optional]
+
+    - A cutoff below which values are under the level of detection.  Default value
+      is 30,000.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+    :A set of flags are generated for each feature:
+
+        + For each group, if 50% or more of the values within a group are less than the indicated cutoff value.
+        + If at least 1 of the groups is flagged
+        + If all groups are flagged:
+
+            +-------+-----------------+------------------+--------------+------------------+
+            | Cmd   | flag_group1_off | flag_group2_off  | flag_met_off | flag_met_all_off |
+            +=======+=================+==================+==============+==================+
+            | one   | 0               | 0                | 0            | 0                |
+            +-------+-----------------+------------------+--------------+------------------+
+            | two   | 1               | 1                | 1            | 1                |
+            +-------+-----------------+------------------+--------------+------------------+
+            | three | 1               | 0                | 1            | 0                |
+            +-------+-----------------+------------------+--------------+------------------+
+
+</help>
 </tool>
