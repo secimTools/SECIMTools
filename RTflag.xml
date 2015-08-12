@@ -32,5 +32,96 @@
     <data format="tabular" name="RTflag"  label="RTflag" />
   </outputs>
 <help>
+
+..class:: infomark
+
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+.. class:: warningmark
+
+**WARNINGS: (1) This script automatically removes spaces and special characters from strings.  (2) If a compound name starts with a number it will prepend an '_'.
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+This tool identifies features with the following characteristics:
+    (1) features whose coefficient of variation in retention time is greater than 90% (default value) of all features and
+    (2) features where the difference in the retention time between the 90th and 10th percentiles (default values) is greater than 0.2 seconds.
+    (3) features where the difference between the retention time maximum and median is greater than 0.1 seconds.
+    (4) features where the difference between the retention time minimum and median is greater than 0.1 seconds.
+    (5) features where the retention time minimum or maximum is greater than 3 times the standard deviation away from the mean.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required.
+
+**Wide Formatted Dataset:**
+
+A wide formatted dataset that contains measurements for each sample.::
+
+    +----------+---------+---------+---------+-----+
+    | Compound | sample1 | sample2 | sample3 | ... |
+    +==========+=========+=========+=========+=====+
+    | one      | 10      | 20      | 10      | ... |
+    | two      | 5       | 22      | 30      | ... |
+    | three    | 30      | 27      | 2       | ... |
+    | four     | 32      | 17      | 8       | ... |
+    | ...      | ...     | ...     | ...     | ... |
+    +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+    Extra columns will automatically be ignored.
+
+
+**Metadata File:**
+A metatdata file relating samples to various groups/treatment.::
+
+    +----------+--------+
+    | sampleID | group1 |
+    +==========+========+
+    | sample1  | g1     |
+    | sample2  | g1     |
+    | sample3  | g1     |
+    | sample4  | g2     |
+    | sample5  | g2     |
+    | sample6  | g2     |
+    | ...      | ...    |
+    +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+**In addition to your datasets, you need to provide:**
+
+**Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*.
+
+**Cvcutoff**  [Optional]
+
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group1*.
+
+**90th percentile**  [Optional]
+
+- The default is to flag features when the difference in the retention time between the 90th and 10th percentiles is greater
+  than 0.2 seconds. The user has the option to select the 95th and 5th percentiles instead.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- The tool generates 2 output datasets.
+
+    **CvplotForRT** is a PNG density plot of the coefficients of variation for the retention time.
+
+    **RTflag** is a TSV file containing the 5 retention time 0/1 indicator flags for each feature.
+
 </help>
 </tool>
