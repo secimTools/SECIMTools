@@ -44,48 +44,30 @@
     <data format="tabular" name="flag_sample"/>
     <data format="tabular" name="flag_feature"/>
   </outputs>
-  <help>
-
+<help>
 .. class:: infomark
 
 **TIP:** 
-If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert.*
+
+.. class:: warningmark
+
+**WARNINGS: (1) A row will be dropped when a pairwise comparison has a missing value.**  (2) This script automatically removes spaces and special characters from strings.  (3) If a compound name starts with a number it will prepend an '_'. 
 
 --------------------------------------------------------------------------------
 
 **What it does**
 
-The Bland-Altman plot BA-Plot_ is commonly used to look at concordance of data
-between samples. It is especially useful for looking at variability between
-replicates. This script will generate BA-plots for all pairwise combinations of
-samples, or if group information is provided it will only report pairwise
-combinations within the group.
+The Bland-Altman plot (BA-Plot) is commonly used to look at the concordance of data
+between samples, particularly between replicates. This script generates BA-plots for all pairwise combinations of samples, or, if group information is provided, for pairwise combinations within the groups. 
 
 .. _BA-Plot: http://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot
 
-A linear regression is performed on the BA-plots to identify samples whose
-residuals are beyond a cutoff. For each compound (row) in the dataset, a sample
-is flagged as an outlier if the Pearson normalized residuals are greater than a
-cutoff.
+In addition to generating the BA-plots, a linear regression is performed to identify (flag) any unusual outlying values.  These flags are summarized and used to generate distribution plots and text files for (i) each sample and for (ii) each feature (row).  
 
-Raw flags can be output by specifying the "Output Raw Flag Counts".
-*flag_outlier_raw* is a table with compounds as rows and flag_outlier## as
-columns, where the ## is incremented for each pairwise comparison between
-samples. *flag_outlier_design* can then be used to relate sample to its
-corresponding flags.
-
-The script outputs a summary of the flags *flag_outlier_summary*, where the
-flags for each sample is summed across all comparisons.
-
-Two sets of plots are output: (ba_plots) Bland-Altman plots for pairwise
-comparisons, and (outlier_dist_plots) Bar graphs of summarized flags which
-allow for the identification of samples with many outlying data points or
-compounds/peaks with many outlying points.
+See below for a more in depth description of the output files.
 
 .. class:: infomark
-
-The BA plot requires that there are not missing values. A row will be dropped
-when a pairwise comparison has a missing value.
 
 --------------------------------------------------------------------------------
 
@@ -111,8 +93,8 @@ when a pairwise comparison has a missing value.
     Extra columns will automatically be ignored.
 
 
-    **Design File:**
-    A design file relating samples to various groups/treatment.::
+    **Metadata File:**
+    A metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
         | sampleID | group1 |
@@ -130,53 +112,45 @@ when a pairwise comparison has a missing value.
     and the values in this column must match the columns names in the wide
     formatted dataset. Extra columns will be ignored.
 
-- In addition to your datasets, you need to provide:
+    **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*.
+      your features. In our example dataset you would input *Compound*.
 
-    **Outlier Cutoff**
+    **Outlier Cutoff – flagging values**
 
-    - Here we use several measures to identify features that are outliers or leverage points.
-        - If the magnitude of the residuals from the linear regression on the
-          BA-plot exceeds this threshold then a features is flagged as an
-          outlier. This cutoff can be adjusted.
-        - In addition, if a feature is identified as a leverage point using
-          DFFITS or Cook's D then it is also flagged. This cannot be adjusted.
+    - Here we use several measures to identify values that are outliers (also called leverage points).
 
-    **Sample Cutoff**
+        - (1) If the magnitude of the residuals from the linear regression on the
+              BA-plot exceeds the user-defined threshold, then a value is flagged as an
+              outlier. This cutoff can be adjusted.
+        - (2) If a value is identified as a leverage point using Cook's D with a p-value cutoff of 0.5, then the valuee is flagged.  This cannot be                adjusted.
+        - (3) If a value is identified as a leverage point using DFFITS it is also flagged. This cannot be adjusted.
+
+    **Sample Flag Cutoff – flagging samples**
 
     - This cutoff sets the level to flag a sample. 
         - Using the above *Outlier Cutoff*, we identify samples that have a
-          large number of features that are flagged as an outlier. The *Sample
-          Cutoff* value, is the proportion of features within a sample that
-          need to be flagged as outliers, for the sample to be flagged (1). The
-          default value is 0.2, meaning that 20% of features need to be found
-          as outliers for the sample to be flagged.
+          large number of outlier values. The *Sample Cutoff* is the                                proportion of values for a sample that need to be flagged for that sample       to be flagged.  The default value is 0.2, meaning that 20% of the values        need to be flagged as outliers for the sample to be flagged as well.
 
-    **Feature Cutoff**
+    **Feature Flag Cutoff  – flagging features**
 
     - This cutoff sets the level to flag a feature. 
-        - Using the above *Outlier Cutoff*, we identify features that are
-          identified as outliers in the majority of samples. The *Feature
-          Cutoff* value, is the proportion of samples a features needs to be
-          found as an outlier for that that feature to be flagged (1). The
-          default value is 0.05, meaning that a feature needs to be found
-          as an outlier in 5% of samples to be flagged.
+        - Using the above *Outlier Cutoff*, we identify features with a large           number of outlier values.  The *Feature Cutoff*, is the proportion of           values within a feature that need to be flagged for the feature to be           flagged.  The default value is 0.05, meaning that 5% of the values across       a feature need to be flagged as outliers for the feature to be flagged.
 
 - If you only want to do within group comparisons (**suggested**) then you need
   to specify:
 
     **Group/Treatment**
 
-    - The column name in your design file that contains group information. In
-      our example design file we would put *group1*.
+    - The column name in your metadata file that contains group information. In
+      our example metadata file we would put *group1*.
 
     **Group ID**
 
-    - This option allows you to specify which groups to analyze (i.e., qc
+    - This option allows you to specify which groups to analyze (i.e., QC
       samples). Multiple group IDs can be specified by separating them with
       spaces. This option requires that **Group/Treatment** is also specified.
 
@@ -192,22 +166,13 @@ when a pairwise comparison has a missing value.
         :height: 300
         :width: 600
 
-    The left panel is a scatter plot comparing the two samples. Solid red line
-    is a regression line and dotted lines are 95% CI. The right panel is a
-    BA-plot where the x-axis is the mean between the two samples and y-axis is
-    the difference. You expect to see a CIGAR shape centered at 0. Data
-    highlighted in red indicate outliers. An data point was considered an
-    outlier if it was flagged by any of 3 criteria. 
+    The left panel is a scatter plot comparing the two samples. The right
+    panel is a BA-plot where the x-axis is the mean between the two samples and y-
+    axis is the difference.  Teh solid red line is a regression line and dotted
+    lines are 95% confidence intervals. Data highlighted in red are outliers as
+    determined by any of the 3 criteria described above. 
 
-        * Regression Residuals were greater than the specified cutoff
-
-        * Cook's D statistic was significant at a P-value cutoff of 0.5
-
-        * DFFITS values exceeded then threshold value.
-
-    **outlier_dist_plots** is a PDF of bar graphs for samples and
-    compounds/peaks showing the number of data points that they had flagged as
-    an outlier.
+    **outlier_dist_plots** is a PDF of bar graphs showing the proportion of values determined to be outliers for samples (top) and features (bottom).
 
     .. image:: ${static_path}/images/secim/ba_plot_outlier_dist_sample.png
         :height: 300
@@ -217,12 +182,8 @@ when a pairwise comparison has a missing value.
         :height: 300
         :width: 600
 
-    The top panel shows the proportion of features that were outliers for each
-    sample. The bottom panel shows the proportion of samples a feature was an
-    outlier in. 
 
-    **flag_sample** is a TSV containing a 0|1 flag for sample. If a sample is 1
-    you should consider removing this sample.
+    **flag_sample** is a TSV containing a 0/1 outlier flag for sample where '1'     indicates that the sample was idenfied as an outlier. If a sample is a '1',     you should consider removing the sample.
 
     +----------+------------------------+
     | sampleID | flag_sample_BA_outlier |
@@ -237,8 +198,7 @@ when a pairwise comparison has a missing value.
     +----------+------------------------+
 
 
-    **flag_feature** is a TSV containing a 0|1 flag for each feature. If a feature is 1
-    you should consider removing this feature.
+    **flag_feature** is a TSV containing a 0/1 flag for each feature where '1'  indicates that the feature was identified as an outlier. If a feature is a      '1', you should consider removing the feature.
 
     +----------+-------------------------+
     | compound | flag_feature_BA_outlier |
