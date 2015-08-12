@@ -30,7 +30,73 @@
             <!--<output name="designOut" file="clean-designOut-test" ftype="tabular" />-->
             <!--</test>-->
     <!--</tests>-->
-    <help>
-        <!--help-->
-    </help>
+<help>
+.. class:: infomark
+
+**TIP:** 
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+This tool 'cleans' string names to avoid characters that could break one of the SECIM Galaxy Tools.   
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required.
+
+      **Wide Formatted Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    Extra columns will automatically be ignored.
+
+
+    **Metadata File:**
+    A Metadata file relating samples to various groups/treatment.::
+
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1  | g1     |
+        | sample2  | g1     |
+        | sample3  | g1     |
+        | sample4  | g2     |
+        | sample5  | g2     |
+        | sample6  | g2     |
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+    **In addition to your datasets, you need to provide:**
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- This tool outputs 2 files where common illegal characters (e.g. slashes, spaces, pound, etc.)
+  have been removed from (1) the 'Unique Compound ID' in the wide dataset and (2) the 'sampleID' column in the metadata file. 
+</help>
 </tool>
