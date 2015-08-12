@@ -25,67 +25,88 @@
   <outputs>
     <data format="png" name="out_file1" />
   </outputs>
-  <help>
-
+<help>
 
 .. class:: infomark
 
 **TIP:** If your data is not TAB delimited, use *Edit Datasets-&gt;Convert characters*
 
------
+.. class:: warningmark
 
-.. class:: infomark
+**WARNINGS:**
+    - (1) A row will be dropped when a pairwise comparison has a missing value.
+    - (2) This script automatically removes spaces and special characters from strings.
+    - (3) If a compound name starts with a number it will prepend an '_'.
 
-**FYI:** If no Annotation File is selected, the row colorbar (e.g. for coloring compounds/genes by pathway) will be one solid color
-
------
-
-.. class:: infomark
+--------------------------------------------------------------------------------
 
 **What it does**
 
-This tool Generates a Hierarchical Cluster Heatmap from (1) a Wide Formated (side-by-side) Dataset, (2) a Design File and (3) an optional Annotation File.  
-    
-**Wide Formetted Dataset:**
+This tool generates a Hierarchical Cluster Heatmap from a Wide Formated dataset, a Metadata dataset and an optional Annotation dataset.
 
-    A wide formatted dataset that contains measurements for each sample::
-
-        +------------+---------+---------+---------+-----+
-        | Compound   | sample1 | sample2 | sample3 | ... |
-        +============+=========+=========+=========+=====+
-        | compound1  |   10    |   20    |   10    | ... |
-        | compound2  |   5     |   22    |   30    | ... |
-        | compound3  |   30    |   27    |   2     | ... |
-        | compound4  |   32    |   17    |   8     | ... |
-        | ...        |   ...   |   ...   |   ...   | ... |
-        +------------+---------+---------+---------+-----+
-
-    **Note 1:** The sample IDs must match the sample IDs in the Design File (below).
-    **Note 2:** If using an Annotation File, the compound names must match the compound names in the Annotation File.
+--------------------------------------------------------------------------------
 
 
-**Design File:**
-    
-    A Design File relating samples to various groups/treatments::
+**Input**
 
-        +----------+--------+--------+
-        | sampleID | group1 | group2 |
-        +==========+========+========+
-        | sample1  | g1     | t1     |
-        | sample2  | g1     | t1     |
-        | sample3  | g1     | t1     |
-        | sample4  | g2     | t1     |
-        | sample5  | g2     | t1     |
-        | sample6  | g2     | t1     |
-        | ...      | ...    | ...    |
-        +----------+--------+--------+
-    
-    **Note:** The sample IDs must match the sample IDs in the Dataset file (above).  
+- Two input datasets are required.
+
+    **Wide Formatted Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
+    Extra columns will automatically be ignored.
+
+
+    **Metadata File:**
+    A Metadata file relating samples to various groups/treatment.::
+
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1  | g1     |
+        | sample2  | g1     |
+        | sample3  | g1     |
+        | sample4  | g2     |
+        | sample5  | g2     |
+        | sample6  | g2     |
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+    **In addition to your datasets, you need to provide:**
+
+    **Group/Treatment** [Optional]
+
+    - The column name in your metadata file that contains group information. In
+      our example design file we would put *group1*. If provided, samples will
+      be colored by group.
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*
 
 
 **Optional Annotation File:**
-    
-    An Annotation File relating compounds to pathways of interest::
+
+     - used to generate a feature color bar
+
+    An Annotation File relating features to pathways of interest::
 
         +------------+------------+
         | Compound   | annotation |
@@ -95,19 +116,13 @@ This tool Generates a Hierarchical Cluster Heatmap from (1) a Wide Formated (sid
         | compound3  |    a1      |
         | compound4  |    a2      |
         +----------+--------------+
-      **Note:** The compound names must match the compound names in the Wide Format Dataset.
+      **Note:** The feature names in the Annotation file must match the feature names in the Wide Format Dataset.
 
+--------------------------------------------------------------------------------
 
-**In addition to the above datasets, you need to provide:**
+**Output Files**
 
-    **Group/Treatment** 
-	
-    (1) the name of the column in the Design File that contains the sample treatment groups.  Used to generate a column (sampleID) color bar.
+- This tool outputs a PNG image of the hierarchical heat map
 
-    **Optional Annotation Information**
-
-    (2) the column name in the Annotation Fie that contains the list of compounds.  This list should match the list of compounds in the Wide Format Dataset.
-    (3) the column name in the Annotation File that contains pathway/functional annotations for each compound.  Used to generate a row (compound) color bar.
-		
-  </help>
+</help>
 </tool>
