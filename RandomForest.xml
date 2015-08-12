@@ -24,95 +24,113 @@
         <data format="csv" name="outfile1" label="Transformed Data"/>
         <data format="csv" name="outfile2" label="Importance Factors"/>
     </outputs>
-    <help>
+<help>
 
-    .. class:: infomark
+..class:: infomark
 
-    **TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+.. class:: warningmark
+
+**WARNINGS:**
+    - (1) This script automatically removes spaces and special characters from strings.
+    - (2) If a compound name starts with a number it will prepend an '_'.
+
+--------------------------------------------------------------------------------
+
+**What it does**
+
+This tool uses the Random forest algorithm to identify specific features that differentiate groups/classes.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required.
+
+**Wide Formatted Dataset:**
+
+A wide formatted dataset that contains measurements for each sample.::
+
+    +----------+---------+---------+---------+-----+
+    | Compound | sample1 | sample2 | sample3 | ... |
+    +==========+=========+=========+=========+=====+
+    | one      | 10      | 20      | 10      | ... |
+    | two      | 5       | 22      | 30      | ... |
+    | three    | 30      | 27      | 2       | ... |
+    | four     | 32      | 17      | 8       | ... |
+    | ...      | ...     | ...     | ...     | ... |
+    +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+    Extra columns will automatically be ignored.
 
 
-    **Syntax**
+**Metadata File:**
+A metatdata file relating samples to various groups/treatment.::
 
-    This tool uses the Random forest algorithm to select the important features that the groups/classes differentiate the most based on.
+    +----------+--------+
+    | sampleID | group1 |
+    +==========+========+
+    | sample1  | g1     |
+    | sample2  | g1     |
+    | sample3  | g1     |
+    | sample4  | g2     |
+    | sample5  | g2     |
+    | sample6  | g2     |
+    | ...      | ...    |
+    +----------+--------+
 
-    - Two sets of results are displayed in the resulting history item.
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
 
-    **Input**
+    **In addition to your datasets, you need to provide:**
 
-    - Two input datasets are required.
+**Unique Compound ID**
 
-        **Wide Formatted Dataset:**
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*.
 
-        A wide formatted dataset that contains measurements for each sample.::
+**Group/Treatment**
 
-            +----------+---------+---------+---------+-----+
-            | Compound | sample1 | sample2 | sample3 | ... |
-            +==========+=========+=========+=========+=====+
-            | one      | 10      | 20      | 10      | ... |
-            | two      | 5       | 22      | 30      | ... |
-            | three    | 30      | 27      | 2       | ... |
-            | four     | 32      | 17      | 8       | ... |
-            | ...      | ...     | ...     | ...     | ... |
-            +----------+---------+---------+---------+-----+
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group1*.
 
-            **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-            Extra columns will automatically be ignored.
+**Number of Trees in the Forest**
 
+    - A typical number of trees is at least 1,000 (default value).  One would
+      increase the number of trees in the forest if, upon multiple rerunning of the
+      algorithm, the order of importance of features changes significantly.
 
-            **Design File:**
-            A design file relating samples to various groups/treatment.::
+--------------------------------------------------------------------------------
 
-            +----------+--------+
-            | sampleID | group1 |
-            +==========+========+
-            | sample1  | g1     |
-            | sample2  | g1     |
-            | sample3  | g1     |
-            | sample4  | g2     |
-            | sample5  | g2     |
-            | sample6  | g2     |
-            | ...      | ...    |
-            +----------+--------+
+**Output Files**
 
-            **NOTE: You must have a column named *sampleID***
-            and the values in this column must match the columns names in the wide
-            formatted dataset. Extra columns will be ignored.
+- The tool generates 2 output datasets.
 
-    - In addition to your datasets, you need to provide:
-
-        **Unique Compound ID**
-
-        - The column name in your wide dataset that contains the unique IDs for
-          your compounds. In our example dataset you would input *Compound*.
-
-        **Group/Treatment**
-
-        - The column name in your design file that contains group information. In
-          our example design file we would put *group1*.
-
-       **Number of Trees in the Forest**
-
-       - Typical number of trees is at least 1,000. This script defaults to 1,000.
-         One would increase the number of trees in the forest if upon multiple
-         rerunning of the algorithm, the order of importance of features changes significantly.
-
-    **Example output**
-
-    - output 1: Transformed dataset::
+**Transformed dataset**:: is a TSV file containing a transformed Wide Dataset where the order of the features in the file reflects their relative importance.
 
         +----------+----------+----------+----------+----------+
         | sampleID | group    | feature1 | feature3 | feature2 |
         +==========+==========+==========+==========+==========+
         | sample1  | human    | 68       | 0.1      | 4.1      |
+        +----------+----------+----------+----------+----------+
         | sample2  | human    | 71       | 0.31     | 4.6      |
+        +----------+----------+----------+----------+----------+
         | sample3  | nonhuman | 62       | 0.09     | 3.8      |
+        +----------+----------+----------+----------+----------+
         | sample4  | human    | 75       | 0.65     | 4.4      |
+        +----------+----------+----------+----------+----------+
         | sample5  | nonhuman | 58       | 0.23     | 3.2      |
+        +----------+----------+----------+----------+----------+
         | sample6  | nonhuman | 60       | 0.77     | 3.1      |
+        +----------+----------+----------+----------+----------+
         | ...      | ...      | ...      | ...      | ...      |
         +----------+----------+----------+----------+----------+
 
-    - output 2: rank-order list of features and their relative importance ::
+**rank-order list**:: is a TSV file containing the features in rank-order and their relative importance.
 
         +----------+------+
         | feature1 | 0.45 |
@@ -122,9 +140,7 @@
         | feature2 | 0.22 |
         +----------+------+
 
-    **Next Step**
+**To plot the 2 most important features** use the SECIM scatterplot tool on the transformed dataset to plot the features againt each other and test the separation levels.
 
-    Use the scatterplotPNG tool on output1 (transformed dataset) to plot the two most important features againt each other and test the separation levels.
-
-    </help>
+</help>
 </tool>
