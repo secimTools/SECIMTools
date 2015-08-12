@@ -44,67 +44,50 @@
     <outputs>
         <data format="png" name="fig"/>
     </outputs>
-    <help>
+<help>
 
-.. class:: infomark
-    **TIP:**
-    If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+..class:: infomark
+
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+.. class:: warningmark
+
+**WARNINGS:**
+    - (1) This script automatically removes spaces and special characters from strings.
+    - (2) If a compound name starts with a number it will prepend an '_'.
 
 --------------------------------------------------------------------------------
 
 **What it does**
 
-Builds a 2d scatter plot.
+Generates a 2 dimensional scatter plot.
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-**Required**
+- Two input datasets are required.
 
-**Stacked Dataset:**
+**Tall Formatted Dataset:**
 
-A stacked formatted dataset that contains measurements for each sample.::
+A tall formatted dataset that contains measurements for each sample.::
 
-    +----------+-----+-----+-----+-----+
-    | sampleID | x1  | y1  | x2  | ... |
-    +==========+=====+=====+=====+=====+
-    | sample1  | 10  | 20  | 10  | ... |
-    | sample2  | 5   | 22  | 30  | ... |
-    | sample3  | 30  | 27  | 2   | ... |
-    | sample4  | 32  | 17  | 8   | ... |
-    | ...      | ... | ... | ... | ... |
-    +----------+-----+-----+-----+-----+
+    +----------+-----------+-----------+-----------+-----+
+    | sampleID | feature1  | feature1  | feature2  | ... |
+    +==========+===========+===========+===========+=====+
+    | sample1  |    10     |    20     |    10     | ... |
+    | sample2  |    5      |    22     |    30     | ... |
+    | sample3  |    30     |    27     |    2      | ... |
+    | sample4  |    32     |    17     |    8      | ... |
+    | ...      |    …      |    ...    |    …      | ... |
+    +----------+-----------+-----------+-----------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File
-    (below). However the name of the columns do not matter because you put
-    that in.
-
-**Sample ID**
-
-The column name in your stacked dataset that contains sample information.
-
-**Column name with X-value**
-
-The column name in your stacked dataset that contains the x-value you
-want to plot (i.e., x1 or PC1)
-
-**Column name with Y-value**
-
-The column name in your stacked dataset that contains the y-value you
-want to plot (i.e., y1 or PC2)
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
 
 
-**Optional**
-
-**Plot title**
-
-Title to display on your plot.
-
-**Design File:**
-
-A design file relating samples to various groups/treatment if
-you want to color by group.::
+**Metadata File:**
+A metatdata file relating samples to various groups/treatment.::
 
     +----------+--------+
     | sampleID | group1 |
@@ -119,29 +102,52 @@ you want to color by group.::
     +----------+--------+
 
     **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the stack
-    formatted dataset. Extra columns will be ignored.
+    and the values in this column must match the vlues in column in the tall
+    formatted dataset.
+
+- In addition to your datasets, you need to provide:
+
+**Sample ID**
+
+    - The column name in your Tall and Metadata datasets that contains the unique IDs for your samples.  In our example dataset you would input *SampleID*.
+
+**Column name with X-value**
+
+    - The column name in your Tall dataset that contains the values to be plotted on the X-axis.
+
+**Column name with Y-value**
+
+    - The column name in your Tall file that contains the values to be plotted on the Y-axis.
+
+**Plot title**  [Optional]
+
+    - Optional title to display on your plot
 
 
-**Group/Treatment**
+**Group/Treatment**  [Optional]
 
-- The column name in your design file that contains group information. In
-  our example design file we would put *group1*.
+    - The column name in your Metadata file that contains group information. In
+      our example design file we would put *group1*.
 
-**X-axis label**
 
-- Label to put on the X-axis
+**X-axis label**  [Optional]
 
-**Y-axis label**
+    - Optional x-axis label to display on your plot
 
-- Label to put on the Y-axis
+
+**Y-axis label**  [Optional]
+
+    - Optional y-axis label to display on your plot
 
 --------------------------------------------------------------------------------
 
 **Output Files**
 
-- This tool outputs a 2d scatter plot.
+- This tool outputs 1 PDF file:
 
-    </help>
+    **scatterplot_PDF** is a PDF plot of the selected values.
+
+
+</help>
 </tool>
 
