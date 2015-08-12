@@ -50,22 +50,34 @@
     </test>
   </tests>
   -->
-  <help>
+<help>
 
 .. class:: infomark
 
-**TIP:** 
+**TIP:**
 If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+
+.. class:: warningmark
+
+**WARNINGS:**
+    - (1) A row will be dropped when a pairwise comparison has a missing value.
+    - (2) This script automatically removes spaces and special characters from strings.
+    - (3) If a compound name starts with a number it will prepend an '_'.
 
 --------------------------------------------------------------------------------
 
-**Syntax**
+**What it does**
 
-This tool plots the distribution of your samples. 
+This tool plots the distribution of your samples.
 
-- Two input datasets are required. 
+--------------------------------------------------------------------------------
 
-    **Wide Formatted Dataset:**
+**Input**
+
+- Two input datasets are required.
+
+      **Wide Formatted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample.::
 
@@ -79,12 +91,12 @@ This tool plots the distribution of your samples.
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 
-    **Design File:**
-    A design file relating samples to various groups/treatments.::
+    **Metadata File:**
+    A Metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
         | sampleID | group1 |
@@ -102,12 +114,13 @@ This tool plots the distribution of your samples.
     and the values in this column must match the columns names in the wide
     formatted dataset. Extra columns will be ignored.
 
-- In addition to your datasets, you need to provide:
+    **In addition to your datasets, you need to provide:**
 
     **Unique Compound ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*.
+      your compounds. In our example dataset you would input *Compound*
+
 
     **Group/Treatment** [Optional]
 
