@@ -16,7 +16,6 @@
         --SEDpairwise $out2
         --group $group
 
-        #end if
         #if $p
             --p $p
         #end if
