@@ -50,28 +50,32 @@
     <outputs>
         <data format="png" name="fig"/>
     </outputs>
-    <help>
+<help>
 
-.. class:: infomark
+..class:: infomark
 
 **TIP:**
 If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
---------------------------------------------------------------------------------
+.. class:: warningmark
+
+**WARNINGS:**
+    - (1) This script automatically removes spaces and special characters from strings.
+    - (2) If a compound name starts with a number it will prepend an '_'.
+
+------------------------------------------------------------------------------
 
 **What it does**
 
-Generates a 3d scatter plot.
+Generates a 3D scatter plot.
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-**Required**
+**Tall Dataset:**
 
-**Stacked Dataset:**
-
-A stacked formatted dataset that contains measurements for each sample.::
+A Tall formatted dataset that contains measurements for each sample.::
 
     +----------+-----+-----+-----+-----+
     | sampleID | x1  | y1  | z1  | ... |
@@ -83,80 +87,66 @@ A stacked formatted dataset that contains measurements for each sample.::
     | ...      | ... | ... | ... | ... |
     +----------+-----+-----+-----+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File
-    (below). However the name of the columns do not matter because you put
-    that in.
+**Metadata File**
+
+A Metatdata File relating samples to various groups/treatment.  Used if you want to color by group::
+
+         +----------+--------+
+         | sampleID | group  |
+         +==========+========+
+         | sample1  | g1     |
+         | sample2  | g1     |
+         | sample3  | g2     |
+         | sample4  | g2     |
+         | ...      | ...    |
+         +----------+--------+
+
+**NOTE:** The sampleIDs must match the sampleIDs in the Metadata File.
 
 **Sample ID**
 
-The column name in your stacked dataset that contains sample information.
+- The column name in your Tall format dataset that contains sample information.
 
 **Column name with X-value**
 
-The column name in your stacked dataset that contains the x-value you
-want to plot (i.e., x1 or PC1)
+- The column name in your tall dataset that contains the x-value you want to plot (i.e., x1 or PC1)
 
 **Column name with Y-value**
 
-The column name in your stacked dataset that contains the y-value you
-want to plot (i.e., y1 or PC2)
+- The column name in your tall dataset that contains the y-value you want to plot (i.e., y1 or PC2)
 
 **Column name with Z-value**
 
-The column name in your stacked dataset that contains the z-value you
-want to plot (i.e., z1 or PC3)
-
-**Optional**
-
-**Plot title**
-
-Title to display on your plot.
-
-**Design File:**
-
-A design file relating samples to various groups/treatment if
-you want to color by group.::
-
-    +----------+--------+
-    | sampleID | group1 |
-    +==========+========+
-    | sample1  | g1     |
-    | sample2  | g1     |
-    | sample3  | g1     |
-    | sample4  | g2     |
-    | sample5  | g2     |
-    | sample6  | g2     |
-    | ...      | ...    |
-    +----------+--------+
-
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the stack
-    formatted dataset. Extra columns will be ignored.
+- The column name in your tall dataset that contains the z-value you want to plot (i.e., z1 or PC3)
 
 
-**Group/Treatment**
+**Plot title**  [Optional]
 
-- The column name in your design file that contains group information. In
-  our example design file we would put *group1*.
+- Title to display on your plot.
 
-**X-axis label**
+**Group/Treatment**  [Optional]
+
+- The column name in your Meatadata file that contains group information. In
+  our example design file we would put *group*.
+
+**X-axis label**   [Optional]
 
 - Label to put on the X-axis
 
-**Y-axis label**
+**Y-axis label**  [Optional]
 
 - Label to put on the Y-axis
 
-**Z-axis label**
+**Z-axis label**  [Optional]
 
 - Label to put on the Z-axis
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
 **Output Files**
 
-- This tool outputs a 3d scatter plot.
+**3Dscatterplot**:: is a PDF of a 3D scatterplot.ot.
 
-    </help>
+</help>
 </tool>
 
