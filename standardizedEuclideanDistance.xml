@@ -32,7 +32,97 @@
         <data format="tabular" name="out1" label="SEDtoCenter" />
         <data format="tabular" name="out2" label="SEDpairwise" />
     </outputs>
-    <help>
-        <!--help-->
-    </help>
+<help>
+
+..class:: infomark
+
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+
+.. class:: warningmark
+
+**WARNINGS:**
+    - (1) This script automatically removes spaces and special characters from strings.
+    - (2) If a compound name starts with a number it will prepend an '_'.
+
+------------------------------------------------------------------------------
+
+**What it does**
+
+This tool estimates the variance and calculates (i) the standardized Euclidean distance (SED)
+between each sample and the estimated center and (ii) the sample pairwise standardized euclidean distance by group.
+
+
+**Input**
+
+- Two input datasets are required.
+
+    **Wide Formatted Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+    Extra columns will automatically be ignored.
+
+
+    **Metadata File:**
+    A Metadata file relating samples to various groups/treatment.::
+
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1  | g1     |
+        | sample2  | g1     |
+        | sample3  | g1     |
+        | sample4  | g2     |
+        | sample5  | g2     |
+        | sample6  | g2     |
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+
+    **In addition to your datasets, you need to provide:**
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*
+
+
+    **Input Group name to separate by**
+
+    - The column name in your Metadata file that contains group information. In
+      our example Metadata file we would put *group1*.
+
+    **Percentile cutoff**  [Optional]
+
+    - Select a confidence interval cutoff for the standard distribution.  The
+      default is 0.95.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+**SED_**:: is a PDF containing a set of figures for each group and for all groups combined.  Figures include (1) the SED for samples in the indicated group to the estimated center, (2) the pairwise SED for samples in the indicated group and (3) box-plots for the pairwise SED for samples in the indicated group.
+
+**SEDpairwise_**:: is a TSV containing the SED values, by group, for each pairwise sample combination.
+
+**SEDtoCenter_**:: is a TSV containing the SED values for each sample to the estimated center.
+
+
+</help>
 </tool>
