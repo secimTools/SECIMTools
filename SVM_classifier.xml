@@ -41,73 +41,154 @@
     <data format="csv" name="outfile1" label="Classified target"/>
     <data name="accuracy_on_training" format='tabular' label="accuracy on the trainig set"/>
   </outputs>
-  <help>
+<help>
 
-.. class:: infomark
+..class:: infomark
 
-**TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
------
+.. class:: warningmark
 
-**SVM classifier**
+**WARNINGS:**
+    - (1) This script automatically removes spaces and special characters from strings.
+    - (2) If a compound name starts with a number it will prepend an '_'.
 
-This is a support vector machine(SVM) classification tool. The inputs are two datasets, training and target dataset, as well as other parameters for the SVM algorithm. The training set contains a column which is the class label (the name of this column is an input in this tool, i.e. class column name) and the target set does not have such column. The tool returns the classified taget set (adds a column containing predicted class labels) as well as the accuracy of the trained SVM on the training set. It is important to note that the two dataset, training and target, must have identical structure (expect for the trainig set having an extra column containing the class labels).
+------------------------------------------------------------------------------
 
------
+**What it does**
 
-**Example input**
+This is a support vector machine (SVM) classification tool. Given a training dataset containing samples with known group information, the SVM algorithm creates a model that assigns new samples in the target dataset to a group.  The tool returns a new target set containing a new column containing the group assignments and a dataset containing the accuracy of the SVM algorithm on the training set. 
 
--- training set::
+------------------------------------------------------------------------------
 
-     group    feature1    feature2    feature3                                  
-     human    68          4.1         0.10                                      
-     human    71          4.6         0.31                                      
-     nonhuman 62          3.8         0.09                                      
-     human    75          4.4         0.65                                      
-     nonhuman 58          3.2         0.23                                      
-     nonhuman 60          3.1         0.77                                      
+**Input**
 
--- target set::
+- Four input datasets are required.
 
-     feature1    feature2    feature3                                  
-     68          4.1         0.10                                      
-     71          4.6         0.31                                      
-     62          3.8         0.09                                      
-     75          4.4         0.65                                      
-     58          3.2         0.23                                      
-     60          3.1         0.77                                      
+    **Training Dataset**
+    - A wide formatted dataset that contains your training data.::
 
--- class column name = group
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
 
--- kernel function used for SVM can be one of the following:
+    **Metadata File for Training Dataset**
 
-.. image:: ${static_path}/images/secim/kernels.png
-    :height: 160 
-    :width: 300
-    
-    
-    
--- degree for the polynomial kernel:: has to be a positive integer
+    A metatdata file for the Training dataset relating samples to various
+    groups/treatment.::
 
--- regularization parameter C:: has to be greater than zero.
-Larger values for C adds to the bias and helps removing potential overfitting efftecs.
+         +----------+--------+
+         | sampleID | group  |
+         +==========+========+
+         | sample1  | g1     |
+         | sample2  | g1     |
+         | sample3  | g2     |
+         | sample4  | g2     |
+         | ...      | ...    |
+         +----------+--------+
 
--- Coefficient a:: used in the kernel functions above and has to be greater than zero. However, the value zero is the default and translates to a=1/n_features, where n_features is the number of features same as the length of the descrition vector same as the number of dimensions.
+    **Target Dataset**
+    - A wide formatted dataset that contains your target data, the data to which you want to asign goups.::
 
--- Coefficient b:: Independent term in kernel function. It is only significant in ‘poly’ and ‘sigmoid’ kernels.
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | A        | 10      | 20      | 10      | ... |
+        | B        | 5       | 22      | 30      | ... |
+        | C        | 30      | 27      | 2       | ... |
+        | D        | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
 
-**Example output**
+**Metadata File for Target Dataset:**
 
--- output 1: classified target set::
+A metatdata file for the Target dataset. At minimum, a list of all sampleIDs in the Target dataset.::
 
-     predicted    feature1    feature2    feature3                                  
-     human        68          4.1         0.10                                      
-     human        71          4.6         0.31                                      
-     nonhuman     62          3.8         0.09                                      
-     human        75          4.4         0.65                                      
-     nonhuman     58          3.2         0.23                                      
-     nonhuman     60          3.1         0.77                                      
+    +----------+
+    | sampleID |
+    +==========+
+    | sample1  |
+    | sample2  |
+    | sample3  |
+    | ...      |
+    +----------+
 
--- output 2: accuracy on the training set:: 100.0 percent
-  </help>
+
+    **NOTE:** The sampleIDs in the Wide format datasets must match the sampleIDs in their respective Metadata dataset. Extra columns will automatically be ignored.
+
+
+**Column name for the class**
+
+    - The column name in your Metadata Training file that contains the group/treatment information.
+      In our example design file we would put *group*.
+
+
+**Name of IDs**
+
+- The column name in your Wide Training and Target datasets that contains the unique IDs for
+  your compounds. In our example dataset you would input *Compound*.  Note the column name
+  must be the same in both Training and Target Datasets.
+
+
+**SVM kernel function**
+
+    - Select one of the four kernel functions for SVM:
+
+    .. image:: ${static_path}/images/secim/kernels.png
+       :height: 160
+       :width: 300
+
+
+
+**Polynomial degree**
+    - Must be a positive integer
+
+**Regularization parameter C**
+    - Must be greater than zero.  Larger values for C adds to the bias and
+      helps removing potential overfitting efftecs.
+
+**Coefficent A**
+    - Used in the kernel functions above.  Must be greater than zero. However,
+      the value zero is the default and translates to a = 1/n_features, where
+      n_features is the number of features same as the length of the descrition
+      vector same as the number of dimensions.
+
+**Coefficent B**
+    - Independent term in kernel function. It is only significant in
+      polynomial and sigmoid kernels.
+
+------------------------------------------------------------------------------
+
+**Output Files**
+
+**Classified_Target**:: is a TSV file of the Target Dataset with an additional column called
+'predicted_class' that contains the prediced group information for the indicated feature estimated by the SVM algorithm.
+
+        +-----------------+----------+----------+----------+-----+
+        | predicted_class | feature1 | feature2 | feature3 | ... |
+        +=================+==========+==========+==========+=====+
+        | g1              | 10       | 20       | 10       | ... |
+        +-----------------+----------+----------+----------+-----+
+        | g2              | 5        | 22       | 30       | ... |
+        +-----------------+----------+----------+----------+-----+
+        | g1              | 30       | 27       | 2        | ... |
+        +-----------------+----------+----------+----------+-----+
+        | g2              | 32       | 17       | 8        | ... |
+        +-----------------+----------+----------+----------+-----+
+        | ...             | ...      | ...      | ...      | ... |
+        +-----------------+----------+----------+----------+-----+
+
+
+**Accuracy on the training set**:: is the accuracy (percentage) on the training dataset and dependent on the kenel
+type and associated parameters.  We recommend a good understanding of kernel types and their parameters.
+
+
+</help>
 </tool>
