@@ -48,7 +48,7 @@ This tool 'cleans' string names to avoid characters that could break one of the 
 
 - Two input datasets are required.
 
-      **Wide Formatted Dataset:**
+    **Wide Formatted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample.::
 
@@ -62,11 +62,12 @@ This tool 'cleans' string names to avoid characters that could break one of the 
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
     Extra columns will automatically be ignored.
 
 
     **Metadata File:**
+
     A Metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
@@ -81,9 +82,9 @@ This tool 'cleans' string names to avoid characters that could break one of the 
         | ...      | ...    |
         +----------+--------+
 
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the wide
-    formatted dataset. Extra columns will be ignored.
+    **NOTE: You must have a column named *sampleID*** and the values in this
+    column must match the column names in the wide formatted dataset. Extra
+    columns will be ignored.
 
     **In addition to your datasets, you need to provide:**
 
@@ -96,7 +97,10 @@ This tool 'cleans' string names to avoid characters that could break one of the 
 
 **Output Files**
 
-- This tool outputs 2 files where common illegal characters (e.g. slashes, spaces, pound, etc.)
-  have been removed from (1) the 'Unique Compound ID' in the wide dataset and (2) the 'sampleID' column in the metadata file.
+- This tool outputs 2 files where common illegal characters (e.g. slashes,
+  spaces, pound, etc.) have been removed from (1) the 'Unique Compound ID' in the
+  wide dataset, (2) 'sampleID' in the wide dataset, and (3) the 'sampleID' column
+  in the metadata file.
+
 </help>
 </tool>

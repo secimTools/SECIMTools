@@ -61,16 +61,22 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert.*
 
 **What it does**
 
-The Bland-Altman plot (BA-Plot) is commonly used to look at the concordance of data
-between samples, particularly between replicates. This script generates BA-plots for all pairwise combinations of samples, or, if group information is provided, for pairwise combinations within the groups.
+The Bland-Altman plot (BA-Plot_) is commonly used to look at the concordance of
+data between samples, particularly between replicates. This script generates
+BA-plots for all pairwise combinations of samples, or, if group information is
+provided, for pairwise combinations within the groups.
 
 .. _BA-Plot: http://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot
 
-In addition to generating the BA-plots, a linear regression is performed to identify (flag) any unusual outlying values.  These flags are summarized and used to generate distribution plots and text files for (i) each sample and for (ii) each feature (row).
+In addition to generating the BA-plots, a linear regression is performed to
+identify (flag) any unusual outlying values. These flags are summarized and
+used to generate distribution plots and text files for (i) each sample and for
+(ii) each feature (row).
+
+.. class:: infomark
 
 See below for a more in depth description of the output files.
 
-.. class:: infomark
 
 --------------------------------------------------------------------------------
 
@@ -92,11 +98,12 @@ See below for a more in depth description of the output files.
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+    **NOTE:** The sample IDs must match the sample IDs in the Design File
+    (below). Extra columns will automatically be ignored.
 
 
     **Metadata File:**
+
     A metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
@@ -111,9 +118,9 @@ See below for a more in depth description of the output files.
         | ...      | ...    |
         +----------+--------+
 
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the wide
-    formatted dataset. Extra columns will be ignored.
+    **NOTE: You must have a column named *sampleID*** and the values in this
+    column must match the column names in the wide formatted dataset. Extra
+    columns will be ignored.
 
     **In addition to your datasets, you need to provide:**
 
@@ -124,22 +131,28 @@ See below for a more in depth description of the output files.
 
     **Outlier Cutoff – flagging values**
 
-    - Here we use several measures to identify values that are outliers (also called leverage points).
+    - Here we use several measures to identify values that are outliers (or leverage points).
 
-        - (1) If the magnitude of the residuals from the linear regression on the
-              BA-plot exceeds the user-defined threshold, then a value is flagged as an
-              outlier. This cutoff can be adjusted.
-        - (2) If a value is identified as a leverage point using Cook's D with a p-value cutoff of 0.5, then the valuee is flagged.  This cannot be                adjusted.
-        - (3) If a value is identified as a leverage point using DFFITS it is also flagged. This cannot be adjusted.
+        - (1) If the magnitude of the residuals from the linear regression on
+              the BA-plot exceeds the user-defined threshold, then a value is flagged
+              as an outlier. This cutoff can be adjusted, but the default is 3.
+
+        - (2) If a value is identified as a leverage point using Cook's D with
+              a p-value cutoff of 0.5, then the value is flagged. This cannot be
+              adjusted.
+
+        - (3) If a value is identified as a leverage point using DFFITS it is
+              also flagged. This cannot be adjusted.
 
     **Sample Flag Cutoff – flagging samples**
 
     - This cutoff sets the level to flag a sample.
+
         - Using the above *Outlier Cutoff*, we identify samples that have a
-        large number of outlier values. The *Sample Cutoff* is the proportion
-        of values for a sample that need to be flagged for that sample to be flagged.
-        The default value is 0.2, meaning that 20% of the values need to be flagged as
-        outliers for the sample to be flagged as well.
+          large number of outlier values. The *Sample Cutoff* is the proportion
+          of values for a sample that need to be flagged for that sample to be
+          flagged. The default value is 0.2, meaning that 20% of the values need
+          to be flagged as outliers for the sample to be flagged as well.
 
     **Feature Flag Cutoff  – flagging features**
 

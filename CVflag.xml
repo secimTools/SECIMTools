@@ -46,12 +46,12 @@
 
 .. class:: infomark
 
-**TIP:**
-If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
+**TIP:** If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 .. class:: warningmark
 
 **WARNINGS:**
+
     - (1) A row will be dropped when a pairwise comparison has a missing value.
     - (2) This script automatically removes spaces and special characters from strings.
     - (3) If a compound name starts with a number it will prepend an '_'.
@@ -60,8 +60,9 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 **What it does**
 
-This tool calculates the coefficient of variation.  Can be used to identify features with larger than expected variability.  Recommend using log transformed data.
-
+This tool calculates the coefficient of variation. Can be used to identify
+features with larger than expected variability. Recommend using log transformed
+data.
 
 --------------------------------------------------------------------------------
 
@@ -69,8 +70,7 @@ This tool calculates the coefficient of variation.  Can be used to identify feat
 
 - Two input datasets are required.
 
-      **Wide Formatted Dataset**
-
+    **Wide Formatted Dataset**
 
     A wide formatted dataset that contains measurements for each sample.::
 
@@ -84,12 +84,11 @@ This tool calculates the coefficient of variation.  Can be used to identify feat
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
     Extra columns will automatically be ignored.
 
-
-    **Metadata File:**
-    A Metadata file relating samples to various groups/treatment.::
+    **Metadata File:** A Metadata file relating samples to various
+    groups/treatment.::
 
         +----------+--------+
         | sampleID | group1 |
@@ -103,8 +102,8 @@ This tool calculates the coefficient of variation.  Can be used to identify feat
         | ...      | ...    |
         +----------+--------+
 
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the wide
+    **NOTE: You must have a column named *sampleID*** and the values in this
+    column must match the column names in the wide dataset.
 
 
     **In addition to your datasets, you need to provide:**
@@ -116,27 +115,32 @@ This tool calculates the coefficient of variation.  Can be used to identify feat
 
     **Cvcutoff**   [Optional]
 
-    - Here you can opt to change the default CV cutoff used to generate the 0/1 indicator flags.  The default CV cutoff (10 %)
-      will flag features with a CV larger than 90 % of the features.
-
+    - Here you can opt to change the default CV cutoff used to generate the 0|1
+      indicator flags. The default CV cutoff (10 %) will flag features with a CV
+      larger than 90 % of the features.
 
     **Group/Treatment** [Optional]
 
-    - The column name in your design file that contains group information. In
-      our example design file we would put *group1*. If provided samples will
+    - The column name in your metadata file that contains group information. In
+      our example metadata file we would put *group1*. If provided samples will
       be colored by group.
 
 --------------------------------------------------------------------------------
 
 **Output Files**
 
-- This tool outputs a CV density plot and a text filed containing flags for features with a large CV.
+- This tool outputs a CV density plot and a text filed containing flags for
+  features with a large CV.
 
-    **CVplot_PDF** is a PDF of a CV density plot.  If group information is given, one plot is produced for each group in additionto a combined density plot containing all groups.
+    **CVplot_PDF** is a PDF of a CV density plot. If group information is
+    given, one plot is produced for each group in addition to a combined density
+    plot containing all groups.
 
-    **CVflag_table** is a TSV file with feature as row and containing a summary 0/1 indicator flag for whether the CV for
-    a given feature is greater than the threshold value.  A feature is given a '1' if the CV for that feature is greater than the threshold given.
-    If group is specified, additional group-specific 0/1 indicator flags will be present.
+    **CVflag_table** is a TSV file with feature as row and containing a summary
+    0|1 indicator flag for whether the CV for a given feature is greater than
+    the threshold value. A feature is given a '1' if the CV for that feature
+    is greater than the threshold given.  If group is specified, additional
+    group-specific 0|1 indicator flags will be present.
 
 </help>
 

@@ -86,6 +86,7 @@ This tool carries out a log transformation on values in a Wide Formated dataset/
 
 
     **Metadata File:**
+
     A Metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
@@ -100,9 +101,9 @@ This tool carries out a log transformation on values in a Wide Formated dataset/
         | ...      | ...    |
         +----------+--------+
 
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the wide
-    formatted dataset. Extra columns will be ignored.
+    **NOTE: You must have a column named *sampleID*** and the values in this
+    column must match the column names in the wide formatted dataset. Extra
+    columns will be ignored.
 
     **In addition to your datasets, you need to provide:**
 
@@ -111,23 +112,21 @@ This tool carries out a log transformation on values in a Wide Formated dataset/
     - The column name in your wide dataset that contains the unique IDs for
       your compounds. In our example dataset you would input *Compound*
 
-
-
     **Group/Treatment**
 
-    - The name of the column in the Design File that contains the sample treatment groups.  Used to generate a column (sampleID) color bar.
+    - The name of the column in the Metadata File that contains the sample
+      treatment groups.  Used to generate a column (sampleID) color bar.
 
+    **The base which to calculate the logarithm**
 
-
-    **Number of trees in the forest**
-
-    - Default of 1000.  We recommend no less than this number.
+    - Choices are the base 10 and base 2 log, as well as the natrual log.
 
 --------------------------------------------------------------------------------
 
 **Output Files**
 
-- This tool outputs a TSV file of the log transformed data.  Missing values remain missing.
+- This tool outputs a TSV file of the log transformed data. Missing values
+  remain missing.
 
 
 </help>

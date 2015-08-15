@@ -34,6 +34,7 @@
 .. class:: warningmark
 
 **WARNINGS:**
+
     - (1) A row will be dropped when a pairwise comparison has a missing value.
     - (2) This script automatically removes spaces and special characters from strings.
     - (3) If a compound name starts with a number it will prepend an '_'.
@@ -42,7 +43,8 @@
 
 **What it does**
 
-This tool generates a Hierarchical Cluster Heatmap from a Wide Formated dataset, a Metadata dataset and an optional Annotation dataset.
+This tool generates a Hierarchical Cluster Heatmap from a Wide Formated
+dataset, a Metadata dataset and an optional Annotation dataset.
 
 --------------------------------------------------------------------------------
 
@@ -70,6 +72,7 @@ This tool generates a Hierarchical Cluster Heatmap from a Wide Formated dataset,
 
 
     **Metadata File:**
+
     A Metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
@@ -84,16 +87,16 @@ This tool generates a Hierarchical Cluster Heatmap from a Wide Formated dataset,
         | ...      | ...    |
         +----------+--------+
 
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the wide
-    formatted dataset. Extra columns will be ignored.
+    **NOTE: You must have a column named *sampleID*** and the values in this
+    column must match the column names in the wide formatted dataset. Extra
+    columns will be ignored.
 
     **In addition to your datasets, you need to provide:**
 
     **Group/Treatment** [Optional]
 
     - The column name in your metadata file that contains group information. In
-      our example design file we would put *group1*. If provided, samples will
+      our example metadata file we would put *group1*. If provided, samples will
       be colored by group.
 
     **Unique Compound ID**
@@ -104,7 +107,7 @@ This tool generates a Hierarchical Cluster Heatmap from a Wide Formated dataset,
 
 **Optional Annotation File:**
 
-     - used to generate a feature color bar
+     Used to generate a feature color bar.
 
     An Annotation File relating features to pathways of interest::
 
@@ -116,7 +119,9 @@ This tool generates a Hierarchical Cluster Heatmap from a Wide Formated dataset,
         | compound3  |    a1      |
         | compound4  |    a2      |
         +----------+--------------+
-      **Note:** The feature names in the Annotation file must match the feature names in the Wide Format Dataset.
+
+      **Note:** The feature names in the Annotation file must match the feature
+      names in the Wide Format Dataset.
 
 --------------------------------------------------------------------------------
 

@@ -45,6 +45,7 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 .. class:: warningmark
 
 **WARNINGS:**
+
     - (1) A row will be dropped when a pairwise comparison has a missing value.
     - (2) This script automatically removes spaces and special characters from strings.
     - (3) If a compound name starts with a number it will prepend an '_'.
@@ -53,8 +54,10 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 **What it does**
 
-This tool counts the number of digits before the decimal place for each value. Used to identify values with different orders of magnitude across an individual feature.  Unusual samples may be identified by finding systematically low or high feature values for a particular sample. 
-
+This tool counts the number of digits before the decimal place for each value.
+Used to identify values with different orders of magnitude across an individual
+feature. Unusual samples may be identified by finding systematically low or
+high feature values for a particular sample. 
 
 --------------------------------------------------------------------------------
 
@@ -62,7 +65,7 @@ This tool counts the number of digits before the decimal place for each value. U
 
 - Two input datasets are required.
 
-      **Wide Formatted Dataset:**
+    **Wide Formatted Dataset:**
 
     A wide formatted dataset that contains measurements for each sample.::
 
@@ -76,11 +79,12 @@ This tool counts the number of digits before the decimal place for each value. U
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File
+    (below). Extra columns will automatically be ignored.
 
 
     **Metadata File:**
+
     A Metadata file relating samples to various groups/treatment.::
 
         +----------+--------+
@@ -95,9 +99,9 @@ This tool counts the number of digits before the decimal place for each value. U
         | ...      | ...    |
         +----------+--------+
 
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the wide
-    formatted dataset. Extra columns will be ignored.
+    **NOTE: You must have a column named *sampleID*** and the values in this
+    column must match the column names in the wide formatted dataset. Extra
+    columns will be ignored.
 
     **In addition to your datasets, you need to provide:**
 
@@ -109,27 +113,28 @@ This tool counts the number of digits before the decimal place for each value. U
 
     **Group/Treatment** [Optional]
 
-    - The column name in your design file that contains group information. In
-      our example design file we would put *group1*. If provided samples will
+    - The column name in your metadata file that contains group information. In
+      our example metadata file we would put *group1*. If provided samples will
       be colored by group.
 
 --------------------------------------------------------------------------------
 
 **Output Files**
 
-- This tool outputs an html page containing links to the files created.  Separating by group is recommended, where applicable.
+- This tool outputs an html page containing links to the files created.
+  Separating by group is recommended, where applicable.
 
-    **Counts_table** is a TSV file with feature as row and sample as column. Values
-    are the number of digits for a given feature-sample combination. The maximum,
-    minimum and differences are calculated for each feature.  If groups are given,
-    each groups generates a separate counts_table
+    **Counts_table** is a TSV file with features as rows and samples as
+    columns. Values are the number of digits for a given feature-sample
+    combination. The maximum, minimum and differences are calculated for each
+    feature. If groups are given, each groups generates a separate counts_table
 
     **Figure.png** is a plot of the differences between the maximum and minimum, by
     group if specified.
 
-    **Flags** is a TSV file with feature as row and containing a summary 0/1
-    indicator flag.  A feature is given a '1' if the difference for that feature
-    across all groups, if specified, is greater than or equal to 2.
+    **Flags** is a TSV file with features as rows with a summary 0|1 indicator
+    flag. A feature is given a '1' if the difference for that feature across
+    all groups, if specified, is greater than or equal to 2.
 
 
 </help>
