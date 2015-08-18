@@ -16,15 +16,12 @@
     <outputs>
         <data format="tabular" name="output" label="MergedFlags"/>
     </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
 <help>
 
-.. class:: infomark
-
-**TIP:**
-If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
-Data sets also must have the same index!
-
---------------------------------------------------------------------------------
+@TIP_AND_WARNING@
 
 **What it does**
 
@@ -75,8 +72,6 @@ all files must contain the same index.  Flag files can also be merged to Wide Fo
         | four     | 32      | 17      | 8       | ... |
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
-
-    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
 
 --------------------------------------------------------------------------------
 
