@@ -44,20 +44,12 @@
     <outputs>
         <data format="png" name="fig"/>
     </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
 <help>
 
-..class:: infomark
-
-**TIP:**
-If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
-
-.. class:: warningmark
-
-**WARNINGS:**
-    - (1) This script automatically removes spaces and special characters from strings.
-    - (2) If a compound name starts with a number it will prepend an '_'.
-
---------------------------------------------------------------------------------
+@TIP_AND_WARNING@
 
 **What it does**
 
@@ -69,75 +61,43 @@ Generates a 2 dimensional scatter plot.
 
 - Two input datasets are required.
 
-**Tall Formatted Dataset:**
-
-A tall formatted dataset that contains measurements for each sample.::
-
-    +----------+-----------+-----------+-----------+-----+
-    | sampleID | feature1  | feature1  | feature2  | ... |
-    +==========+===========+===========+===========+=====+
-    | sample1  |    10     |    20     |    10     | ... |
-    | sample2  |    5      |    22     |    30     | ... |
-    | sample3  |    30     |    27     |    2      | ... |
-    | sample4  |    32     |    17     |    8      | ... |
-    | ...      |    …      |    ...    |    …      | ... |
-    +----------+-----------+-----------+-----------+-----+
+    @WIDE@
 
     **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
 
 
-**Metadata File:**
-A metatdata file relating samples to various groups/treatment.::
-
-    +----------+--------+
-    | sampleID | group1 |
-    +==========+========+
-    | sample1  | g1     |
-    | sample2  | g1     |
-    | sample3  | g1     |
-    | sample4  | g2     |
-    | sample5  | g2     |
-    | sample6  | g2     |
-    | ...      | ...    |
-    +----------+--------+
-
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the vlues in column in the tall
-    formatted dataset.
+    @METADATA@
 
 - In addition to your datasets, you need to provide:
 
-**Sample ID**
+    **Sample ID**
 
-    - The column name in your Tall and Metadata datasets that contains the unique IDs for your samples.  In our example dataset you would input *SampleID*.
+        - The column name in your Tall and Metadata datasets that contains the unique IDs for your samples.  In our example dataset you would input *SampleID*.
 
-**Column name with X-value**
+    **Column name with X-value**
 
-    - The column name in your Tall dataset that contains the values to be plotted on the X-axis.
+        - The column name in your Tall dataset that contains the values to be plotted on the X-axis.
 
-**Column name with Y-value**
+    **Column name with Y-value**
 
-    - The column name in your Tall file that contains the values to be plotted on the Y-axis.
+        - The column name in your Tall file that contains the values to be plotted on the Y-axis.
 
-**Plot title**  [Optional]
+    **Plot title**  [Optional]
 
-    - Optional title to display on your plot
-
-
-**Group/Treatment**  [Optional]
-
-    - The column name in your Metadata file that contains group information. In
-      our example design file we would put *group1*.
+        - Optional title to display on your plot
 
 
-**X-axis label**  [Optional]
-
-    - Optional x-axis label to display on your plot
+    @GROUP_OPTIONAL@
 
 
-**Y-axis label**  [Optional]
+    **X-axis label**  [Optional]
 
-    - Optional y-axis label to display on your plot
+        - Optional x-axis label to display on your plot
+
+
+    **Y-axis label**  [Optional]
+
+        - Optional y-axis label to display on your plot
 
 --------------------------------------------------------------------------------
 
