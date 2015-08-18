@@ -16,14 +16,12 @@
     <outputs>
         <data format="png" name="output" label="Mahalanobis Figure"/>
     </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
     <help>
 
-.. class:: infomark
-
-**TIP:**
-If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
-
---------------------------------------------------------------------------------
+@TIP_AND_WARNING@
 
 **What it does**
 
@@ -50,19 +48,7 @@ after accounting for the correlation structure in the data.
 
 - One input dataset is required.
 
-**Wide Formatted Dataset:**
-
-A wide formatted dataset that contains measurements for each sample.::
-
- +----------+---------+---------+---------+-----+
- | Compound | sample1 | sample2 | sample3 | ... |
- +==========+=========+=========+=========+=====+
- | one      | 10      | 20      | 10      | ... |
- | two      | 5       | 22      | 30      | ... |
- | three    | 30      | 27      | 2       | ... |
- | four     | 32      | 17      | 8       | ... |
- | ...      | ...     | ...     | ...     | ... |
- +----------+---------+---------+---------+-----+
+@WIDE@
 
 
 --------------------------------------------------------------------------------
