@@ -27,6 +27,9 @@
     <data format="pdf" name="qq_plots" label="Anova_qq_plots"/>
     <data format="pdf" name="volcano_plots" label="Anova_volcano_plots"/>
   </outputs>
+  <macros>
+      <import>marcos.xml</import>
+  </macros>
   <!-- TODO: uncomment the following test when we have tools.update_state() working for
        multiple dependents with the same dependency.
   <tests>
@@ -43,19 +46,7 @@
   -->
 <help>
 
-.. class:: infomark
-
-**TIP:**
-If your data is not TAB delimited, use *Text Manipulation-&gt; Convert*
-
-.. class:: warningmark
-
-**WARNINGS:**
-
-    - (1) This script automatically removes spaces and special characters from strings.**
-    - (2) If a compound name starts with a number it will prepend an '_'.
-
---------------------------------------------------------------------------------
+@TIP_AND_WARNING@
 
 **What it does**
 
@@ -63,42 +54,13 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
 
 - Two input datasets are required.
 
-    **Wide Formatted Dataset:** A wide formatted dataset that contains
-    measurements for each sample.::
-
-        +----------+---------+---------+---------+-----+
-        | Compound | sample1 | sample2 | sample3 | ... |
-        +==========+=========+=========+=========+=====+
-        | one      | 10      | 20      | 10      | ... |
-        | two      | 5       | 22      | 30      | ... |
-        | three    | 30      | 27      | 2       | ... |
-        | four     | 32      | 17      | 8       | ... |
-        | ...      | ...     | ...     | ...     | ... |
-        +----------+---------+---------+---------+-----+
+    @WIDE@
 
         **NOTE:** The sample IDs must match the sample IDs in the Metadata File
         (below). Extra columns will automatically be ignored.
 
 
-    **Metadata File:** A metadata file relating samples to various
-    groups/treatment.::
-
-        +----------+--------+
-        | sampleID | group1 |
-        +==========+========+
-        | sample1  | g1     |
-        | sample2  | g1     |
-        | sample3  | g1     |
-        | sample4  | g2     |
-        | sample5  | g2     |
-        | sample6  | g2     |
-        | ...      | ...    |
-        +----------+--------+
-
-    **NOTE: You must have a column named *sampleID*** and the values in this
-    column must match the column names in the wide formatted dataset. Extra
-    columns will be ignored.
-
+    @METADATA@
 
     **In addition to your datasets, you need to provide:**
 
@@ -108,11 +70,7 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
     - The column name in your wide dataset that contains the unique IDs for
       your compounds. In our example dataset you would input *Compound*.
 
-
-    **Group/Treatment**
-
-    - The column name in your metadata file that contains group information. In
-      our example metadata file we would put *group1*.
+    @GROUP@
 
 --------------------------------------------------------------------------------
 

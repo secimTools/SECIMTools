@@ -58,4 +58,11 @@
       be colored by group.
 
 </token>
+<token name="@GROUP@">
+    **Group/Treatment**
+
+    - The column name in your metadata file that contains group information. In
+      our example metadata file we would put *group1*.
+
+</token>
 </macros>
