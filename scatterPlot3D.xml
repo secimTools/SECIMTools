@@ -50,20 +50,12 @@
     <outputs>
         <data format="png" name="fig"/>
     </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
 <help>
 
-..class:: infomark
-
-**TIP:**
-If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
-
-.. class:: warningmark
-
-**WARNINGS:**
-    - (1) This script automatically removes spaces and special characters from strings.
-    - (2) If a compound name starts with a number it will prepend an '_'.
-
-------------------------------------------------------------------------------
+@TIP_AND_WARNING@
 
 **What it does**
 
@@ -73,35 +65,11 @@ Generates a 3D scatter plot.
 
 **Input**
 
-**Tall Dataset:**
+    @WIDE@
 
-A Tall formatted dataset that contains measurements for each sample.::
 
-    +----------+-----+-----+-----+-----+
-    | sampleID | x1  | y1  | z1  | ... |
-    +==========+=====+=====+=====+=====+
-    | sample1  | 10  | 20  | 10  | ... |
-    | sample2  | 5   | 22  | 30  | ... |
-    | sample3  | 30  | 27  | 2   | ... |
-    | sample4  | 32  | 17  | 8   | ... |
-    | ...      | ... | ... | ... | ... |
-    +----------+-----+-----+-----+-----+
+    @METADATA@
 
-**Metadata File**
-
-A Metatdata File relating samples to various groups/treatment.  Used if you want to color by group::
-
-         +----------+--------+
-         | sampleID | group  |
-         +==========+========+
-         | sample1  | g1     |
-         | sample2  | g1     |
-         | sample3  | g2     |
-         | sample4  | g2     |
-         | ...      | ...    |
-         +----------+--------+
-
-**NOTE:** The sampleIDs must match the sampleIDs in the Metadata File.
 
 **Sample ID**
 
@@ -124,10 +92,9 @@ A Metatdata File relating samples to various groups/treatment.  Used if you want
 
 - Title to display on your plot.
 
-**Group/Treatment**  [Optional]
 
-- The column name in your Meatadata file that contains group information. In
-  our example design file we would put *group*.
+@GROUP_OPTIONAL@
+
 
 **X-axis label**   [Optional]
 
