@@ -79,11 +79,8 @@ data.
       indicator flags. The default CV cutoff (10 %) will flag features with a CV
       larger than 90 % of the features.
 
-    **Group/Treatment** [Optional]
+    @GROUP_OPTIONAL@
 
-    - The column name in your metadata file that contains group information. In
-      our example metadata file we would put *group1*. If provided samples will
-      be colored by group.
 
 --------------------------------------------------------------------------------
 
