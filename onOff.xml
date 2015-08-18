@@ -25,15 +25,12 @@
     <outputs>
         <data format="tabular" name="output" label="On/Off flags" />
     </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
 <help>
 
-.. class:: infomark
-
-**TIP:**
-If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
-Data sets also must have the same index!
-
---------------------------------------------------------------------------------
+@TIP_AND_WARNING@
 
 **What it does**
 
@@ -47,42 +44,13 @@ half of the data is below a user-input cutoff value or missing.  Default value i
 
 - Two input datasets are required.
 
-    **Wide Formatted Dataset:**
-
-    A wide formatted dataset that contains measurements for each sample.::
-
-        +----------+---------+---------+---------+-----+
-        | Compound | sample1 | sample2 | sample3 | ... |
-        +==========+=========+=========+=========+=====+
-        | one      | 10      | 20      | 10      | ... |
-        | two      | 5       | 22      | 30      | ... |
-        | three    | 30      | 27      | 2       | ... |
-        | four     | 32      | 17      | 8       | ... |
-        | ...      | ...     | ...     | ...     | ... |
-        +----------+---------+---------+---------+-----+
+    @WIDE@
 
     **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
     Extra columns will automatically be ignored.
 
 
-    **Metadata File:**
-    A Metadata file relating samples to various groups/treatment.::
-
-        +----------+--------+
-        | sampleID | group1 |
-        +==========+========+
-        | sample1  | g1     |
-        | sample2  | g1     |
-        | sample3  | g1     |
-        | sample4  | g2     |
-        | sample5  | g2     |
-        | sample6  | g2     |
-        | ...      | ...    |
-        +----------+--------+
-
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the wide
-    formatted dataset. Extra columns will be ignored.
+    @METADATA@
 
     **In addition to your datasets, you need to provide:**
 
