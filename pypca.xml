@@ -22,13 +22,12 @@
         <data format="tabular" name="loadings" label="${tool.name} on ${on_string}: loadings"/>
         <data format="tabular" name="scores" label="${tool.name} on ${on_string}: scores"/>
     </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
 <help>
 
-.. class:: infomark
-
-**TIP:** If your data is not TAB delimited, use *Edit Datasets-&gt;Convert characters*
-
---------------------------------------------------------------------------------
+@TIP_AND_WARNING@
 
 .. class:: infomark
 
@@ -54,42 +53,13 @@ input data using a singular value decomposition based solution.
 
 - Two input datasets are required.
 
-**Wide Formatted Dataset:**
-
-A wide formatted dataset that contains measurements for each sample.::
-
-    +----------+---------+---------+---------+-----+
-    | Compound | sample1 | sample2 | sample3 | ... |
-    +==========+=========+=========+=========+=====+
-    | one      | 10      | 20      | 10      | ... |
-    | two      | 5       | 22      | 30      | ... |
-    | three    | 30      | 27      | 2       | ... |
-    | four     | 32      | 17      | 8       | ... |
-    | ...      | ...     | ...     | ...     | ... |
-    +----------+---------+---------+---------+-----+
+    @WIDE@
 
     **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 
-**Metadata File:**
-A metatdata file relating samples to various groups/treatment.::
-
-    +----------+--------+
-    | sampleID | group1 |
-    +==========+========+
-    | sample1  | g1     |
-    | sample2  | g1     |
-    | sample3  | g1     |
-    | sample4  | g2     |
-    | sample5  | g2     |
-    | sample6  | g2     |
-    | ...      | ...    |
-    +----------+--------+
-
-    **NOTE: You must have a column named *sampleID***
-    and the values in this column must match the columns names in the wide
-    formatted dataset. Extra columns will be ignored.
+    @METADATA@
 
 **In addition to your datasets, you need to provide:**
 
