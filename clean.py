@@ -1,6 +1,6 @@
+# !/usr/bin/env python
 # Author: Jonathan Poisson | PoissonJ@ufl.edu
 
-# !/usr/bin/env python
 
 # Built-in packages
 import argparse
