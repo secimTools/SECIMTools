@@ -20,9 +20,6 @@ from interface import Flags
 from interface import wideToDesign
 import logger as sl
 
-# Glocals
-global DEBUG
-
 
 def getOptions(myopts=None):
     """Function to pull in arguments"""
@@ -120,20 +117,20 @@ def setRTflag(args, wide, dat, dir):
     RTflag = Flags(index=RTround.index)
     if args.p90p10:
         RTflag.addColumn(column = 'flag_RT_Q90Q10_outlier',
-                        mask   = (RTstat['p90p10'] > 0.2))
+                        mask   = (RTstat['p90p10'] > args.minutes))
     else:
         RTflag.addColumn(column = 'flag_RT_Q95Q05_outlier',
-                        mask   = (RTstat['p95p05'] > 0.2))
+                        mask   = (RTstat['p95p05'] > args.minutes))
 
     RTflag.addColumn(column = 'flag_RT_max_gt_threshold',
-                    mask   = (RTstat['max'] - RTstat['median'] > 0.1))
+                    mask   = (RTstat['max'] - RTstat['median'] > args.minutes / 2))
 
     RTflag.addColumn(column = 'flag_RT_min_lt_threshold',
-                    mask   = (RTstat['min'] - RTstat['median'] < -0.1))
+                    mask   = (RTstat['min'] - RTstat['median'] < -args.minutes / 2))
 
     RTflag.addColumn(column = 'flag_RT_min_max_outlier',
-                    mask   = ((RTstat['max']-RTstat['mean']>3*RTstat['std']) |
-                              (RTstat['min']-RTstat['mean']<-3*RTstat['std'])))
+                    mask   = ((RTstat['max']-RTstat['mean'] > 3 * RTstat['std']) |
+                              (RTstat['min']-RTstat['mean'] < -3 * RTstat['std'])))
 
     if not args.CVcutoff:
         CVcutoff = np.nanpercentile(RTstat['cv'].values, q=90)
