@@ -66,17 +66,17 @@ This tool identifies features with the following characteristics:
     **Unique Compound ID**
 
         - The column name in your wide dataset that contains the unique IDs for
-        your compounds. In our example dataset you would input *Compound*.
+          your compounds. In our example dataset you would input *Compound*.
 
     **Cvcutoff**  [Optional]
 
         - The column name in your design file that contains group information. In
-        our example design file we would put *group1*.
+          our example design file we would put *group1*.
 
     **90th percentile**  [Optional]
 
     - The default is to flag features when the difference in the retention time between the 90th and 10th percentiles is greater
-    than 0.2 seconds. The user has the option to select the 95th and 5th percentiles instead.
+      than 0.2 seconds. The user has the option to select the 95th and 5th percentiles instead.
 
 --------------------------------------------------------------------------------
 
