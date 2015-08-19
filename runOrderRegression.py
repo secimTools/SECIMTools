@@ -36,7 +36,7 @@ def getOptions():
     group2 = parser.add_argument_group(title='Required Output')
     group2.add_argument('--fig', dest='oname', action='store', required=True, help="Name of PDF to save scatter plots.")
     group2.add_argument('--table', dest='tname', action='store', required=True,
-                        help="Name of PDF to save scatter plots.")
+                        help="Name of table for scatter plots")
 
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
