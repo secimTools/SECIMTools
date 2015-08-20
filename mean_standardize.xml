@@ -38,7 +38,7 @@
             <param name="uniqID" value="rowID" />
             <param name="group" value="treatment" />
             <param name="std" value="MEAN" />
-            <output name="out" value="./test-data/test_mean_standardize_out.tsv" />
+            <output name="out" file="./test-data/test_mean_standardize_out.tsv" />
         </test>
     </tests>
 
