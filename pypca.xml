@@ -25,6 +25,15 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <output name="loadings" file="./test-data/test_pypca_load_out.tsv" />
+            <output name="scores" file="./test-data/test_pypca_score_out.tsv" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@

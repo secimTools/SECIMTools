@@ -19,6 +19,12 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <output name="output" file="./test-data/test_mergeFlags_output.tsv" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@

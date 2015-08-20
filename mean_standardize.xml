@@ -31,6 +31,16 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <param name="group" value="treatment" />
+            <param name="std" value="MEAN" />
+            <output name="out" value="./test-data/test_mean_standardize_out.tsv" />
+        </test>
+    </tests>
 
     <help>
 

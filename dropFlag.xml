@@ -51,6 +51,18 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <param name="group" value="treatment" />
+            <param name="flags" value="./test-data/test_flag.tsv" />
+            <param name="cutoff" value=".5" />
+            <output name="wideOut" file="./test-data/test_dropFlag_wideOut.tsv" />
+            <output name="designOut" file="./test-data/test_dropFlag_designOut.tsv" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@

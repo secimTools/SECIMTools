@@ -33,15 +33,16 @@
   <macros>
       <import>macros.xml</import>
   </macros>
-    <!--<tests>-->
-        <!--<test>-->
-            <!--<param name="input" value="ST000015_log.tsv" />-->
-            <!--<param name="design" value="ST000015_design.tsv" />-->
-            <!--<param name="uniqID" value="Name" />-->
-            <!--<output name="CVplotOutFile" file="CVflag-CVplotOutFile-test.pdf" />-->
-            <!--<output name="CVflagOutFile" file="CVflag-CVflagOutFile-test.tsv" />-->
-        <!--</test>-->
-    <!--</tests>-->
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <param name="group" value="treatment" />
+            <output name="CVplot" file="./test-data/test_CVplotOutFile.pdf" />
+            <output name="CVflag" file="./test-data/test_CVflagOutFile.pdf" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@

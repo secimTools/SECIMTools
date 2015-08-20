@@ -30,6 +30,17 @@
   <macros>
       <import>macros.xml</import>
   </macros>
+  <tests>
+      <test>
+          <param name="input" value="./test-data/test_data.tsv" />
+          <param name="design" value="./test-data/test_design.csv" />
+          <param name="uniqID" value="rowID" />
+          <param name="group" value="treatment" />
+          <param name="order" value="runOrder" />
+          <output name="order_plots" file="./test-data/test_runOrderRegression_fig.pdf" />
+          <output name="order_summary" file="./test-data/test_runOrderRegression_table.pdf" />
+      </test>
+  </tests>
 <help>
 
 @TIP_AND_WARNING@

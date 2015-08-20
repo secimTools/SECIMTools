@@ -24,15 +24,15 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <!--<tests>-->
-        <!--<test>-->
-            <!--<param name="input" value="ST000015_log.tsv" />-->
-            <!--<param name="design" value="ST000015_design.tsv" />-->
-            <!--<param name="ID" value="Name" />-->
-            <!--<output name="wideOut" file="clean-wideOut-test" ftype="tabular" />-->
-            <!--<output name="designOut" file="clean-designOut-test" ftype="tabular" />-->
-            <!--</test>-->
-    <!--</tests>-->
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <output name="wideOut" file="./test-data/test_clean_wideOut.tsv" ftype="tabular" />
+            <output name="designOut" file="./test-data/test_clean_designOut.tsv" ftype="tabular" />
+        </test>
+    </tests>
 <help>
 .. class:: infomark
 

@@ -35,6 +35,17 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <param name="group" value="treatment" />
+            <output name="SEDplot" file="./test-data/test_standardizedEuclideanDistance_SEDplotOutFile.pdf" />
+            <output name="SEDtoCenter" file="./test-data/test_standardizedEuclideanDistance_SEDtoCenter.tsv" />
+            <output name="SEDpairwise" file="./test-data/test_standardizedEuclideanDistance_SEDpairwise.tsv" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@

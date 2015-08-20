@@ -30,20 +30,17 @@
   <macros>
       <import>marcos.xml</import>
   </macros>
-  <!-- TODO: uncomment the following test when we have tools.update_state() working for
-       multiple dependents with the same dependency.
   <tests>
     <test>
-      <param name="input" value="scatterplot_in1.tabular" ftype="tabular"/>
-      <param name="col1" value="2"/>
-      <param name="col2" value="3"/>
-      <param name="title" value="Scatterplot"/>
-      <param name="xlab" value="V1"/>
-      <param name="ylab" value="V2"/>
-      <output name="out_file1" file="scatterplot_out1.png" />
+      <param name="input" value="./test-data/test_data.tsv " ftype="tabular"/>
+      <param name="design" value="./test-data/test_design.csv" ftype="tabular"/>
+      <param name="uniqID" value="rowID"/>
+      <param name="group" value="treatment"/>
+      <output name="results_table" file="./test-data/test_anova_tsv.tsv" />
+      <output name="qq_plots" file="./test-data/test_anova_fig.tsv" />
+      <output name="volcano_plots" file="./test-data/test_anova_fig2.tsv" />
     </test>
   </tests>
-  -->
 <help>
 
 @TIP_AND_WARNING@

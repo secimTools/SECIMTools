@@ -27,6 +27,17 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <param name="group" value="treatment" />
+            <param name="number_of_estimators" value="1000" />
+            <output name="outfile1" file="./test-data/test_RandomForest_out.tsv" />
+            <output name="outfile2" file="./test-data/test_RandomForest_out2.tsv" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@

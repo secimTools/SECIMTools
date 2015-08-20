@@ -41,6 +41,23 @@
     <data format="csv" name="outfile1" label="Classified target"/>
     <data name="accuracy_on_training" format='tabular' label="accuracy on the trainig set"/>
   </outputs>
+  <tests>
+      <test>
+          <param name="train_wide" value="./test-data/test_data.tsv" />
+          <param name="train_design" value="./test-data/test_design.csv" />
+          <param name="test_wide" value="./test-data/test_data.tsv" />
+          <param name="test_design" value="./test-data/test_design.csv" />
+          <param name="uniqID" value="rowID" />
+          <param name="class_column_name" value="treatment" />
+          <param name="kernel" value="linear" />
+          <param name="degree" value="3" />
+          <param name="C" value="1" />
+          <param name="a" value="0.0" />
+          <param name="b" value="0.0" />
+          <outfile name="outfile1" file="./test-data/test_SVM_classifier_outfile.tsv" />
+          <outfile name="accuracy_on_training" file="./test-data/test_SVM_classifier_accuracy_on_training.tsv" />
+      </test>
+  </tests>
 <help>
 
 ..class:: infomark
