@@ -152,8 +152,18 @@ def main(args):
 
     # Run each column through regression
     logger.info('Running Regressions')
-    res = trans.apply(runOrder, axis=0)
-    res.dropna(inplace=True)        # Drop rows that are missing regression results.
+
+    res = list()
+    # Iterate over columns
+    # Was using an apply statment instead, but it kept giving me index errors
+    for col in trans.columns:
+        res.append(runOrder(trans[col]))
+
+    # convert result list to a Series
+    res = pd.Series({x[0]: x for x in res})
+
+    # Drop rows that are missing regression results
+    res.dropna(inplace=True)
 
     # Plot Results
     # Open a multiple page PDF for plots
