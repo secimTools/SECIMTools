@@ -113,7 +113,6 @@ def setRTflag(args, wide, dat, dir):
     RTstat['p90p10'] = RTstat['p90'] - RTstat['p10']
 
     # Set RT flags
-    #RTflag = pd.DataFrame(index=RTround.index)
     RTflag = Flags(index=RTround.index)
     if args.p90p10:
         RTflag.addColumn(column = 'flag_RT_Q90Q10_outlier',
@@ -158,8 +157,6 @@ def setRTflag(args, wide, dat, dir):
     plt.legend()
 
     galaxySavefig(fig, args.RTplot)
-    #plt.savefig(args.CVplot, format='pdf')
-    #plt.close(fig)
 
 def main(args):
     """ """
