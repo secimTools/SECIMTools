@@ -65,15 +65,15 @@ This tool uses the Random forest algorithm to identify specific features that di
     **Unique Compound ID**
 
         - The column name in your wide dataset that contains the unique IDs for
-        your compounds. In our example dataset you would input *Compound*.
+          your compounds. In our example dataset you would input *Compound*.
 
       @GROUP@
 
     **Number of Trees in the Forest**
 
         - A typical number of trees is at least 1,000 (default value).  One would
-        increase the number of trees in the forest if, upon multiple rerunning of the
-        algorithm, the order of importance of features changes significantly.
+          increase the number of trees in the forest if, upon multiple rerunning of the
+          algorithm, the order of importance of features changes significantly.
 
 --------------------------------------------------------------------------------
 

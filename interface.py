@@ -2,6 +2,7 @@
 
 # Built-in packages
 import re
+import sys
 
 # Add-on packages
 import pandas as pd
@@ -107,8 +108,8 @@ class wideToDesign:
             self.design = self.design[self.design.index.isin(self.sampleIDs)]
 
         except:
-            print "Please make sure that your design file has a column called 'sampleID'."
-            raise ValueError
+            print "Error:", sys.exc_info()[0]
+            raise
 
         # Save annotations
         self.anno = anno

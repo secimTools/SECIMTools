@@ -28,7 +28,7 @@
     <data format="pdf" name="volcano_plots" label="Anova_volcano_plots"/>
   </outputs>
   <macros>
-      <import>marcos.xml</import>
+      <import>macros.xml</import>
   </macros>
   <tests>
     <test>
