@@ -170,6 +170,13 @@ def main(args):
     logger.info('Plotting Results')
     pp = PdfPages(args.oname)
     outTable = res.apply(makeScatter, args=(pp, ))
+
+    # If there are no significant values, then output a page in the pdf
+    # informing the user.
+    if pp.get_pagecount() == 0:
+        fig = plt.figure()
+        fig.text(0.5, 0.4, 'There were no features significant for plotting.', fontsize=20)
+        pp.savefig(fig)
     pp.close()
 
     # Write regression results to table
