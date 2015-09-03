@@ -22,23 +22,23 @@ from interface import Flags
 
 def getOptions():
     """ Function to pull in arguments """
-    
-    description = """For mutivariate data, the standardized Euclidean distance 
-    (SED) takes the variance into consideration. If we assume all the vectors 
-    are identically and independent multinormally distributed with a diagonal 
-    covariance matrix (assuming the correlations are 0), the SED follows a 
-    certain distribution associated with the dimension of the vector. Thus, 
-    samples with SEDs higher than the cutoff are dubious and conflict to the 
-    multinormal assumption. 
-    
-    The scripts estimate the variance according to the input data and calculate 
-    the SEDs from all samples to the estimated center and also the sample pairwise 
+
+    description = """For mutivariate data, the standardized Euclidean distance
+    (SED) takes the variance into consideration. If we assume all the vectors
+    are identically and independent multinormally distributed with a diagonal
+    covariance matrix (assuming the correlations are 0), the SED follows a
+    certain distribution associated with the dimension of the vector. Thus,
+    samples with SEDs higher than the cutoff are dubious and conflict to the
+    multinormal assumption.
+
+    The scripts estimate the variance according to the input data and calculate
+    the SEDs from all samples to the estimated center and also the sample pairwise
     SEDs by group.
-    
-    The output includes 3 plots for each group and 3 plots in the end for all 
+
+    The output includes 3 plots for each group and 3 plots in the end for all
     the samples altogether.
     """
-    
+
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
 
     group1 = parser.add_argument_group(description="Required Input")
@@ -57,26 +57,26 @@ def getOptions():
     return(args)
 
 def saveFigToPdf(pdf, SEDtoCenter, cutoff1, SEDpairwise, cutoff2, groupName, p):
-    
+
     # Call function to do a scatter plot on SEDs from samples to the center
     fig1 = plotSEDtoCenter(SEDtoCenter, cutoff1, groupName, p)
     pdf.savefig(fig1, bbox_inches='tight')
     plt.close(fig1)
-    
+
     # Call function to do a scatter plot on SEDs for pairwise samples
     fig2 = scatterPlotSEDpairwise(SEDpairwise, cutoff2, groupName, p)
     pdf.savefig(fig2, bbox_inches='tight')
     plt.close(fig2)
-    
+
     # Call function to do a boxplot on SEDs for pairwise samples
     fig3 = boxPlotSEDpairwise(SEDpairwise, cutoff2, groupName, p)
     pdf.savefig(fig3, bbox_inches='tight')
     plt.close(fig3)
-    
+
     return pdf
 
 def sortByCols(DF, colNames):
-    
+
     # Sort the columns of a dataframe by column names
     sortedDF = pd.DataFrame()
     for colName in colNames:
@@ -84,10 +84,10 @@ def sortByCols(DF, colNames):
     return sortedDF
 
 def SEDbyGroup(dat, wide, args):
-    
+
     # Start writing plots to pdf
     pdfOut = PdfPages(args.plot)
-    
+
     # Calculate and plot SEDs by group or not by group
     if not args.group:
         # Plot SEDs not by group and save the dataframe for output
@@ -106,17 +106,18 @@ def SEDbyGroup(dat, wide, args):
 
             # Change dat.sampleIDs to match the design file
             dat.sampleIDs = group.index
-            
+
             SEDtoCenter_group, cutoff1, SEDpairwise_group, cutoff2 = standardizedEulideanDistance(currentFrame, args.p)
-            pdfOut = saveFigToPdf(pdfOut, SEDtoCenter_group, cutoff1, SEDpairwise_group, cutoff2, 'in group ' + title, args.p)
-            
+
+            pdfOut = saveFigToPdf(pdfOut, SEDtoCenter_group, cutoff1, SEDpairwise_group, cutoff2, 'in group ' + str(title), args.p)
+
             SEDtoCenter_group['group'] = [title]*currentFrame.shape[1]
             SEDpairwise_group['group'] = [title]*currentFrame.shape[1]
             SEDtoCenter = pd.DataFrame.merge(SEDtoCenter, SEDtoCenter_group, on=['SED_to_Center', 'group'], left_index=True, right_index=True, how='outer', sort=False)
             SEDpairwise = pd.DataFrame.merge(SEDpairwise, SEDpairwise_group, on='group', left_index=True, right_index=True, how='outer', sort=False)
             cutoffForSEDtoCenter.loc[title] = cutoff1.values[0]
             cutoffForSEDpairwise.loc[title] = cutoff2.values[0]
-        
+
         # Do same plots on all samples together in the end
         cutoffForSEDtoCenter.loc['mean'] = cutoffForSEDtoCenter.mean()
         cutoffForSEDpairwise.loc['mean'] = cutoffForSEDpairwise.mean()
@@ -126,12 +127,12 @@ def SEDbyGroup(dat, wide, args):
         saveFigToPdf(pdfOut, SEDtoCenter, cutoffForSEDtoCenter.loc[['mean']], SEDpairwise, cutoffForSEDpairwise.loc[['mean']], '', args.p)
         SEDtoCenter.drop('group', axis=1, inplace=True)
         SEDpairwise.drop('group', axis=1, inplace=True)
-    
+
     pdfOut.close()
-    
+
     SEDtoCenter.to_csv(args.out1, sep='\t')
     SEDpairwise.to_csv(args.out2, sep='\t')
-    
+
     return SEDtoCenter, SEDpairwise
 
 def standardizedEulideanDistance(wide, p):
@@ -158,15 +159,15 @@ def standardizedEulideanDistance(wide, p):
 
     SEDtoCenter = dist.pairwise(wide.values.T, pd.DataFrame(colMean).T)
     SEDtoCenter = pd.DataFrame(SEDtoCenter, columns = ['SED_to_Center'], index = wide.columns)
-    
+
     # Calculate the pairwise standardized Euclidean Distance of all samples
     SEDpairwise = dist.pairwise(wide.values.T)
     SEDpairwise = pd.DataFrame(SEDpairwise, columns = wide.columns, index = wide.columns)
     for index, row in SEDpairwise.iterrows():
         SEDpairwise.loc[index, index] = np.nan
-    
+
     # Calculate cutoffs
-    # For SEDtoCenter: 
+    # For SEDtoCenter:
     #   Beta: sqrt((p-1)^2/p*(sum of n iid Beta(1/2, p/2)));        (It's the exact distribution.)
     #   Normal: sqrt(N((p-1)/p*n, 2*(p-2)*(p-1)^2/p^2/(p+1)*n));    (It's normal approximation. Works well when n is large.)
     #   Chisq: sqrt((p-1)/p*Chi-sq(n));                             (It's Chi-sq approximation. Works well when p is decent and p/n is not small.)
@@ -202,11 +203,11 @@ def addCutoff(fig, ax, cutoff, p):
     col = cutoff.columns
     for i in [0, 1, 2]:
         ax.axhline(val[i], color=colors[i], ls=lslist[i], lw=lwlist[i], label='{0} {1}% Cutoff: {2}'.format(col[i],round(p*100,3),round(val[i],1)))
-    
+
     return fig, ax
 
 def getRot(n):
-    
+
     # Set Rotation of labels according to the number of samples
     return min(90,max(0,((n-1)/4-1)*30))
 
@@ -217,7 +218,7 @@ def figInitiate(figWidth, colNames, figTitle):
     fig.suptitle(figTitle)
     ax.set_xlim(-0.5, -0.5+len(colNames))
     plt.xticks(range(len(colNames)), colNames)
-    
+
     return fig, ax
 
 def plotSEDtoCenter(SEDtoCenter, cutoff, groupName, p):
@@ -240,11 +241,11 @@ def plotSEDtoCenter(SEDtoCenter, cutoff, groupName, p):
 
     # Add a horizontal line above 95% of the data
     fig, ax = addCutoff(fig, ax, cutoff, p)
-    
+
     # Plot SED from samples to the center as scatter plot
     SEDtoCenter['index'] = range(pSamples)
     if 'group' in SEDtoCenter.columns:
-        # 'group' column only appear in the last plots for all samples. 
+        # 'group' column only appear in the last plots for all samples.
         # Separate data by group and plot all in one scatter plot with different colors
         kGroups = len(pd.Categorical(SEDtoCenter['group']).categories)
         groups = SEDtoCenter.groupby('group')
@@ -259,10 +260,10 @@ def plotSEDtoCenter(SEDtoCenter, cutoff, groupName, p):
     SEDtoCenter.drop('index', axis=1, inplace=True)
     ax.set_xlabel('Index')
     ax.set_ylabel('standardized Euclidean Distance')
-    
+
     plt.legend(fancybox=True, framealpha=0.5)
     plt.close(fig)
-    
+
     return fig
 
 def scatterPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
@@ -275,13 +276,13 @@ def scatterPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
         fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns[:-1], 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
     else:
         fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns, 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
-    
+
     # Add a horizontal line above 95% of the data
     fig, ax = addCutoff(fig, ax, cutoff, p)
-    
+
     # Plot SED from pairwise samples as scatter plot
     if 'group' in SEDpairwise.columns:
-        # 'group' column only appear in the last plots for all samples. 
+        # 'group' column only appear in the last plots for all samples.
         # Separate data by group and plot all in one scatter plot with different colors
         colorindex = pd.Categorical(SEDpairwise['group']).categories.get_indexer(SEDpairwise['group'])
         group = SEDpairwise['group']
@@ -302,20 +303,20 @@ def scatterPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
             XY.plot(kind='scatter', x='Index', y='SED', marker='+', color=colors[colorindex[i]], ax=ax, rot=getRot(pSamples))
         groupLabelled.append(group[i])
         ax.set_ylabel('standardized Euclidean Distance')
-        
+
     plt.legend(fancybox=True, framealpha=0.5)
     plt.close(fig)
-    
+
     return fig
-    
+
 def boxPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
-    
+
     # BoxPlot pairwise SED for samples
     # Everything is similar as the plot function above
     pSamples = SEDpairwise.shape[0]
-    
+
     if 'group' in SEDpairwise.columns:
-        # 'group' column only appear in the last plots for all samples. 
+        # 'group' column only appear in the last plots for all samples.
         # Separate data by group and plot all in one scatter plot with different colors
         # Create figure object with a single axis and initiate the fig
         fig, ax = plt.subplots(1, 1, figsize=(max(pSamples/4, 12), 8))
@@ -343,13 +344,13 @@ def boxPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
     else:
         fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns, 'Box-plots for pairwise standardized Euclidean Distance from samples {}'.format(groupName))
         SEDpairwise.boxplot(ax=ax, rot=getRot(pSamples), return_type='dict', showmeans=(pSamples<40), positions=range(0, pSamples), manage_xticks=False)
-    
+
     # Add a horizontal line above 95% of the data
     fig, ax = addCutoff(fig, ax, cutoff, p)
-    
+
     plt.legend(fancybox=True, framealpha=0.5)
     plt.close(fig)
-    
+
     return fig
 
 
@@ -370,17 +371,17 @@ def main(args):
 
     # Import data
     dat = wideToDesign(args.fname, args.dname, args.uniqID)
-    
+
     # Only interested in samples
     wide = dat.wide[dat.sampleIDs]
-    
+
     # Put warnings and get rid of rows with missing values
     if wide.isnull().sum().sum():
         nOriginal = wide.shape[0]
         print "Missing values detected. All missing rows removed. "
         wide = wide.dropna()
         print "Original rows: {0}; # of rows after drop: {1}".format(nOriginal, wide.shape[0])
-    
+
     # Calculate SED by group or not
     SEDbyGroup(dat, wide, args)
 
