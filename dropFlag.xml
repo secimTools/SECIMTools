@@ -35,7 +35,7 @@
         <param name="flags" type="data" format="tabular" label="Flag File"
                help="Input flagged dataset containing the flag value for each compound"/>
         <param name="cutoff" type="float" size="30"  value=".5" label="Cutoff Value"
-               help="All flag sums greater than this value will be deleted"/>
+               help="Input value for cutoff. Any rows with a flag average value greater than this number will be dropped."/>
         <param name="drop" type="select" size="30" display="radio" value="" label="Drop rows or columns"
                help="Choose whether to drop rows or columns">
             <option value="row" selected="true">Drop the row value</option>
