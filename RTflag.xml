@@ -88,8 +88,8 @@ This tool identifies features with the following characteristics:
 
     **90th percentile**  [Optional]
 
-        - The default is to flag features when the difference in the retention time between the 90th and 10th percentiles is greater
-          than 0.2 minutes. The user has the option to select the 95th and 5th percentiles instead.
+        - The default is to flag features when the difference in the retention time between the 95th and 5th percentiles is greater
+          than 0.2 minutes. The user has the option to select the 90th and 10th percentiles instead.
 
 --------------------------------------------------------------------------------
 
