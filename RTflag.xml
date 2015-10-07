@@ -54,8 +54,8 @@
 **What it does**
 
 This tool identifies features with the following characteristics:
-    (1) features whose coefficient of variation in retention time is greater than 90% (default value) of all features and
-    (2) features where the difference in the retention time between the 90th and 10th percentiles (default values) is greater than 0.2 minutes.
+    (1) features whose coefficient of variation in retention time is greater than 95% (default value) of all features and
+    (2) features where the difference in the retention time between the 95th and 10th percentiles (default values) is greater than 0.2 minutes.
     (3) features where the difference between the retention time maximum and median is greater than 0.1 minutes.
     (4) features where the difference between the retention time minimum and median is greater than 0.1 minutes.
     (5) features where the retention time minimum or maximum is greater than 3 times the standard deviation away from the mean.
