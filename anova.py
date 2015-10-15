@@ -368,7 +368,12 @@ def main(args):
     # Import data
     logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}\n\tGroup Column: {3}'.format(args.fname, args.dname, args.uniqID, args.group))
     dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group, clean_string=True)
+
+    # Drop missing values
+    dat.wide = dat.wide.dropna()
+
     results = initResults(dat)
+
 
     # Transpose the data
     dat.trans = dat.transpose()
