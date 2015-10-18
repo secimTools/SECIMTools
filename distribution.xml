@@ -31,6 +31,7 @@
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
     <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
+    <param name="runOrder" type="text" size="30" value="" optional="true" label="Run Order" help="Name of the column in your Metadata File that contains the Run Order of your samples."/>
   </inputs>
   <outputs>
     <data format="pdf" name="dist1" />
