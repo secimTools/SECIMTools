@@ -21,9 +21,9 @@
         #end if
     </command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
         <param name="group" type="text" size="30" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact" />
         <param name="p" type="text" size="30" label="Percentile cutoff [OPTIONAL]" help="The percentile cutoff for standard distributions. The default is 0.95. " />
     </inputs>
@@ -73,10 +73,10 @@ between each sample and the estimated center and (ii) the sample pairwise standa
 
     **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*
+      your features. In our example dataset you would input *Feature*
 
 
     @GROUP@

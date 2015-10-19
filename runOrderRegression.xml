@@ -17,9 +17,9 @@
       --table $order_summary
   </command>
   <inputs>
-    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
     <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
     <param name="order" type="text" size="30" value="" label="Run Order ID" help="Name of the column in your Metadata File that contains run order."/>
   </inputs>
@@ -47,7 +47,7 @@
 
 **What it does**
 
-This tool uses linear regression to identify potential relationships between sample run order and sample values.  If a linear relationship with run order is identified, further exploration may be warranted.   
+This tool uses linear regression to identify potential relationships between the order samples were run in and their values.  If a linear relationship with run order is identified, further exploration may be warranted.   
 
 --------------------------------------------------------------------------------
 
@@ -65,10 +65,10 @@ This tool uses linear regression to identify potential relationships between sam
 
 **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
         - The column name in your wide dataset that contains the unique IDs for
-          your compounds. In our example dataset you would input *Compound*.
+          your features. In our example dataset you would input *Feature*.
 
     @GROUP@
 
@@ -86,7 +86,7 @@ This tool uses linear regression to identify potential relationships between sam
     **runOrder_PDF** is a PDF containing the regression plots, one plot for each
     feature, where the x-axis is run order and the y-axis is value.  Only plots
     where the p- value was less than 0.05 are output as PDFs given that the
-    prediction is no linear association of run order vs value (i.e., slope = 0).
+    prediction is no linear association of run order with value (i.e., slope = 0).
     Features with a significant p-value are candidates for further investigation.
 
     .. image:: ${static_path}/images/secim/runOrder_plot.png

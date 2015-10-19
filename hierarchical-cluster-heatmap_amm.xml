@@ -19,8 +19,8 @@
     <param format="tabular" name="design" type="data" label="Select Metadata file." help="Dataset missing? See TIP below."/>
     <param name="group" type="text" label="Group/Treatment column in Metadata File to color samples by" help="Name of column in Metadata file containing group categories."/>
     <param format="tabular" name="anno" type="data" optional="true" label="Optional - Select Annotation File." help="Dataset missing? See TIP below."/>
-    <param name="cmpd" type="text" optional="true" label="Column containing unique Compound IDs in Annotation File" help="Name of column in Annotation File containing unique compound IDs."/>
-    <param name="a_col" type="text" optional="true" label="Column containing annotations to color compounds by." help="Name of the column in the annotation data set that contains the annotations for each unique compound/gene ID."/>
+    <param name="cmpd" type="text" optional="true" label="Column containing unique Feature IDs in Annotation File" help="Name of column in Annotation File containing unique feature/compound IDs."/>
+    <param name="a_col" type="text" optional="true" label="Column containing annotations to color features by." help="Name of the column in the annotation data set that contains the annotations for each unique feature/compound/gene ID."/>
   </inputs>
   <outputs>
     <data format="png" name="out_file1" />
@@ -34,7 +34,7 @@
 
 **What it does**
 
-This tool generates a Hierarchical Cluster Heatmap from a Wide Formated
+This tool generates a Hierarchical Cluster Heatmap from a Wide Format
 dataset, a Metadata dataset and an optional Annotation dataset.
 
 --------------------------------------------------------------------------------
@@ -56,10 +56,10 @@ dataset, a Metadata dataset and an optional Annotation dataset.
 
     @GROUP_OPTIONAL@
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*
+      your features. In our example dataset you would input *Features*
 
 
 **Optional Annotation File:**
@@ -69,7 +69,7 @@ dataset, a Metadata dataset and an optional Annotation dataset.
     An Annotation File relating features to pathways of interest::
 
         +------------+------------+
-        | Compound   | annotation |
+        | Feature    | annotation |
         +============+============+
         | compound1  |    a1      |
         | compound2  |    a1      |

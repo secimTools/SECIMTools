@@ -20,11 +20,11 @@
       #end if
   </command>
   <inputs>
-    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-    <param name="CVcutoff"  type="float" optional="true" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
-    <param name="group" type="text" size="30" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by groups in a column in the Metadata file, enter the column name. Spelling and capitalization must be exact" />
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
+    <param name="CVcutoff"  type="float" optional="true" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag the top 10% of features with the largest CV. If you want to set a CV cutoff, put the number here."/>
+    <param name="group" type="text" size="30" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by a column in the Metadata file, enter the column name. Spelling and capitalization must be exact" />
   </inputs>
   <outputs>
     <data format="pdf" name="CVplot"  label="CVplot" />
@@ -50,7 +50,7 @@
 
 **What it does**
 
-This tool calculates the coefficient of variation. Can be used to identify
+This tool calculates the coefficient of variation. Can be used to identify and flag
 features with larger than expected variability. Recommend using log transformed
 data.
 
@@ -69,14 +69,14 @@ data.
 
     **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*
+      your featuress. In our example dataset you would input *Feature*
 
     **Cvcutoff**   [Optional]
 
-    - Here you can opt to change the default CV cutoff used to generate the 0|1
+    - Here you can opt to change the default CV cutoff used to generate the 0/1
       indicator flags. The default CV cutoff (10 %) will flag features with a CV
       larger than 90 % of the features.
 
@@ -87,7 +87,7 @@ data.
 
 **Output Files**
 
-- This tool outputs a CV density plot and a text filed containing flags for
+- This tool outputs a CV density plot and a text file containing flags for
   features with a large CV.
 
     **CVplot_PDF** is a PDF of a CV density plot. If group information is

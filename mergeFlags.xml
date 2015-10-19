@@ -31,8 +31,8 @@
 
 **What it does**
 
-This tool takes in any number of flag files with the same index and merges them
-together into one easy-to-read table.  Since merging is done by index (e.g. 'compound'),
+This tool takes in any number of flag files containing the same index and merges them
+together into one easy-to-read table.  Since merging is done by index (e.g. 'Feature'),
 all files must contain the same index.  Flag files can also be merged to Wide Format datasets.
 
 --------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ all files must contain the same index.  Flag files can also be merged to Wide Fo
     A flag file corresponding to flagged values of of the wide and design files.::
 
         +----------+---------+---------+--------+-----+
-        | Compound | flag1   | flag2   | flag3  | ... |
+        | Feature  | flag1   | flag2   | flag3  | ... |
         +==========+=========+=========+========+=====+
         | one      | 0       | 0       | 1      | ... |
         | two      | 0       | 0       | 0      | ... |
@@ -58,19 +58,16 @@ all files must contain the same index.  Flag files can also be merged to Wide Fo
 
 
 
+    - Indexes (e.g. Feature column) must be the same for the data sets
 
-
-
-    - Indexes must be the same for the data sets
-
-    **In addition to your flag datasets, you may provide and optional dataset:**
+    **In addition to your flag datasets, you may provide an optional dataset:**
 
     **Wide Formatted Dataset:** [Optional]
 
     A wide formatted dataset that contains measurements for each sample.::
 
         +----------+---------+---------+---------+-----+
-        | Compound | sample1 | sample2 | sample3 | ... |
+        | Features | sample1 | sample2 | sample3 | ... |
         +==========+=========+=========+=========+=====+
         | one      | 10      | 20      | 10      | ... |
         | two      | 5       | 22      | 30      | ... |
@@ -83,7 +80,7 @@ all files must contain the same index.  Flag files can also be merged to Wide Fo
 
 **Output Files**
 
-- This tool outputs a TSV file containing all merged flag data sets
+- This tool outputs a TSV file containing all merged data sets
 
 
 </help>

@@ -10,18 +10,19 @@
 
     - (1) A row will be dropped when a pairwise comparison has a missing value.
     - (2) This script automatically removes spaces and special characters from strings.
-    - (3) If a compound name starts with a number it will prepend an '_'.
+    - (3) If a compound/feature name starts with a number it will prepend an '_'.
+    - (4) Input names are case sensitive and must match exactly (e.g use 'Feature' not 'feature').
 
---------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 
 </token>
 <token name="@WIDE@">
     **Wide Formatted Dataset**
 
     A wide formatted dataset that contains measurements for each sample.::
-
+    
         +----------+---------+---------+---------+-----+
-        | Compound | sample1 | sample2 | sample3 | ... |
+        | Feature | sample1 | sample2 | sample3 | ... |
         +==========+=========+=========+=========+=====+
         | one      | 10      | 20      | 10      | ... |
         | two      | 5       | 22      | 30      | ... |
@@ -30,13 +31,14 @@
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
+    **NOTE: The 'Feature' column defines the rows within a wide formatted dataset.
 </token>
 <token name="@METADATA@">
     **Metadata File:** A Metadata file relating samples to various
     groups/treatment.::
 
         +----------+--------+
-        | sampleID | group1 |
+        | sampleID | group |
         +==========+========+
         | sample1  | g1     |
         | sample2  | g1     |
@@ -54,7 +56,7 @@
     **Group/Treatment** [Optional]
 
     - The column name in your metadata file that contains group information. In
-      our example metadata file we would put *group1*. If provided samples will
+      our example metadata file we would put *group*. If provided samples will
       be colored by group.
 
 </token>
@@ -62,7 +64,7 @@
     **Group/Treatment**
 
     - The column name in your metadata file that contains group information. In
-      our example metadata file we would put *group1*.
+      our example metadata file we would put *group*.
 
 </token>
 </macros>

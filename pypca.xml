@@ -14,9 +14,9 @@
         --score_out $scores
     </command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
     </inputs>
     <outputs>
         <data format="tabular" name="loadings" label="${tool.name} on ${on_string}: loadings"/>
@@ -72,10 +72,10 @@ input data using a singular value decomposition based solution.
 
 **In addition to your datasets, you need to provide:**
 
-**Unique Compound ID**
+**Unique Feature ID**
 
 - The column name in your wide dataset that contains the unique IDs for
-  your compounds. In our example dataset you would input *Compound*.
+  your features. In our example dataset you would input *Feature*.
 
 --------------------------------------------------------------------------------
 

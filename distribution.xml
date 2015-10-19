@@ -27,9 +27,9 @@
       #end if
   </command>
   <inputs>
-    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Featre ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
     <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
     <param name="runOrder" type="text" size="30" value="" optional="true" label="Run Order" help="Name of the column in your Metadata File that contains the Run Order of your samples."/>
   </inputs>
@@ -74,10 +74,10 @@ This tool plots the distribution of your samples.
 
     **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*.
+      your features. In our example dataset you would input *Feature*.
 
 
       @GROUP_OPTIONAL@

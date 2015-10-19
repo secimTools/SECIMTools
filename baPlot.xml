@@ -29,9 +29,9 @@
 
   </command>
   <inputs>
-    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
     <param name="resid_cutoff" type="text" size="30" value="3" label="Outlier Cutoff" help="Residual cutoff value, this value will flag samples whose residuals are ≥ to cutoff value."/>
     <param name="sample_cutoff" type="text" size="30" value="0.2" label="Sample Flag Cutoff" help="Flag a sample as 1, if the proportion of features within a sample that are outliers exceeds this cutoff.[Number between 0-1]"/>
     <param name="feature_cutoff" type="text" size="30" value="0.05" label="Feature Flag Cutoff" help="Flag a feature, if the proportion of times this feature was identified as an outlier exceeds this cutoff.[Number between 0-1]"/>
@@ -69,13 +69,13 @@
 **What it does**
 
 The Bland-Altman plot (BA-Plot_) is commonly used to look at the concordance of
-data between samples, particularly between replicates. This script generates
+data between pairs of samples, particularly between replicates. This script generates
 BA-plots for all pairwise combinations of samples, or, if group information is
 provided, for pairwise combinations within the groups.
 
 .. _BA-Plot: http://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot
 
-In addition to generating the BA-plots, a linear regression is performed to
+In addition to generating the BA-plots, a linear regression is fit to
 identify (flag) any unusual outlying values. These flags are summarized and
 used to generate distribution plots and text files for (i) each sample and for
 (ii) each feature (row).
@@ -103,7 +103,7 @@ See below for a more in depth description of the output files.
     **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Compound*.
+      your features. In our example dataset you would input *Feature*.
 
     **Outlier Cutoff – flagging values**
 
@@ -111,13 +111,13 @@ See below for a more in depth description of the output files.
 
         - (1) If the magnitude of the residuals from the linear regression on
               the BA-plot exceeds the user-defined threshold, then a value is flagged
-              as an outlier. This cutoff can be adjusted, but the default is 3.
+              as an outlier. This cutoff can be adjusted by the user, the default is 3.
 
         - (2) If a value is identified as a leverage point using Cook's D with
               a p-value cutoff of 0.5, then the value is flagged. This cannot be
               adjusted.
 
-        - (3) If a value is identified as a leverage point using DFFITS it is
+        - (3) If a value is identified as a leverage point using the DFFITS technique it is
               also flagged. This cannot be adjusted.
 
     **Sample Flag Cutoff – flagging samples**
@@ -164,7 +164,7 @@ See below for a more in depth description of the output files.
 
     The left panel is a scatter plot comparing the two samples. The right
     panel is a BA-plot where the x-axis is the mean between the two samples and y-
-    axis is the difference.  Teh solid red line is a regression line and dotted
+    axis is the difference.  The solid red line is a regression line and dotted
     lines are 95% confidence intervals. Data highlighted in red are outliers as
     determined by any of the 3 criteria described above.
 
@@ -179,7 +179,8 @@ See below for a more in depth description of the output files.
         :width: 600
 
 
-    **flag_sample** is a TSV containing a 0/1 outlier flag for sample where '1'     indicates that the sample was idenfied as an outlier. If a sample is a '1',     you should consider removing the sample.
+    **flag_sample** is a TSV containing a 0/1 outlier flag for each sample where '1' indicates that the sample was identified as an outlier. 
+    If a sample is a '1', you should consider removing the sample.
 
     +----------+------------------------+
     | sampleID | flag_sample_BA_outlier |
@@ -197,7 +198,7 @@ See below for a more in depth description of the output files.
     **flag_feature** is a TSV containing a 0/1 flag for each feature where '1'  indicates that the feature was identified as an outlier. If a feature is a      '1', you should consider removing the feature.
 
     +----------+-------------------------+
-    | compound | flag_feature_BA_outlier |
+    | Feature  | flag_feature_BA_outlier |
     +==========+=========================+
     | one      | 0                       |
     +----------+-------------------------+

@@ -25,15 +25,15 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset"
-               help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+               help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Metadata File"
                help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID"
-               help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID"
+               help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
         <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]"
                help="Name of the column in your Metadata File that contains group classifications."/>
         <param name="flags" type="data" format="tabular" label="Flag File"
-               help="Input flagged dataset containing the flag value for each compound"/>
+               help="Input flagged dataset containing the flag value for each feature"/>
         <param name="cutoff" type="float" size="30"  value=".5" label="Cutoff Value"
                help="Input value for cutoff. Any rows with a flag average value greater than this number will be dropped."/>
         <param name="drop" type="select" size="30" display="radio" value="" label="Drop rows or columns"
@@ -70,12 +70,12 @@
 **What it does**
 
 This tool takes a Wide formatted dataset, a Metadata dataset and a file
-containing 0|1 indicator flags and drops values based on a user selected
-cutoff. For feature 0|1 indicator flags, features are dropped from the Wide
-dataset if the sum of all 0|1 indicator flags for a given feature is greater
-than a cutoff value input by the user. For sample 0|1 indicator flags, samples
-are dropped form the Wide dataset if the sum of all 0/1 indicator flags for a
-given sample is greater than a cutoff value input by the user. Note that
+containing 0/1 indicator flags and drops values based on a user selected
+cutoff value. For feature 0/1 indicator flags, features are dropped from the Wide
+dataset if the sum of all 0/1 indicator flags for a given feature is greater
+than the cutoff value input by the user. For sample 0/1 indicator flags, samples
+are dropped from the Wide dataset if the sum of all 0/1 indicator flags for a
+given sample is greater than the cutoff value input by the user. Note that
 features and samples are dropped in separate operations.
 
 --------------------------------------------------------------------------------
@@ -94,18 +94,18 @@ features and samples are dropped in separate operations.
 
     **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*
+      your features. In our example dataset you would input *Feature*
 
       @GROUP_OPTIONAL@
 
-    **Flag 0|1 Indicator File:** A flag indicator file corresponding to flagged
-    (0|1) values for features (shown below) or samples::
+    **Flag 0/1 Indicator File:** A flag indicator file corresponding to flagged
+    (0/1) values for features (shown below) or samples::
 
         +----------+---------+---------+---------+-----+
-        | Compound | flag_A | flag_B   | flag_C  | ... |
+        | Feature  | flag_A | flag_B   | flag_C  | ... |
         +==========+=========+=========+=========+=====+
         | one      | 0       | 0       | 0       | ... |
         | two      | 0       | 1       | 1       | ... |

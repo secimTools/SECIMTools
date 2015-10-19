@@ -27,10 +27,10 @@
         --fig $fig
     </command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Stacked Dataset"
-               help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="sampleID" label="Sample ID"
-               help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <param name="input" type="data" format="tabular" label="Tall Formatted Dataset"
+               help="Input dataset in tall format (see help below) and tab separated. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="featureID" label="Feauture ID"
+               help="Name of the column in your Tall Dataset that has unique feature/compound/gene IDs."/>
         <param name="xaxis" type="text" size="30" value="" label="Column name with X-value"/>
         <param name="yaxis" type="text" size="30" value="" label="Column name with Y-value"/>
         <param name="title" type="text" size="30" value="" optional="true" label="Plot title [Optiona]."/>
@@ -70,45 +70,71 @@ Generates a 2 dimensional scatter plot.
 
 **Input**
 
-- Two input datasets are required.
+**A Tall Formatted Dataset:**
+A tall formatted dataset that contains measurements for each sample.::
 
-    @WIDE@
+   +----------+-----+-----+-----+-----+
+    | sampleID | featureID  | peak area|
+    +==========+=====+=====+=====+=====+
+    | sample1  |     1     |    20     |
+    | sample1  |     2     |    22     |
+    | sample1  |     3     |    27     |
+    | sample2  |     1     |    18     |
+    | sample2  |     2     |    21     |
+    | sample2  |     3     |    24     |
+    |  ...     |     ...   |    ...    |
+    +----------+-----+-----+-----+-----+
 
-    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below) and Feature IDs must be unique.
 
 
-    @METADATA@
+**Feature ID**
 
-- In addition to your datasets, you need to provide:
+- The column name in your Tall format dataset that contains the unique feature/compound IDs.
 
-    **Sample ID**
+**Column name with X-value**
 
-        - The column name in your Tall and Metadata datasets that contains the unique IDs for your samples.  In our example dataset you would input *SampleID*.
+- The column name in your tall dataset that contains the x-value you want to plot (i.e., x1 or PC1)
 
-    **Column name with X-value**
+**Column name with Y-value**
 
-        - The column name in your Tall dataset that contains the values to be plotted on the X-axis.
+- The column name in your tall dataset that contains the y-value you want to plot (i.e., y1 or PC2)
 
-    **Column name with Y-value**
+**Plot title**  [Optional]
 
-        - The column name in your Tall file that contains the values to be plotted on the Y-axis.
+- Title to display on your plot.
 
-    **Plot title**  [Optional]
 
-        - Optional title to display on your plot
+**A Metadata Dataset:  Optional**
+A metatdata file relating samples to various groups or treatments.::
+
+    +----------+--------+---------+
+    | sampleID | group1 | runOrder|
+    +==========+========+=========+
+    | sample1  | g1     | 2       |
+    | sample2  | g1     | 3       |
+    | sample3  | g1     | 6       |
+    | sample4  | g2     | 1       |
+    | sample5  | g2     | 5       |
+    | sample6  | g2     | 4       |
+    | ...      | ...    | . . .   |
+    +----------+--------+---------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the SampleIDs in the tall
+    formatted dataset.
 
 
     @GROUP_OPTIONAL@
 
+**X-axis label**   [Optional]
 
-    **X-axis label**  [Optional]
+- Label to put on the X-axis
 
-        - Optional x-axis label to display on your plot
+**Y-axis label**  [Optional]
 
+- Label to put on the Y-axis
 
-    **Y-axis label**  [Optional]
-
-        - Optional y-axis label to display on your plot
 
 --------------------------------------------------------------------------------
 

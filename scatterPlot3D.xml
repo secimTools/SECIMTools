@@ -31,10 +31,10 @@
         --fig $fig
     </command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Stacked Dataset"
-               help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="uniqID" size="30" type="text" value="sampleID" label="Sample ID"
-               help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <param name="input" type="data" format="tabular" label="Tall Dataset"
+               help="Input dataset in tall format (see help section below) and tab separated. If not tab separated see TIP below."/>
+        <param name="uniqID" size="30" type="text" value="featureID" label="Feature ID"
+               help="Name of the column in your Tall Dataset that has unique feature/compound/gene IDs."/>
         <param name="xaxis" type="text" size="30" value="" label="Column name with X-value"/>
         <param name="yaxis" type="text" size="30" value="" label="Column name with Y-value"/>
         <param name="zaxis" type="text" size="30" value="" label="Column name with Z-value"/>
@@ -77,15 +77,26 @@ Generates a 3D scatter plot.
 
 **Input**
 
-    @WIDE@
+**A Tall Formatted Dataset:**
+A tall formatted dataset that contains measurements for each sample.::
 
+   +----------+-----+-----+-----+-----+
+    | sampleID | featureID  | peak area|
+    +==========+=====+=====+=====+=====+
+    | sample1  |     1     |    20     |
+    | sample1  |     2     |    22     |
+    | sample1  |     3     |    27     |
+    | sample2  |     1     |    18     |
+    | sample2  |     2     |    21     |
+    | sample2  |     3     |    24     |
+    |  ...     |     ...   |    ...    |
+    +----------+-----+-----+-----+-----+
 
-    @METADATA@
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below) and Feature IDs must be unique.
 
+**FeatureID**
 
-**Sample ID**
-
-- The column name in your Tall format dataset that contains sample information.
+- The column name in your Tall format dataset that contains the unique feature/compound IDs.
 
 **Column name with X-value**
 
@@ -103,6 +114,27 @@ Generates a 3D scatter plot.
 **Plot title**  [Optional]
 
 - Title to display on your plot.
+
+
+**A Metadata Dataset:**
+A metatdata file relating samples to various groups or treatments.::
+
+    +----------+--------+---------+
+    | sampleID | group1 | runOrder|
+    +==========+========+=========+
+    | sample1  | g1     | 2       |
+    | sample2  | g1     | 3       |
+    | sample3  | g1     | 6       |
+    | sample4  | g2     | 1       |
+    | sample5  | g2     | 5       |
+    | sample6  | g2     | 4       |
+    | ...      | ...    | . . .   |
+    +----------+--------+---------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the SampleIDs in the tall
+    formatted dataset.
+
 
 
 @GROUP_OPTIONAL@
