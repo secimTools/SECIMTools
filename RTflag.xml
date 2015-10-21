@@ -22,9 +22,9 @@
       #end if
   </command>
   <inputs>
-    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
     <param name="CVcutoff" optional="true" type="float" value=".1" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
     <param name="minutes" type="float" size="30" value=".2" label="Percentile Cutoff" help="Percenctile cutoff in minutes. The default value used is 0.2 minutes" />
     <param name="pctl" type="boolean" size="30" label="90th percentile [OPTIONAL]" help="Check this box to use a 90th percentile. The default is a 95th percentile (NO). [OPTIONAL]" />
@@ -76,10 +76,10 @@ This tool identifies features with the following characteristics:
 
 **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
         - The column name in your wide dataset that contains the unique IDs for
-          your compounds. In our example dataset you would input *Compound*.
+          your features. In our example dataset you would input *Feature*.
 
     **Cvcutoff**  [Optional]
 

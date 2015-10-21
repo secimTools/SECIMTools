@@ -13,9 +13,9 @@
         --designOut $designOut
     </command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Featrue ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
     </inputs>
     <outputs>
         <data format="tabular" name="wideOut" label="Wide data" />
@@ -43,7 +43,7 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 **What it does**
 
-This tool 'cleans' string names to avoid characters that could break one of the SECIM Galaxy Tools.
+This tool 'cleans' string names to avoid characters that could prevent one of the SECIM Galaxy Tools from executing properly.
 
 --------------------------------------------------------------------------------
 
@@ -61,17 +61,17 @@ This tool 'cleans' string names to avoid characters that could break one of the 
 
     **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*
+      your features. In our example dataset you would input *Feature*
 
 --------------------------------------------------------------------------------
 
 **Output Files**
 
 - This tool outputs 2 files where common illegal characters (e.g. slashes,
-  spaces, pound, etc.) have been removed from (1) the 'Unique Compound ID' in the
+  spaces, pound, etc.) have been removed from (1) the 'Unique Feature ID' in the
   wide dataset, (2) 'sampleID' in the wide dataset, and (3) the 'sampleID' column
   in the metadata file.
 

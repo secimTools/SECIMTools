@@ -17,7 +17,7 @@
       --fig2 $volcano_plots
   </command>
   <inputs>
-    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
     <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
@@ -66,6 +66,7 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
 
     - The column name in your wide dataset that contains the unique IDs for
       your compounds. In our example dataset you would input *Compound*.
+   
 
     @GROUP@
 
@@ -77,7 +78,7 @@ This tool outputs 3 different files.
 
     - **(1) results_table** is a `TSV` table that contains the One-Way-ANOVA
       results and the analysis of means. File headers follow the SAS JMP
-      Genomics conventions.
+      Genomics conventions (http://www.jmp.com/support/help/).
 
     - **(2) qq_plots** is a `PDF` file containing, for each sample, various
       plots of the residuals. Plots include (i) q-q plots to check for normality

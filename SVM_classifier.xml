@@ -87,7 +87,7 @@ This is a support vector machine (SVM) classification tool. Given a training dat
     - A wide formatted dataset that contains your training data.::
 
         +----------+---------+---------+---------+-----+
-        | Compound | sample1 | sample2 | sample3 | ... |
+        | Feature  | sample1 | sample2 | sample3 | ... |
         +==========+=========+=========+=========+=====+
         | one      | 10      | 20      | 10      | ... |
         | two      | 5       | 22      | 30      | ... |
@@ -115,7 +115,7 @@ This is a support vector machine (SVM) classification tool. Given a training dat
     - A wide formatted dataset that contains your target data, the data to which you want to asign goups.::
 
         +----------+---------+---------+---------+-----+
-        | Compound | sample1 | sample2 | sample3 | ... |
+        | Feature  | sample1 | sample2 | sample3 | ... |
         +==========+=========+=========+=========+=====+
         | A        | 10      | 20      | 10      | ... |
         | B        | 5       | 22      | 30      | ... |
@@ -126,7 +126,7 @@ This is a support vector machine (SVM) classification tool. Given a training dat
 
 **Metadata File for Target Dataset:**
 
-A metatdata file for the Target dataset. At minimum, a list of all sampleIDs in the Target dataset.::
+A metatdata file for the Target dataset. At a minimum, a list of all sampleIDs in the Target dataset.::
 
     +----------+
     | sampleID |
@@ -138,19 +138,19 @@ A metatdata file for the Target dataset. At minimum, a list of all sampleIDs in 
     +----------+
 
 
-    **NOTE:** The sampleIDs in the Wide format datasets must match the sampleIDs in their respective Metadata dataset. Extra columns will automatically be ignored.
+    **NOTE:** The sampleIDs in the Wide format datasets must match the sampleIDs in their respective Metadata datasets. Extra columns will automatically be ignored.
 
 
 **Column name for the class**
 
-    - The column name in your Metadata Training file that contains the group/treatment information.
-      In our example design file we would put *group*.
+    - The column name in your Metadata Training dataset that contains the group/treatment information.
+      In our example Metadata file we would put *group*.
 
 
 **Name of IDs**
 
 - The column name in your Wide Training and Target datasets that contains the unique IDs for
-  your compounds. In our example dataset you would input *Compound*.  Note the column name
+  your features/compounds. In our example dataset you would input *Feature*.  Note the column name
   must be the same in both Training and Target Datasets.
 
 
@@ -186,7 +186,7 @@ A metatdata file for the Target dataset. At minimum, a list of all sampleIDs in 
 **Output Files**
 
 **Classified_Target**:: is a TSV file of the Target Dataset with an additional column called
-'predicted_class' that contains the prediced group information for the indicated feature estimated by the SVM algorithm.
+'predicted_class' that contains the predicted group information for the indicated feature estimated by the SVM algorithm.
 
         +-----------------+----------+----------+----------+-----+
         | predicted_class | feature1 | feature2 | feature3 | ... |
@@ -204,8 +204,8 @@ A metatdata file for the Target dataset. At minimum, a list of all sampleIDs in 
 
 
 **Accuracy on the training set**:: is the accuracy (percentage) on the training dataset and dependent on the kenel
-type and associated parameters.  We recommend a good understanding of kernel types and their parameters.
-
+type and associated parameters.  We recommend a good understanding of kernel types and their parameters before using 
+this tool and interpreting output.
 
 </help>
 </tool>

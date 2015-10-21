@@ -22,9 +22,9 @@
       #end if
   </command>
   <inputs>
-    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
     <param name="nozero" type="select" size="30" display="radio" value="yes" label="Remove zeros before processing" help="If you do not remove zeros before processing, otherwise a zero will skew results.">
         <option value="yes">Remove zeros</option>
         <option value="no">Do not remove zeros</option>
@@ -76,10 +76,10 @@ high feature values for a particular sample.
 
     **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*
+      your features. In our example dataset you would input *Feature*
 
 
       @GROUP_OPTIONAL@
@@ -92,8 +92,8 @@ high feature values for a particular sample.
   Separating by group is recommended, where applicable.
 
     **Counts_table** is a TSV file with features as rows and samples as
-    columns. Values are the number of digits for a given feature-sample
-    combination. The maximum, minimum and differences are calculated for each
+    columns. Values are the number of digits, before a decimal, for a given feature-sample
+    combination. The maximum, minimum and difference are calculated for each
     feature. If groups are given, each groups generates a separate counts_table
 
     **Figure.png** is a plot of the differences between the maximum and minimum, by
