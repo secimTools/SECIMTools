@@ -10,7 +10,6 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import numpy as np
 import mpld3
 
 
@@ -29,11 +28,10 @@ def getOptions():
     group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
     group1.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
     group1.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name [pdf].")
-    group1.add_argument("--fig2", dest="ofig2", action='store', required=False, help="Output figure name [html].")
+    group1.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name [html].")
 
     group2 = parser.add_argument_group(title='Optional input', description='Optional input for districution script.')
     group2.add_argument("--group", dest="group", action='store', required=False, help="Name of column in design file with Group/treatment information.")
-    group2.add_argument('--order', dest='order', action='store', required=False, help='Name of the column with the runOrder')
     args = parser.parse_args()
     return(args)
 
@@ -93,32 +91,15 @@ def pltBoxplot(dat, ax):
     If no group information then color distribution lines by sample.
 
     """
-    #Geting colors per group
-    lab_group =  dict(dat.design[dat.group])
-    groups = dat.levels
-    colors = plt.cm.brg(np.arange(0,1,1.0/len(groups)))
-    group_color = {groups[i]:colors[i] for i in range(len(groups))}
-
-    #Changin run order
-    if dat.anno:
-        id_runOrder =  dict(dict(dat.design[dat.anno])['runOrder'])
-        samp = dat.wide[dat.sampleIDs]
-        cols = samp.columns.tolist()
-        runOrder = range(len(cols))
-        for i in range(len(cols)):
-            runOrder[id_runOrder[cols[i]]-1]=cols[i]
-        samp=samp[runOrder]
-    
+    samp = dat.wide[dat.sampleIDs]
     samp.boxplot(ax=ax, rot=45, return_type='dict')
-    for label in ax.xaxis.get_ticklabels():
-        label.set_color(group_color[lab_group[label.get_text()]])
     ax.set_title('Sample Distribution')
 
 
 def main(args):
     # Import data
     logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}\n\tGroup Column: {3}'.format(args.fname, args.dname, args.uniqID, args.group))
-    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group, anno=[args.order, ])
+    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
     dat.wide.convert_objects(convert_numeric=True)
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(20, 20))
