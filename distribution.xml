@@ -7,9 +7,19 @@
     <requirement type="python-module">mpld3</requirement>
     <requirement type="python-module">interface</requirement>
     <requirement type="python-module">logger</requirement>
+    <requirement type="python-module">numpy</requirement>
   </requirements>
   <command interpreter="python">
-      #if $group
+      #if $group and $runOrder
+      distribution.py
+      --input $input
+      --design $design
+      --ID $uniqID
+      --group $group
+      --order $runOrder
+      --fig $dist1
+      --fig2 $dist2
+      #else if $group
       distribution.py
       --input $input
       --design $design
@@ -31,6 +41,7 @@
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
     <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
+    <param name="runOrder" type="text" size="30" value="" optional="true" label="Run Order" help="Name of the column in your Metadata File that contains the Run Order of your samples."/>
   </inputs>
   <outputs>
     <data format="pdf" name="dist1" />
@@ -42,9 +53,10 @@
   <tests>
     <test>
         <param name="input" value="./test-data/test_data.tsv" />
-        <param name="design" value="./test-data/test_design.csv" />
+        <param name="design" value="./test-data/test_design.tsv" />
         <param name="uniqID" value="rowID" />
         <param name="group" value="treatment" />
+        <param name="order" value="runOrder" />
         <output name="dist1" file="./test-data/test_distribution_fig.pdf" />
         <output name="dist2" file="./test-data/test_distribution_fig2.html" />
     </test>
