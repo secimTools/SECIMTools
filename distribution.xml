@@ -1,5 +1,22 @@
 <tool id="distribution" name="Distribution Analysis">
   <description>Generate distributions for each sample.</description>
+  <command interpreter="python">
+      #if $group
+        distribution.py --input $input --design $design --ID $uniqID --group $group --fig $dist1 --fig2 $dist2
+      #else
+        distribution.py --input $input --design $design --ID $uniqID --fig $dist1 --fig2 $dist2
+      #end if
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="group" size="30" type="text" value="" optional="true" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+  </inputs>
+  <outputs>
+    <data format="pdf" name="dist1" />
+    <data format="html" name="dist2" />
+  </outputs>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">pandas</requirement>
@@ -7,91 +24,85 @@
     <requirement type="python-module">mpld3</requirement>
     <requirement type="python-module">interface</requirement>
     <requirement type="python-module">logger</requirement>
-    <requirement type="python-module">numpy</requirement>
   </requirements>
-  <command interpreter="python">
-      #if $group and $runOrder
-      distribution.py
-      --input $input
-      --design $design
-      --ID $uniqID
-      --group $group
-      --order $runOrder
-      --fig $dist1
-      --fig2 $dist2
-      #else if $group
-      distribution.py
-      --input $input
-      --design $design
-      --ID $uniqID
-      --group $group
-      --fig $dist1
-      --fig2 $dist2
-      #else
-      distribution.py
-      --input $input
-      --design $design
-      --ID $uniqID
-      --fig $dist1
-      --fig2 $dist2
-      #end if
-  </command>
-  <inputs>
-    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-    <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
-    <param name="runOrder" type="text" size="30" value="" optional="true" label="Run Order" help="Name of the column in your Metadata File that contains the Run Order of your samples."/>
-  </inputs>
-  <outputs>
-    <data format="pdf" name="dist1" />
-    <data format="html" name="dist2" />
-  </outputs>
-  <macros>
-      <import>macros.xml</import>
-  </macros>
+  <!-- TODO: uncomment the following test when we have tools.update_state() working for 
+       multiple dependents with the same dependency.
   <tests>
     <test>
-        <param name="input" value="./test-data/test_data.tsv" />
-        <param name="design" value="./test-data/test_design.tsv" />
-        <param name="uniqID" value="rowID" />
-        <param name="group" value="treatment" />
-        <param name="order" value="runOrder" />
-        <output name="dist1" file="./test-data/test_distribution_fig.pdf" />
-        <output name="dist2" file="./test-data/test_distribution_fig2.html" />
+      <param name="input" value="scatterplot_in1.tabular" ftype="tabular"/>
+      <param name="col1" value="2"/>
+      <param name="col2" value="3"/>
+      <param name="title" value="Scatterplot"/>
+      <param name="xlab" value="V1"/>
+      <param name="ylab" value="V2"/>
+      <output name="out_file1" file="scatterplot_out1.png" />
     </test>
   </tests>
-<help>
+  -->
+  <help>
 
-@TIP_AND_WARNING@
+.. class:: infomark
 
-**What it does**
-
-This tool plots the distribution of your samples.
+**TIP:** 
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 --------------------------------------------------------------------------------
 
-**Input**
+**Syntax**
 
-- Two input datasets are required.
+This tool plots the distribution of your samples. 
 
-    @WIDE@
+- Two input datasets are required. 
 
-    **NOTE:** The sample IDs must match the sample IDs in the Metadata File
-    (below). Extra columns will automatically be ignored.
+    **Wide Formatted Dataset:**
+
+    A wide formatted dataset that contains measurements for each sample.::
+
+        +----------+---------+---------+---------+-----+
+        | Compound | sample1 | sample2 | sample3 | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 10      | 20      | 10      | ... |
+        | two      | 5       | 22      | 30      | ... |
+        | three    | 30      | 27      | 2       | ... |
+        | four     | 32      | 17      | 8       | ... |
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below). 
+    Extra columns will automatically be ignored.
 
 
-    @METADATA@
+    **Design File:**
+    A design file relating samples to various groups/treatments.::
 
-    **In addition to your datasets, you need to provide:**
+        +----------+--------+
+        | sampleID | group1 |
+        +==========+========+
+        | sample1  | g1     |
+        | sample2  | g1     |
+        | sample3  | g1     |
+        | sample4  | g2     |
+        | sample5  | g2     |
+        | sample6  | g2     |
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE: You must have a column named *sampleID***
+    and the values in this column must match the columns names in the wide
+    formatted dataset. Extra columns will be ignored.
+
+- In addition to your datasets, you need to provide:
 
     **Unique Compound ID**
 
     - The column name in your wide dataset that contains the unique IDs for
       your compounds. In our example dataset you would input *Compound*.
 
+    **Group/Treatment** [Optional]
 
-      @GROUP_OPTIONAL@
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group1*. If provided samples will
+      be colored by group.
 
 --------------------------------------------------------------------------------
 
