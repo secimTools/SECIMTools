@@ -1,0 +1,22 @@
+ <section id="secim" name="SECIM Tools">
+      <tool file="secimtools/anova.xml"/>
+      <tool file="secimtools/baPlot.xml"/>
+      <tool file="secimtools/clean.xml"/>
+      <tool file="secimtools/countDigits.xml"/>
+      <tool file="secimtools/CVflag.xml"/>
+      <tool file="secimtools/distribution.xml"/>
+      <tool file="secimtools/dropFlag.xml"/>
+      <tool file="secimtools/hierarchical-cluster-heatmap_amm.xml"/>
+      <tool file="secimtools/log_transform.xml"/>
+      <tool file="secimtools/mergeFlags.xml"/>
+      <tool file="secimtools/onOff.xml"/>
+      <tool file="secimtools/pypca.xml"/>
+      <tool file="secimtools/RandomForest.xml"/>
+      <tool file="secimtools/RTflag.xml"/>
+      <tool file="secimtools/runOrderRegression.xml"/>
+      <tool file="secimtools/scatterPlot3D.xml"/>
+      <tool file="secimtools/scatterPlot.xml"/>
+      <tool file="secimtools/SVM_classifier.xml"/>
+      <tool file="secimtools/onOff.xml"/>
+      <tool file="secimtools/standardizedEuclideanDistance.xml"/>
+ </section>
