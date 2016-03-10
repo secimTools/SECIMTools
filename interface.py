@@ -77,8 +77,7 @@ class wideToDesign:
             self.uniqID = uniqID
             self.wide = pd.read_table(wide)
             if clean_string:
-                self.wide[self.uniqID] = self.wide[self.uniqID].apply(lambda x: self._cleanStr(x))
-
+                self.wide[str(self.uniqID)] = self.wide[str(self.uniqID)].apply(lambda x: self._cleanStr(x))
             # Make sure index is a string and not numeric
             self.wide[self.uniqID] = self.wide[self.uniqID].astype(str)
 
@@ -155,7 +154,8 @@ class wideToDesign:
                 for reverting back to original values.
 
         """
-        if isinstance(x, str):
+        if not isinstance(x, str):
+            x = str(x)
             val = x
             x = x.replace(' ', '_')
             x = x.replace('-', '_')
@@ -165,7 +165,9 @@ class wideToDesign:
             x = x.replace('(', '_')
             x = x.replace(')', '_')
             x = x.replace(')', '_')
+            x = x.replace('.', '_')
             x = re.sub(r'^([0-9].*)', r'_\1', x)
+            x = re.sub(r'^', 'c', x)
             self.origString[x] = val
         return x
 
