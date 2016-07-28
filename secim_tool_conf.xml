@@ -14,7 +14,7 @@
         <tool file="secimtools/log_transform.xml"/>
         <tool file="secimtools/mergeFlags.xml"/>
         <tool file="secimtools/onOff.xml"/>
-        <tool file="secimtools/pca.xml"/>
+        <tool file="secimtools/pypca.xml"/>
         <tool file="secimtools/peak_compare.xml"/>
         <tool file="secimtools/RandomForest.xml"/>
         <tool file="secimtools/RTflag.xml"/>
