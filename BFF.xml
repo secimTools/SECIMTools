@@ -1,0 +1,103 @@
+<tool id="BFF" name="Blank Feature Filtering">
+	<description>Filters data using blanks (BFF).</description>
+	<requirements>
+		<requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">logging</requirement>
+    <requirement type="python-module">logger</requirement>
+    <requirement type="python-module">interface</requirement>
+    <requirement type="python-module">flags</requirement>
+    <requirement type="python-module">math</requirement>
+    <requirement type="python-module">copy</requirement>
+	</requirements>
+	<command interpreter="python">
+			BFF.py
+      --input $input
+      --design $design
+      --uniqID $uniqID
+      --group $group
+      --blank $blank
+      --bff $bff
+      --outflags $outflags
+      --outbff $outbff
+	</command>
+	<inputs>
+		<param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
+    <param name="group" type="text" size="30" value="group" optional="true" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
+    <param name="blank" type="text" size="30" value="blank" optional="true" label="Blank Name" help="Name of the group in your Metadata File that contains the blanks. Used to calculate baseline in filtering."/>
+    <param name="bff" type="text" size="30" value="5000" optional="true" label="Default Limit of Detection" help="Default value to use as limit of detection."/>
+	</inputs>
+	<outputs>
+		<data format="tabular" name="outflags" label="BFF_flags"/>
+    <data format="tabular" name="outbff" label="BFF_value"/>
+	</outputs>
+	<macros>
+			<import>macros.xml</import>
+	</macros>
+	<tests>
+		<test>
+		<param name="input" value="./test-data/test_data.tsv" />
+        <param name="design" value="./test-data/test_design.tsv" />
+        <param name="group" value="treatment" />
+        <output name="outflags" file="./test-data/test_outflags.csv" />
+        <output name="outbff" file="./test-data/test_outbff.csv" />
+		</test>
+	</tests>
+<help>
+
+@TIP_AND_WARNING@
+
+**What it does**
+
+This tool uses blanks, if present in the data, to flag features below a detection limit.
+The BFFValue = (3 * SD of the blanks) + (the average of the blanks).  A feature is 
+flagged as below the detection limit if the (group mean - BFFValue) / BFFValue is 
+less than 100.
+--------------------------------------------------------------------------------
+
+**Input Files**
+
+- Two input datasets are required.
+
+		@WIDE@
+
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File
+    (below). Extra columns will automatically be ignored.
+
+
+    @METADATA@
+
+    **In addition to your datasets, you need to provide:**
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*.
+
+   ** Name of the Columns Containing the Blanks**
+
+    - The column name in your Metadata file that indicates which samples are 
+      blanks.
+
+   ** Name of the Columns Containing the Treatment Groups**
+
+    - The column name in your Metadata file that indicates treatment groups.
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+This tool outputs 2 different files:
+
+	- A `TABULAR` file containing BFF_Values for each feature/group combination.
+
+	- A `TABULAR` file containing binary (0/1) flags for whether a particular 
+	  feature is 'off' (flag_BFF_group = 1) or 'on' (flag_BFF_group = 0) for the 
+	  indicated treatment group.
+
+
+</help>
+</tool>
+
