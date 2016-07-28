@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # Built-in packages
 import re
 import sys
@@ -10,7 +9,7 @@ import pandas as pd
 
 class wideToDesign:
     """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, wide, design, uniqID, group=False, anno=False, clean_string=False):
+    def __init__(self, wide, design, uniqID, group=False, anno=False, clean_string=True, keepSample=True):
         """ Import and set-up data.
 
         Import data both wide formated data and a design file. Set-up basic
@@ -77,12 +76,15 @@ class wideToDesign:
             self.uniqID = uniqID
             self.wide = pd.read_table(wide)
             if clean_string:
-                self.wide[str(self.uniqID)] = self.wide[str(self.uniqID)].apply(lambda x: self._cleanStr(x))
+                self.wide[self.uniqID] = self.wide[self.uniqID].apply(lambda x: self._cleanStr(x))
+                self.wide.rename(columns= lambda x:self._cleanStr(x),inplace=True)
+
             # Make sure index is a string and not numeric
             self.wide[self.uniqID] = self.wide[self.uniqID].astype(str)
 
             # Set index to uniqID column
             self.wide.set_index(self.uniqID, inplace=True)
+                
         except:
             print "Please make sure that your data file has a column called '{0}'.".format(uniqID)
             raise ValueError
@@ -95,6 +97,10 @@ class wideToDesign:
             self.design['sampleID'] = self.design['sampleID'].astype(str)
             self.design.set_index('sampleID', inplace=True)
 
+            # Cleaning design file
+            if clean_string:
+                self.design.rename(index= lambda x:self._cleanStr(x),inplace=True)
+
             # Create a list of sampleIDs, but first check that they are present
             # in the wide data.
             self.sampleIDs = list()
@@ -102,6 +108,17 @@ class wideToDesign:
             for sample in self.design.index.tolist():
                 if sample in self.wide.columns:
                     self.sampleIDs.append(sample)
+                else:
+                    print "WARNING - Sample {0} missing on wide dataset".format(sample)
+
+
+            for sample in self.wide.columns.tolist():
+                if not (sample in self.design.index):
+                    if keepSample:
+                        print "WARNING - Sample {0} missing on design file".format(sample)
+                    else:
+                        print "ERROR - Sample {0} missing on design file".format(sample)
+                        raise
 
             # Drop design rows that are not in the wide data set
             self.design = self.design[self.design.index.isin(self.sampleIDs)]
@@ -136,6 +153,10 @@ class wideToDesign:
         else:
             self.group = None
 
+        #Just keeping samples listed in design file
+        if keepSample:
+            self.keep_sample(self.sampleIDs)
+
     def _cleanStr(self, x):
         """ Clean strings so they behave.
 
@@ -154,20 +175,23 @@ class wideToDesign:
                 for reverting back to original values.
 
         """
-        if not isinstance(x, str):
-            x = str(x)
+        if isinstance(x, str):
             val = x
             x = x.replace(' ', '_')
+            x = x.replace('.', '_')
             x = x.replace('-', '_')
             x = x.replace('*', '_')
             x = x.replace('/', '_')
             x = x.replace('+', '_')
             x = x.replace('(', '_')
             x = x.replace(')', '_')
-            x = x.replace(')', '_')
-            x = x.replace('.', '_')
+            x = x.replace('[', '_')
+            x = x.replace(']', '_')
+            x = x.replace('{', '_')
+            x = x.replace('}', '_')
+            x = x.replace('"', '_')
+            x = x.replace('\'', '_')
             x = re.sub(r'^([0-9].*)', r'_\1', x)
-            x = re.sub(r'^', 'c', x)
             self.origString[x] = val
         return x
 
@@ -270,199 +294,143 @@ class wideToDesign:
         self.wide = self.wide[self.sampleIDs]
         self.design = self.design[self.design.index.isin(self.sampleIDs)]
 
+    def removeSingle(self):
+        for level,current in self.design.groupby(self.group):
+            if len(current) < 2:
+                self.design.drop(current.index, inplace=True)
+                self.wide.drop(current.index, axis=1, inplace=True)
+                print "Your group '{0}' has only one element, this group is going to be remove to perform further calculations.".format(level)
 
-class Flags:
-    def __init__(self, index):
-        """
-        This class  creates an empty dataframe to hold the flag values for a dataset. The dataframe is created
-        through instantiation and filled with 0's.
 
-        Arguments:
+class annoFormat:
+    """ Class to handle generic data in a wide format with an associated design file. """
+    def __init__(self, anno, uniqID, mz, rt, clean_string=True):
+        """ Import and set-up data.
 
-            :param index: List of values to be used as the index of the data frame
-            :type index: list
-
-            :param column: Column name for the dataframe
-            :type column: string
-
-        """
-        # Create DataFrame from index and columns
-        self.df_flags = pd.DataFrame(index=index)
-
-        # Create a list to store column names
-        self._columns = list()
-
-    def _testIfIndexesMatch(self, mask):
-        """
-        Before laying a mask over the Flags DataFrame, test if the mask's
-        indexes match to avoid errors.
+        Import data both wide formated data and a design file. Set-up basic
+        attributes.
 
         :Arguments:
-            :param mask: List of True and False values corresponding to flag
-                         values.
-            :type mask: list
+            wide (TSV): A table in wide format with compounds/genes as rows and
+                samples as columns.
+
+                Name     sample1   sample2   sample3
+                ------------------------------------
+                one      10        20        10
+                two      10        20        10
+
+            design (TSV): A table relating samples ('sampleID') to groups or
+                treatments.
+
+                sampleID   group1  group2
+                -------------------------
+                sample1    g1      t1
+                sample2    g1      t1
+                sample3    g1      t1
+
+            uniqID (str): The name of the unique identifier column in 'wide'
+                (i.e. The column with compound/gene names).
+
+            group (str): The name of column names in 'design' that give
+                group information. For example: treatment
+
+            clean_string (bool): If True remove special characters from strings
+                in dataset.
+
+            anno (list): A list of additional annotations that can be used to group
+                items.
 
         :Returns:
-            :type boolean: True or false if the indexes match
+            **Attribute**
+
+            self.uniqID (str): The name of the unique identifier column in 'wide'
+                (i.e. The column with compound/gene names).
+
+            self.wide (pd.DataFrame): A wide formatted table with compound/gene
+                as row and sample as columns.
+
+            self.sampleIDs (list): A list of sampleIDs. These will correspond
+                to columns in self.wide.
+
+            self.design (pd.DataFrame): A table relating sampleID to groups.
+
+            self.group (list): A list of column names in self.design that give
+                group information. For example: treatment, tissue
+
+            anno (list): A list of additional annotations that can be used to group
+                items.
+
+            self.levels (list): A list of levels in self.group. For example:
+                trt1, tr2, control.
 
         """
+        self.origString = dict()
 
-        result = self.df_flags.index.isin(mask.index).any()
-        return result
+        # Import anno formatted data file
+        try:
+            self.uniqID = uniqID
+            self.mz = mz
+            self.rt = rt
 
-    def update(self, mask, column=''):
-        """
-        Update the dataframe with 1's if the mask value is true
+            #Trying to import
+            self.anno = pd.read_table(anno)
+
+            if clean_string:
+                self.anno[self.uniqID] = self.anno[self.uniqID].apply(lambda x: self._cleanStr(x))
+                self.anno.rename(columns= lambda x:self._cleanStr(x),inplace=True)
+
+            # Make sure index is a string and not numeric
+            self.anno[self.uniqID] = self.anno[self.uniqID].astype(str)
+
+            # Set index to uniqID column
+            self.anno.set_index(self.uniqID, inplace=True)
+
+            # Ignoring not mz or rt columns
+            self.anno = self.anno[[self.mz,self.rt]]
+                
+        except:
+            print "Please make sure that your data file have columns called '{0}','{1}' and '{2}'.".format(uniqID,mz,rt)
+            raise ValueError
+
+
+
+    def _cleanStr(self, x):
+        """ Clean strings so they behave.
+
+        For some modules, uniqIDs and groups cannot contain spaces, '-', '*',
+        '/', '+', or '()'. For example, statsmodel parses the strings and interprets
+        them in the model.
 
         :Arguments:
-            :param mask: List of mask values. Must follow same structure as instantiated flag dataframe
-            :type mask: list
-
-            :param column: Column name to update in the flag frame. Not required
-            :type column: String
+            x (str): A string that needs cleaning
 
         :Returns:
-            Updated instance of the flag dataframe. The dataframe can be accessed through '.df_flags'.
+            x (str): The cleaned string.
+
+            self.origString (dict): A dictionary where the key is the new
+                string and the value is the original string. This will be useful
+                for reverting back to original values.
 
         """
-
-        # Update the values to 1's if they are true in the mask
-        if len(column) > 0:
-            if self._testIfIndexesMatch(mask):
-                self.df_flags.loc[mask.index, column] = mask.astype(int)
-        else:
-            self.df_flags.loc[mask.index, self._columns] = mask.astype(int)
-
-    def addColumn(self, column, mask=[]):
-        """
-        Add a column to the flag DataFrame
-
-        :Arguments:
-            :param column: Name of the column to add to the DataFrame
-            :type column: string | list of strings
-
-            :param mask: List of True and False values corresponding to flag
-                         values. OPTIONAL
-            :type mask: list
-
-        """
-        self.df_flags[column] = 0
-
-        # Store column names
-        if isinstance(column, str):
-            self._columns.append(column)
-        else:
-            self._columns.extend(column)
-
-        # Update the column if a mask is given and the mask matches the index
-        if len(mask) > 0:
-            self.update(mask=mask, column=column)
-
-    def fillNa(self):
-        """
-        Fill the flag DataFrame with np.nan
-        """
-
-        # Fill the 0's with numpy.nan
-        self.df_flags.replace(0, np.nan, inplace=True)
-
-    def testOverlap(self, indices):
-        """ Test if a list of indeces overlap. """
-
-        # TODO: Trying to figure out the best algorithm to test if indeces are
-        # the sam.
-        for i, index in enumerate(indices):
-            if i == 0:
-                overlap = set(index)
-            else:
-                if overlap.intersection(set(index)):
-                    overlap = overlap.union(set(index))
-
-    def splitFlags(self):
-        """ Split large DataFrame into individual DataFrames per column
-
-        :Returns:
-            :rtype: dictionary
-            :returns: Dictionary of pandas.DataFrame
-
-        """
-        # List to hold dataframes
-        df_list= []
-
-        # Loop through columns and build a dataframe
-        for column in self._columns:
-            exec('df_' + str(column) + '= pd.DataFrame(' +
-                    'data=self.df_flags[column], index=self.df_flags.index,' +
-                    'columns=[column])')
-            # Add newly created DataFrame to df dictionary
-            exec('df_dict.append(df_' + str(column) + ')')
-
-        # Return df_dict
-        return df_list
-
-    @staticmethod
-    def _mergeIndex(indices):
-        """ Function to check for overlap for a list of indices.
-
-        This function is based on:
-        http://stackoverflow.com/questions/9110837/python-simple-list-merging-based-on-intersections
-
-        :param list indices: A list of pd.Index
-
-        """
-        # Convert index into set
-        sets = [set(ind) for ind in indices if len(ind)]
-        merged = 1
-        while merged:
-            merged = 0
-            results = []
-            while sets:
-                common, rest = sets[0], sets[1:]
-                sets = []
-                for x in rest:
-                    if x.isdisjoint(common):
-                        # If they don't overlap then append
-                        sets.append(x)
-                    else:
-                        # If they overlap, take the union
-                        merged = 1
-                        common |= x
-                results.append(common)
-            sets = results
-        return sets
-
-    @staticmethod
-    def merge(flags):
-        """
-        Merge a list of DataFrames. This method will check to make sure all of the indices are the same for each
-        DataFrame and will then return one merged DataFrame.
-
-        :Arguments:
-
-            :param flags: List of DataFrames
-            :type flags: list
-
-        :Returns:
-
-            :return: DataFrame of merged flags
-            :rtype: pandas.DataFrame
-
-        """
-        # Check the index of each dataframe before trying to merge
-        mergeIndex = Flags._mergeIndex([x.index for x in flags])
-
-        if len(mergeIndex) == 1:
-            # Merge all flags together
-            # NOTE: Pandas cannot store NAN values as a int. If there are NAN
-            # then the column is converted to a float.
-            df_mergedFlags = pd.concat(flags, axis=1)
-
-            # Return merged flag file
-            return df_mergedFlags
-        else:
-            print "Not all indexes overlap. Check that flags are features OR \
-                   samples."
-            raise SystemExit
+        if isinstance(x, str):
+            val = x
+            x = x.replace(' ', '_')
+            x = x.replace('.', '_')
+            x = x.replace('-', '_')
+            x = x.replace('*', '_')
+            x = x.replace('/', '_')
+            x = x.replace('+', '_')
+            x = x.replace('(', '_')
+            x = x.replace(')', '_')
+            x = x.replace('[', '_')
+            x = x.replace(']', '_')
+            x = x.replace('{', '_')
+            x = x.replace('}', '_')
+            x = x.replace('"', '_')
+            x = x.replace('\'', '_')
+            x = re.sub(r'^([0-9].*)', r'_\1', x)
+            self.origString[x] = val
+        return x
 
 
 if __name__ == '__main__':
