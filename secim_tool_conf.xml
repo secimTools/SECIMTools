@@ -13,6 +13,7 @@
         <tool file="secimtools/mergeFlags.xml"/>
         <tool file="secimtools/onOff.xml"/>
         <tool file="secimtools/pypca.xml"/>
+        <tool file="secimtools/pca.xml"/>
         <tool file="secimtools/RandomForest.xml"/>
         <tool file="secimtools/RTflag.xml"/>
         <tool file="secimtools/runOrderRegression.xml"/>
