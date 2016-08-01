@@ -1,10 +1,11 @@
-<tool id="pca2" name="Principal Component Analysis (beta)" version="2.0.0">
+<tool id="pca" name="Principal Component Analysis (Beta)" version="2.0.0">
     <description>"Calculates PCA on a dataset and plots the first 3 principal components"</description>
     <requirements>
         <requirement type="python-module">sklearn</requirement>
         <requirement type="python-module">pandas</requirement>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">palettable</requirement>
     </requirements>
     <command interpreter="python">
         pca.py
