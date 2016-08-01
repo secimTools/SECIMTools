@@ -1,25 +1,15 @@
 #!/usr/bin/env python
-################################################################################
-# Date: 2016/July/07
-# 
-# Module: standarizedEuclideanDistance.py
-#
-# VERSION: 1.0
-# 
-# AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
-#
-# DESCRIPTION: This program does a pairwise and to mean  standarized euclidean
-#               comparison for a given dataset.
-#
-################################################################################
 
 # Built-in packages
 import argparse
+from argparse import RawDescriptionHelpFormatter
 import logging
 import os
 
 # Add-on packages
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as stats
@@ -28,12 +18,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 # Local packages
 from interface import wideToDesign
-from manager_figure import figureHandler
-import  module_scatter as  scatter
-import manager_color as ch
-import logger as sl
-import module_box as box
-import module_lines as lines
+from flags import Flags
 
 def getOptions():
     """ Function to pull in arguments """
@@ -47,450 +32,358 @@ def getOptions():
     multinormal assumption.
 
     The scripts estimate the variance according to the input data and calculate
-    the SEDs from all samples to the estimated Mean and also the sample 
-    pairwise SEDs by group.
+    the SEDs from all samples to the estimated center and also the sample pairwise
+    SEDs by group.
 
     The output includes 3 plots for each group and 3 plots in the end for all
     the samples altogether.
     """
 
-    parser = argparse.ArgumentParser(description=description, formatter_class=
-                                    argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
 
-    standard = parser.add_argument_group(description="Required Input")
-    standard.add_argument("-i","--input", dest="input", action='store',required=True,
-                         help="Dataset in Wide format")
-    standard.add_argument("-d","--design", dest="design", action='store', 
-                         required=True, help="Design file")
-    standard.add_argument("-id","--ID", dest="uniqID", action='store', required=True, 
-                         help="Name of the column with unique identifiers.")
+    group1 = parser.add_argument_group(description="Required Input")
+    group1.add_argument("--input", dest="fname", action='store', required=True, help="Dataset in Wide format")
+    group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file")
+    group1.add_argument("--ID", dest = "uniqID", action = 'store', required = True, help = "Name of the column with unique identifiers.")
+    group1.add_argument("--SEDplotOutFile", dest="plot", action='store', required=True, help="PDF Output of standardized Euclidean distance plot")
+    group1.add_argument("--SEDtoCenter", dest="out1", action='store', required=True, help="TSV Output of standardized Euclidean distances from samples to the center")
+    group1.add_argument("--SEDpairwise", dest="out2", action='store', required=True, help="TSV Output of sample-pairwise standardized Euclidean distances")
 
-    output = parser.add_argument_group(description="Output Files")
-    output.add_argument("-f", "--figure", dest="figure", action='store', 
-                        required=True, help="""PDF Output of standardized 
-                        Euclidean distance plot""")
-    output.add_argument("-m","--SEDtoMean", dest="toMean", action='store', 
-                        required=True, help="""TSV Output of standardized 
-                        Euclidean distances from samples to the mean.""")
-    output.add_argument("-pw","--SEDpairwise", dest="pairwise", action='store', 
-                        required=True, help="""TSV Output of sample-pairwise 
-                        standardized Euclidean distances.""")
-
-    optional = parser.add_argument_group(description="Optional Input")
-    optional.add_argument("-g","--group", dest="group",default=False, action='store', 
-                        required=False, help="Treatment group")
-    optional.add_argument("-o","--order",dest="order",action="store",
-                        default=False,help="Run Order")
-    optional.add_argument("-p","--per", dest="p", action='store', required=False, 
-                        default=0.95, type=float, help="""The percentile cutoff 
-                        for standard distributions. The default is 0.95. """)
-    optional.add_argument("-l","--levels",dest="levels",action="store", 
-                        required=False, default=False, help="""Different groups to
-                         sort by separeted by comas.""")
-    optional.add_argument("-lg","--log",dest="log",action="store",required=False, 
-                        default=False,help="Log file")
+    group2 = parser.add_argument_group(description="Optional Input")
+    group1.add_argument("--group", dest="group", action='store', required=False, help="Treatment group")
+    group2.add_argument("--p", dest="p", action='store', required=False, default=0.95, type=float, help="The percentile cutoff for standard distributions. The default is 0.95. ")
 
     args = parser.parse_args()
     return(args)
 
-def plotCutoffs(cut_S,ax,p):
-    """
-    Plot the cutoff lines to each plot
+def saveFigToPdf(pdf, SEDtoCenter, cutoff1, SEDpairwise, cutoff2, groupName, p):
 
-    :Arguments:
-        :type cut_S: pandas.Series
-        :param cut_S: contains a cutoff value, name and color
+    # Call function to do a scatter plot on SEDs from samples to the center
+    fig1 = plotSEDtoCenter(SEDtoCenter, cutoff1, groupName, p)
+    pdf.savefig(fig1, bbox_inches='tight')
+    plt.close(fig1)
 
-        :type ax: matplotlib.axes._subplots.AxesSubplot
-        :param ax: Gets an ax project.
-
-        :type p: float
-        :param p: percentile of cutoff
-    """
-    lines.drawCutoffHoriz(ax=ax,y=float(cut_S.values[0]),
-            cl=cutPalette.ugColors[cut_S.name],
-            lb="{0} {1}% Cutoff: {2}".format(cut_S.name,round(p*100,3),
-            round(float(cut_S.values[0]),1)),ls="--",lw=2)
-
-def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, levels):
-    """
-    Manage all the plots for this script
-
-    :Arguments:
-        :type SEDData: pandas.dataFrame
-        :param SEDData: Contains SED data either to Mean or pairwise
-
-        :type design: pandas.dataFrame
-        :param design: Design file after getColor
-
-        :type pdf: PDF object
-        :param pdf: PDF for output plots
-
-        :type groupName: string
-        :param groupName: Name of the group (figure title).
-
-        :type cutoff: pandas.dataFrame
-        :param cutoff: Cutoff values, beta, chi-sqr and normal.
-
-        :type p: float
-        :param p: Percentil for cutoff.
-
-        :type plotType: string
-        :param plotType: Type of plot, the possible types are scatterplot to mean
-            scatterplot pairwise and boxplot pairwise.
-
-    """
-
-    #Geting number of features in dataframe
-    nFeatures = len(SEDData.index)
-
-    #Calculates the widht for the figure base on the number of features
-    figWidth = max(nFeatures/4, 12)
-
-    # Create figure object with a single axis and initiate the figss
-    figure = figureHandler(proj='2d', figsize=(figWidth, 8))
-
-    # Choose type of plot
-    # Plot scatterplot to mean
-    if(plotType=="scatterToMean"):
-        #Adds Figure title, x axis limits and set the xticks
-        figure.formatAxis(figTitle="Standardized Euclidean Distance from samples {} to the mean".
-                        format(groupName),xlim=(-0.5,-0.5+nFeatures),ylim="ignore",
-                        xticks=SEDData.index.values,xTitle="Index",
-                        yTitle="Standardized Euclidean Distance")
-
-        #Plot scatterplot quickplot
-        scatter.scatter2D(ax=figure.ax[0],colorList=design["colors"],
-                        x=range(len(SEDData.index)), y=SEDData["SED_to_Mean"])
-
-    #Plot scatterplot pairwise
-    elif(plotType=="scatterPairwise"):
-        # Adds Figure title, x axis limits and set the xticks
-        figure.formatAxis(figTitle="Pairwise standardized Euclidean Distance from samples {}".
-                        format(groupName),xlim=(-0.5,-0.5+nFeatures),ylim="ignore",
-                        xticks=SEDData.index.values,xTitle="Index",
-                        yTitle="Standardized Euclidean Distance")
-
-        # Plot scatterplot
-        for index in SEDData.index.values:
-            scatter.scatter2D(ax=figure.ax[0],colorList=design["colors"][index],
-                            x=range(len(SEDData.index)), y=SEDData[index])
-
-    #Plot boxplot pairwise
-    elif(plotType=="boxplotPairwise"):
-        # Add Figure title, x axis limits and set the xticks
-        figure.formatAxis(figTitle="Box-plots for pairwise standardized Euclidean Distance from samples {}".
-                        format(groupName),xlim=(-0.5,-0.5+nFeatures),ylim="ignore",
-                        xticks=SEDData.index.values,xTitle="Index",
-                        yTitle="Standardized Euclidean Distance")
-        # Plot Box plot
-        box.boxDF(ax=figure.ax[0], colors=design["colors"].values, dat=SEDData)
-
-    #Add a cutoof line
-    cutoff.apply(lambda x: plotCutoffs(x,ax=figure.ax[0],p=p),axis=0)
-    figure.shrink()
-    # Plot legend
-    figure.makeLegend(figure.ax[0], ugColors, levels)
-
-    # Add figure to PDF and close the figure afterwards
-    figure.addToPdf(pdf)
-
-def prepareSED(data_df, design, pdf, groupName, p, ugColors, levels):
-    """
-    Core for processing all the data.
-
-    :Arguments:
-        :type data_df: pandas.Series.
-        :param data_df: contains a cutoff value, name and color.
-
-        :type design: matplotlib.axes._subplots.AxesSubplot.
-        :param design: Gets an ax project.
-
-        :type pdf: PDF object.
-        :param pdf: PDF for output plots.
-
-        :type groupName: string.
-        :param groupName: Name of the group (figure title).
-
-        :type p: float.
-        :param p: percentile of cutoff.
-
-    :Returns:
-        :rtype pdf: PDF object.
-        :return pdf: PDF for output plots.
-
-        :rtype SEDtoMean: pd.DataFrames
-        :return SEDtoMean: SEd for Mean
-        
-        :rtype SEDpairwise: pd.DataFrames
-        :return SEDpairwise: SED for pairwise data
-    """
-    #Calculate SED without groups
-    SEDtoMean, SEDpairwise = getSED(data_df)
-
-    #Calculate cutOffs
-    cutoff1,cutoff2 = getCutOffs(data_df, p)
-
-    # Call function to do a scatter plot on SEDs from samples to the Mean
-    makePlots(SEDtoMean, design, pdf, groupName, cutoff1, p, "scatterToMean",
-                ugColors, levels)
-
-    #Call function to do a scatter plot on SEDs for pairwise samples
-    makePlots(SEDpairwise, design, pdf, groupName, cutoff2, p, "scatterPairwise",
-                ugColors, levels)
+    # Call function to do a scatter plot on SEDs for pairwise samples
+    fig2 = scatterPlotSEDpairwise(SEDpairwise, cutoff2, groupName, p)
+    pdf.savefig(fig2, bbox_inches='tight')
+    plt.close(fig2)
 
     # Call function to do a boxplot on SEDs for pairwise samples
-    makePlots(SEDpairwise, design, pdf, groupName, cutoff2, p, "boxplotPairwise",
-                ugColors, levels)
+    fig3 = boxPlotSEDpairwise(SEDpairwise, cutoff2, groupName, p)
+    pdf.savefig(fig3, bbox_inches='tight')
+    plt.close(fig3)
 
-    #Returning data
-    return pdf, SEDtoMean, SEDpairwise
+    return pdf
 
-def calculateSED(dat, levels, combName, pdf, p):
-    """
-    Manage all the plots for this script
+def sortByCols(DF, colNames):
 
-    :Arguments:
-        :type dat: wideToDesign
-        :param dat: Contains data parsed by interface
+    # Sort the columns of a dataframe by column names
+    sortedDF = pd.DataFrame()
+    for colName in colNames:
+        sortedDF[colName] = DF[colName]
+    return sortedDF
 
-        :type args: argparse.data
-        :param args: All input data
+def SEDbyGroup(dat, wide, args):
 
-        :type levels: string
-        :param levels: Name of the column on desing file (after get colors)
-                         with the name of the column containing the combinations.
+    # Start writing plots to pdf
+    pdfOut = PdfPages(args.plot)
 
-        :type combName: dictionary 
-        :param combName: dictionary with colors and different groups
-    """
-    
+    # Calculate and plot SEDs by group or not by group
+    if not args.group:
+        # Plot SEDs not by group and save the dataframe for output
+        SEDtoCenter, cutoffForSEDtoCenter, SEDpairwise, cutoffForSEDpairwise = standardizedEulideanDistance(wide, args.p)
+        saveFigToPdf(pdfOut, SEDtoCenter, cutoffForSEDtoCenter, SEDpairwise, cutoffForSEDpairwise, '', args.p)
+    else:
+        # Plot SEDs by group and save the dataframe for output
+        SEDtoCenter = pd.DataFrame(columns=['SED_to_Center', 'group'])
+        SEDpairwise = pd.DataFrame(columns=['group'])
+        cutoffForSEDtoCenter = pd.DataFrame(columns = ['Beta(Exact)', 'Normal', 'Chi-sq'])
+        cutoffForSEDpairwise = pd.DataFrame(columns = ['Beta(Exact)', 'Normal', 'Chi-sq'])
+        for title, group in dat.design.groupby(args.group):
+            # For each group, do a scatter plot on SEDs to the center, a scatter plot on pairwise SEDs and a boxplot on pairwise SEDs
+            # Filter the wide file into a new dataframe
+            currentFrame = wide[group.index]
 
-    if len(levels.keys()) > 1:
-        #Creates dataframes for later use for SED results
-        SEDtoMean=pd.DataFrame(columns=['SED_to_Mean', 'group'])
-        SEDpairwise=pd.DataFrame(columns=["group"])
+            # Change dat.sampleIDs to match the design file
+            dat.sampleIDs = group.index
 
-        #Calculates pairwise and to mean distances by group(or levels)
-        for level, group in dat.design.groupby(combName):
-            #Subsetting wide
-            currentFrame = dat.wide[group.index]
+            SEDtoCenter_group, cutoff1, SEDpairwise_group, cutoff2 = standardizedEulideanDistance(currentFrame, args.p)
 
-            #Getting SED per group
-            logger.info("Getting SED for {0}".format(level))
-            pdf, SEDtoMean_G, SEDpairwise_G = prepareSED(currentFrame, group, 
-                                                pdf, "in group "+str(level), p,
-                                                levels, combName)
+            pdfOut = saveFigToPdf(pdfOut, SEDtoCenter_group, cutoff1, SEDpairwise_group, cutoff2, 'in group ' + str(title), args.p)
 
-            #Add 'group' column to the current group
-            SEDtoMean_G['group'] = [level]*len(currentFrame.columns)
-            SEDpairwise_G['group'] = [level]*len(currentFrame.columns)
+            SEDtoCenter_group['group'] = [title]*currentFrame.shape[1]
+            SEDpairwise_group['group'] = [title]*currentFrame.shape[1]
+            SEDtoCenter = pd.DataFrame.merge(SEDtoCenter, SEDtoCenter_group, on=['SED_to_Center', 'group'], left_index=True, right_index=True, how='outer', sort=False)
+            SEDpairwise = pd.DataFrame.merge(SEDpairwise, SEDpairwise_group, on='group', left_index=True, right_index=True, how='outer', sort=False)
+            cutoffForSEDtoCenter.loc[title] = cutoff1.values[0]
+            cutoffForSEDpairwise.loc[title] = cutoff2.values[0]
 
-            #Merges dataframes onto an All dataframe 
-            SEDtoMean = pd.DataFrame.merge(SEDtoMean,
-                                            SEDtoMean_G, 
-                                            on=['SED_to_Mean', 'group'], 
-                                            left_index=True, 
-                                            right_index=True, 
-                                            how='outer', 
-                                            sort=False)
-            SEDpairwise = pd.DataFrame.merge(SEDpairwise, 
-                                            SEDpairwise_G, 
-                                            on=["group"], 
-                                            left_index=True, 
-                                            right_index=True,
-                                            how='outer', 
-                                            sort=False)
-
-        #Get means of all different groupss
-        logger.info("Getting SED for all data")
-        cutoffAllMean,cutoffAllPairwise = getCutOffs(dat.wide,p)
-
-        #Sort df by group
-        SEDtoMean = SEDtoMean.sort_values(by='group')
-        SEDpairwise = SEDpairwise.sort_values(by='group')
-
-        # Plot a scatter plot on SEDs from samples to the Mean
-        makePlots (SEDtoMean, dat.design, pdf, "", cutoffAllMean, p, 
-                    "scatterToMean", levels, combName)
-
-        # Plot a scatter plot on SEDs for pairwise samples
-        makePlots (SEDpairwise, dat.design, pdf, "", cutoffAllPairwise, p, 
-                    "scatterPairwise", levels, combName)
-
-        # Plot a boxplot on SEDs for pairwise samples
-        makePlots (SEDpairwise, dat.design, pdf, "", cutoffAllPairwise, p, 
-                    "boxplotPairwise", levels, combName)
-
-        #If group drop "group" column
-        SEDtoMean.drop('group', axis=1, inplace=True)
+        # Do same plots on all samples together in the end
+        cutoffForSEDtoCenter.loc['mean'] = cutoffForSEDtoCenter.mean()
+        cutoffForSEDpairwise.loc['mean'] = cutoffForSEDpairwise.mean()
+        SEDtoCenter = SEDtoCenter.sort('group')
+        SEDpairwise = SEDpairwise.sort('group')
+        SEDpairwise = sortByCols(SEDpairwise, [SEDpairwise.index,'group'])
+        saveFigToPdf(pdfOut, SEDtoCenter, cutoffForSEDtoCenter.loc[['mean']], SEDpairwise, cutoffForSEDpairwise.loc[['mean']], '', args.p)
+        SEDtoCenter.drop('group', axis=1, inplace=True)
         SEDpairwise.drop('group', axis=1, inplace=True)
 
-    else:
-        logger.info("Getting SED for all data")
-        pdf,SEDtoMean,SEDpairwise = prepareSED(dat.wide, dat.design, pdf,'', p,
-                                        levels, combName)
+    pdfOut.close()
 
-    return SEDtoMean,SEDpairwise
+    SEDtoCenter.to_csv(args.out1, sep='\t')
+    SEDpairwise.to_csv(args.out2, sep='\t')
 
-def getSED(wide):
-    """ 
-    Calculate the Standardized Euclidean Distance and return an array of 
-    distances to the Mean and a matrix of pairwise distances.
+    return SEDtoCenter, SEDpairwise
+
+def standardizedEulideanDistance(wide, p):
+    """ Calculate the standardized Euclidean distance and return an array of distances to the center and a matrix of pairwise distances.
 
     :Arguments:
         :type wide: pandas.DataFrame
-        :param wide: A wide formatted data frame with samples as columns and 
-                     compounds as rows.
+        :param wide: A wide formatted data frame with samples as columns and compounds as rows.
 
     :Returns:
         :return: Return 4 pd.DataFrames with SED values and cutoffs.
         :rtype: pd.DataFrames
     """
-    #Calculate means
-    mean = pd.DataFrame(wide.mean(axis=1))
 
-    #Calculate variance
-    variance = wide.var(axis=1,ddof=1)
+    # Estimated Variance from the data
+    varHat = wide.var(axis=1, ddof=1)
+    varHat[varHat==0] = 1
+    dist = DistanceMetric.get_metric('seuclidean', V=varHat)
 
-    #Flag if variance == 0
-    variance[variance==0]=1
+    # Column means
+    colMean = wide.mean(axis=1)
 
-    #Get SED distances!
-    dist = DistanceMetric.get_metric('seuclidean', V=variance)
+    # Calculate the standardized Euclidean Distance from all samples to the center
 
-    #Calculate the SED from all samples to the mean
-    SEDtoMean = dist.pairwise(wide.values.T, mean.T)
-    SEDtoMean = pd.DataFrame(SEDtoMean, columns = ['SED_to_Mean'], 
-                               index = wide.columns)
+    SEDtoCenter = dist.pairwise(wide.values.T, pd.DataFrame(colMean).T)
+    SEDtoCenter = pd.DataFrame(SEDtoCenter, columns = ['SED_to_Center'], index = wide.columns)
 
-    #Calculate the pairwise standardized Euclidean Distance of all samples
+    # Calculate the pairwise standardized Euclidean Distance of all samples
     SEDpairwise = dist.pairwise(wide.values.T)
-    SEDpairwise = pd.DataFrame(SEDpairwise, columns=wide.columns, 
-                               index=wide.columns)
-
-    #Converts to NaN the diagonal
+    SEDpairwise = pd.DataFrame(SEDpairwise, columns = wide.columns, index = wide.columns)
     for index, row in SEDpairwise.iterrows():
         SEDpairwise.loc[index, index] = np.nan
 
-    #Returning data
-    return SEDtoMean,SEDpairwise
+    # Calculate cutoffs
+    # For SEDtoCenter:
+    #   Beta: sqrt((p-1)^2/p*(sum of n iid Beta(1/2, p/2)));        (It's the exact distribution.)
+    #   Normal: sqrt(N((p-1)/p*n, 2*(p-2)*(p-1)^2/p^2/(p+1)*n));    (It's normal approximation. Works well when n is large.)
+    #   Chisq: sqrt((p-1)/p*Chi-sq(n));                             (It's Chi-sq approximation. Works well when p is decent and p/n is not small.)
+    # For SEDpairwise:
+    #   Beta: sqrt(2*(p-1)*(sum of n iid Beta(1/2, p/2)));
+    #   Normal: sqrt(N(2*n, 8*(p-2)/(p+1)*n));
+    #   Chisq: sqrt(2*Chi-sq(n));
+    # where n = # of compounds and p = # of samples
+    pSamples  = float(wide.shape[1])
+    nFeatures = float(wide.shape[0])
+    nIterate  = 20000 #100000
+    #p = 0.95
+    betaP     = np.percentile(pd.DataFrame(stats.beta.rvs(0.5, 0.5*(pSamples-2), size=nIterate*nFeatures).reshape(nIterate, nFeatures)).sum(axis=1), p*100)
+    betaCut1  = np.sqrt((pSamples-1)**2/pSamples*betaP)
+    normCut1  = np.sqrt(stats.norm.ppf(p, (pSamples-1)/pSamples*nFeatures, np.sqrt(2*nFeatures*(pSamples-2)*(pSamples-1)**2/pSamples**2/(pSamples+1))))
+    chisqCut1 = np.sqrt((pSamples-1)/pSamples*stats.chi2.ppf(p, nFeatures))
+    betaCut2  = np.sqrt((pSamples-1)*2*betaP)
+    normCut2  = np.sqrt(stats.norm.ppf(p, 2*nFeatures, np.sqrt(8*nFeatures*(pSamples-2)/(pSamples+1))))
+    chisqCut2 = np.sqrt(2*stats.chi2.ppf(p, nFeatures))
+    cutoff1   = pd.DataFrame([[betaCut1, normCut1, chisqCut1]], columns=['Beta(Exact)', 'Normal', 'Chi-sq'])
+    cutoff2   = pd.DataFrame([[betaCut2, normCut2, chisqCut2]], columns=['Beta(Exact)', 'Normal', 'Chi-sq'])
 
-def getCutOffs(wide,p):
-    """ 
-    Calculate the Standardized Euclidean Distance and return an array of 
-    distances to the Mean and a matrix of pairwise distances.
+    # TODO: Create a flag based on values greater than one of the cutoffs.
+    return SEDtoCenter, cutoff1, SEDpairwise, cutoff2
+
+def addCutoff(fig, ax, cutoff, p):
+
+    # Add cutoff lines to each plot
+    colors = ['r', 'y', 'c']
+    lslist = ['-', '--', '--']
+    lwlist = [1, 2, 2]
+    val = cutoff.values[0]
+    col = cutoff.columns
+    for i in [0, 1, 2]:
+        ax.axhline(val[i], color=colors[i], ls=lslist[i], lw=lwlist[i], label='{0} {1}% Cutoff: {2}'.format(col[i],round(p*100,3),round(val[i],1)))
+
+    return fig, ax
+
+def getRot(n):
+
+    # Set Rotation of labels according to the number of samples
+    return min(90,max(0,((n-1)/4-1)*30))
+
+def figInitiate(figWidth, colNames, figTitle):
+
+    # Initiate plots with certain size, title or xticks (sample names on the x axis)
+    fig, ax = plt.subplots(1, 1, figsize=(figWidth, 8))
+    fig.suptitle(figTitle)
+    ax.set_xlim(-0.5, -0.5+len(colNames))
+    plt.xticks(range(len(colNames)), colNames)
+
+    return fig, ax
+
+def plotSEDtoCenter(SEDtoCenter, cutoff, groupName, p):
+    """ Plot the standardized Euclidean distance plot for samples to the center.
 
     :Arguments:
-        :type wide: pandas.DataFrame
-        :param wide: A wide formatted data frame with samples as columns and 
-                     compounds as rows.
+        :type SEDtoCenter: pd.DataFrame
+        :param SEDtoCenter: An array of distances in a DataFrame.
 
-        :type p: float.
-        :param p: percentile of cutoff.
+        :param tuple cutoffs: A tuple with label and cutoff. Used a tuple so that sort order would be maintained.
 
     :Returns:
-        :rtype cutoff1: pandas.dataFrame
-        :return cutoff1: Cutoff values for mean, beta, chi-sqr and normal.
+        :return: Returns a figure object.
+        :rtype: matplotlib.pyplot.Figure.figure
 
-        :rtype cutoff2: pandas.dataFrame
-        :return cutoff2: Cutoff values for pairwise, beta, chi-sqr and normal.
     """
+    # Create figure object with a single axis and initiate the fig
+    pSamples = SEDtoCenter.shape[0]
+    fig, ax = figInitiate(max(pSamples/4, 12), SEDtoCenter.index, 'standardized Euclidean Distance from samples {} to the center'.format(groupName))
 
-    #Stablish iterations, and numer of colums ps and number of rows nf
-    ps  = len(wide.columns)
-    nf = len(wide.index)
-    iters  = 20000
+    # Add a horizontal line above 95% of the data
+    fig, ax = addCutoff(fig, ax, cutoff, p)
 
-    #Calculates betaP
-    betaP=np.percentile(pd.DataFrame(stats.beta.rvs(0.5, 0.5*(ps-2),size=iters*nf).reshape(iters,nf)).sum(axis=1), p*100.0)
+    # Plot SED from samples to the center as scatter plot
+    SEDtoCenter['index'] = range(pSamples)
+    if 'group' in SEDtoCenter.columns:
+        # 'group' column only appear in the last plots for all samples.
+        # Separate data by group and plot all in one scatter plot with different colors
+        kGroups = len(pd.Categorical(SEDtoCenter['group']).categories)
+        groups = SEDtoCenter.groupby('group')
+        colors = pd.tools.plotting._get_standard_colors(kGroups)
+        colorindex = 0
+        for name, group in groups:
+            # Set labels and color for different groups
+            group.plot(kind='scatter', x='index', y='SED_to_Center', marker='o', label=name, ax=ax, color=colors[colorindex], rot=getRot(pSamples))
+            colorindex += 1
+    else:
+        SEDtoCenter.plot(kind='scatter', x='index', y='SED_to_Center', marker='o', ax=ax, rot=getRot(pSamples))
+    SEDtoCenter.drop('index', axis=1, inplace=True)
+    ax.set_xlabel('Index')
+    ax.set_ylabel('standardized Euclidean Distance')
 
-    #casting to float so it behaves well
-    ps = float(ps)
-    nf = float(nf)    
+    plt.legend(fancybox=True, framealpha=0.5)
+    plt.close(fig)
 
-    #Calculates cutoffs beta,norm & chisq for data to mean
-    betaCut1  = np.sqrt((ps-1)**2/ps*betaP)
-    normCut1  = np.sqrt(stats.norm.ppf(p, (ps-1)/ps*nf, 
-                        np.sqrt(2*nf*(ps-2)*(ps-1)**2/ps**2/(ps+1))))
-    chisqCut1 = np.sqrt((ps-1)/ps*stats.chi2.ppf(p, nf))
+    return fig
 
-    #Calculates cutoffs beta,n norm & chisq for pairwise
-    betaCut2  = np.sqrt((ps-1)*2*betaP)
-    normCut2  = np.sqrt(stats.norm.ppf(p, 2*nf, np.sqrt(8*nf*(ps-2)/(ps+1))))
-    chisqCut2 = np.sqrt(2*stats.chi2.ppf(p, nf))
+def scatterPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
 
-    #Create data fram for ecah set of cut offs
-    cutoff1   = pd.DataFrame([[betaCut1, normCut1, chisqCut1],
-                            ['Beta(Exact)', 'Normal', 'Chi-sq']],index=["cut","name"],
-                            columns=['Beta(Exact)', 'Normal', 'Chi-sq'])
-    cutoff2   = pd.DataFrame([[betaCut2, normCut2, chisqCut2],
-                            ['Beta(Exact)', 'Normal', 'Chi-sq']],index=["cut","name"],
-                            columns=['Beta(Exact)', 'Normal', 'Chi-sq'])
-    
-    #Create Palette
-    cutPalette.getColors(cutoff1.T,["name"])
+    # ScatterPlot pairwise SED for samples
+    # Everything is similar as the plot function above
+    # Create figure object with a single axis and initiate the fig
+    pSamples = SEDpairwise.shape[0]
+    if 'group' in SEDpairwise.columns:
+        fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns[:-1], 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
+    else:
+        fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns, 'pairwise standardized Euclidean Distance from samples {}'.format(groupName))
 
-    #Returning colors
-    return cutoff1,cutoff2
+    # Add a horizontal line above 95% of the data
+    fig, ax = addCutoff(fig, ax, cutoff, p)
+
+    # Plot SED from pairwise samples as scatter plot
+    if 'group' in SEDpairwise.columns:
+        # 'group' column only appear in the last plots for all samples.
+        # Separate data by group and plot all in one scatter plot with different colors
+        colorindex = pd.Categorical(SEDpairwise['group']).categories.get_indexer(SEDpairwise['group'])
+        group = SEDpairwise['group']
+        kGroups = len(pd.Categorical(SEDpairwise['group']).categories)
+    else:
+        colorindex = [0]*pSamples
+        group = ['pairwise SED']*pSamples
+        kGroups = 1
+    colors = pd.tools.plotting._get_standard_colors(kGroups)
+    groupLabelled = []
+    for i in range(pSamples):
+        XY = pd.DataFrame([[i]*pSamples], index=['Index'], columns=SEDpairwise.index).T
+        XY['SED'] = SEDpairwise.ix[:,i].values
+        if (group[i] not in groupLabelled) and ('group' in SEDpairwise.columns):
+            # label different groups
+            XY.plot(kind='scatter', x='Index', y='SED', marker='+', color=colors[colorindex[i]], label=group[i], ax=ax, rot=getRot(pSamples))
+        else:
+            XY.plot(kind='scatter', x='Index', y='SED', marker='+', color=colors[colorindex[i]], ax=ax, rot=getRot(pSamples))
+        groupLabelled.append(group[i])
+        ax.set_ylabel('standardized Euclidean Distance')
+
+    plt.legend(fancybox=True, framealpha=0.5)
+    plt.close(fig)
+
+    return fig
+
+def boxPlotSEDpairwise(SEDpairwise, cutoff, groupName, p):
+
+    # BoxPlot pairwise SED for samples
+    # Everything is similar as the plot function above
+    pSamples = SEDpairwise.shape[0]
+
+    if 'group' in SEDpairwise.columns:
+        # 'group' column only appear in the last plots for all samples.
+        # Separate data by group and plot all in one scatter plot with different colors
+        # Create figure object with a single axis and initiate the fig
+        fig, ax = plt.subplots(1, 1, figsize=(max(pSamples/4, 12), 8))
+        fig.suptitle('Box-plots for pairwise standardized Euclidean Distance from samples {}'.format(groupName))
+        kGroups = len(pd.Categorical(SEDpairwise['group']).categories)
+        groups = SEDpairwise.groupby('group')
+        #colors = pd.tools.plotting._get_standard_colors(kGroups)
+        facecolors = ['lightblue', 'lightcyan', 'lightgreen', 'lightgray', 'lightpink', 'lightsteelblue', 'lightyellow']
+        posi = 0
+        colorindex = 0
+        for name, group in groups:
+            boxplots = group.drop('group',axis=1).T.boxplot(ax=ax, rot=getRot(pSamples), return_type='dict', showmeans=(pSamples<40), positions=range(posi, posi+group.shape[0]), manage_xticks=False, patch_artist=True)
+            #for whisker in boxplots['whiskers']:
+            #    whisker.set(color=colors[colorindex])
+            for box in boxplots['boxes']:
+                box.set(facecolor=facecolors[colorindex%len(facecolors)])
+            #for cap in boxplots['caps']:
+            #    cap.set(color=colors[colorindex])
+            #for flier in boxplots['fliers']:
+            #    flier.set(color=colors[colorindex], alpha=0.5)
+            posi += group.shape[0]
+            colorindex += 1
+        plt.xticks(range(pSamples), group.drop('group',axis=1).columns)
+        ax.set_xlim(-0.5, -0.5+pSamples)
+    else:
+        fig, ax = figInitiate(max(pSamples/4, 12), SEDpairwise.columns, 'Box-plots for pairwise standardized Euclidean Distance from samples {}'.format(groupName))
+        SEDpairwise.boxplot(ax=ax, rot=getRot(pSamples), return_type='dict', showmeans=(pSamples<40), positions=range(0, pSamples), manage_xticks=False)
+
+    # Add a horizontal line above 95% of the data
+    fig, ax = addCutoff(fig, ax, cutoff, p)
+
+    plt.legend(fancybox=True, framealpha=0.5)
+    plt.close(fig)
+
+    return fig
+
+
+def galaxySavefig(fig, fname):
+    """ Take galaxy DAT file and save as fig """
+
+    png_out = fname + '.png'
+    fig.savefig(png_out)
+
+    # shuffle it back and clean up
+    data = file(png_out, 'rb').read()
+    with open(fname, 'wb') as fp:
+        fp.write(data)
+    os.remove(png_out)
 
 def main(args):
-    """ 
-    Main Script 
-    """
+    """ Main Script """
 
-    #Getting palettes for data and cutoffs
-    global cutPalette
-    dataPalette = ch.colorHandler(pal="tableau",col="Tableau_10")
-    cutPalette = ch.colorHandler(pal="tableau",col="TrafficLight_9")
+    # Import data
+    dat = wideToDesign(args.fname, args.dname, args.uniqID)
 
-    #Checking if levels
-    subGroups = []
-    if args.levels and args.group:
-        subGroups = args.levels.split(",")
-        levels = [args.group]+subGroups
-    elif args.group and not args.levels:
-        levels = [args.group]
-    elif not args.group and args.levels:
-        logger.error(u"Use --groups if you are using just one group")
-        exit()
-    else:
-        levels = []
-    logger.info(u"Groups used to color by :{}".format(",".join(levels)))
+    # Only interested in samples
+    wide = dat.wide[dat.sampleIDs]
 
-    #Checkig if order
-    if args.order and args.levels:
-        anno = [args.order] + subGroups
-    elif args.order and not args.levels:
-        anno = [args.order,]
-    elif not args.order and args.levels:
-        anno = [args.levels,]
-    else:
-        anno=False
+    # Put warnings and get rid of rows with missing values
+    if wide.isnull().sum().sum():
+        nOriginal = wide.shape[0]
+        print "Missing values detected. All missing rows removed. "
+        wide = wide.dropna()
+        print "Original rows: {0}; # of rows after drop: {1}".format(nOriginal, wide.shape[0])
 
-    #Parsing data with interface
-    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
-                        anno=anno)
-
-    #Removing groups with just one sample
-    if args.group:
-        dat.removeSingle()
-    
-    #Select colors for data
-    dat.design, ugColors, combName = dataPalette.getColors(design=dat.design,
-                                                            groups=levels)
-    #Open pdfPages
-    with PdfPages(os.path.abspath(args.figure)) as pdf:
-        # Calculate SED
-        SEDtoMean,SEDpairwise=calculateSED(dat, ugColors, combName, pdf, args.p)
-
-
-    #Outputing files for tsv files
-    SEDtoMean.to_csv(os.path.abspath(args.toMean), sep='\t')
-    SEDpairwise.to_csv(os.path.abspath(args.pairwise), sep='\t')
-
-    #Ending script
-    logger.info("Script complete.")
+    # Calculate SED by group or not
+    SEDbyGroup(dat, wide, args)
 
 if __name__ == '__main__':
     # Turn on Logging if option -g was given
@@ -498,17 +391,14 @@ if __name__ == '__main__':
 
     # Turn on logging
     logger = logging.getLogger()
-    sl.setLogger(logger)
+    # if args.debug:
+    #     mclib.logger.setLogger(logger, args.log, 'debug')
+    # else:
+    #     mclib.logger.setLogger(logger, args.log)
 
-    # Standar logging
-    logger.info(u"""Importing data with following parameters: 
-                \tWide: {0}
-                \tDesign: {1}
-                \tUnique ID: {2}
-                \tGroup: {3}
-                \tRun Order: {4}
-                """ .format(args.input, args.design, args.uniqID, args.group, 
-                    args.order))
+    # Output git commit version to log, if user has access
+    # mclib.git.git_to_log(__file__)
 
-    #Main script
+    # Run Main part of the script
     main(args)
+    logger.info("Script complete.")

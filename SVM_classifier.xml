@@ -1,15 +1,15 @@
-<tool id="SVMClassifier" name="SVM Classifier (Beta)" version="2.0.0">
+<tool id="SVM_classifier" name="SVM classifier">
   <description> for classification.</description>
   <requirements>
     <requirement type="python-module">pandas</requirement>
     <requirement type="python-module">sklearn</requirement>
   </requirements>
-  <command interpreter="python">SVMClassifier.py
+  <command interpreter="python">SVM_classifier.py
       --train_wide $train_wide
       --train_design $train_design
       --test_wide $test_wide
       --test_design $test_design
-      --group $group
+      --class_column_name $class_column_name
       --ID $uniqID
       --kernel $kernel
       --degree $degree
@@ -24,7 +24,7 @@
     <param name="train_design" type="data" format="tabular" label="Training Metadata Dataset" help="Dataset missing? See TIP below"/>
     <param name="test_wide" type="data" format="tabular" label="Target Wide Dataset" help="Dataset missing? See TIP below"/>
     <param name="test_design" type="data" format="tabular" label="Target Metadata Dataset" help="Dataset missing? See TIP below"/>
-    <param name="group" size="30" type="text" value="class" label="Column name for the group categorization"/>
+    <param name="class_column_name" size="30" type="text" value="class" label="Column name for the class"/>
     <param name="uniqID" type="text" size="30" value="Name" label="Name of IDs"/>
     <param name="kernel" type="select" size="30" display="radio" value="rbf" label="SVM kernel function">
         <option value="rbf">Radial Basis function (Gaussians)</option>
@@ -41,6 +41,23 @@
     <data format="csv" name="outfile1" label="Classified target"/>
     <data name="accuracy_on_training" format='tabular' label="accuracy on the trainig set"/>
   </outputs>
+  <tests>
+      <test>
+          <param name="train_wide" value="./test-data/test_data.tsv" />
+          <param name="train_design" value="./test-data/test_design.csv" />
+          <param name="test_wide" value="./test-data/test_data.tsv" />
+          <param name="test_design" value="./test-data/test_design.csv" />
+          <param name="uniqID" value="rowID" />
+          <param name="class_column_name" value="treatment" />
+          <param name="kernel" value="linear" />
+          <param name="degree" value="3" />
+          <param name="C" value="1" />
+          <param name="a" value="0.0" />
+          <param name="b" value="0.0" />
+          <outfile name="outfile1" file="./test-data/test_SVM_classifier_outfile.tsv" />
+          <outfile name="accuracy_on_training" file="./test-data/test_SVM_classifier_accuracy_on_training.tsv" />
+      </test>
+  </tests>
 <help>
 
 ..class:: infomark
@@ -124,13 +141,13 @@ A metatdata file for the Target dataset. At a minimum, a list of all sampleIDs i
     **NOTE:** The sampleIDs in the Wide format datasets must match the sampleIDs in their respective Metadata datasets. Extra columns will automatically be ignored.
 
 
-**Group**
+**Column name for the class**
 
     - The column name in your Metadata Training dataset that contains the group/treatment information.
       In our example Metadata file we would put *group*.
 
 
-**Unique Feature ID**
+**Name of IDs**
 
 - The column name in your Wide Training and Target datasets that contains the unique IDs for
   your features/compounds. In our example dataset you would input *Feature*.  Note the column name

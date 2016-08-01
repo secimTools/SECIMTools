@@ -1,4 +1,4 @@
-<tool id="runOrder" name="Run Order Regression" version="2.0.0">
+<tool id="runOrder" name="Run Order Regression">
   <description>Look for linear relationships with run order.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
@@ -6,8 +6,6 @@
     <requirement type="python-module">pandas</requirement>
     <requirement type="python-module">statsmodels</requirement>
     <requirement type="python-module">matplotlib</requirement>
-    <requirement type="python-module">numpy</requirement>
-    <requirement type="python-module">palettable</requirement>
   </requirements>
   <command interpreter="python">runOrderRegression.py
       --input $input
@@ -32,6 +30,17 @@
   <macros>
       <import>macros.xml</import>
   </macros>
+  <tests>
+      <test>
+          <param name="input" value="./test-data/test_data.tsv" />
+          <param name="design" value="./test-data/test_design.csv" />
+          <param name="uniqID" value="rowID" />
+          <param name="group" value="treatment" />
+          <param name="order" value="runOrder" />
+          <output name="order_plots" file="./test-data/test_runOrderRegression_fig.pdf" />
+          <output name="order_summary" file="./test-data/test_runOrderRegression_table.pdf" />
+      </test>
+  </tests>
 <help>
 
 @TIP_AND_WARNING@
@@ -67,8 +76,6 @@ This tool uses linear regression to identify potential relationships between the
 
         - The column name in your Metadata file that contains the order samples were
           run.
-
-        **NOTE:** Groups with one element will be excluded from the test.
 
 -----------------------------------------------------------------------------------
 

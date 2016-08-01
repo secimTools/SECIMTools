@@ -6,7 +6,6 @@ import argparse
 from argparse import RawDescriptionHelpFormatter
 from itertools import combinations
 from collections import defaultdict
-from itertools import cycle, islice
 
 # Add-on packages
 import matplotlib
@@ -24,34 +23,26 @@ import matplotlib.gridspec as gridspec
 from interface import wideToDesign
 import logger as sl
 
-#graphing packages
-from manager_color import colorHandler
-from manager_figure import figureHandler
-import module_scatter as scatter
-import module_box as box
-import module_hist as hist
-import module_lines as lines
 
 def getOptions():
     """ Function to pull in arguments """
     description = """ One-Way ANOVA """
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument('-i',"--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
-    parser.add_argument('-d',"--design", dest="dname", action='store', required=True, help="Design file.")
-    parser.add_argument('-id',"--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument('-g',"--group", dest="group", action='store', required=True, help="Group/treatment identifier in design file.")
-    parser.add_argument('-o',"--out", dest="oname", action='store', required=True, help="Output file name.")
-    parser.add_argument('-f1',"--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
-    parser.add_argument('-f2',"--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
-    parser.add_argument('-bug',"--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
+    parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
+    parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
+    parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
+    parser.add_argument("--group", dest="group", action='store', required=True, help="Group/treatment identifier in design file.")
+    parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
+    parser.add_argument("--fig", dest="ofig", action='store', required=True, help="Output figure name for q-q plots [pdf].")
+    parser.add_argument("--fig2", dest="ofig2", action='store', required=True, help="Output figure name for volcano plots [pdf].")
+    parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
     args = parser.parse_args()
 
     return(args)
 
 
 def createCbn(dat):
-    """ 
-    Create all pairwise combinations of treatments
+    """ Create all pairwise combinations of treatments
 
     :Arguments:
         :type dat: interface.wideToDesign
@@ -83,8 +74,7 @@ def createCbn(dat):
 
 
 def initResults(dat):
-    """ 
-    Initialize the results dataset
+    """ Initialize the results dataset
 
     :Arguments:
         :type dat: interface.wideToDesign
@@ -116,8 +106,7 @@ def initResults(dat):
 
 
 def oneWay(dat, compound, results):
-    """ 
-    One-way ANOVA
+    """ One-way ANOVA
 
     Run a simple one-way anova, where compound is the dependent variable and
     group is the independent variable.
@@ -128,7 +117,7 @@ def oneWay(dat, compound, results):
             feature information.
 
         :type compound: string
-        :param compound: The name of the current compound.
+        :param compound: compound (str): The name of the current compound.
 
         :type results: pandas.DataFrame
         :param results: The results table, corresponding values will be
@@ -163,8 +152,7 @@ def oneWay(dat, compound, results):
 
 
 def calcDiff(dat, compound, grpMeans, combo, results):
-    """ 
-    Calculate group means and the differences between group means.
+    """ Calculate group means and the differences between group means.
 
     :Arguments:
         :type dat: interface.wideToDesign
@@ -199,8 +187,7 @@ def calcDiff(dat, compound, grpMeans, combo, results):
 
 
 def calcDiffSE(dat, compound, combo, results):
-    """ 
-    Calculate the Standard Error between differences.
+    """ Calculate the Standard Error between differences.
 
     :Arguments:
         :type dat: interface.wideToDesign
@@ -208,7 +195,7 @@ def calcDiffSE(dat, compound, combo, results):
             feature information.
 
         :type compound: string
-        :param compound: The name of the current compound.
+        :param compound: compound (str): The name of the current compound.
 
         :type combo: dictionary
         :param combo: A dictionary of dictionaries with all possible pairwise
@@ -240,8 +227,7 @@ def calcDiffSE(dat, compound, combo, results):
 
 
 def tTest(compound, combo, results, cutoff=4):
-    """ 
-    Calculate T-value and T-critical.
+    """ Calculate T-value and T-critical.
 
     :Arguments:
         :type compound: string
@@ -254,7 +240,7 @@ def tTest(compound, combo, results, cutoff=4):
         :param results: The results table, corresponding values will be
 
         :type cutoff: int
-        :param cutoff: The cutoff value for significance.
+        :param cutoff: The cutoff value for significance [default: 4].
 
     :Returns:
         :rtype: pandas.DataFrame
@@ -273,8 +259,7 @@ def tTest(compound, combo, results, cutoff=4):
 
 
 def qqPlot(resids, fit, oname):
-    """ 
-    Plot the residual diagnostic plots by sample.
+    """ Plot the residual diagnostic plots by sample.
 
     Output q-q plot, boxplots and distributions of the residuals. These plots
     will be used diagnose if residuals are approximately normal.
@@ -282,9 +267,6 @@ def qqPlot(resids, fit, oname):
     :Arguments:
         :type resids: pandas.Series
         :param resids: Pearson normalized residuals. (residuals / sqrt(MSE))
-
-        :type fit: pandas DataFrame
-        :param fit: output of the ANOVA
 
         :type oname: string
         :param oname: Name of the output file in pdf format.
@@ -295,53 +277,48 @@ def qqPlot(resids, fit, oname):
 
     """
     with PdfPages(oname) as pdf:
-    	fhs = list()
-    	
         tresid = resids.T
         tfit = fit.T
-
-        for i in range(0,len(tresid.columns)):
-            axisLayout = [(0,0,1,1),(0,1,1,1),(0,2,1,1),(1,0,3,1)]
-            fhs.append(figureHandler(proj='2d',numAx=4,numRow=2,numCol=3,arrangement=axisLayout))
-
-
-        i = 0
         for col in tresid.columns:
+            fig = plt.figure(figsize=(8, 8))
+            fig.suptitle(col)
 
-            data = tresid[col].values.ravel()
-            noColors = list()
-            for j in range(0,len(data)):
-                noColors.append('b')#blue
-            df_data = pd.DataFrame(data)
+            # Set up layout using gridspec
+            gs = gridspec.GridSpec(2, 3, wspace=0)
+            ax1 = plt.subplot(gs[0, 0])
+            ax2 = plt.subplot(gs[0, 1])
+            ax3 = plt.subplot(gs[0, 2], sharey=ax1)
+            ax4 = plt.subplot(gs[1, :])
+
+            # Generate Plots
+            sm.graphics.qqplot(tresid[col], fit=True, line='r', ax=ax1)
+            ax2.boxplot(tresid[col].values.ravel(), vert=True)
+            ax3.hist(tresid[col].values.ravel(), orientation='horizontal')
+            ax4.scatter(tfit[col], tresid[col])
+            ax4.axhline(0, c='r', lw=1)
+
+            # Clean up plots
+            ## Set titles
+            ax2.set_title('Distribution of P-values')
+            ax4.set_title('Fitted Values vs Residuals')
+
+            ## Add axis labels
+            ax4.set_xlabel('Fitted Values')
+            ax4.set_ylabel('Standardized Residuals')
+
+            ## remove unnecessary axis
+            ax1.get_xaxis().set_visible(False)
+            ax2.get_xaxis().set_visible(False)
+            ax2.get_yaxis().set_visible(False)
+            ax3.get_xaxis().set_visible(False)
+            ax3.get_yaxis().set_visible(False)
+
+            pdf.savefig(fig)
+            plt.close(fig)
 
 
-            sm.graphics.qqplot(tresid[col], fit=True, line='r', ax=fhs[i].ax[0])
-
-            #print data
-            box.boxSeries(ser=data,ax=fhs[i].ax[1])
-
-            hist.quickHist(ax=fhs[i].ax[2],dat=df_data,orientation='horizontal')
-
-            scatter.scatter2D(ax=fhs[i].ax[3],x=tfit[col], y=tresid[col],colorList=list('b'))
-
-            lines.drawCutoffHoriz(ax=fhs[i].ax[3],y=0)
-
-            fhs[i].formatAxis(figTitle=col,axnum=0,grid=False,showX=False,
-                yTitle="Sample Quantiles")
-            fhs[i].formatAxis(axnum=1,axTitle="Distribution of P-values",
-                grid=False,showX=False,showY=False)
-            fhs[i].formatAxis(axnum=2,showX=False,showY=False)
-            fhs[i].formatAxis(axnum=3,axTitle="Fitted Values vs Residuals",
-                xTitle="Fitted Values",yTitle="Standardized Residuals",grid=False)
-            fhs[i].addToPdf(pdfPages=pdf)
-            
-            i = i+1
-
-
-            
 def volcano(combo, results, oname, cutoff=4):
-    """ 
-    Plot volcano plots.
+    """ Plot volcano plots.
 
     Creates volcano plots to compare means, for all pairwise differences.
 
@@ -352,14 +329,11 @@ def volcano(combo, results, oname, cutoff=4):
             combinations. Used this to create the various column headers in the
             results table.
 
-        :type results: pandas DataFrame
-        :param results: TODO
-
         :type oname: string
         :param oname: Name of the output file in pdf format.
-       
+
         :type cutoff: int
-        :param cutoff: The cutoff value for significance.
+        :param cutoff: The cutoff value for significance [default: 4].
 
     :Returns:
         :rtype: PD
@@ -373,19 +347,22 @@ def volcano(combo, results, oname, cutoff=4):
             pval = combo[key]['lpTval']
 
             # Set up figure
-            fh = figureHandler(proj='2d')
-       
+            fig = plt.figure(figsize=(8, 8))
+            fig.suptitle(combo[key]['Name'])
+            ax = fig.add_subplot(111)
+
             # Plot all results
-            scatter.scatter2D(x=list(results[diff]),y=list(results[pval]),colorList=list('b'),ax=fh.ax[0])
+            results.plot(x=diff, y=pval, kind='scatter', ax=ax)
+
             # Color results beyond threshold red
             subset = results[results[pval] > cutoff]
             if not subset.empty:
-                scatter.scatter2D(x=list(subset[diff]),y=list(subset[pval]),colorList=list('r'), ax=fh.ax[0])
+                subset.plot(x=diff, y=pval, kind='scatter', color='r', ax=ax)
 
-            lines.drawCutoffHoriz(y=cutoff,ax=fh.ax[0])
-            fh.formatAxis(axTitle=combo[key]['Name'],grid=False)
+            plt.axhline(cutoff, color='r', ls='--', lw=2)
+            pdf.savefig(fig)
+            plt.close(fig)
 
-            fh.addToPdf(pdfPages=pdf)
 
 def main(args):
     # Import data
@@ -396,6 +373,7 @@ def main(args):
     dat.wide = dat.wide.dropna()
 
     results = initResults(dat)
+
 
     # Transpose the data
     dat.trans = dat.transpose()
@@ -439,19 +417,10 @@ def main(args):
     volcano(combo, results, args.ofig2)
 
     # write results table
-    for col in results.columns.values:
-        results[col] = results[col].astype("float")
+    results = results.convert_objects(convert_numeric=True)
     results.index = pd.Series([dat.revertStr(x) for x in results.index])
     results = results.apply(lambda x: x.round(4))
     results.to_csv(args.oname, sep="\t")
-    
-def sortByCols(DF,colNames):
-    # Sort the columns of a dataframe by column names
-    sortedDF = pd.DataFrame()
-    for colName in colNames:
-        sortedDF[colName] = DF[colName]
-    return sortedDF
-
 
 
 if __name__ == '__main__':

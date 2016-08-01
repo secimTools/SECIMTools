@@ -1,266 +1,177 @@
 #!/usr/bin/env python
-################################################################################
-# SCRIPT: dropFlag_v2.py
-# 
-# AUTHOR: Miguel Ibarra Arellano (miguelib@ufl.edu)
-# 
-# DESCRIPTION: This script takes a Wide format file (wide), a flag file and a 
-# design file (only for drop by column) and drops either rows or columns for a 
-# given criteria. This criteria could be either numeric,string or a flag (1,0). 
-#
-# OUTPUT:
-#       Drop by row:
-#                   Wide file with just the dropped rows
-#                   Wide file without the dropped rows
-#       Drop by column:
-#                   Wide file with just the dropped columns
-#                   Wide file without the dropped columns
-#
-################################################################################
 
-#Standard Libraries
-import logging
+# Author: Jonathan Poisson | poissonj@ufl.edu
+
+# Built-in packages
 import argparse
-import copy
 from argparse import RawDescriptionHelpFormatter
-import re
 
-#Add-on Libraries
+# Add-on packages
 import pandas as pd
 
-#Local Libraries
+# Local Packages
 from interface import wideToDesign
-import logger as sl
 
 
-"""Function to pull arguments"""
 def getOptions():
-	parser = argparse.ArgumentParser(description="Drops rows or columns given \
-									an specific cut value and condition")
-	
-	required = parser.add_argument_group(title='Required Input', 
-										description='Requiered input to the \
-										program.')
-	required.add_argument('-i',"--input",dest="input", action="store",
-						required=True,help="Input dataset in wide format.")
-	required.add_argument('-d',"--design",dest="designFile", action="store",
-						required=True, help="Design file.")
-	required.add_argument('-f',"--flags",dest="flagFile", action="store",
-						required=True,help="Flag file.")
-	required.add_argument('-id',"--ID",dest="uniqID",action="store",
-						required=True,help="Name of the column with unique \
-						identifiers.")
-	required.add_argument('-fd',"--flagDrop",dest="flagDrop",action='store',
-						required=True, help="Name of the flag/field you want to\
-						access.")
+    """ Function to pull in arguments """
+    description = """
+    This tool takes in a Wide formatted dataset, a Design
+    formatted dataset and corresponding flag values. With the inputted user
+    cutoff value the flag values are summed and the sums that are greater than
+    the cutoff value are dropped. If rows are the specified attribute to drop
+    then the return will be a new Wide file but if columns are dropped then a
+    new Wide file and Design file will be created because changes will have
+    occurred in each file."""
 
-	output = parser.add_argument_group(title='Output', description='Output of \
-										the script.')
-	output.add_argument('-ow',"--outWide",dest="outWide",action="store",required=True,
-						help="Output file without the Drops.")
-	output.add_argument('-of',"--outFlags",dest="outFlags",action="store",
-						required=True,help="Output file for Drops.")
+    parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
 
-	"""
-	exclusive = parser.add_mutually_exclusive_group(required=True)
-	exclusive.add_argument("-r","--row",dest="dropRow",action='store_true',
-							help="Drop rows.")
-	exclusive.add_argument("-c","--column",dest="dropColumn",action='store_true',
-							help="Drop column.")
-	"""
+    group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
+    group1.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
+    group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
+    group1.add_argument("--ID", dest="uniqID", action='store', required=True,
+                        help="Name of the column with unique identifiers.")
+    group1.add_argument("--group", dest="group", action='store', default=False, required=False,
+                        help="Group/treatment identifier in design file [Optional].")
+    group1.add_argument("--flags", dest="flagFile", action='store', required=True, help="Input flag file")
 
-	optional = parser.add_argument_group(title="Optional Input", description="\
-										Optional Input to the program.")
-	required.add_argument('-g',"--group",dest="group",action="store",
-						required=False,help="Group/treatment identifier in \
-						design file.")
-	optional.add_argument('-val',"--value",dest="value",action='store',
-						required=False, default="1",help="Cut Value")
-	optional.add_argument('-con',"--condition",dest="condition",action='store',
-						required=False, default="0",help="Condition for the cut\
-						where 0=Equal to, 1=Greater than and 2=less than.")
+    group2 = parser.add_argument_group(title='Required input', description='Additional required input for this tool.')
+    group2.add_argument("--cutoff", dest="cutoff", action='store', type=float, required=True, default=.5,
+                        help="Cutoff value for dropping. Drop row if the porportion is less than this value. The default cutoff is .5")
+    group2.add_argument("--wideOut", dest="wideOut", action='store', required=True, help="Output Wide Dataset")
+    group2.add_argument("--designOut", dest="designOut", action='store', required=False,
+                        help="Output Design Dataset. Only required when columns are wanted to be dropped.")
 
-	args = parser.parse_args()
-	return(args);
+    group3 = parser.add_mutually_exclusive_group(required=True)
+    group3.add_argument("--row", dest="dropRow", action="store_true", help="Drop rows.")
+    group3.add_argument("--column", dest="dropColumn", action="store_true", help="Drop columns.")
 
-def dropRows(df_wide, df_flags,cut_value, condition, args):
-	""" 
-	Drop rows in a wide file based on its flag file and the specified flag 
-	values to keep.
+    args = parser.parse_args()
 
-	:Arguments:
-		:type df_wide: pandas.DataFrame
-		:param df: A data frame in wide format
+    # Check if cutoff value is a porportion
+    if args.cutoff > 1 or args.cutoff < 0:
+        parser.error("Cutoff value needs to be a porportion")
 
-		:type df_flags: pandas.DataFrame
-		:param df: A data frame of flag values corresponding to the wide file
-
-		:type cut_value: string
-		:param args: Cut Value for evaluation
-
-		:type condition: string
-		:param args: Condition to evaluate
-
-		:type args: argparse.ArgumentParser
-		:param args: Command line arguments.
-
-	:Returns:
-		:rtype: pandas.DataFrame
-		:returns: Updates the wide DataFrame with dropped rows and writes to a
-			TSV.
-		:rtype: pandas.DataFrame
-		:returns: Fron wide DataFrame Dropped rows and writes to a TSV.
-	"""
-	#Dropping flags from flag files, first asks for the type of value, then asks
-	# for the diferent type of conditions new conditios can be added here
-
-	if re.match('^[0-9]',cut_value):
-		cut_value = float(cut_value)
-		if condition == '>':
-			df_filtered =  df_flags[df_flags[args.flagDrop]<cut_value]
-		elif condition == '<':
-			df_filtered =  df_flags[df_flags[args.flagDrop]>cut_value]
-		elif condition == '==':
-			df_filtered =  df_flags[df_flags[args.flagDrop]!=cut_value]
-		else:
-			logger.error(u'The {0} is not supported by the program, please use <,== or >'.format(condition))
-			quit()
-	else:
-		cut_value = str(cut_value)
-		if condition == '==':
-			df_filtered =  df_flags[df_flags[args.flagDrop]!=cut_value]
-		else:
-			logger.error(u'The {0} conditional is not supported for string flags, please use =='.format(condition))
-			quit()
-
-	#Create a mask over the original data to determinate what to delete
-	mask = df_wide.index.isin(df_filtered.index)
-
-	#Create a mask over the original flags to determinate what to delete
-	mask_flags = df_flags.index.isin(df_filtered.index)
-
-	# Use mask to drop values form original data
-	df_wide_keeped = df_wide[mask]
-	#df_wide_dropped = df_wide[~mask]
-
-	# Use mas to drop values out of original flags
-	df_flags_keeped = df_flags[mask_flags]
-	#df_flags_dropped = df_flags[~mask_flags]
-
-	#Export wide
-	df_wide_keeped.to_csv(args.outWide, sep='\t')
-	#df_wide_dropped.to_csv(args.outputDrops, sep='\t')
-
-	#Export flags
-	df_flags_keeped.to_csv(args.outFlags, sep='\t')
-	#df_flags_dropped.to_csv(args.outputDrops, sep='\t')
-
-def dropColumns(df_wide, df_flags,cut_value, condition, args):
-	""" 
-	Drop columns in a wide file based on its flag file and the specified flag 
-	values to keep.
-
-	:Arguments:
-		:type df_wide: pandas.DataFrame
-		:param df: A data frame in wide format
-
-		:type df_flags: pandas.DataFrame
-		:param df: A data frame of flag values corresponding to the wide file
-
-		:type cut_value: string
-		:param args: Cut Value for evaluation
-
-		:type condition: string
-		:param args: Condition to evaluate
-
-		:type args: argparse.ArgumentParser
-		:param args: Command line arguments.
-
-	:Returns:
-		:rtype: pandas.DataFrame
-		:returns: Updates the wide DataFrame with dropped columns and writes to 
-					a TSV.
-		:rtype: pandas.DataFrame
-		:returns: Fron wide DataFrame Dropped columns and writes to a TSV.
-	"""
-	#Getting list of filtered columns from flag files
-	if re.match('^[0-9]',cut_value):
-		cut_value = float(cut_value)
-		if condition == '>':
-			samples_to_drop = df_flags.index[df_flags[args.flagDrop]<cut_value]
-		elif condition == '<':
-			samples_to_drop = df_flags.index[df_flags[args.flagDrop]>cut_value]
-		elif condition == '==':
-			samples_to_drop = df_flags.index[df_flags[args.flagDrop]!=cut_value]
-		else:
-			logger.error(u'The {0} is not supported by the program, please use <,== or >'.format(condition))
-			quit()
-	else:
-		cut_value = str(cut_value)
-		if condition == '==':
-			samples_to_drop = df_flags.index[df_flags[args.flagDrop]!=cut_value]
-		else:
-			logger.error(u'The {0} conditional is not supported for string flags, please use =='.format(condition))
-			quit()
-
-	dropped_flags = df_flags.T[samples_to_drop].T
-
-	#Output 
-	df_wide.to_csv(args.outWide, columns=samples_to_drop, sep='\t')
-	dropped_flags.to_csv(args.outFlags, sep='\t')
+    return args
 
 
-def main():
-	#Gettign arguments from parser
-	args = getOptions()
+def dropRows(df_wide, df_flags, cutoffValue, args):
+    """ Drop rows in a log file based on its flag file and the specified flag values to keep.
 
-	#Stablishing logger
-	logger = logging.getLogger()
-	sl.setLogger(logger)
+    :Arguments:
+        :type df_wide: pandas.DataFrame
+        :param df: A data frame in wide format
 
-	#Change condition
-	if args.condition == "0":
-		args.condition="=="
-	elif args.condition == "1":
-		args.condition=">"
-	elif args.condition == "2":
-		args.condition="<"
+        :type df_wide: pandas.DataFrame
+        :param df: A data frame in design format
 
-	#Starting script
-	logger.info(u'Importing data with following parameters: \
-		\n\tWide: {0}\
-		\n\tFlags: {1}\
-		\n\tDesign: {2}\
-		\n\tID: {3}\
-		\n\tgroup: {4}\
-		\n\toutput: {5}\
-		\n\tVariable: {6}\
-		\n\tCondition: {7}\
-		\n\tValue: {8}'.format(args.input,args.flagFile,args.designFile,
-							args.uniqID,args.group,args.outWide,args.outFlags,
-							args.condition,args.value))
+        :type df_flags: pandas.DataFrame
+        :param df: A data frame of flag values corresponding to the wide file
 
-	# Execute wideToDesign to make all data uniform
-	formatted_data = wideToDesign(wide=args.input, design=args.designFile, 
-								uniqID=args.uniqID, group=args.group)    
+        :param integer cutoffValue: The int value of the cutoff for which flags to keep.
+            All flag sums per row greater than this number will cause the row to be deleted
 
-	# Convert flag file to DataFrame
-	df_flags = pd.DataFrame.from_csv(args.flagFile, sep='\t')
-	
-	# Drop wither rows or columns
-	if df_flags.index.name=="sampleID":
-		logger.info("Runing drop flags by Column")
-		dropColumns(df_wide=formatted_data.wide, df_flags=df_flags, 
-					cut_value=args.value, condition=args.condition, args=args)
-	
-	else:
-		logger.info("Runing drop flags by Row")
-		dropRows(df_wide=formatted_data.wide, df_flags=df_flags, 
-				cut_value=args.value, condition=args.condition, args=args)
+        :type args: argparse.ArgumentParser
+        :param args: Command line arguments.
 
-	# Finishing script
-	logger.info("Script complete.")
+    :Returns:
+        :rtype: pandas.DataFrame
+        :returns: Updates the wide DataFrame with dropped rows and writes to a
+            TSV.
+
+    """
+    # Create a sum column and add to the end of the flag file
+    meanColumn = df_flags.mean(numeric_only=True, axis=1, skipna=True)
+    df_flags['mean'] = meanColumn
+
+    # Only keep the rows in the original data that the user specified
+    df_flags = df_flags.loc[df_flags['mean'] < cutoffValue]
+
+    # Create a mask over the original data to determine what to delete
+    mask = df_wide.index.isin(df_flags.index)
+
+    # Use mask to drop values form original data
+    df_wide = df_wide[mask]
+
+    # Export
+    df_wide.to_csv(args.wideOut, sep='\t')
+
+
+def dropColumns(df_wide, df_design, df_flags, cutoffValue, args):
+    """ Drop columns in both the wide and design files based on the sampleID's flag sums.
+
+    :Arguments:
+
+        :type df_wide: pandas.DataFrame
+        :param df_wide: A data frame in wide format
+
+        :type df_design: pandas.DataFrame
+        :param df_design: A data frame in design format
+
+        :type df_flags: pandas.DataFrame
+        :param df_flags: A data frame of flag values corresponding to the wide and design files
+
+        :param int cutoffValue: The integer value of the cutoff for which flags to keep.
+            All flag sums per column greater than this number will cause that corresponding column to be deleted
+
+        :type args: argparse.ArgumentParser
+        :param args: Command line arguments.
+
+    :Returns:
+        :rtype: pandas.DataFrame
+        :returns: Both wide and design files with dropped columns
+    """
+
+    # Mean the Columns and create new row at the bottom named Mean
+    df_flags.loc['Mean', :] = df_flags.mean(axis=0)
+
+    # Create list of sampleIDs that are greater than or equal to the cutoff
+    df_flaggedIDs = df_flags.columns[df_flags.loc['Mean', :] >= cutoffValue]
+
+    # Create list of sampleIDs to keep in wide DataFrame.
+    #
+    # NOTE: the ~ inverts boolean values.
+    #
+    # Take the list of values to drop 'df_flaggedIDs', see if df_wide column
+    # headers are in this list. Invert the boolean to keep headers that are not
+    # in the list.
+    keepSampleIDs = df_wide.columns[~df_wide.columns.isin(df_flaggedIDs)]
+
+    # Pull out columns from wide
+    df_wide = df_wide[keepSampleIDs]
+
+    # Pull out rows from design file
+    df_design = df_design[df_design.index.isin(keepSampleIDs)]
+
+    # Sort tables before exporting
+    df_wide = df_wide.sort(axis=1)
+    df_design = df_design.sort(axis=0)
+
+    # Export the files
+    df_wide.to_csv(args.wideOut, sep='\t')
+    df_design.to_csv(args.designOut, sep='\t')
+
+
+def main(args):
+    # Execute wideToDesign to make all data uniform
+    formatted_data = wideToDesign(wide=args.fname, design=args.dname, uniqID=args.uniqID, group=args.group)
+
+    # Convert flag file to DataFrame
+    df_flags = pd.DataFrame.from_csv(args.flagFile, sep='\t')
+
+    # If the user specified rows, run dropRows
+    if args.dropRow:
+        dropRows(df_wide=formatted_data.wide, df_flags=df_flags, cutoffValue=args.cutoff, args=args)
+
+    # If the user specified columns, run dropColumns
+    else:  # (if args.dropColumn:)
+        dropColumns(df_wide=formatted_data.wide, df_design=formatted_data.design, df_flags=df_flags,
+                    cutoffValue=args.cutoff, args=args)
+
 
 if __name__ == '__main__':
-	main()
-	
+    # Command line options
+    args = getOptions()
+    # Run the main function with data from wideToDesign and the flag file
+    main(args)
+

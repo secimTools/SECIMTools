@@ -1,27 +1,24 @@
-<tool id="countDigits" name="Count Digits (Beta)" version="2.0.0">
+<tool id="countDigits" name="Count Digits">
   <description>Count the number of digits before the period.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">pandas</requirement>
-    <requirement type="python-module">zipfile</requirement>
-    <requirement type="python-module">StringIO</requirement>
-    <requirement type="python-module">palettable</requirement>
+    <requirement type="python-module">matplotlib</requirement>
   </requirements>
   <command interpreter="python">
       countDigits.py
+      --html $html
+      --html_path "$html.files_path"
       --input $input
       --design $design
       --ID $uniqID
       --flags $flags
-      --figure $figure
-      --counts "counts"
-      --html $counts
 
       #if $nozero:
           --noZero
-      #end if      
+      #end if
       #if $group:
-          --group $group
+	    --group $group
       #end if
   </command>
   <inputs>
@@ -35,13 +32,23 @@
     <param name="group" size="30" type="text" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by groups in a column in the Metadata file, enter the column name. Spelling and capitalization must be exact" />
   </inputs>
   <outputs>
-    <data format="pdf" name="figure"  label="CountDigits_Figure" />
+    <data format="html" name="html"  label="CountDigits_Output_List.html" />
     <data format="tabular" name="flags" label="CountDigits_Flags" />
-    <data format="html" name="counts" label="CountDigits_Counts" />
   </outputs>
   <macros>
       <import>macros.xml</import>
   </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <param name="group" value="treatment" />
+            <!--<param name="html_path" value="./test-data/html-path/" />-->
+            <output name="html" file="./test-data/html-path/html.html" />
+            <output name="flags" file="./test-data/html-path/flags.tsv" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@
@@ -77,22 +84,19 @@ high feature values for a particular sample.
 
       @GROUP_OPTIONAL@
 
-      **NOTE:** Groups with one element will be excluded from the test.
-
 --------------------------------------------------------------------------------
 
 **Output Files**
 
 - This tool outputs an html page containing links to the files created.
-  Separating by group is recommended, where applicable. If desired, it can also output the 
-  files without an html wrapper 
+  Separating by group is recommended, where applicable.
 
     **Counts_table** is a TSV file with features as rows and samples as
     columns. Values are the number of digits, before a decimal, for a given feature-sample
-    combination. The maximum, minimum, and difference are calculated for each
+    combination. The maximum, minimum and difference are calculated for each
     feature. If groups are given, each groups generates a separate counts_table
 
-    **Figure.pdf** is a plot of the differences between the maximum and minimum, by
+    **Figure.png** is a plot of the differences between the maximum and minimum, by
     group if specified.
 
     **Flags** is a TSV file with features as rows with a summary 0|1 indicator

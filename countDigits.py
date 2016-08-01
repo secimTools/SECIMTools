@@ -1,42 +1,21 @@
-################################################################################
-# DATE: 2016/May/06, rev: 2016/July/11
-#
-# SCRIPT: countDigits.py
-#
-# VERSION: 1.1
-# 
-# AUTHOR: Miguel A Ibarra (miguelib@ufl.edu)
-# 
-# DESCRIPTION: This script takes a a wide format file and counts digits in decimal numbers
-# 
-# The output is an html file containing graphs and data
-#
-################################################################################
 #!/usr/bin/env python
 
 # Built-in packages
-import os
 import logging
-import zipfile
 import argparse
-from StringIO import StringIO as IO
+import shutil
+import os
 
 # Add-on packages
 import matplotlib
-import numpy as np
 matplotlib.use('Agg')
-from lxml import etree
 import matplotlib.pyplot as plt
-import xml.etree.ElementTree as ET
-from matplotlib.backends.backend_pdf import PdfPages
+import numpy as np
 
 # Local Packages
-import logger as sl
-import module_hist as hist
-from flags import Flags
 from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+from interface import Flags
+import logger as sl
 
 
 def getOptions(myopts=None):
@@ -45,33 +24,20 @@ def getOptions(myopts=None):
                       or discrepancies"""
     parser = argparse.ArgumentParser(description=description)
 
-    standard = parser.add_argument_group(description="Standar input")
-    standard.add_argument('-i',"--input", dest="input", action='store', 
-                        required=True, help="Input dataset in wide format.")
-    standard.add_argument('-d',"--design", dest="design", action='store', 
-                        required=True, help="Design file.")
-    standard.add_argument('-id',"--ID", dest="uniqID", action='store', 
-                        required=True, help="Name of the column with uniq IDs.")
-    standard.add_argument('-g',"--group", dest="group", action='store', 
-                         required=False, default=False, help="Add the option to \
-                        separate sample IDs by treatement name. ")
+    requiredInput = parser.add_argument_group(description="Required input")
+    requiredInput.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
+    requiredInput.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
+    requiredInput.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
+    requiredInput.add_argument("--html_path", dest="htmlPath", action='store', required=True, help="Path to save created files and html file")
+    requiredInput.add_argument("--html", dest="html", action='store', required=True, help="Html file output name")
+    requiredInput.add_argument("--flags", dest="flags", action='store', required=True, help="Flag file output")
 
-    output = parser.add_argument_group(description="Output options")
-    output.add_argument("-f","--figure",dest="figure",action="store",
-                        required=True,help="Output path for plot file")
-    output.add_argument("-fl","--flags",dest="flags",action="store",
-                        required=True,help="Output path for flag file")
-    output.add_argument("-c","--counts",dest="counts",action="store",
-                        required=True,help="Output path for counts file")
+    optionalInput = parser.add_argument_group(description="Optional input")
+    optionalInput.add_argument("--noZero", dest="zero", action='store_true', required=False, help="Flag to ignore zeros.")
+    optionalInput.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
+    optionalInput.add_argument("--group", dest="group", action='store', required=False, default=False, help="Add the option to separate sample IDs by treatement name. ")
+    optionalInput.add_argument("--noZip", dest="noZip", action='store_true', required=False, default=False, help="If running from command line use --noZip to skip the zip creation. This stops the command line from freezing")
 
-    optional = parser.add_argument_group(description="Optional input")
-    optional.add_argument('-nz',"--noZero", dest="zero", action='store_true', 
-                        required=False, help="Flag to ignore zeros.")
-    optional.add_argument('-bug',"--debug", dest="debug", action='store_true', 
-                        required=False, help="Add debugging log output.")
-    optional.add_argument('-ht',"--html", dest="html", action='store', 
-                        required=False, default=False,  help="Path for html\
-                        output file (this option is just for galaxy")
     if myopts:
         args = parser.parse_args(myopts)
     else:
@@ -79,240 +45,221 @@ def getOptions(myopts=None):
 
     return(args)
 
-def splitDigits(x):
-    """ 
-    Function to split digits by decimal
+
+def splitDigit(x):
+    """ Function to split digits by decimal
 
         :Arguments:
-            :type x: int
-            :param x: Number to count digits form.
+            :param integer x: Digit to split
 
         :Returns:
-            :rtype x: int
-            :returns x: count of the given number.
+            :rtype: integer
+            :returns: integer that is split by the decimal
 
     """
+
     if x == 0:
-        return np.nan
+        cnt = np.nan
     else:
         # Bug fixer of scientific notation (Very large and very small numbers)
         x = str('%f' % x)
 
         # Split x at the decimal point and then take the length of the string
-        # Before the decimal point then return
-        return len(x.split('.')[0])
+        # Before the decimal point
+        cnt = len(x.split('.')[0])
+    return cnt
 
-def countDigits(wide):
-    """
-    This function counts digits on a given file.
 
-        :Arguments:
-            :type wide: pandas.DataFrame.
-            :param wide: Input data to count digits.
+class FileName:
+    """ Class to create a file name for accurate location in the Galaxy file system """
+    def __init__(self, text, fileType, groupName=''):
+        """ Constructor
 
-        :Returns:
-            :rtype count: pandas.DataFrame
-            :returns count: DataFrama with the counted digits and min, max and 
-                            diff among rows.
+            :Arguments:
+                :param string text: Text of the file name
+                :param string fileType: '.tsv', '.txt', '.csv'
+                :param string groupName: If using groups to separate data, the group name will be added to the file name
+        """
+        self.text = str(text)  # Must convert all to string just in case of numbers as names
+        self.fileType = str(fileType)
+        self.groupName = str(groupName)
+        self._createFileName()
+        self._createFileNameWithSlash()
 
-    """
-    # Count the number of digits before decimal and get basic distribution info
-    count = wide.applymap(lambda x: splitDigits(x))
+    def _createFileName(self):
+        if self.groupName == '':
+            self.fileName = self.text + self.fileType
+        else:
+            self.fileName = self.groupName + '_' + self.text + self.fileType
 
-    # Calculate min number of digits on the row
-    count["min"] = count.apply(np.min, axis=1)
+    def _createFileNameWithSlash(self):
+        if self.groupName == '':
+            self.fileNameWithSlash = '/' + self.text + self.fileType
+        else:
+            self.fileNameWithSlash = '/' + self.groupName + '_' + self.text + self.fileType
 
-    # Calculate max numver of digits on the row
-    count["max"] = count.apply(np.max, axis=1)
 
-    # Calculate difference between max and min number of digits
-    count["diff"] = count["max"] - count["min"]
-
-    # Return counts
-    return count
-
-def plotCDhistogram(count,pdf,group):
-    """
-    This function counts digits on a given file.
-
-        :Arguments:
-            :type count: pandas.DataFrame.
-            :param count: DataFrama with the counted digits and min, max and 
-                            diff among rows.
-
-            :type pdf: matplotlib.backends.backend_pdf.PdfPages.
-            :param pdf: PDF object to plot figures in.
-
-            :type group: str.
-            :param group: Name of the group to plot.
-    """
-    #Creating title
-    title="Distribution of difference between \n(min and max) for {0} compounds".\
-            format(group)
-    if count['diff'].any():
-        
-        #Opening figure handler
-        fh = figureHandler(proj='2d')
-
-        #Plot histogram
-        hist.quickHist(ax=fh.ax[0],dat=count['diff'])
-
-        #Giving format to the axis
-        fh.formatAxis(xTitle='Difference in Number of Digits (max - min)',
-            yTitle='Number of Features',figTitle=title, ylim="ignore")
-
-        # Explort figure
-        fh.addToPdf(pdf,dpi=600)
-
-    else:
-        logger.warn("There were no differences in digit counts for {0}, no plot will be generated".format(group))
-
-def createHTML():
-    #Create html object
-    html = etree.Element("html")
-    head = etree.SubElement(html, "head")
-    title = etree.SubElement(head, "title")
-    title.text = "Count Digits Results List"
-    body = etree.SubElement(html, "body")
-    div = etree.SubElement(body, "div",style="background-color:black; \
-                color:white; text-align:center; margin-bottom:5% padding:4px;")
-    h1 = etree.SubElement(div,"h1")
-    ul = etree.SubElement(body,"ul",style="text-align:left; margin-left:5%;")
-    h1.text="Output"
-    
-    #Return htmml
-    return html
-
-def save2html(data, filename, html=None):
-    #Add data to html
-    if html is not None:
-        li = etree.SubElement(html[1][1],"li", style="margin-bottom:1.5%;")
-        a= etree.SubElement(li,"a",href=filename)
-        a.text=filename
-
-    #Save data
-    data.to_csv(filename,sep="\t",na_rep=0)
-
-    #Return html
-    return html
-
-def countDigitsByGroup(dat, args, pdf, html=None):
-    """ 
-    If the group option is selected this function is called to split by groups.
+def countDigitsByGroups(args, wide, dat, dir):
+    """ If the group option is selected this function is called to split by groups.
 
     The function calls the countDigits function in a loop that iterates through
     the groups
 
         :Arguments:
-            :type dat: wideToDesign
-            :param dat: input data 
+            :type args: argparse.ArgumentParser
+            :param args: Command line arguments
 
-            :type args: argparse.ArgumentParser.
-            :param args: Command line arguments.
+            :type wide: pandas.DataFrame
+            :param wide: A data frame in wide format
 
-            :type pdf: matplotlib.backends.backend_pdf.PdfPages.
-            :param pdf: PDF object to plot figures in.
+            :type dat: pandas.DataFrame
+            :param dat: A data frame in design format
 
-            :type countzip: zipfile.ZipFile.
-            :param countzip: Zip container.
+            :param string dir: String of the directory name for storing files in galaxy
+
     """
     # Split Design file by group
-    if dat.group:
-        for name, group in dat.design.groupby(dat.group):
-            #Setting count name
-            countName = args.counts+"_{0}.tsv".format(name)
+    try:
+        for title, group in dat.design.groupby(args.group):
 
             # Filter the wide file into a new dataframe
-            currentFrame = dat.wide[group.index]
+            currentFrame = wide[group.index]
 
-            # Counting digits per group
-            count  = countDigits(currentFrame)
+            # Change dat.sampleIDs to match the design file
+            dat.sampleIDs = group.index
 
-            # Plotting CD histograms
-            plotCDhistogram(count,pdf,name)
+            countDigits(currentFrame, dat, dir=dir, groupName=title)
+    except KeyError:
+        logger.error("{} is not a column name in the design file.".format(args.group))
+    except Exception as e:
+        logger.error("Error. {}".format(e))
 
-            # Save countName, save it to html if exist
-            save2html(html=html, data=count, filename=countName)
 
-def saveFlags(count):
-    """ 
-    Function to create and export flags for the counts.
+def countDigits(wide, dat, dir, groupName=''):
+    """ Function to create and export the counts, figure, and summary files
 
         :Arguments:
-            :type count: pandas.DataFrame.
-            :param count: DataFrama with the counted digits and min, max and 
-                            diff among rows.
+            :type wide: pandas.DataFrame
+            :param wide: A data frame in wide format
+
+            :type dat: pandas.DataFrame
+            :param dat: A data frame in design format
+
+            :param string dir: String of the directory name for storing files in galaxy
+
+            :param string groupName: Name of the group if using the group option. Set to an empty stirng by default
+
     """
+    # Count the number of digits before decimal and get basic distribution info
+    cnt = wide.applymap(lambda x: splitDigit(x))
+    cnt['min'] = cnt.apply(np.min, axis=1)
+    cnt['max'] = cnt.apply(np.max, axis=1)
+    cnt['diff'] = cnt['max'] - cnt['min']
 
-    # Create flag object
-    flag = Flags(index=count.index)
+    # Create mask of differences. If the difference is greater than 1 a flag needs to be made
+    mask = cnt['diff'] >= 2
 
-    # If the difference is greater than 1 a flag is set for dat row/met.
-    flag.addColumn(column="flag_feature_count_digits",mask=count["diff"] >= 2)
+    # Update the global flag file with mask
+    flag.update(mask)
 
-    #Save flags
-    flag.df_flags.to_csv(os.path.abspath(args.flags),sep="\t")
+    # write output
+    cntFileName = FileName(text='counts', fileType='.tsv', groupName=groupName)
+    cntFile = open(dir + cntFileName.fileNameWithSlash, 'w')
+    cntFile.write(cnt.to_csv(sep='\t'))
+    cntFile.close()
+
+    htmlContents.append('<li style=\"margin-bottom:1.5%;\"><a href="{}">{}</a></li>'.format(cntFileName.fileName, groupName + ' Counts'))
+
+    # Make distribution plot of differences
+
+    # Set title to default if there is none
+    if groupName:  # If a title is set (set a different title for each group and export everything in a zip)
+        title = 'Distribution of difference between min and max across compounds: ' + str(groupName)
+        # shutil.make_archive("CountDigitsArchive", "zip")  # This creates a zip of everything, not good
+
+    else:  # groups are not being used
+        title = 'Distribution of difference between min and max across compounds'
+
+    if cnt['diff'].any():
+        fig, ax = plt.subplots(figsize=(8, 8))
+        cnt['diff'].plot(kind='hist', ax=ax, title=title)
+        ax.set_xlabel('Difference in Number of Digits (max - min)')
+        ax.set_ylabel('Number of Features')
+
+        # Save figure into archive
+        figureFileName = FileName(text='difference(Max-Min)', fileType='.png', groupName=groupName)
+        fig.savefig(dir + figureFileName.fileNameWithSlash, bbox_inches='tight')
+        htmlContents.append('<li style=\"margin-bottom:1.5%;\"><a href="{}">{}</a></li>'.format(figureFileName.fileName, groupName + ' Figure'))
+    else:
+        logger.warn('There were no differences in digit counts, no plot will be generated')
+
 
 def main(args):
-    #parsing data with interface
-    dat = wideToDesign(wide=args.input, design=args.design, uniqID=args.uniqID, 
-                        group=args.group)
+    # Create a directory in galaxy to hold the files created
+    directory = args.htmlPath
+    try:  # for test - needs this done
+        os.makedirs(args.htmlPath)
+    except Exception, e:
+        logger.error("Error. {}".format(e))
 
-    if args.html is not None:
-        # Initiation zip files
-        html = createHTML()
-        logger.info(u"Using html output file")
+    htmlFile = file(args.html, 'w')
+
+    global htmlContents
+    # universe_wsgi.ini file's html_sanitizing must be false to allow for styling
+    htmlContents = ["<html><head><title>Count Digits Results List</title></head><body>"]
+    htmlContents.append('<div style=\"background-color:black; color:white; text-align:center; margin-bottom:5% padding:4px;\">'
+                        '<h1>Output</h1>'
+                        '</div>')
+    htmlContents.append('<ul style=\"text-align:left; margin-left:5%;\">')
+
+    # Import data
+    logger.info(u'html system path: {}'.format(args.htmlPath))
+    logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}'.format(args.fname, args.dname, args.uniqID))
+    dat = wideToDesign(args.fname, args.dname, args.uniqID)
+
+    # Only interested in samples
+    wide = dat.wide[dat.sampleIDs]
+
+    # Global flag file
+    global flag
+    flag = Flags(index=wide.index)
+    flag.addColumn(column='flag_feature_count_digits')
 
     # Use group separation or not depending on user input
-    with PdfPages(os.path.abspath(args.figure)) as pdf:
-        if args.group:
-            # Removing groups with just one elemen from dat
-            dat.removeSingle()
+    if args.group:
+        countDigitsByGroups(args, wide, dat, dir=directory)
+    else:
+        countDigits(wide, dat, dir=directory)
 
-            # Count Digits per group
-            logger.info(u"Counting digits per group")
-            countDigitsByGroup(dat, args, pdf, html=html)
+    # Create a zip archive with the inputted zip file name of the temp file
+    if args.noZip:
+        pass
+    else:
+        shutil.make_archive(directory + '/Archive_of_Results', 'zip', directory)
 
-        # Count digits for all elements
-        count = countDigits(wide=dat.wide)
+    # Add zip of all the files to the list
+    htmlContents.append('<li><a href="{}">{}</a></li>'.format('Archive_of_Results.zip', 'Zip of Results'))
 
-        # Plotting for all elements
-        plotCDhistogram(count=count, pdf=pdf, group="all")
+    # Close html list and contents
+    htmlContents.append('</ul></body></html>')
 
-        # Calculate and save flags for all elements
-        logger.info(u"Calculating flags")
-        saveFlags(count)
+    htmlFile.write("\n".join(htmlContents))
+    htmlFile.write("\n")
+    htmlFile.close()
 
-    # Add count of all elements to html if not html save directly
-    html = save2html(html=html,data=count,filename=args.counts+"_all.tsv")
+    # Output flag file
+    flag.df_flags.to_csv(args.flags, sep="\t")
 
-    #Save to html
-    if args.html:
-        with open(args.html,"w") as  htmlOut:
-            print >> htmlOut,etree.tostring(html,pretty_print=True)
-
-    
-    logger.info(u"Count Digits Complete!")
 
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
 
-    # Setting logger
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel='debug')
     else:
         sl.setLogger(logger)
 
-    # Starting script with the following parameters
-    logger.info(u"Importing data with following parameters: \
-                \n\tWide: {0}\
-                \n\tDesign: {1}\
-                \n\tUnique ID: {2}\
-                \n\tGroup: {3}\
-                \n\tHtml: {4}".\
-    format(args.input,args.design, args.uniqID, args.group, args.html))
-
-    # Main
     main(args)
+

@@ -78,6 +78,7 @@ class wideToDesign:
             if clean_string:
                 self.wide[self.uniqID] = self.wide[self.uniqID].apply(lambda x: self._cleanStr(x))
                 self.wide.rename(columns= lambda x:self._cleanStr(x),inplace=True)
+
             # Make sure index is a string and not numeric
             self.wide[self.uniqID] = self.wide[self.uniqID].astype(str)
 
@@ -184,19 +185,12 @@ class wideToDesign:
             x = x.replace('+', '_')
             x = x.replace('(', '_')
             x = x.replace(')', '_')
-<<<<<<< HEAD
             x = x.replace('[', '_')
             x = x.replace(']', '_')
             x = x.replace('{', '_')
             x = x.replace('}', '_')
             x = x.replace('"', '_')
             x = x.replace('\'', '_')
-=======
-            x = x.replace(')', '_')
-<<<<<<< HEAD
->>>>>>> parent of 6d506e5... Fix the compound ID cleaning method in the interface to resolve recurrent anova issues
-=======
->>>>>>> parent of 6d506e5... Fix the compound ID cleaning method in the interface to resolve recurrent anova issues
             x = re.sub(r'^([0-9].*)', r'_\1', x)
             self.origString[x] = val
         return x

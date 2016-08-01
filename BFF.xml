@@ -1,4 +1,4 @@
-<tool id="BFF" name="Blank Feature Filtering (Beta)" version="2.0,0">
+<tool id="BFF" name="Blank Feature Filtering">
 	<description>Filters data using blanks (BFF).</description>
 	<requirements>
 		<requirement type="python-module">numpy</requirement>

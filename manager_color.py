@@ -1,14 +1,14 @@
-import palettable
-import matplotlib
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import palettable.tableau as tb
-import palettable.wesanderson as wes
-import palettable.cubehelix as cubhx
-import palettable.colorbrewer.sequential as seq
 import palettable.colorbrewer.diverging as div
 import palettable.colorbrewer.qualitative as qual
+import palettable.colorbrewer.sequential as seq
+import palettable.cubehelix as cubhx
+import palettable.tableau as tb 
+import palettable.wesanderson as wes 
+import palettable
+import matplotlib
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
 class colorHandler:
     """class to handle colors used in graphing""" 

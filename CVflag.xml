@@ -1,17 +1,16 @@
-<tool id="CVflag" name="CV flags (Beta)" version="2.0.0">
+<tool id="CVflag" name="CV flags">
   <description>Calculate CV flags</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">pandas</requirement>
     <requirement type="python-module">matplotlib</requirement>
-    <requirement type="python-module">palettable</requirement>
   </requirements>
   <command interpreter="python">CVflag.py
       --input $input
       --design $design
       --ID $uniqID
-      --figure $CVplot
-      --flag $CVflag
+      --CVplotOutFile $CVplot
+      --CVflagOutFile $CVflag
 
       #if $group:
           --group $group
@@ -24,8 +23,8 @@
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
-    <param name="group" type="text" size="30" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by a column in the Metadata file, enter the column name. Spelling and capitalization must be exact" />
     <param name="CVcutoff"  type="float" optional="true" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag the top 10% of features with the largest CV. If you want to set a CV cutoff, put the number here."/>
+    <param name="group" type="text" size="30" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by a column in the Metadata file, enter the column name. Spelling and capitalization must be exact" />
   </inputs>
   <outputs>
     <data format="pdf" name="CVplot"  label="CVplot" />
@@ -34,6 +33,16 @@
   <macros>
       <import>macros.xml</import>
   </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <param name="group" value="treatment" />
+            <output name="CVplot" file="./test-data/test_CVplotOutFile.pdf" />
+            <output name="CVflag" file="./test-data/test_CVflagOutFile.pdf" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@

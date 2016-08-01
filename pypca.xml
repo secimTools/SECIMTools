@@ -1,35 +1,39 @@
-<tool id="pca2" name="Principal Component Analysis (beta)" version="2.0.0">
-    <description>"Calculates PCA on a dataset and plots the first 3 principal components"</description>
+<tool id="pca" name="Principal Component Analysis" version="1.0.2">
+    <description></description>
     <requirements>
         <requirement type="python-module">sklearn</requirement>
         <requirement type="python-module">pandas</requirement>
         <requirement type="python-module">numpy</requirement>
-        <requirement type="python-module">matplotlib</requirement>
     </requirements>
     <command interpreter="python">
-        pca.py
+        pypca.py
         --input $input
         --design $design
         --ID $uniqID
-        --group $group
         --load_out $loadings
         --score_out $scores
-        --figure $figures
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
-        <param name="group" type="text" size="30" label="Input Group name to separate by [OPTIONAL]" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
     </inputs>
     <outputs>
         <data format="tabular" name="loadings" label="${tool.name} on ${on_string}: loadings"/>
         <data format="tabular" name="scores" label="${tool.name} on ${on_string}: scores"/>
-        <data format="pdf" name="figures" label="${tool.name} on ${on_string}: scatter plots"/>
     </outputs>
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+        <test>
+            <param name="input" value="./test-data/test_data.tsv" />
+            <param name="design" value="./test-data/test_design.csv" />
+            <param name="uniqID" value="rowID" />
+            <output name="loadings" file="./test-data/test_pypca_load_out.tsv" />
+            <output name="scores" file="./test-data/test_pypca_score_out.tsv" />
+        </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@
@@ -38,7 +42,8 @@
 
 **What it does**
 
-This tool performs Principal Component Analysis on the numeric input data.
+This tool performs Principal Component Analysis on the given numeric
+input data using a singular value decomposition based solution.
 
 --------------------------------------------------------------------------------
 
@@ -48,8 +53,7 @@ This tool performs Principal Component Analysis on the numeric input data.
 
 - This tool currently treats all variables as continuous numeric
   variables. Running the tool on categorical variables might result in
-  incorrect results. 
-- Rows containing non-numeric (or missing) data in any
+  incorrect results. Rows containing non-numeric (or missing) data in any
   of the chosen columns will be skipped from the analysis.
 
 --------------------------------------------------------------------------------
@@ -60,7 +64,7 @@ This tool performs Principal Component Analysis on the numeric input data.
 
     @WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 
@@ -77,8 +81,8 @@ This tool performs Principal Component Analysis on the numeric input data.
 
 **Output Files**
 
-- This tool outputs 2 files in addition to the following loadings plots:
-  (1) PC1 vs PC2, (2) PC2 vs PC3 (3) PC2 vs PC3 and (4) PC1 vs PC2 vs PC3
+
+- This tool outputs 2 files.
 
 **loadings** is a TSV containing eigen-vectors/variable loadings.
 
@@ -96,7 +100,6 @@ This tool performs Principal Component Analysis on the numeric input data.
     - Proportion of variance explained by each principal component
     - Scores: Scores of the input data on the principal components
 
-**  
 
 </help>
 </tool>
