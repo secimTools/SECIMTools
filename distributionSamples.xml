@@ -1,0 +1,95 @@
+<tool id="distributionSamples" name="Distribution by Samples (Beta)" version="2.0.0">
+  <description>Generate distributions for each sample.</description>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">mpld3</requirement>
+    <requirement type="python-module">interface</requirement>
+    <requirement type="python-module">logger</requirement>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">palettable</requirement>
+  </requirements>
+  <command interpreter="python">
+      distributionSamples.py
+      --input $input
+      --design $design
+      --ID $uniqID
+      --figure $figure
+           
+      #if $group
+      	--group $group
+      #end if
+      
+      #if $order
+      	--order $order
+      #end if
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
+    <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
+    <param name="order" type="text" size="30" value="" optional="true" label="Run Order" help="Name of the column in your Metadata File that contains the Run Order of your samples."/>
+  </inputs>
+  <outputs>
+    <data format="pdf" name="figure" />
+  </outputs>
+  <macros>
+      <import>macros.xml</import>
+  </macros>
+  <tests>
+    <test>
+        <param name="input" value="./test-data/test_data.tsv" />
+        <param name="design" value="./test-data/test_design.tsv" />
+        <param name="uniqID" value="rowID" />
+        <param name="group" value="treatment" />
+        <param name="order" value="runOrder" />
+        <output name="dist1" file="./test-data/test_distribution_fig.pdf" />
+    </test>
+  </tests>
+<help>
+
+@TIP_AND_WARNING@
+
+**What it does**
+
+This tool plots the distribution of your samples.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required.
+
+    @WIDE@
+
+    **NOTE:** The sample IDs must match the sample IDs in the Metadata File
+    (below). Extra columns will automatically be ignored.
+
+
+    @METADATA@
+
+    **In addition to your datasets, you need to provide:**
+
+    **Unique Compound ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your compounds. In our example dataset you would input *Compound*.
+
+
+      @GROUP_OPTIONAL@
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+This tool outputs 2 different files.
+
+    - A `PDF` file containing distributions.
+
+    - A `HTML` that has the same distribution plot, but with interactive zoom.
+
+</help>
+</tool>
+
