@@ -67,16 +67,25 @@ def getOptions():
     return (args)
 
 def calculateLOD(row,defaultLOD):
+    # Calculates the average of the blanks plus3 times the SD of the same.
     lod = round(np.average(row)+(3*np.std(row,ddof=1)),3)
+
+    # If the limit of detection is bellow 0 then use a default LOD instead.
     if lod > 0:
         return lod
     else:
+    # Default LOD 5000
         lod=5000
         return lod
 
 def gettingBFF(row):
+    # Remove LOD values form the row
     groups = row[row.index!="lod"]
+
+    # Calculate BFF value per group
     bff = groups.apply(lambda group: ((group-row["lod"])/row["lod"]))
+
+    # Return BFF value
     return bff
 
 def main():
@@ -135,12 +144,12 @@ def main():
         df_offFlags.addColumn(column='flag_bff_'+group+'_off', mask=mask==False)
 
     #Calculate flag at least one off
-    maskAny = df_offFlags.df_flags.any(axis=1)
-    df_offFlags.addColumn('flag_bff_any_off', maskAny)
+        #maskAny = df_offFlags.df_flags.any(axis=1)
+        #df_offFlags.addColumn('flag_bff_any_off', maskAny)
 
     #Calculate flag all off
-    maskAll = df_offFlags.df_flags.all(axis=1)
-    df_offFlags.addColumn('flag_bff_all_off', maskAll)
+        #maskAll = df_offFlags.df_flags.all(axis=1)
+        #df_offFlags.addColumn('flag_bff_all_off', maskAll)
 
     #Outputting files
     logger.info(u"""Output limit of detection values file.""")
