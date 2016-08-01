@@ -2,10 +2,11 @@
 
 # Built-in packages
 import argparse
-
+import logging
 # Local packages
 from interface import wideToDesign
-from interface import Flags
+from flags import Flags
+import logger as sl
 
 
 def getOptions():
@@ -34,7 +35,7 @@ def main(args):
     dat = wideToDesign(args.fname, args.dname, args.uniqID)
 
     df_offFlags = Flags(index=dat.wide.index)
-
+    logger.info("Running On/Off")
     # Iterate through each group to add flags for if a group has over half of
     # its data above the cutoff
     for title, group in dat.design.groupby(args.group):
@@ -56,6 +57,7 @@ def main(args):
     maskFlagMetAllOff = df_offFlags.df_flags.all(axis=1)
     df_offFlags.addColumn('flag_feature_all_off', maskFlagMetAllOff)
 
+    logger.info("Creating output")
     df_offFlags.df_flags.to_csv(args.output, sep="\t")
 
 if __name__ == "__main__":
@@ -63,5 +65,11 @@ if __name__ == "__main__":
     # Command line options
     args = getOptions()
 
+    logger = logging.getLogger()
+
+    sl.setLogger(logger)
+
+    # Plotting import info 
+    logger.info('Importing Data')
     main(args)
 
