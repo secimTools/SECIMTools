@@ -1,4 +1,4 @@
-<tool id="baPlot" name="Bland-Altman Plot">
+<tool id="baPlot" name="Bland-Altman Plot (Beta)" version="2.0.0">
   <description>Create pairwise BA plots to identify outliers.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
@@ -6,12 +6,13 @@
     <requirement type="python-module">pandas</requirement>
     <requirement type="python-module">statsmodels</requirement>
     <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">palettable</requirement>
   </requirements>
   <command interpreter="python">baPlot.py
       --input $input
       --design $design
       --ID $uniqID
-      --ba $ba_plots
+      --figure $ba_plots
       --flag_dist $outlier_dist_plots
       --flag_sample $flag_sample
       --flag_feature $flag_feature
@@ -47,21 +48,6 @@
   <macros>
       <import>macros.xml</import>
   </macros>
-  <tests>
-    <test>
-      <param name="input" value="./test-data/test_data.tsv " ftype="tabular"/>
-      <param name="design" value="./test-data/test_design.csv" ftype="tabular"/>
-      <param name="uniqID" value="rowID"/>
-      <param name="group" value="treatment"/>
-      <param name="resid_cutoff" value="3"/>
-      <param name="sample_cutoff" value=".2"/>
-      <param name="feature_cutoff" value=".05"/>
-      <output name="ba_plots" file="./test-data/test_baPlot_ba.pdf" />
-      <output name="outlier_dist_plots" file="./test-data/test_baPlot_flag_dist.pdf" />
-      <output name="flag_sample" file="./test-data/test_baPlot_flag_sample.tsv" />
-      <output name="flag_feature" file="./test-datatest_baPlot_flag_feature.tsv" />
-    </test>
- </tests>
 <help>
 
 @TIP_AND_WARNING@
