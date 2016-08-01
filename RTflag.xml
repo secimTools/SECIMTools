@@ -1,17 +1,18 @@
-<tool id="RTflag" name="RT flags">
+<tool id="RTflag" name="RT flags (Beta)" version="2.0.0">
   <description>Calculate RT flags</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">pandas</requirement>
     <requirement type="python-module">matplotlib</requirement>
     <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">palettable</requirement>
   </requirements>
   <command interpreter="python">RTflag.py
       --input $input
       --design $design
       --ID $uniqID
-      --RTplotOutFile $RTplot
-      --RTflagOutFile $RTflag
+      --figure $RTplot
+      --flag $RTflag
       --minutes $minutes
 
       #if $CVcutoff:
@@ -30,23 +31,12 @@
     <param name="pctl" type="boolean" size="30" label="90th percentile [OPTIONAL]" help="Check this box to use a 90th percentile. The default is a 95th percentile (NO). [OPTIONAL]" />
   </inputs>
   <outputs>
-    <data format="png" name="RTplot"  label="RTplot" />
+    <data format="pdf" name="RTplot"  label="RTplot" />
     <data format="tabular" name="RTflag"  label="RTflag" />
   </outputs>
   <macros>
       <import>macros.xml</import>
   </macros>
-    <tests>
-        <test>
-            <param name="input" value="./test-data/test_data.tsv" />
-            <param name="design" value="./test-data/test_design.csv" />
-            <param name="uniqID" value="rowID" />
-            <param name="minutes" value=".2" />
-            <param name="CVcutoff" value=".1" />
-            <output name="RTplot" file="./test-data/test_RTflag_RTplotOutFile.tsv" />
-            <output name="RTflag" file="./test-data/test_RTflag_RTplotOutFile.png" />
-        </test>
-    </tests>
 <help>
 
 @TIP_AND_WARNING@
@@ -97,7 +87,7 @@ This tool identifies features with the following characteristics:
 
 - The tool generates 2 output datasets.
 
-    **CvplotForRT** is a PNG density plot of the coefficients of variation for the retention time.
+    **CVplotForRT** is a PDF density plot of the coefficients of variation for the retention time.
 
     **RTflag** is a TSV file containing the 5 retention time 0/1 indicator flags for each feature.
 
