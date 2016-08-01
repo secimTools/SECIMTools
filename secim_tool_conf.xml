@@ -19,7 +19,7 @@
 		<tool file="secimtools/randomForest.xml"/>
 		<tool file="secimtools/RTflag.xml"/>
 		<tool file="secimtools/runOrderRegression.xml"/>
-		<tool file="secimtools/standarizedEuclideanDistance.xml"/>
+		<tool file="secimtools/standardizedEuclideanDistance.xml"/>
 		<tool file="secimtools/summarizeFlags.xml"/>
 		<tool file="secimtools/SVMClassifier.xml"/>
     </section>
