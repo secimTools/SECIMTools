@@ -18,7 +18,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 # Local packages
 from interface import wideToDesign
-from interface import Flags
+from flags import Flags
 
 def getOptions():
     """ Function to pull in arguments """
