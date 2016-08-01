@@ -193,6 +193,9 @@ class wideToDesign:
             x = x.replace('\'', '_')
 =======
             x = x.replace(')', '_')
+<<<<<<< HEAD
+>>>>>>> parent of 6d506e5... Fix the compound ID cleaning method in the interface to resolve recurrent anova issues
+=======
 >>>>>>> parent of 6d506e5... Fix the compound ID cleaning method in the interface to resolve recurrent anova issues
             x = re.sub(r'^([0-9].*)', r'_\1', x)
             self.origString[x] = val
