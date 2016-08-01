@@ -1,4 +1,4 @@
-<tool id="log_transform" name="Log Transformation">
+<tool id="logTransform" name="Log Transformation (Beta)" version="2.0.0">
     <description>Transform your data using the log.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
@@ -30,15 +30,6 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <tests>
-        <test>
-            <param name="input" value="./test-data/test_data.tsv" />
-            <param name="design" value="./test-data/test_design.csv" />
-            <param name="uniqID" value="rowID" />
-            <param name="log" value="log" />
-            <output name="out" file="./test-data/test_log_transform_out.tsv" />
-        </test>
-    </tests>
 <help>
 
     @TIP_AND_WARNING@
