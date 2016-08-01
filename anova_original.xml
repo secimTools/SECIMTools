@@ -1,5 +1,5 @@
-<tool id="anova-single-file" name="One-Way ANOVA">
-  <description> for two or more groups.</description>
+<tool id="anovaSingleFile" name="One-Way ANOVA (Stable)" version="1.0.0">
+  <description> Performs One Way ANOVA.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">scipy</requirement>
@@ -7,7 +7,8 @@
     <requirement type="python-module">statsmodels</requirement>
     <requirement type="python-module">matplotlib</requirement>
   </requirements>
-  <command interpreter="python">anova.py
+  <command interpreter="python">
+      anova_original.py
       --input $input
       --design $design
       --ID $uniqID
@@ -30,17 +31,6 @@
   <macros>
       <import>macros.xml</import>
   </macros>
-  <tests>
-    <test>
-      <param name="input" value="./test-data/test_data.tsv " ftype="tabular"/>
-      <param name="design" value="./test-data/test_design.csv" ftype="tabular"/>
-      <param name="uniqID" value="rowID"/>
-      <param name="group" value="treatment"/>
-      <output name="results_table" file="./test-data/test_anova_tsv.tsv" />
-      <output name="qq_plots" file="./test-data/test_anova_fig.tsv" />
-      <output name="volcano_plots" file="./test-data/test_anova_fig2.tsv" />
-    </test>
-  </tests>
 <help>
 
 @TIP_AND_WARNING@
