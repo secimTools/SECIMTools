@@ -1,0 +1,70 @@
+<tool id="Summary Flags" name="Summary Flags (Beta)" version="2.0.0">
+    <description>Summarize flags of a given flags file</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+    </requirements>
+    <command interpreter="python">summarizeFlags.py
+        --flags $flags
+        --ID $uniqID
+        --outSummary $summaryFlags
+    </command>
+    <inputs>
+        <param name="flags" type="data" format="tabular" label="Flag File"
+               help="Input flagged dataset containing the flag value for each feature"/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID"
+               help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="summaryFlags" label="Summary flags"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**What it does**
+
+This tool takes a flag wide formatted file and summarizes the information 
+of the flags. It will output a flag file with the flag information plus the sum
+of the flags, the mean of the flags, if flag that is going to be set up as on if
+any of the flags is on and a flag that will be on if all the original flags for a
+given metabolite are on.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- One input dataset is requiered.
+
+    @FLAGS@
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- If dropping features:
+
+    **Flag summary file**
+
+    A flag file with the summary data per row.:
+
+    +-------+------+------+------+-----+--+---------+--------+--------+
+    |Feature|flag_A|flag_B|flag_C|flag_sum|flag_mean|flag_any|flag_all|
+    +=======+======+======+======+========+=========+========+========+
+    |one    |0     |0     |0     |0       |0.0      |0       |0       |
+    +-------+------+------+------+--------+---------+--------+--------+
+    |two    |0     |1     |1     |2       |0.6      |1       |0       |
+    +-------+------+------+------+--------+---------+--------+--------+
+    |three  |0     |1     |0     |1       |0.3      |1       |0       |
+    +-------+------+------+------+--------+---------+--------+--------+
+    |four   |1     |1     |1     |3       |1.0      |1       |1       |
+    +-------+------+------+------+--------+---------+--------+--------+
+    |...    |...   |...   |...   |...     |...      |...     |...     |
+    +-------+------+------+------+--------+---------+--------+--------+
+
+
+</help>
+</tool>
