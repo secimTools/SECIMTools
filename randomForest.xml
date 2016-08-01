@@ -1,10 +1,10 @@
-<tool id="random-forest" name="Random Forest">
+<tool id="random-forest" name="Random Forest (Beta)" version="2.0.0">
     <description> for feature selection.</description>
     <requirements>
         <requirement type="python-module">pandas</requirement>
         <requirement type="python-module">sklearn</requirement>
     </requirements>
-    <command interpreter="python">RandomForest.py
+    <command interpreter="python">randomForest.py
         --input $input
         --design $design
         --ID $uniqID
@@ -27,17 +27,6 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <tests>
-        <test>
-            <param name="input" value="./test-data/test_data.tsv" />
-            <param name="design" value="./test-data/test_design.csv" />
-            <param name="uniqID" value="rowID" />
-            <param name="group" value="treatment" />
-            <param name="number_of_estimators" value="1000" />
-            <output name="outfile1" file="./test-data/test_RandomForest_out.tsv" />
-            <output name="outfile2" file="./test-data/test_RandomForest_out2.tsv" />
-        </test>
-    </tests>
 <help>
 
 @TIP_AND_WARNING@

@@ -17,14 +17,14 @@ def getOptions(myopts=None):
     """ Function to pull in arguments """
     description = """ One-Way ANOVA """
     parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
-    parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
-    parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument("--group", dest="group", action='store', required=True, help="Group/treatment identifier in design file.")
-    parser.add_argument("--num", dest="num", action='store', type=int, required=True, default=1000, help="Number of estimators.")
-    parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
-    parser.add_argument("--out2", dest="oname2", action='store', required=True, help="Output file name.")
-    parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
+    parser.add_argument('-i',"--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
+    parser.add_argument('-d',"--design", dest="dname", action='store', required=True, help="Design file.")
+    parser.add_argument('-id',"--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
+    parser.add_argument('-g',"--group", dest="group", action='store', required=True, help="Group/treatment identifier in design file.")
+    parser.add_argument('-n',"--num", dest="num", action='store', type=int, required=True, default=1000, help="Number of estimators.")
+    parser.add_argument('-o1',"--out", dest="oname", action='store', required=True, help="Output file name.")
+    parser.add_argument('-o2',"--out2", dest="oname2", action='store', required=True, help="Output file name.")
+    parser.add_argument('-bug',"--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 
     if myopts:
         args = parser.parse_args(myopts)
