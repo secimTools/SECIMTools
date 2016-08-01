@@ -11,7 +11,7 @@ import pandas as pd
 
 # Local Packages
 import logger as sl
-from interface import Flags
+from flags import Flags
 
 
 def getOptions():
