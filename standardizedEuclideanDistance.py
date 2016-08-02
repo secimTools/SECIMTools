@@ -14,26 +14,28 @@
 ################################################################################
 
 # Built-in packages
-import argparse
-import logging
 import os
+import logging
+import argparse
 
 # Add-on packages
+import matplotlib
+matplotlib.use('Agg')
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as stats
+import matplotlib.pyplot as plt
 from sklearn.neighbors import DistanceMetric
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Local packages
-from interface import wideToDesign
-from manager_figure import figureHandler
-import  module_scatter as  scatter
-import manager_color as ch
 import logger as sl
 import module_box as box
+import manager_color as ch
 import module_lines as lines
+import  module_scatter as  scatter
+from interface import wideToDesign
+from manager_figure import figureHandlers
 
 def getOptions():
     """ Function to pull in arguments """

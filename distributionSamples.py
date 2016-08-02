@@ -19,22 +19,21 @@ import argparse
 from argparse import RawDescriptionHelpFormatter
 
 # Add-on packages
-import pandas as pd
+import mpld3
 import matplotlib
 matplotlib.use('Agg')
-from matplotlib.backends.backend_pdf import PdfPages
-import matplotlib.pyplot as plt
 import numpy as np
-import mpld3
-
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 # Local Packages
-from interface import wideToDesign
-from manager_figure import figureHandler
-from manager_color import colorHandler
+import logger as sl
 import module_box as box
 import module_distribution as density
-import logger as sl
+from interface import wideToDesign
+from manager_color import colorHandler
+from manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """

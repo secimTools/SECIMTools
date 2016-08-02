@@ -17,6 +17,8 @@ import argparse
 from argparse import RawDescriptionHelpFormatter
 
 # Add-on packages
+import matplotlib
+matplotlib.use('Agg')
 import pandas as pd
 
 # Local Packages

@@ -22,16 +22,18 @@
 
 #Standar Libraries
 import os
-import argparse
 import logging
+import argparse
 
 #AddOn Libraries
+import matplotlib
+matplotlib.use('Agg')
 import pandas as pd
 
 # Local Packages
-from interface import wideToDesign
-import module_heatmap as hm
 import logger as sl
+import module_heatmap as hm
+from interface import wideToDesign
 
 #Import data
 def getOptions():
