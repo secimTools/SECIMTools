@@ -7,7 +7,7 @@
         <requirement type="python-module">interface</requirement>
         <requirement type="python-module">logger</requirement>
     </requirements>
-    <command interpreter="python">log_transform.py
+    <command interpreter="python">logTransform.py
         --input $input
         --design $design
         --ID $uniqID
