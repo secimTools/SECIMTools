@@ -23,6 +23,7 @@
 #Standar Libraries
 import os
 import logging
+import warnings
 import argparse
 
 #AddOn Libraries
@@ -84,7 +85,9 @@ def main(args):
     hcFig = hm.plotHeatmap(dat.wide,hcheatmap=True)
 
     # Saving figures
-    hcFig.savefig(args.heatmap,format="pdf")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        hcFig.savefig(args.heatmap,format="pdf")
 
 if __name__ == '__main__':
         #Import data
