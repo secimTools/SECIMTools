@@ -1,26 +1,26 @@
 <?xml version='1.0' encoding='utf-8'?>
 <toolbox>
-    <section id="secim2" name="SECIM Tools 2">
-		<tool file="secimtools/anova_original.xml"/>
-		<tool file="secimtools/baPlot.xml"/>
-		<tool file="secimtools/BFF.xml"/>
-		<tool file="secimtools/countDigits.xml"/>
-		<tool file="secimtools/CVflag.xml"/>
-		<tool file="secimtools/distributionSamples.xml"/>
-		<tool file="secimtools/distributionFeatures.xml"/>
-		<tool file="secimtools/dropFlag.xml"/>
-		<tool file="secimtools/hcheatmap.xml"/>
-		<tool file="secimtools/heatmap.xml"/>
-		<tool file="secimtools/logTransform.xml"/>
-		<tool file="secimtools/mergeFlags.xml"/>
-		<tool file="secimtools/onOff.xml"/>
-		<tool file="secimtools/pca.xml"/>
-		<tool file="secimtools/peakCompare.xml"/>
-		<tool file="secimtools/randomForest.xml"/>
-		<tool file="secimtools/RTflag.xml"/>
-		<tool file="secimtools/runOrderRegression.xml"/>
-		<tool file="secimtools/standardizedEuclideanDistance.xml"/>
-		<tool file="secimtools/summarizeFlags.xml"/>
-		<tool file="secimtools/SVMClassifier.xml"/>
-    </section>
+  <section id="secim2" name="SECIM Tools 2.0 (BETA)">
+    <tool file="secimtools_v2/anova_original.xml"/>
+    <tool file="secimtools_v2/baPlot.xml"/>
+    <tool file="secimtools_v2/BFF.xml"/>
+    <tool file="secimtools_v2/countDigits.xml"/>
+    <tool file="secimtools_v2/CVflag.xml"/>
+    <tool file="secimtools_v2/distributionSamples.xml"/>
+    <tool file="secimtools_v2/distributionFeatures.xml"/>
+    <tool file="secimtools_v2/dropFlag.xml"/>
+    <tool file="secimtools_v2/hcheatmap.xml"/>
+    <tool file="secimtools_v2/heatmap.xml"/>
+    <tool file="secimtools_v2/logTransform.xml"/>
+    <tool file="secimtools_v2/mergeFlags.xml"/>
+    <tool file="secimtools_v2/onOff.xml"/>
+    <tool file="secimtools_v2/pca.xml"/>
+    <tool file="secimtools_v2/peakCompare.xml"/>
+    <tool file="secimtools_v2/randomForest.xml"/>
+    <tool file="secimtools_v2/RTflag.xml"/>
+    <tool file="secimtools_v2/runOrderRegression.xml"/>
+    <tool file="secimtools_v2/standardizedEuclideanDistance.xml"/>
+    <tool file="secimtools_v2/summarizeFlags.xml"/>
+    <tool file="secimtools_v2/SVMClassifier.xml"/>
+  </section>
 </toolbox>
