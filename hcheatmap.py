@@ -72,7 +72,7 @@ def getOptions():
     return (args)
 
 def main(args):
-	"""Function to run everything"""
+    """Function to run everything"""
     # Importing data
     dat = wideToDesign(args.input, args.design, args.uniqID)
 

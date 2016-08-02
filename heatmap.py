@@ -71,6 +71,7 @@ def getOptions():
     return (args)
 
 def main():
+    """Runs eveything"""
     #Import data
     args = getOptions()
 
