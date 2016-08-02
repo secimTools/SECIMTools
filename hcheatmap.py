@@ -23,12 +23,12 @@
 #Standar Libraries
 import os
 import logging
-import warnings
+#import warnings
 import argparse
 
 #AddOn Libraries
-import matplotlib
-matplotlib.use('Agg')
+#import matplotlib
+#matplotlib.use('Agg')
 import pandas as pd
 
 # Local Packages
@@ -72,6 +72,7 @@ def getOptions():
     return (args)
 
 def main(args):
+	"""Function to run everything"""
     # Importing data
     dat = wideToDesign(args.input, args.design, args.uniqID)
 
@@ -85,12 +86,12 @@ def main(args):
     hcFig = hm.plotHeatmap(dat.wide,hcheatmap=True)
 
     # Saving figures
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        hcFig.savefig(args.heatmap,format="pdf")
+    #with warnings.catch_warnings():
+    #    warnings.simplefilter("ignore")
+    hcFig.savefig(args.heatmap,format="pdf")
 
 if __name__ == '__main__':
-        #Import data
+    #Import data
     args = getOptions()
 
     #Setting logger

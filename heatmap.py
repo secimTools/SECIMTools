@@ -23,12 +23,12 @@
 #Standar Libraries
 import os
 import argparse
-import warnings
+#import warnings
 import logging
 
 #AddOn Libraries
-import matplotlib
-matplotlib.use('Agg')
+#import matplotlib
+#matplotlib.use('Agg')
 import pandas as pd
 
 # Local Packages
@@ -92,9 +92,9 @@ def main():
     hcFig = hm.plotHeatmap(dat.wide)
 
     #Saving figures
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        hcFig.savefig(args.heatmap,format="pdf")
+    #with warnings.catch_warnings():
+    #    warnings.simplefilter("ignore")
+    hcFig.savefig(args.heatmap,format="pdf")
 
 if __name__ == '__main__':
     main()
