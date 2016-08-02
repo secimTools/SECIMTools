@@ -28,9 +28,9 @@ class figureHandler:
             :type dpi: int
             :param dpi: resolution, measured in dots per square inch
         """
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            self.fig.savefig(out,dpi=dpi,format="pdf")
+        #with warnings.catch_warnings():
+        #    warnings.simplefilter("ignore")
+        self.fig.savefig(out,dpi=dpi,format="pdf")
 
     def addToPdf(self,pdfPages,dpi=90):
         """
@@ -44,10 +44,10 @@ class figureHandler:
             :type pdfPages: matplotlib pdfPages
             :param pdfPages: pdfPages object to be made into a document
         """
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            self.fig.savefig(pdfPages,dpi=dpi,format="pdf")
-            plt.close(self.fig)
+        #with warnings.catch_warnings():
+        #    warnings.simplefilter("ignore")
+        self.fig.savefig(pdfPages,dpi=dpi,format="pdf")
+        plt.close(self.fig)
 
     def shrink(self,top= .90,bottom=.15,left = .15,right=.7):
         """
