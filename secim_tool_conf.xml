@@ -3,7 +3,6 @@
     <section id="secim" name="SECIM Tools">
         <tool file="secimtools/anova.xml"/>
         <tool file="secimtools/baPlot.xml"/>
-        <tool file="secimtools/BFF.xml"/>
         <tool file="secimtools/clean.xml"/>
         <tool file="secimtools/countDigits.xml"/>
         <tool file="secimtools/CVflag.xml"/>
