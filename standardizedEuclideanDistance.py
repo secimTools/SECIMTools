@@ -35,7 +35,7 @@ import manager_color as ch
 import module_lines as lines
 import  module_scatter as  scatter
 from interface import wideToDesign
-from manager_figure import figureHandlers
+from manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
