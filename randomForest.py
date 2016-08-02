@@ -13,49 +13,38 @@ from interface import wideToDesign
 import logger as sl
 
 
-def getOptions():
+def getOptions(myopts=None):
     """ Function to pull in arguments """
-    description = """ One-Way ANOVA """
-    parser = argparse.ArgumentParser(description=description, 
-                                    formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument('-i',"--input", dest="fname", action='store', 
-                        required=True, help="Input dataset in wide format.")
-    parser.add_argument('-d',"--design", dest="dname", action='store', 
-                        required=True, help="Design file.")
-    parser.add_argument('-id',"--ID", dest="uniqID", action='store', 
-                        required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument('-g',"--group", dest="group", action='store', 
-                        required=True, help="Group/treatment identifier in design file.")
-    parser.add_argument('-n',"--num", dest="num", action='store', type=int, 
-                        required=True, default=1000, help="Number of estimators.")
-    parser.add_argument('-o1',"--out", dest="oname", action='store', 
-                        required=True, help="Output file name.")
-    parser.add_argument('-o2',"--out2", dest="oname2", action='store', 
-                        required=True, help="Output file name.")
-    parser.add_argument('-bug',"--debug", dest="debug", action='store_true', 
-                        required=False, help="Add debugging log output.")
+    description = """ Random Forest """
+    parser = argparse.ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
+    parser.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
+    parser.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
+    parser.add_argument("--group", dest="group", action='store', required=True, help="Group/treatment identifier in design file.")
+    parser.add_argument("--num", dest="num", action='store', type=int, required=True, default=1000, help="Number of estimators.")
+    parser.add_argument("--out", dest="oname", action='store', required=True, help="Output file name.")
+    parser.add_argument("--out2", dest="oname2", action='store', required=True, help="Output file name.")
+    parser.add_argument("--debug", dest="debug", action='store_true', required=False, help="Add debugging log output.")
 
-    args = parser.parse_args()
+    if myopts:
+        args = parser.parse_args(myopts)
+    else:
+        args = parser.parse_args()
 
     return(args)
 
 
 def main(args):
-    # Import data with interface
-    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group, 
-                        clean_string=True)
-
-    # Transpose
+    # Import data and transpose
+    logger.info(u'Importing data with following parameters: \n\tWide: {0}\n\tDesign: {1}\n\tUnique ID: {2}\n\tGroup Column: {3}'.format(args.fname, args.dname, args.uniqID, args.group))
+    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group, clean_string=True)
     data = dat.transpose()
-
-    # Drop NAN
     data.dropna(axis=1, inplace=True)
 
     # Pull classifications out of dataset
     classes = data[dat.group].copy()
     data.drop(dat.group, axis=1, inplace=True)
     #TODO: Random forest does not handle NaNs, need to figure out the proper way to impute values.
-    #UPDATE KNN Imputation
 
     # Build Random Forest classifier
     logger.info('Creating classifier')
@@ -63,8 +52,7 @@ def main(args):
     model.fit(data, classes)
 
     # Identify features
-    importance = pd.DataFrame([data.columns, model.feature_importances_])
-    importance = importance.T.sort_values(axis=0, ascending=False)
+    importance = pd.DataFrame([data.columns, model.feature_importances_]).T.sort_values(by=1, axis=0, ascending=False)
 
     # Export features ranked by importance
     logger.info('Exporting features')
@@ -95,14 +83,6 @@ if __name__ == '__main__':
         sl.setLogger(logger, logLevel='debug')
     else:
         sl.setLogger(logger)
-
-    # Import data and transpose
-    logger.info(u"Importing data with following parameters: \
-        \n\tWide: {0}\
-        \n\tDesign: {1}\
-        \n\tUnique ID: {2}\
-        \n\tGroup Column: {3}".\
-        format(args.fname, args.dname, args.uniqID, args.group))
 
     main(args)
 
