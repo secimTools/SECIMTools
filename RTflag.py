@@ -205,12 +205,16 @@ def main(args):
 
 
 if __name__ == '__main__':
+
     # Command line options
     args=getOptions()
 
     #Set logger
     logger=logging.getLogger()
     sl.setLogger(logger)
+
+    # Setting np warrnings off!!!!!
+    np.seterr(invalid='ignore')
 
     #Main
     main(args)
