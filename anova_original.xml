@@ -1,4 +1,4 @@
-<tool id="anovaSingleFile" name="One-Way ANOVA (Stable)" version="1.0.0">
+<tool id="anovaSingleFile2" name="One-Way ANOVA (Stable)" version="1.0.0">
   <description> Performs One Way ANOVA.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
@@ -19,9 +19,9 @@
   </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-    <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+    <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
   </inputs>
   <outputs>
     <data format="tabular" name="results_table" label="Anova_results_table"/>
@@ -43,7 +43,7 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
 
     @WIDE@
 
-        **NOTE:** The sample IDs must match the sample IDs in the Metadata File
+        **NOTE:** The sample IDs must match the sample IDs in the Design File
         (below). Extra columns will automatically be ignored.
 
 
@@ -52,10 +52,10 @@ This tool does row-by-row analysis calculating a One-Way-ANOVA on the selected g
     **In addition to your datasets, you need to provide:**
 
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*.
+      your features. In our example dataset you would input *Compound*.
    
 
     @GROUP@

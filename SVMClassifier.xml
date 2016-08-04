@@ -1,4 +1,4 @@
-<tool id="SVMClassifier" name="SVM Classifier (Beta)" version="2.0.0">
+<tool id="SVMClassifier2" name="SVM Classifier (Beta)" version="2.0.0">
   <description> for classification.</description>
   <requirements>
     <requirement type="python-module">pandas</requirement>
@@ -21,11 +21,11 @@
   </command>
   <inputs>
     <param name="train_wide" type="data" format="tabular" label="Training Wide Dataset" help="Dataset missing? See TIP below"/>
-    <param name="train_design" type="data" format="tabular" label="Training Metadata Dataset" help="Dataset missing? See TIP below"/>
+    <param name="train_design" type="data" format="tabular" label="Training Design Dataset" help="Dataset missing? See TIP below"/>
     <param name="test_wide" type="data" format="tabular" label="Target Wide Dataset" help="Dataset missing? See TIP below"/>
-    <param name="test_design" type="data" format="tabular" label="Target Metadata Dataset" help="Dataset missing? See TIP below"/>
-    <param name="group" size="30" type="text" value="class" label="Column name for the group categorization"/>
-    <param name="uniqID" type="text" size="30" value="Name" label="Name of IDs"/>
+    <param name="test_design" type="data" format="tabular" label="Target Design Dataset" help="Dataset missing? See TIP below"/>
+    <param name="group" size="30" type="text" value="class" label="Group/Treatment" help="Insert the group name from the Design file to separate the flag file. Must be the same across both data sets"/>
+    <param name="uniqID" type="text" size="30" value="Name" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs. Must be the same across both data sets."/>
     <param name="kernel" type="select" size="30" display="radio" value="rbf" label="SVM kernel function">
         <option value="rbf">Radial Basis function (Gaussians)</option>
         <option value="linear">Linear</option>
@@ -52,7 +52,7 @@ If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*
 
 **WARNINGS:**
     - (1) This script automatically removes spaces and special characters from strings.
-    - (2) If a compound name starts with a number it will prepend an '_'.
+    - (2) If a feature name starts with a number it will prepend an '_'.
 
 ------------------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ This is a support vector machine (SVM) classification tool. Given a training dat
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **Metadata File for Training Dataset**
+    **Design File for Training Dataset**
 
     A metatdata file for the Training dataset relating samples to various
     groups/treatment.::
@@ -107,7 +107,7 @@ This is a support vector machine (SVM) classification tool. Given a training dat
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-**Metadata File for Target Dataset:**
+**Design File for Target Dataset:**
 
 A metatdata file for the Target dataset. At a minimum, a list of all sampleIDs in the Target dataset.::
 
@@ -121,13 +121,13 @@ A metatdata file for the Target dataset. At a minimum, a list of all sampleIDs i
     +----------+
 
 
-    **NOTE:** The sampleIDs in the Wide format datasets must match the sampleIDs in their respective Metadata datasets. Extra columns will automatically be ignored.
+    **NOTE:** The sampleIDs in the Wide format datasets must match the sampleIDs in their respective Design datasets. Extra columns will automatically be ignored.
 
 
 **Group**
 
-    - The column name in your Metadata Training dataset that contains the group/treatment information.
-      In our example Metadata file we would put *group*.
+    - The column name in your Design Training dataset that contains the group/treatment information.
+      In our example Design file we would put *group*.
 
 
 **Unique Feature ID**

@@ -1,4 +1,4 @@
-<tool id="onOff" name="On/Off Flags (Beta)" version="2.0.0">
+<tool id="onOff2" name="On/Off Flags (Beta)" version="2.0.0">
     <description>"Flags metabolite features as on or off"</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
@@ -17,9 +17,9 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
-        <param name="group" type="text" size="30" label="Input group name from Metadata file" help="Insert the group name from the Metadata file to separate the flag file" />
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" label="Group/Treatment" help="Insert the group name from the Design file to separate the flag file" />
         <param name="cutoff" type="integer" optional="true" size="4" value="30000" label="Cutoff [OPTIONAL]" help="Cutoff to use for which values to flag. This defaults to 30,000"/>
     </inputs>
     <outputs>
@@ -46,7 +46,7 @@ half of the data is below a user-input cutoff value or missing.  Default value i
 
     @WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 
@@ -62,9 +62,9 @@ half of the data is below a user-input cutoff value or missing.  Default value i
 
     **In addition to your datasets, you need to provide:**
 
-    **Input group name from Metadata file**
+    **Input group name from Design file**
 
-    - The column name in your Metadata file that contains the group/treatment information.  In the above example, you would input *group*.
+    - The column name in your Design file that contains the group/treatment information.  In the above example, you would input *group*.
 
 
 - In addition to your datasets, you can specify a different cutoff:

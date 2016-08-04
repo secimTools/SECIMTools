@@ -1,4 +1,4 @@
-<tool id="logTransform" name="Log Transformation (Beta)" version="2.0.0">
+<tool id="logTransform2" name="Log Transformation (Beta)" version="2.0.0">
     <description>Transform your data using the log.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
@@ -16,8 +16,8 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" size="30" type="text" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" size="30" type="text" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="log" size="30" type="select" value="" label="Log Transformation" help="Select type of log.">
             <option value="log" selected="true">Natural Log</option>
             <option value="log2" selected="true">log base 2</option>
@@ -47,7 +47,7 @@ This tool carries out a log transformation on values in a Wide Format dataset.
 
     @WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Metadata File (below).
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
 

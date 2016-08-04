@@ -1,4 +1,4 @@
-<tool id="RTflag" name="RT flags (Beta)" version="2.0.0">
+<tool id="RTflag2" name="RT flags (Beta)" version="2.0.0">
   <description>Calculate RT flags</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
@@ -7,6 +7,9 @@
     <requirement type="python-module">scipy</requirement>
     <requirement type="python-module">palettable</requirement>
   </requirements>
+  <stdio>
+    <exit_code range="1:" level="warning" description="RuntimeWarning"/>
+  </stdio>
   <command interpreter="python">RTflag.py
       --input $input
       --design $design
@@ -24,10 +27,10 @@
   </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
-    <param name="CVcutoff" optional="true" type="float" value=".1" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     <param name="minutes" type="float" size="30" value=".2" label="Percentile Cutoff" help="Percenctile cutoff in minutes. The default value used is 0.2 minutes" />
+    <param name="CVcutoff" optional="true" type="float" value=".1" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
     <param name="pctl" type="boolean" size="30" label="90th percentile [OPTIONAL]" help="Check this box to use a 90th percentile. The default is a 95th percentile (NO). [OPTIONAL]" />
   </inputs>
   <outputs>

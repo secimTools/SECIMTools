@@ -1,4 +1,4 @@
-<tool id="countDigits" name="Count Digits (Beta)" version="2.0.0">
+<tool id="countDigits2" name="Count Digits (Beta)" version="2.0.0">
   <description>Count the number of digits before the period.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
@@ -6,6 +6,7 @@
     <requirement type="python-module">zipfile</requirement>
     <requirement type="python-module">StringIO</requirement>
     <requirement type="python-module">palettable</requirement>
+    <requirement type="python-module">lxml</requirement>
   </requirements>
   <command interpreter="python">
       countDigits.py
@@ -16,6 +17,7 @@
       --figure $figure
       --counts "counts"
       --html $counts
+      --htmlPath "$counts.files_path"
 
       #if $nozero:
           --noZero
@@ -26,13 +28,13 @@
   </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     <param name="nozero" type="select" size="30" display="radio" value="yes" label="Remove zeros before processing" help="If you do not remove zeros before processing, otherwise a zero will skew results.">
         <option value="yes">Remove zeros</option>
         <option value="no">Do not remove zeros</option>
     </param>
-    <param name="group" size="30" type="text" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by groups in a column in the Metadata file, enter the column name. Spelling and capitalization must be exact" />
+    <param name="group" size="30" type="text" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by groups in a column in the Design file, enter the column name. Spelling and capitalization must be exact" />
   </inputs>
   <outputs>
     <data format="pdf" name="figure"  label="CountDigits_Figure" />
@@ -61,7 +63,7 @@ high feature values for a particular sample.
 
     @WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Metadata File
+    **NOTE:** The sample IDs must match the sample IDs in the Design File
     (below). Extra columns will automatically be ignored.
 
 

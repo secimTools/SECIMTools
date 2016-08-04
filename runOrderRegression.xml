@@ -1,4 +1,4 @@
-<tool id="runOrder" name="Run Order Regression" version="2.0.0">
+<tool id="runOrder2" name="Run Order Regression (Beta)" version="2.0.0">
   <description>Look for linear relationships with run order.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
@@ -20,10 +20,10 @@
   </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
-    <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
-    <param name="order" type="text" size="30" value="" label="Run Order ID" help="Name of the column in your Metadata File that contains run order."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+    <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+    <param name="order" type="text" size="30" value="" label="Run Order ID" help="Name of the column in your Design File that contains run order."/>
   </inputs>
   <outputs>
     <data format="pdf" name="order_plots" />
@@ -65,7 +65,7 @@ This tool uses linear regression to identify potential relationships between the
 
     **Run Order ID**
 
-        - The column name in your Metadata file that contains the order samples were
+        - The column name in your Design file that contains the order samples were
           run.
 
         **NOTE:** Groups with one element will be excluded from the test.

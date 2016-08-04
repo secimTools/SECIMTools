@@ -1,4 +1,4 @@
-<tool id="BFF" name="Blank Feature Filtering (Beta)" version="2.0,0">
+<tool id="BFF2" name="Blank Feature Filtering (Beta)" version="2.0,0">
 	<description>Filters data using blanks (BFF).</description>
 	<requirements>
 		<requirement type="python-module">numpy</requirement>
@@ -24,10 +24,10 @@
 	</command>
 	<inputs>
 		<param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-    <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
-    <param name="group" type="text" size="30" value="group" optional="true" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
-    <param name="blank" type="text" size="30" value="blank" optional="true" label="Blank Name" help="Name of the group in your Metadata File that contains the blanks. Used to calculate baseline in filtering."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+    <param name="group" type="text" size="30" value="group" optional="true" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+    <param name="blank" type="text" size="30" value="blank" optional="true" label="Blank Name" help="Name of the group in your Design File that contains the blanks. Used to calculate baseline in filtering."/>
     <param name="bff" type="text" size="30" value="5000" optional="true" label="Default Limit of Detection" help="Default value to use as limit of detection."/>
 	</inputs>
 	<outputs>
@@ -64,7 +64,7 @@ less than 100.
 
 		@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Metadata File
+    **NOTE:** The sample IDs must match the sample IDs in the Design File
     (below). Extra columns will automatically be ignored.
 
 
@@ -72,19 +72,19 @@ less than 100.
 
     **In addition to your datasets, you need to provide:**
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*.
+      your features. In our example dataset you would input *Compound*.
 
    ** Name of the Columns Containing the Blanks**
 
-    - The column name in your Metadata file that indicates which samples are 
+    - The column name in your Design file that indicates which samples are 
       blanks.
 
    ** Name of the Columns Containing the Treatment Groups**
 
-    - The column name in your Metadata file that indicates treatment groups.
+    - The column name in your Design file that indicates treatment groups.
 --------------------------------------------------------------------------------
 
 **Output Files**

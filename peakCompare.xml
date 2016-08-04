@@ -1,4 +1,4 @@
-<tool id="peakCompare" name="Peak Compare (Beta)" version="2.0.0">
+<tool id="peakCompare2" name="Peak Compare (Beta)" version="2.0.0">
 	<description>"Matches features in 2 files based on  their mz and RT."</description>
 	<requirements>
 		<requirement type="python-module">numpy</requirement>
@@ -30,14 +30,14 @@
 	<inputs>
 		<param name="anno1" type="data" format="tabular" label="File 1" help="Input dataset 1 in wide format and tab separated. If not tab separated see TIP below."/>
 		<param name="anno2" type="data" format="tabular" label="File 2" help="Input dataset 2 in wide format and tab separated. If not tab separated see TIP below."/>
-		<param name="uniqID1" type="text" size="30" value="" optional="false" label="Uniq ID for anno1" help="Name of he column on you anno file 1 containing uniqID."/>
-		<param name="uniqID2" type="text" size="30" value="" optional="false" label="Uniq ID for anno2" help="Name of he column on you anno file 2 containing uniqID."/>
-		<param name="mzID1" type="text" size="30" value="" optional="false" label="MZ for anno 1" help="Name of he column on you anno file 1 containing mz."/>
-		<param name="mzID2" type="text" size="30" value="" optional="false" label="MZ for anno 2" help="Name of he column on you anno file 2 containing mz."/>
-		<param name="rtID1" type="text" size="30" value="" optional="false" label="RT for anno 1" help="Name of he column on you anno file 2 containing rt."/>
-		<param name="rtID2" type="text" size="30" value="" optional="false" label="RT for anno 2" help="Name of he column on you anno file 1 containing rt."/>
-		<param name="mz" type="text" size="30" value="0.005" optional="true" label="MZ cut value" help="Window value for MZ (By default 0.005)."/>
-		<param name="rt" type="text" size="30" value="0.15" optional="true" label="RT cut value" help="Window value for RT (By default 0.15)."/>
+		<param name="uniqID1" type="text" size="30" value="" optional="false" label="Unique ID for File 1" help="Name of the column on you anno file 1 containing unique ID."/>
+		<param name="uniqID2" type="text" size="30" value="" optional="false" label="Unique ID for File 2" help="Name of the column on you anno file 2 containing unique ID."/>
+		<param name="mzID1" type="text" size="30" value="" optional="false" label="Mass/Charge for File 1" help="Name of the column on you anno file 1 containing mz."/>
+		<param name="mzID2" type="text" size="30" value="" optional="false" label="Mass/Charge for File 2" help="Name of the column on you anno file 2 containing mz."/>
+		<param name="rtID1" type="text" size="30" value="" optional="false" label="Retention Time for File 1" help="Name of the column on you anno file 2 containing rt."/>
+		<param name="rtID2" type="text" size="30" value="" optional="false" label="Retention Time for File 2" help="Name of the column on you anno file 1 containing rt."/>
+		<param name="mz" type="text" size="30" value="0.005" optional="true" label="Mass/Charge cut value" help="Window value for MZ (By default 0.005)."/>
+		<param name="rt" type="text" size="30" value="0.15" optional="true" label="Retention Time cut value" help="Window value for RT (By default 0.15)."/>
 		<param name="name1" type="text" size="30" value="F1" optional="true" label="File 1 name" help="Short name for File 1 (By default F1)."/>
 		<param name="name2" type="text" size="30" value="F2" optional="true" label="File 2 name" help="Short name for File 2 (By default F2)."/>
 	</inputs>

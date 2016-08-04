@@ -1,4 +1,4 @@
-<tool id="random-forest" name="Random Forest (Beta)" version="2.0.0">
+<tool id="random-fores2t" name="Random Forest (Beta)" version="2.0.0">
     <description> for feature selection.</description>
     <requirements>
         <requirement type="python-module">pandas</requirement>
@@ -15,9 +15,9 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature/compound/gene IDs."/>
-        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
         <param name="number_of_estimators" type="text" size="30" value="1000" label="Number of trees in the forest" help="Run at least 1000 trees."/>
     </inputs>
     <outputs>
