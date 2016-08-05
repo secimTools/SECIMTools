@@ -1,29 +1,29 @@
 <?xml version='1.0' encoding='utf-8'?>
 <toolbox>
     <section id="secim" name="SECIM Tools">
-		<tool file="secimtools/anova_original.xml"/>
-		<tool file="secimtools/baPlot.xml"/>
-		<tool file="secimtools/BFF.xml"/>
-		<tool file="secimtools/countDigits.xml"/>
-		<tool file="secimtools/CVflag.xml"/>
-		<tool file="secimtools/distributionSamples.xml"/>
-		<tool file="secimtools/distributionFeatures.xml"/>
-		<tool file="secimtools/dropFlag.xml"/>
-		<tool file="secimtools/hcheatmap.xml"/>
-		<tool file="secimtools/heatmap.xml"/>
-		<tool file="secimtools/knn.xml"/>
-		<tool file="secimtools/logTransform.xml"/>
-		<tool file="secimtools/mergeFlags.xml"/>
-		<tool file="secimtools/onOff.xml"/>
-		<tool file="secimtools/pca.xml"/>
-		<tool file="secimtools/peakCompare.xml"/>
-		<tool file="secimtools/randomForest.xml"/>
-		<tool file="secimtools/RTflag.xml"/>
-		<tool file="secimtools/runOrderRegression.xml"/>
-		<tool file="secimtools/scatter.xml"/>
-		<tool file="secimtools/scatter3D.xml"/>
-		<tool file="secimtools/standardizedEuclideanDistance.xml"/>
-		<tool file="secimtools/summarizeFlags.xml"/>
-		<tool file="secimtools/SVMClassifier.xml"/>
-    </section>
+        <tool file="secimtools/anova_original.xml"/>
+        <tool file="secimtools/baPlot.xml"/>
+        <tool file="secimtools/BFF.xml"/>
+        <tool file="secimtools/countDigits.xml"/>
+        <tool file="secimtools/CVflag.xml"/>
+        <tool file="secimtools/distributionSamples.xml"/>
+        <tool file="secimtools/distributionFeatures.xml"/>
+        <tool file="secimtools/dropFlag.xml"/>
+        <tool file="secimtools/hcheatmap.xml"/>
+        <tool file="secimtools/heatmap.xml"/>
+        <tool file="secimtools/imputation.xml"/>
+        <tool file="secimtools/logTransform.xml"/>
+        <tool file="secimtools/mergeFlags.xml"/>
+        <tool file="secimtools/onOff.xml"/>
+        <tool file="secimtools/pca.xml"/>
+        <tool file="secimtools/peakCompare.xml"/>
+        <tool file="secimtools/randomForest.xml"/>
+        <tool file="secimtools/RTflag.xml"/>
+        <tool file="secimtools/runOrderRegression.xml"/>
+        <tool file="secimtools/scatter.xml"/>
+        <tool file="secimtools/scatter3D.xml"/>
+        <tool file="secimtools/standardizedEuclideanDistance.xml"/>
+        <tool file="secimtools/summarizeFlags.xml"/>
+        <tool file="secimtools/SVMClassifier.xml"/>
+	</section>
 </toolbox>
