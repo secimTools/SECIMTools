@@ -23,7 +23,7 @@ def getOptions(myOpts=None):
                         help="Name of column for X values")
     standard.add_argument("-y", "--Y",dest="y", action='store', required=True, 
                         help="Name of column for Y values")
-    
+
     
 
     output = parser.add_argument_group(title='Required output')
@@ -37,6 +37,9 @@ def getOptions(myOpts=None):
                         required=False,default="tableau",help="See palettable website")
     optional.add_argument("-p","--palette",dest="palette",action='store',
                         required=False,default="Tableau_20",help="See palettable website")
+    standard.add_argument("-pca","--pca",dest="pca",action='store_true',
+                    required=False,default=False,help="PCA ouput data or standard data")
+
     args = parser.parse_args()
     return(args)
 
@@ -59,7 +62,15 @@ def main(args):
     paletteGroup = args.paletteGroup
     palette = args.palette
 
-    wide = pandas.DataFrame.from_csv(data,header=3,sep="\t")
+    usePCA = args.pca
+    print usePCA
+
+    if usePCA:
+        wide = pandas.DataFrame.from_csv(data,header=3,sep="\t")
+    else:
+        wide = pandas.DataFrame.from_csv(data,sep="\t")
+
+    
     fh = figureHandler(proj="2d")
 
 

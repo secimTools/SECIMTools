@@ -14,6 +14,10 @@
         --Y $y
         --Z $z
         --figure $figure
+        
+        #if $pca
+            --pca
+        #end if
 
         #if $design
             --design $design
@@ -47,14 +51,16 @@
         <param name="x" type="text" size="30" value="" label="X Group Title" help="Name of the column for X values."/>
         <param name="y" type="text" size="30" value="" label="Y Group Title" help="Name of the column for Y values."/>
         <param name="z" type="text" size="30" value="" label="Z Group Title" help="Name of the column for Z values."/>
+        <param name="pca" type="boolean" label="Use PCA Data?" help="Using a PCA output or standard dataset"/>
+
 
         <param name="rotation" type="text" size="30" value="" label="Camera rotation for viewing [Optional]" help="Ideal viewing rotation may be a process of trial and error"/>
         <param name="elevation" type="text" size="30" value="" label="Camera elevation for viewing [Optional]" help="Ideal viewing elevation may be a process of trial and error"/>
 
         <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="group" type="text" size="30" value="" label="Input Group name to separate by [OPTIONAL]" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
-        <param name="paletteGroup" type="text" size="30" label="Palette Group [OPTIONAL]" help="See Palettable's website"/>
-        <param name="palette" type="text" size="30" label="Palette [OPTIONAL]" help="See Palettable's website"/>
+        <param name="group" type="text" size="30" value="" label="Input Group name to separate by [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
+        <param name="paletteGroup" type="text" size="30" label="Palette Group [Optional]" help="See Palettable's website"/>
+        <param name="palette" type="text" size="30" label="Palette [Optional]" help="See Palettable's website"/>
 
     </inputs>
     <outputs>

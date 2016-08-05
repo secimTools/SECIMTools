@@ -34,7 +34,7 @@
         <option value="yes">Remove zeros</option>
         <option value="no">Do not remove zeros</option>
     </param>
-    <param name="group" size="30" type="text" label="Input Group name to separate by [OPTIONAL]" help="If you wish to sort by groups in a column in the Design file, enter the column name. Spelling and capitalization must be exact" />
+    <param name="group" size="30" type="text" label="Input Group name to separate by [Optional]" help="If you wish to sort by groups in a column in the Design file, enter the column name. Spelling and capitalization must be exact" />
   </inputs>
   <outputs>
     <data format="pdf" name="figure"  label="CountDigits_Figure" />

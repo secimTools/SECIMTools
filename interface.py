@@ -76,7 +76,7 @@ class wideToDesign:
             self.uniqID = uniqID
             self.wide = pd.read_table(wide)
             if clean_string:
-                self.wide[self.uniqID] = self.wide[self.uniqID].apply(lambda x: self._cleanStr(x))
+                self.wide[self.uniqID] = self.wide[self.uniqID].apply(lambda x: self._cleanStr(str(x)))
                 self.wide.rename(columns= lambda x:self._cleanStr(x),inplace=True)
 
             # Make sure index is a string and not numeric
@@ -177,6 +177,7 @@ class wideToDesign:
         """
         if isinstance(x, str):
             val = x
+            x = re.sub(r'^-([0-9].*)', r'__\1', x)
             x = x.replace(' ', '_')
             x = x.replace('.', '_')
             x = x.replace('-', '_')

@@ -192,6 +192,7 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
     cutoff.apply(lambda x: plotCutoffs(x,ax=figure.ax[0],p=p),axis=0)
     figure.shrink()
     # Plot legend
+    #if group:
     figure.makeLegend(figure.ax[0], ugColors, levels)
 
     # Add figure to PDF and close the figure afterwards

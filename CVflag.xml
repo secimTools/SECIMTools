@@ -25,7 +25,7 @@
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     <param name="group" type="text" size="30" label="Group/Treatment [OPTIONAL]" help="If you wish to sort by a column in the Design file, enter the column name. Spelling and capitalization must be exact" />
-    <param name="CVcutoff"  type="float" optional="true" size="4" label="CVcutoff [OPTIONAL]" help="The default CV cutoff will flag the top 10% of features with the largest CV. If you want to set a CV cutoff, put the number here."/>
+    <param name="CVcutoff"  type="float" optional="true" size="4" label="CVcutoff [Optional]" help="The default CV cutoff will flag the top 10% of features with the largest CV. If you want to set a CV cutoff, put the number here."/>
   </inputs>
   <outputs>
     <data format="pdf" name="CVplot"  label="CVplot" />

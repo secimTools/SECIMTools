@@ -49,7 +49,7 @@ class figureHandler:
         self.fig.savefig(pdfPages,dpi=dpi,format="pdf")
         plt.close(self.fig)
 
-    def shrink(self,top= .90,bottom=.15,left = .15,right=.7):
+    def shrink(self,top= .90,bottom=.2,left = .15,right=.7):
         """
         Adjusts figure size to accomodate legends and axis set_ticks_position
         :type top: float
@@ -126,15 +126,15 @@ class figureHandler:
         """
         #Etablish figtitle
         if figTitle != None:
-            self.fig.suptitle(figTitle,fontsize=15)
+            self.fig.suptitle(figTitle,fontsize=12)
 
         #Set titles
         if xTitle != "":
-            self.ax[axnum].set_xlabel(xTitle,fontweight="bold")
+            self.ax[axnum].set_xlabel(xTitle,fontweight="bold",fontsize=8)
         if yTitle != "":
-            self.ax[axnum].set_ylabel(yTitle,fontweight="bold")
+            self.ax[axnum].set_ylabel(yTitle,fontweight="bold",fontsize=8)
         if axTitle != "":    
-            self.ax[axnum].set_title(axTitle,fontweight="bold")
+            self.ax[axnum].set_title(axTitle,fontweight="bold",fontsize=8)
         self.ax[axnum].grid(grid)
         
         #Make top and right line invisible
@@ -148,8 +148,10 @@ class figureHandler:
 
         #Add personalized xticks
         if len(xticks) > 0:
-            plt.xticks(range(len(xticks)), xticks, rotation=90)
-
+            plt.xticks(range(len(xticks)), xticks, rotation='vertical')
+        
+        #plt.xticks(rotation=90)
+        plt.setp(self.ax[axnum].xaxis.get_majorticklabels(),rotation=90)
         #Change xlimits
         if xlim == None:
             self.ax[axnum].set_xlim(xmin  - abs(xmin)*0.05, xmax  + abs(xmax)*0.05)
@@ -165,6 +167,10 @@ class figureHandler:
             pass
         else:
             self.ax[axnum].set_ylim(ylim)
+
+        #Resize just a bit 
+        self.fig.subplots_adjust(top=.9,bottom=.2,left=.15)
+
 
     def format3D(self,xTitle='',yTitle='',zTitle='',elevation=45,rotation=45,title=None):
         """
@@ -246,8 +252,10 @@ class figureHandler:
         colorLabels = [name for name,color in sorted(ucGroups.items())]
 
         # Print color legend
+        # BBox to anchor works by a theoretical x,y coordinate relative to the figure
+        # starting at a point specified by loc. 
         colorLegend = ax.legend(pltsColor,colorLabels,loc="upper left",frameon=True,
-                                title=group,bbox_to_anchor=(1.017,1.017),numpoints=1,ncol=cols)
+                                title=group,bbox_to_anchor=(1.1,1.0),numpoints=1,ncol=cols,fontsize=8)
         # Add legend to axis
         legendAdded = ax.add_artist(colorLegend)
 

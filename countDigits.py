@@ -70,7 +70,10 @@ def getOptions(myopts=None):
     optional.add_argument('-bug',"--debug", dest="debug", action='store_true', 
                         required=False, help="Add debugging log output.")
     optional.add_argument('-ht',"--html", dest="html", action='store', 
-                        required=False, default=False,  help="Path for html\
+                        required=False, default=None,  help="Path for html\
+                        output file (this option is just for galaxy")
+    optional.add_argument('-htp',"--htmlPath", dest="htmlPath", action='store', 
+                        required=False, default=None,  help="Path for html\
                         output file (this option is just for galaxy")
     if myopts:
         args = parser.parse_args(myopts)
@@ -188,7 +191,7 @@ def save2html(data, filename, html=None):
     if html is not None:
         li = etree.SubElement(html[1][1],"li", style="margin-bottom:1.5%;")
         a= etree.SubElement(li,"a",href=filename)
-        a.text=filename
+        a.text=os.path.split(filename)[1]
 
     #Save data
     data.to_csv(filename,sep="\t",na_rep=0)
@@ -196,7 +199,7 @@ def save2html(data, filename, html=None):
     #Return html
     return html
 
-def countDigitsByGroup(dat, args, pdf, html=None):
+def countDigitsByGroup(dat, folderDir, pdf, html=None):
     """ 
     If the group option is selected this function is called to split by groups.
 
@@ -220,7 +223,7 @@ def countDigitsByGroup(dat, args, pdf, html=None):
     if dat.group:
         for name, group in dat.design.groupby(dat.group):
             #Setting count name
-            countName = args.counts+"_{0}.tsv".format(name)
+            countName = folderDir+"_{0}.tsv".format(name)
 
             # Filter the wide file into a new dataframe
             currentFrame = dat.wide[group.index]
@@ -259,9 +262,22 @@ def main(args):
                         group=args.group)
 
     if args.html is not None:
+        # Create folder for counts if html found
+        try:
+            folderDir = args.htmlPath
+            os.makedirs(folderDir)
+        except Exception, e:
+            logger.error("Error. {}".format(e))
+
         # Initiation zip files
         html = createHTML()
+        folderDir=folderDir+"/"+args.counts
         logger.info(u"Using html output file")
+    else:
+        folderDir=args.counts
+        html=args.html
+
+        
 
     # Use group separation or not depending on user input
     with PdfPages(os.path.abspath(args.figure)) as pdf:
@@ -271,7 +287,7 @@ def main(args):
 
             # Count Digits per group
             logger.info(u"Counting digits per group")
-            countDigitsByGroup(dat, args, pdf, html=html)
+            countDigitsByGroup(dat, folderDir, pdf, html=html)
 
         # Count digits for all elements
         count = countDigits(wide=dat.wide)
@@ -284,7 +300,7 @@ def main(args):
         saveFlags(count)
 
     # Add count of all elements to html if not html save directly
-    html = save2html(html=html,data=count,filename=args.counts+"_all.tsv")
+    html = save2html(html=html,data=count,filename=folderDir+"_all.tsv")
 
     #Save to html
     if args.html:

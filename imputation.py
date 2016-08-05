@@ -17,6 +17,8 @@ import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 import sys
+from sklearn.preprocessing import Imputer 
+
 def getOptions(myOpts = None):
     description="""  
     This attempts to impute missing values with K Nearest Neighbors Algorithm
@@ -33,6 +35,8 @@ def getOptions(myOpts = None):
                         help="Name of the column with unique identifiers.")
     standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
                         default=False,help="Name of the column with groups.")
+    standard.add_argument("-s","--strategy",dest="strategy",action="store",required=True,
+                        help="Imputation strategy: KNN, mean, median, or most frequent")
 
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-o","--output",dest="output",action="store",required=False,
@@ -107,44 +111,47 @@ def main(args):
     if args.exclude:
         exclude = args.exclude.split(",")
         dat.wide = dat.wide.applymap(removeCustom,args=exclude)
-
+    if args.strategy == "KNN":
     #Run the KNN Imputation
-    datG = dat.design.groupby(dat.group)
-    fixedFullDataset = list()
+        datG = dat.design.groupby(dat.group)
+        fixedFullDataset = list()
 
-    out = sys.stdout #Save the stdout path for later, we're going to need it
-    f = open('/dev/null','w') #were going to use this to redirect stdout temporarily
-    logger.info("running imputation")
-    for title, group in datG:
+        out = sys.stdout #Save the stdout path for later, we're going to need it
+        f = open('/dev/null','w') #were going to use this to redirect stdout temporarily
+        logger.info("running imputation")
+        for title, group in datG:
 
-        groupLen = len(group.index)
-        if groupLen == 1: #No nearby neighbors to impute
-            logger.info(title + " has no neighbors, will not impute")
-            fixedFullDataset.append(dat.wide[group.index])
-            continue
-        elif groupLen <= k: #some nearby, but not enough to use user specified k
-            logger.info(title + " group length less than k, will use group length - 1 instead")
-            k = groupLen - 1
-            
+            groupLen = len(group.index)
+            if groupLen == 1: #No nearby neighbors to impute
+                logger.info(title + " has no neighbors, will not impute")
+                fixedFullDataset.append(dat.wide[group.index])
+                continue
+            elif groupLen <= k: #some nearby, but not enough to use user specified k
+                logger.info(title + " group length less than k, will use group length - 1 instead")
+                k = groupLen - 1
+                
 
-        wideData = dat.wide[group.index].as_matrix()
-        numRows, numCols = wideData.shape
+            wideData = dat.wide[group.index].as_matrix()
+            numRows, numCols = wideData.shape
 
-        matrixInR = robjects.r['matrix'](wideData,nrow=numRows,ncol=numCols)
-        imputeKNN = robjects.r('impute.knn')
-        sys.stdout = f
-        imputedObject = imputeKNN(data=matrixInR,k=k,rowmax=rowCutoff,colmax=colCutoff)
-        sys.stdout = out
+            matrixInR = robjects.r['matrix'](wideData,nrow=numRows,ncol=numCols)
+            imputeKNN = robjects.r('impute.knn')
+            sys.stdout = f
+            imputedObject = imputeKNN(data=matrixInR,k=k,rowmax=rowCutoff,colmax=colCutoff)
+            sys.stdout = out
 
-        imputedDataAsNumpy = np.array(imputedObject[0])
-        imputedDataAsPandas = pandas.DataFrame(imputedDataAsNumpy,index=dat.wide[group.index].index,
-            columns=dat.wide[group.index].columns)       
-        fixedFullDataset.append(imputedDataAsPandas)
+            imputedDataAsNumpy = np.array(imputedObject[0])
+            imputedDataAsPandas = pandas.DataFrame(imputedDataAsNumpy,index=dat.wide[group.index].index,
+                columns=dat.wide[group.index].columns)       
+            fixedFullDataset.append(imputedDataAsPandas)
 
-        k = int(args.k) #reset k back to normal if it was modified @127
-
-
-    pdFull = pandas.concat(fixedFullDataset,axis=1)
+            k = int(args.k) #reset k back to normal if it was modified @127
+        pdFull = pandas.concat(fixedFullDataset,axis=1)
+    else:
+        wideData = dat.wide.as_matrix()
+        Imputer(copy=False,axis = 1,strategy=args.strategy).fit_transform(wideData)
+        pdFull = pandas.DataFrame(wideData,columns=dat.wide.columns,index=dat.wide.index)
+        
     logger.info("creating output")
     pdFull.applymap(float)
     pdFull = pdFull.round(4)

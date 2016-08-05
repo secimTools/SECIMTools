@@ -27,8 +27,8 @@
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
     <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     <param name="group" type="text" size="30" value="group" optional="true" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
-    <param name="blank" type="text" size="30" value="blank" optional="true" label="Blank Name" help="Name of the group in your Design File that contains the blanks. Used to calculate baseline in filtering."/>
-    <param name="bff" type="text" size="30" value="5000" optional="true" label="Default Limit of Detection" help="Default value to use as limit of detection."/>
+    <param name="blank" type="text" size="30" value="blank" optional="true" label="Blank Name [Optional]" help="Name of the group in your Design File that contains the blanks. Used to calculate baseline in filtering."/>
+    <param name="bff" type="text" size="30" value="5000" optional="true" label="Default Limit of Detection [Optional]" help="Default value to use as limit of detection."/>
 	</inputs>
 	<outputs>
 		<data format="tabular" name="outflags" label="BFF_flags"/>

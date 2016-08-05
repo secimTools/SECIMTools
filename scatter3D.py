@@ -25,7 +25,7 @@ def getOptions(myOpts=None):
                         help="Name of column for Y values")
     standard.add_argument("-z", "--Z",dest="z", action='store', required=True, 
                         help="Name of column for Z values")
-    
+
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-f","--figure",dest="figure",action="store",required=False,
                         help="Path of figure.")
@@ -41,6 +41,9 @@ def getOptions(myOpts=None):
                         required=False,default=45,help="camera viewing rotation")
     optional.add_argument("-e","--elevation",dest="elevation",action='store',
                         required=False,default=45,help="Camera vieweing elevation")
+    optional.add_argument("-pca","--pca",dest="pca",action='store_true',
+                        required=False,default=True,help="PCA ouput data or standard data")
+
     args = parser.parse_args()
     return(args)
      
@@ -67,7 +70,13 @@ def main(args):
     paletteGroup = args.paletteGroup
     palette = args.palette
 
-    wide = pandas.DataFrame.from_csv(data,header=3,sep="\t")
+    print args.pca
+    usePCA = args.pca
+    print type(usePCA)
+    if usePCA:
+        wide = pandas.DataFrame.from_csv(data,header=3,sep="\t")
+    else:
+        wide = pandas.DataFrame.from_csv(data,header=0,sep="\t")
     fh = figureHandler(proj="3d")
 
     if group and uniqID != "rowID":

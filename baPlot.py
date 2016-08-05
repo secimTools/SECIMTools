@@ -335,7 +335,7 @@ def makeBA(x, y, ax, fh):
     ax.plot(mean, fitted, 'r')
     ax.axhline(0, color='k')
     ax.plot(mean, upper, 'r:')
-    # Adjust axes
+    #Adjust axes
     fh.formatAxis(axnum=1,xlim='ignore',ylim='ignore',axTitle='Bland-Altman Plot',
         xTitle='Mean\n{0} & {1}'.format(x.name, y.name),
         yTitle='Difference\n{0} - {1}'.format(x.name, y.name),grid=False)
@@ -411,6 +411,7 @@ def iterateCombo(dat, combo, pdf):
 
     # Set up figure with 2 subplots
     fh = figureHandler(proj='2d',numAx=2,numRow=2,numCol=2,arrangement=[(0,0,1,2),(0,1,1,2)])
+    
 
     # Scatter Plot of c1 vs c2
     makeScatter(dat.wide.loc[:, c1], dat.wide.loc[:, c2], fh.ax[0],fh)
@@ -420,10 +421,8 @@ def iterateCombo(dat, combo, pdf):
 
     # Build plot title
     title = buildTitle(dat, c1, c2)
-
     # Add plot title to the figure
     fh.formatAxis(figTitle=title)
-
     # Shinking figure
     fh.shrink(top=.85,bottom=.25,left=.15,right=.9)
 

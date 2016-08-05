@@ -34,10 +34,10 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment [OPTIONAL]" help="Enter group name to calculate from. Spelling and capitalization must be exact" />
-        <param name="order" type="text" size="30" label="Input runOrder name [OPTIONAL]" help="Enter run order name to calculate from. Spelling and capitalization must be exact" />
-        <param name="levels" type="text" size="30" label="Adittional groups to separate by [OPTIONAL]" help="Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ',' " />
-        <param name="p" type="text" size="30" label="Percentile cutoff [OPTIONAL]" help="The percentile cutoff for standard distributions. The default is 0.95. " />
+        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact" />
+        <param name="order" type="text" size="30" label="Input runOrder name [Optional]" help="Enter run order name to calculate from. Spelling and capitalization must be exact" />
+        <param name="levels" type="text" size="30" label="Adittional groups to separate by [Optional]" help="Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ',' " />
+        <param name="p" type="text" size="30" label="Percentile cutoff [Optional]" help="The percentile cutoff for standard distributions. The default is 0.95. " />
     </inputs>
     <outputs>
         <data format="pdf" name="plot" label="SEDplot" />

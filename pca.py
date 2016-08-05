@@ -219,14 +219,16 @@ def plotScatterplot(data,fh,block,x,y,dat,title,group=False):
 
     fh.despine(fh.ax[0])
 
+    if group:
+        fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=group)
+        fh.shrink()
 
-    fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=group)
     #Get Variance
     varx=block.loc["#Proportion of variance explained",int(x.replace("PC",""))-1]
     vary=block.loc["#Proportion of variance explained",int(y.replace("PC",""))-1]
     fh.formatAxis(figTitle=title,xTitle=x+" {0:.2f}%".format(varx*100),
         yTitle=y+" {0:.2f}%".format(vary*100),grid=False)
-    fh.shrink()
+
     return fh
 
 def plotPCA(dat,data,block,PC1,PC2,PC3,outpath,group=False):
@@ -295,7 +297,8 @@ def plotPCA(dat,data,block,PC1,PC2,PC3,outpath,group=False):
         ucGroups = dict()
         
     ax = scatter.scatter3D(ax=fh4.ax[0],colorList=colorList,x=list(data[PC1]),y=list(data[PC2]),z=list(data[PC3]))
-    fh4.makeLegend(ax=fh4.ax[0],ucGroups=ucGroups,group=group)
+    if group:
+        fh4.makeLegend(ax=fh4.ax[0],ucGroups=ucGroups,group=group)
     fh4.format3D(xTitle=PC1,yTitle=PC2,zTitle=PC3)
     fh4.addToPdf(dpi=90,pdfPages=pdfOut)
 
