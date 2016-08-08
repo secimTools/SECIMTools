@@ -15,7 +15,6 @@
         --load_out $loadings
         --score_out $scores
         --figure $figures
-
         #if $group
             --group $group
         #end if
