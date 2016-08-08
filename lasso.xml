@@ -1,0 +1,92 @@
+<tool id="lasso2" name="Lasso / Elastic Net" version="0.0.5">
+    <description>"TODO"</description>
+    <requirements>
+        <requirement type="python-module">rpy2</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">numpy</requirement>
+
+    </requirements>
+    <command interpreter="python">
+        lasso.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --group $group
+        --alpha $alpha
+
+        --coefficients $coefficients
+        --flags $flags
+        --plots $plots
+
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
+        <param name="alpha" type="text" size="30" label="Alpha" help="Default .5"/>
+
+       
+    </inputs>
+    <outputs>
+        <data format="tabular" name="coefficients" label="Output file for Elastic Net Coefficients"/>
+        <data format="tabular" name="flags" label="Output file for Elastic Net Flags"/>
+        <data format="tabular" name="plots" label="Output file for Elastic Net Plots"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+.. class:: infomark
+
+**What it does**
+
+Beats me. Ask Alex
+--------------------------------------------------------------------------------
+
+.. class:: warningmark
+
+**Note**
+
+- This tool currently treats all variables as continuous numeric
+  variables. Running the tool on categorical variables might result in
+  incorrect results. 
+- Rows containing non-numeric (or missing) data in any
+  of the chosen columns will be skipped from the analysis.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required.
+
+    @WIDE@
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+    Extra columns will automatically be ignored.
+
+
+    @METADATA@
+
+**In addition to your datasets, you need to provide:**
+
+**Unique Feature ID**
+
+- The column name in your wide dataset that contains the unique IDs for
+  your features. In our example dataset you would input *Feature*.
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- This tool a PDF and a TSV of flags and a TSV of coefficients
+
+
+
+**  
+
+</help>
+</tool>
