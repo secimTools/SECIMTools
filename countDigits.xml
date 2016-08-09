@@ -16,8 +16,8 @@
       --flags $flags
       --figure $figure
       --counts "counts"
-      --html $counts
-      --htmlPath "$counts.files_path"
+      --html $html
+      --htmlPath "$html.files_path"
 
       #if $nozero:
           --noZero
@@ -39,7 +39,7 @@
   <outputs>
     <data format="pdf" name="figure"  label="CountDigits_Figure" />
     <data format="tabular" name="flags" label="CountDigits_Flags" />
-    <data format="html" name="counts" label="CountDigits_Counts" />
+    <data format="html" name="html" label="CountDigits_Counts" />
   </outputs>
   <macros>
       <import>macros.xml</import>

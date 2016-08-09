@@ -1,11 +1,14 @@
 <tool id="lasso2" name="Lasso / Elastic Net" version="0.0.5">
-    <description>"TODO"</description>
+    <description>"Lasso / Elastic Net Feature Selection"</description>
     <requirements>
         <requirement type="python-module">rpy2</requirement>
         <requirement type="python-module">pandas</requirement>
         <requirement type="python-module">numpy</requirement>
 
     </requirements>
+    <stdio>
+        <exit_code range="1:" level="warning" description="RuntimeWarning"/>
+    </stdio>
     <command interpreter="python">
         lasso.py
         --input $input
@@ -24,14 +27,14 @@
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="group" type="text" size="30" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
-        <param name="alpha" type="text" size="30" label="Alpha" help="Default .5"/>
+        <param name="alpha" type="text" value=".5" size="30" label="Alpha" help="Default .5"/>
 
        
     </inputs>
     <outputs>
         <data format="tabular" name="coefficients" label="Output file for Elastic Net Coefficients"/>
         <data format="tabular" name="flags" label="Output file for Elastic Net Flags"/>
-        <data format="tabular" name="plots" label="Output file for Elastic Net Plots"/>
+        <data format="pdf" name="plots" label="Output file for Elastic Net Plots"/>
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -44,7 +47,17 @@
 
 **What it does**
 
-Beats me. Ask Alex
+The tool performs feature selection for each pairwise comparison of the levels of the group variable specified by user. The selection method is performed based on the logistic regression with Elastic Net penalty (with LASSO being a special case.) 
+
+The penalty structure is controlled by alpha parameter (defined within [0;1] range) with the default value alpha = 0.5, that can be changed by the user. 
+The value alpha = 1 corresponds to LASSO penalty with the strictest selection rule, while the value of the penalty alpha = 0 corresponds to ridge penalty which does not perform variable selection. 
+
+Variable section is performed for all levers of alpha in the range (0;1] with the value 1 corresponding the least number of variables and the most strict selection criterion (LASSO), while the value 0 corresponds only to the estimate shrinkage and no selection (ridge). 
+
+The best subset of selected variables is selected by cross validation procedure. 
+
+More details about the Elastic Net are available at https://web.stanford.edu/~hastie/Papers/elasticnet.pdf.
+
 --------------------------------------------------------------------------------
 
 .. class:: warningmark
@@ -68,7 +81,6 @@ Beats me. Ask Alex
     **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
     Extra columns will automatically be ignored.
 
-
     @METADATA@
 
 **In addition to your datasets, you need to provide:**
@@ -82,11 +94,12 @@ Beats me. Ask Alex
 
 **Output Files**
 
-- This tool a PDF and a TSV of flags and a TSV of coefficients
 
+- The tool outputs three files: two tab separated files (TSV) and PDF file with the graphs. 
 
+- The first TSV file contains the values of the coefficients (including zeroes) that were produced by the tool for each pair of comparisons (in columns), while the second file contains the corresponding flags (1 for selected) for the features that were selected by the method. 
 
-**  
+- The PDF file contains the pairs of graphs for all pairwise comparisons. The first graph corresponds to the behavior of coefficients based on the value of the penalty, while the second graph provides the details of cross-validation that was used for the optimal penalty detections which finalized the final set of variables produced by the method.
 
 </help>
 </tool>

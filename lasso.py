@@ -56,11 +56,18 @@ def getOptions(myOpts=None):
 
 def main(args):
     #Get R ready
-    #os.path.dirname(os.path.realpath("alexScript2.R"))
-    os.chdir("/home/mthoburn/Desktop/work/galaxy/tools/GalaxyTools")
+    #print os.path.realpath("alexScript2.R")
+    myPath = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+    
+    my_r_script_path = os.path.join(myPath, "alexScript2.R")
+    print my_r_script_path
+    #print os.path.abspath(".")
+    #exit()
+    #os.chdir("/home/mthoburn/Desktop/work/galaxy/tools/GalaxyTools")
+    #os.chdir(os.path.abspath("."))
     #print os.getcwd()
     pandas2ri.activate()
-    with open('alexScript2.R', 'r') as f:
+    with open(my_r_script_path, 'r') as f:
         rFile = f.read()
     alexScript = STAP(rFile, "alexScript2")
     
@@ -96,8 +103,8 @@ def main(args):
 
     #Run R
     returns = alexScript.lassoEN(data.trans,data.design,comboMatrix,comboLength,alpha,plots)
-    robjects.r['write.table'](returns[0],file=coef,sep='\t')
-    robjects.r['write.table'](returns[1],file=flags,sep='\t')
+    robjects.r['write.table'](returns[0],file=coef,sep='\t',quote=False, row_names = False, col_names = True)
+    robjects.r['write.table'](returns[1],file=flags,sep='\t',quote=False, row_names = False, col_names = True)
     #pandas2ri.ri2pandas(returns[1]).to_csv("test-data/en_flags.tsv",sep='\t')
 
 

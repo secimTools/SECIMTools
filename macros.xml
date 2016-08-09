@@ -31,14 +31,14 @@
         | ...      | ...     | ...     | ...     | ... |
         +----------+---------+---------+---------+-----+
 
-    **NOTE: The 'Feature' column defines the rows within a wide formatted dataset.
+    **NOTE:** The 'Feature' column defines the rows within a wide formatted dataset.
 </token>
 <token name="@METADATA@">
-    **Metadata File:** A Metadata file relating samples to various
+    **Design File:** A Design file relating samples to various
     groups/treatment.::
 
         +----------+--------+
-        | sampleID | group |
+        | sampleID | group  |
         +==========+========+
         | sample1  | g1     |
         | sample2  | g1     |
@@ -49,22 +49,61 @@
         | ...      | ...    |
         +----------+--------+
 
-    **NOTE: You must have a column named *sampleID*** and the values in this
+    **NOTE:** You must have a column named **sampleID** and the values in this
     column must match the column names in the wide dataset.
+</token>
+<token name="@FLAGS@">
+    **Flag File:** 
+
+    A wide formated dataset that contains flags for each sample or feature.::
+
+        +----------+---------+---------+---------+-----+
+        | Feature  | flag_A  | flag_B  | flag_C  | ... |
+        +==========+=========+=========+=========+=====+
+        | one      | 0       | 0       | 0       | ... |
+        +----------+---------+---------+---------+-----+
+        | two      | 0       | 1       | 1       | ... |
+        +----------+---------+---------+---------+-----+
+        | three    | 0       | 1       | 0       | ... |
+        +----------+---------+---------+---------+-----+
+        | four     | 1       | 0       | 0       | ... |
+        +----------+---------+---------+---------+-----+
+        | ...      | ...     | ...     | ...     | ... |
+        +----------+---------+---------+---------+-----+
+
+
+</token>
+<token name="@MZRTFILE@">
+    **M/Z RT File:** 
+
+    A wide formated dataset that contains M/Z and RT mesuarementes for each sample.::
+
+        +----------+--------+----------------+
+        | sampleID | M/Z    | Retention Time |
+        +==========+========+================+
+        | sample1  | 0.1556 |  0.253618769   |
+        | sample2  | 0.1675 |  0.327658519   |
+        | sample3  | 0.1341 |  0.156587769   |
+        | sample4  | 0.2341 |  0.153658165   |
+        | sample5  | 0.4557 |  0.315765787   |
+        | sample6  | 0.1879 |  0.253655765   |
+        | ...      | ...    |  ...           |
+        +----------+--------+----------------+
+
 </token>
 <token name="@GROUP_OPTIONAL@">
     **Group/Treatment** [Optional]
 
-    - The column name in your metadata file that contains group information. In
-      our example metadata file we would put *group*. If provided samples will
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group*. If provided samples will
       be colored by group.
 
 </token>
 <token name="@GROUP@">
     **Group/Treatment**
 
-    - The column name in your metadata file that contains group information. In
-      our example metadata file we would put *group*.
+    - The column name in your design file that contains group information. In
+      our example design file we would put *group*.
 
 </token>
 </macros>

@@ -186,7 +186,7 @@ def createHTML():
     #Return htmml
     return html
 
-def save2html(data, filename, html=None):
+def save2html(data, filename, filePath, html=None):
     #Add data to html
     if html is not None:
         li = etree.SubElement(html[1][1],"li", style="margin-bottom:1.5%;")
@@ -194,12 +194,12 @@ def save2html(data, filename, html=None):
         a.text=os.path.split(filename)[1]
 
     #Save data
-    data.to_csv(filename,sep="\t",na_rep=0)
+    data.to_csv(filePath,sep="\t",na_rep=0)
 
     #Return html
     return html
 
-def countDigitsByGroup(dat, folderDir, pdf, html=None):
+def countDigitsByGroup(dat, args, folderDir, pdf, html=None):
     """ 
     If the group option is selected this function is called to split by groups.
 
@@ -222,8 +222,11 @@ def countDigitsByGroup(dat, folderDir, pdf, html=None):
     # Split Design file by group
     if dat.group:
         for name, group in dat.design.groupby(dat.group):
-            #Setting count name
-            countName = folderDir+"_{0}.tsv".format(name)
+            # Setting count path
+            countPath = folderDir+"_{0}.tsv".format(name)
+
+            # Setting count name
+            countName = args.counts+"_{0}.tsv".format(name)
 
             # Filter the wide file into a new dataframe
             currentFrame = dat.wide[group.index]
@@ -235,8 +238,8 @@ def countDigitsByGroup(dat, folderDir, pdf, html=None):
             plotCDhistogram(count,pdf,name)
 
             # Save countName, save it to html if exist
-            save2html(html=html, data=count, filename=countName)
-
+            save2html(html=html, data=count, filename=countName, filePath=countPath)
+            
 def saveFlags(count):
     """ 
     Function to create and export flags for the counts.
@@ -263,8 +266,8 @@ def main(args):
 
     if args.html is not None:
         # Create folder for counts if html found
+        folderDir = args.htmlPath
         try:
-            folderDir = args.htmlPath
             os.makedirs(folderDir)
         except Exception, e:
             logger.error("Error. {}".format(e))
@@ -287,7 +290,7 @@ def main(args):
 
             # Count Digits per group
             logger.info(u"Counting digits per group")
-            countDigitsByGroup(dat, folderDir, pdf, html=html)
+            countDigitsByGroup(dat, args, folderDir, pdf, html=html)
 
         # Count digits for all elements
         count = countDigits(wide=dat.wide)
@@ -300,7 +303,7 @@ def main(args):
         saveFlags(count)
 
     # Add count of all elements to html if not html save directly
-    html = save2html(html=html,data=count,filename=folderDir+"_all.tsv")
+    html = save2html(html=html,data=count,filename=args.counts+"_all.tsv",filePath=folderDir+"_all.tsv")
 
     #Save to html
     if args.html:

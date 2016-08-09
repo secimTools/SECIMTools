@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <toolbox>
     <section id="secim2" name="SECIM Tools 2.0 (BETA)">
+    <tool file="secimtools_v2/anova_lm.xml"/>
 	<tool file="secimtools_v2/anova_original.xml"/>
 	<tool file="secimtools_v2/baPlot.xml"/>
 	<tool file="secimtools_v2/BFF.xml"/>

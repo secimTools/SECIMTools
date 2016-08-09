@@ -1,0 +1,90 @@
+<tool id="anovaMultiple2" name="ANOVA Fixed Efects (BETA)" version="1.0.0">
+  <description> Performs Multiple-Way ANOVA with Covariates.</description>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">statsmodels</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
+  <command interpreter="python">
+      anova_lm.py
+      --input $input
+      --design $design
+      --ID $uniqID
+      --factors $factor
+      --factorTypes $factorTypes
+      --out $results_table
+      --fig $qq_plots
+      --fig2 $volcano_plots
+      #if $interactions
+            --interactions
+      #end if
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+    <param name="factor" type="text" size="30" value="" label="Group(s)/Treatment(s)" help="List with the name of the columns (coma separated) in your Design File that you want to use for ANOVA.(ie. treatment1,treatment2,weight)"/>
+    <param name="factorTypes" type="text" size="30" value="" label=" Type of Group(s)/Treatment(s)" help="List with the type of the columns used. 'C' for Categorical and  'N' for numerical, they should match in order the groups used. (ie. C,C,N)"/>
+    <param name="interactions" type="boolean" label="Calculate ANOVA with interactions" help="If turned on ANOVA the program will output interactions."/>
+  </inputs>
+  <outputs>
+    <data format="tabular" name="results_table" label="Anova_results_table"/>
+    <data format="pdf" name="qq_plots" label="Anova_qq_plots"/>
+    <data format="pdf" name="volcano_plots" label="Anova_volcano_plots"/>
+  </outputs>
+  <macros>
+      <import>macros.xml</import>
+  </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+The tool performs Multiple-Way ANOVA analysis with possible continuous covariates and interactions. 
+The analysis is performed row wise independently for each feature. The user has to specify the categorical (factors) variable(s) they want to run analysis over and well as numerical covariate(s) that user wants to account in the model.  The user can also choose whether to include interactions between factors variables in the model or to use simple additive model.
+The user has to specify the variables (categorical and numerical) that he/she wants to include in the model and also specify (comma separated) the corresponding type of the variable designated as C (for categorical) and N (for numeric). This will avoid disambiguity when some categorical variables that should be treated as levels are coded in the data as numbers (e.g. batch numbers, indicator variables, flags etc.) The user can choose to include all possible interactions via a checkbox.
+
+- Two input datasets are required.
+
+    @WIDE@
+
+        **NOTE:** The sample IDs must match the sample IDs in the Design File
+        (below). Extra columns will automatically be ignored.
+
+
+    @METADATA@
+
+    **In addition to your datasets, you need to provide:**
+
+
+    **Unique Feature ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your features. In our example dataset you would input *Compound*.
+   
+
+    @GROUP@
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+This tool outputs 3 different files.
+
+    - **(1) results_table** is a `TSV` table that contains the One-Way-ANOVA
+      results and the analysis of means. File headers follow the SAS JMP
+      Genomics conventions (http://www.jmp.com/support/help/).
+
+    - **(2) qq_plots** is a `PDF` file containing, for each sample, various
+      plots of the residuals. Plots include (i) q-q plots to check for normality
+      and (ii) residuals vs fits plots to verify that the residuals are normally
+      distributed.
+
+    - **(3) volcano_plots** is a `PDF` file containing volcano plots for
+      visualizing data-points with large changes between group means. The red
+      line shows p = 0.05.
+
+</help>
+</tool>
+
