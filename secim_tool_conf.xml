@@ -16,6 +16,7 @@
 	<tool file="secimtools_v2/lasso.xml"/>
 	<tool file="secimtools_v2/logTransform.xml"/>
 	<tool file="secimtools_v2/mergeFlags.xml"/>
+	<tool file="secimtools_v2/mmc.xml"/>
 	<tool file="secimtools_v2/onOff.xml"/>
 	<tool file="secimtools_v2/pca.xml"/>
 	<tool file="secimtools_v2/peakCompare.xml"/>

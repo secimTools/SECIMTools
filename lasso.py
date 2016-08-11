@@ -1,3 +1,15 @@
+######################################################################################
+# DATE: 2016/August/10
+# 
+# MODULE: lasso.py
+#
+# VERSION: 1.0
+# 
+# AUTHOR: Matt Thoburn (mthoburn@ufl.edu) ed. Miguel Ibarra (miguelib@ufl.edu)
+#
+# DESCRIPTION: This runs an Elastic Net or Lasso Test on wide data
+#
+#######################################################################################
 import numpy as np
 from numpy import genfromtxt
 import pandas

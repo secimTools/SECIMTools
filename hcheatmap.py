@@ -76,6 +76,9 @@ def main(args):
     # Importing data
     dat = wideToDesign(args.input, args.design, args.uniqID)
 
+    # giving name to columns
+    dat.wide.columns.name="sampleID"
+
     # dat.wide.convert_objects(convert_numeric=True)
     dat.wide = dat.wide.applymap(float)
 
@@ -83,11 +86,10 @@ def main(args):
     dat.wide.fillna(float(0),inplace=True)
 
     # Creating axis
-    hcFig = hm.plotHeatmap(dat.wide,hcheatmap=True)
+    logger.info("Plotting HCHeatmap")
+    hcFig = hm.plotHCHeatmap(dat.wide,hcheatmap=True)
 
     # Saving figures
-    #with warnings.catch_warnings():
-    #    warnings.simplefilter("ignore")
     hcFig.savefig(args.heatmap,format="pdf")
 
 if __name__ == '__main__':

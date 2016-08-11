@@ -30,7 +30,33 @@ import matplotlib.pyplot as plt
 from manager_color import colorHandler
 
 
-def plotHeatmap(data,hcheatmap=False):
+def plotHeatmap(data,ax):
+    """
+    This function creates and plots a heatmap or a hcheatmap (hiearchical
+    cluster heat map)
+
+    :Arguments:
+        :type data: pandas data frame.
+        :param data: Data that is going to be used to plot
+
+        :type ax: matplotlib axis
+        :param ax: axis to be drawn on.
+    :Returns:
+        :return ax: matplotlib axis.
+        :rtype ax: axis with the drawn figure.
+    """
+    
+    # Create a custom colormap for the heatmap values
+    # You can have two possible ways to create a pallete.
+    # 1) sns.diverging_palette (a seaborn function)
+    # 2) palettable.colorbrewer.diverging.[color].mpl_colors 
+    colors = colorHandler(pal="diverging", col="Spectral_10")
+    cmap = colors.mpl_colormap
+
+    # Draw the full plot
+    sns.heatmap(data,linewidths=0.0,ax=ax,cmap=cmap)
+
+def plotHCHeatmap(data,hcheatmap=True):
     """
     This function creates and plots a heatmap or a hcheatmap (hiearchical
     cluster heat map)

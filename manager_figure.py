@@ -5,7 +5,7 @@
 #
 # VERSION: 1.0
 # 
-# AUTHOR: Matt Thoburn (mthoburn@ufl.edu)
+# AUTHOR: Matt Thoburn (mthoburn@ufl.edu) ed. Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This module a class to manage figure and axes and their presentation
 #
@@ -150,8 +150,10 @@ class figureHandler:
         if len(xticks) > 0:
             plt.xticks(range(len(xticks)), xticks, rotation='vertical')
         
-        #plt.xticks(rotation=90)
+        # Re-Orient the labels on x and y axis 
         plt.setp(self.ax[axnum].xaxis.get_majorticklabels(),rotation=90)
+        plt.setp(self.ax[axnum].yaxis.get_majorticklabels(),rotation=0)
+
         #Change xlimits
         if xlim == None:
             self.ax[axnum].set_xlim(xmin  - abs(xmin)*0.05, xmax  + abs(xmax)*0.05)

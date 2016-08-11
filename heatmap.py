@@ -35,6 +35,7 @@ import pandas as pd
 import logger as sl
 import module_heatmap as hm
 from interface import wideToDesign
+from  manager_figure import figureHandler
 
 #Import data
 def getOptions():
@@ -75,7 +76,7 @@ def main():
     #Import data
     args = getOptions()
 
-    #Setting logger
+    # Setting logger
     logger = logging.getLogger()
     sl.setLogger(logger)
     logger.info(u"""Importing data with following parameters:
@@ -84,18 +85,25 @@ def main():
                 uniqID: {2}
                 """.format(args.input, args.design, args.uniqID))
 
-    #Importing data
+    # Importing data
     dat = wideToDesign(args.input, args.design, args.uniqID)
-    #dat.wide.convert_objects(convert_numeric=True)
-    for col in dat.wide.columns.values:
-        dat.wide[col] = dat.wide[col].astype("float")
-    #Creating axis
-    hcFig = hm.plotHeatmap(dat.wide)
 
-    #Saving figures
-    #with warnings.catch_warnings():
-    #    warnings.simplefilter("ignore")
-    hcFig.savefig(args.heatmap,format="pdf")
+    # dat.wide.convert_objects(convert_numeric=True)
+    dat.wide = dat.wide.applymap(float)
+
+    # Creating figure Handler object
+    hmapFigureH = figureHandler(proj='2d', figsize=(13,13))
+    logger.info(u"""Figure created""")
+
+    # Creating axis
+    hm.plotHeatmap(dat.wide,hmapFigureH.ax[0])
+
+    # formating axis
+    hmapFigureH.formatAxis(xTitle="sampleID")
+
+    # Saving figure
+    hmapFigureH.export(out=args.heatmap,dpi=300)
+
 
 if __name__ == '__main__':
     main()
