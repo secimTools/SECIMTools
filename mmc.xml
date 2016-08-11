@@ -1,0 +1,109 @@
+<tool id="mmc_python" name="Modulated Modularity Clustering">
+    <description>Modulated Modularity Clustering (MMC)</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">scipy</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+
+    </requirements>
+    <command interpreter="python">
+        mmc.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --out $output
+        --figure $figure
+        --sigmaLow $sigmaLow
+        --sigmaHigh $sigmaHigh
+        --sigmaNum $sigmaNum
+        --correlation $corr
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input data in .tsv format" />
+        <param name="design" type="data" format="tabular" label="Design Dataset" help="Design dataset in .tsv" />
+        <param name="uniqID" type="text" label="Unique ID" help="Unique Identifier" />
+
+        <param name="sigmaLow" type="text" value="0.05" label="Lower sigma value" help="Default: 0.05" />
+        <param name="sigmaHigh" type="text" value="0.50" label="High sigma value" help="Default: 0.50" />
+        <param name="sigmaNum" type="text" value="451" label="Sigma values" help="Number of values of sigma to search. Default: 451" />
+        <param name="corr" type="select" value="pearson" label="Correlation method" help="Correlation method for preliminary correlation before clustering. Default: pearson" >
+            <option value="pearson" selected="true">Pearson</option>
+            <option value="kendall" selected="true">Kendall</option>
+            <option value="spearman" selected="true">Spearman</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="MMC Values"/>
+        <!-- Had to hack it into the script for it to properly output pdf /!-->
+        <data format="pdf" name="figure" label="MMC Heatmaps"/>
+    </outputs>
+    <macros>
+      <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+Modulated Modularity Clustering method (MMC) was designed to detect latent structure in the data from weighted graphs. The method searches for optimal community structure and detects the magnitude of pairwise relationships. The optimal number of clusters and the optimal cluster size are selected by the method during the dataset analysis. The user does not specify any thresholds and tuning parameters and the algorithm is completely automatic.  
+
+The boundaries for the optimization parameter sigma that are pre-specified by the user are adjusted automatically in the algorithm, provided the optimal value is attained closed to the boundary. The number of value used for the parameter sigma increases precision of computations but also increases the computation time. Overall for large datasets (> 10000 features) it may take several days for the algorithm to complete so the algorithm should be executed with caution for large datasets. 
+
+More details about the method can be found in the paper 
+
+Stone, E. A., and  Ayroles, J. F. (2009). Modulated modularity clustering as an exploratory tool for functional genomic inference. PLoS Genet, 5(5), e1000479.
+
+
+- Two input datasets are required.
+
+    @WIDE@
+
+        **NOTE:** The sample IDs must match the sample IDs in the Design File
+        (below). Extra columns will automatically be ignored.
+
+
+    @METADATA@
+
+    **In addition to your datasets, you need to provide:**
+
+
+    **Unique Feature ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your features. In our example dataset you would input *Compound*.
+   
+
+    @GROUP@
+
+
+.. class:: infomark
+
+Script parameters:
+
+Lower sigma value: Decimal from 0 to 1, must be less than high sigma value. The default value is 0.05.
+
+High sigma value: Decimal from 0 to 1, must be greater than lower sigma value. The default value is 0.50.
+
+Sigma values: Natural Number; higher values may increase computation time. The default value is 451 
+
+Correlation method: 'pearson' (standard correlation coefficient, default value),  'kendall' (Kendall Tau correlation coefficient), 
+or 'spearman' (Spearman rank correlation).
+
+
+
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+This tool outputs 2 different files (one PDF files and one TSV file).
+
+    - TSV of MMC Algorithm Summaries.
+
+    - PDF of unsorted, unsorted, and smoothed dependency heatmaps produced by MMC.
+
+
+
+</help>
+
+</tool>
