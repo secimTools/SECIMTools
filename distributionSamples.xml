@@ -33,7 +33,7 @@
     <param name="order" type="text" size="30" value="" optional="true" label="Run Order [Optional]" help="Name of the column in your Design File that contains the Run Order of your samples."/>
   </inputs>
   <outputs>
-    <data format="pdf" name="figure" />
+    <data format="pdf" name="figure" label="${tool.name} on ${on_string}: Plot"/>
   </outputs>
   <macros>
       <import>macros.xml</import>
@@ -86,11 +86,9 @@ This tool plots the distribution of your samples.
 
 **Output Files**
 
-This tool outputs 2 different files.
+    - A PDF containing distributions.
 
-    - A `PDF` file containing distributions.
-
-    - A `HTML` that has the same distribution plot, but with interactive zoom.
+    - An HTML that has the same distribution plot, but with interactive zoom.
 
 </help>
 </tool>

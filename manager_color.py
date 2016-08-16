@@ -1,3 +1,15 @@
+######################################################################################
+# Date: 2016/June/03
+# 
+# Module: manager_color.py
+#
+# VERSION: 1.0
+# 
+# AUTHOR: Miguel Ibarra (miguelib@ufl.edu) ed. Matt Thoburn (mthoburn@ufl.edu) 
+#
+# DESCRIPTION: This module a class to manage color for use in plotting
+#
+#######################################################################################
 import palettable
 import matplotlib
 import numpy as np

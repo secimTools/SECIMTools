@@ -26,10 +26,7 @@ def getOptions(myOpts=None):
     parser.add_argument('-o',"--outfile1", dest="outfile1", action='store', required=True, help="Output traget set with predicted_class labels.")
     parser.add_argument('-acc',"--accuracy_on_training", dest="accuracy_on_training", action='store', required=True, help="Output accuracy value on the training set.")
 
-    if myopts:
-        args = parser.parse_args(myopts)
-    else:
-        args = parser.parse_args()
+    args = parser.parse_args()
 
     return(args)
 

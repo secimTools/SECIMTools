@@ -1,3 +1,15 @@
+######################################################################################
+# DATE: 2016/August/10
+# 
+# MODULE: scatter3D.py
+#
+# VERSION: 1.0
+# 
+# AUTHOR: Matt Thoburn (mthoburn@ufl.edu) ed. Miguel Ibarra (miguelib@ufl.edu)
+#
+# DESCRIPTION: This is a standalone executable for graphing 2D scatter plots from wide data
+#
+#######################################################################################
 from manager_color import colorHandler
 from manager_figure import figureHandler
 from interface import wideToDesign

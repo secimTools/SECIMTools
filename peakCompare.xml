@@ -1,57 +1,57 @@
 <tool id="peakCompare2" name="Peak Compare (Beta)" version="2.0.0">
-	<description>"Matches features in 2 files based on  their mz and RT."</description>
-	<requirements>
-		<requirement type="python-module">numpy</requirement>
-		<requirement type="python-module">matplotlib</requirement>
-		<requirement type="python-module">matplotlib_venn</requirement>
-		<requirement type="python-module">palettable</requirement>
-	</requirements>
-	<command interpreter="python">
-		peakCompare.py
-		--anno1 $anno1
-		--anno2 $anno2
-		--uniqID1 $uniqID1
-		--uniqID2 $uniqID2
-		--mzID1 $mzID1
-		--mzID2 $mzID2
-		--rtID1 $rtID1
-		--rtID2 $rtID2
-		--all $all
-		--matched $match
-		--unmatched1 $unmatched1
-		--unmatched2 $unmatched2
-		--summary $summary
-		--figure $figure
-		--mzcut $mz
-		--rtcut $rt
-		--name1 $name1
-		--name2 $name2
-	</command>
-	<inputs>
-		<param name="anno1" type="data" format="tabular" label="File 1" help="Input dataset 1 in wide format and tab separated. If not tab separated see TIP below."/>
-		<param name="anno2" type="data" format="tabular" label="File 2" help="Input dataset 2 in wide format and tab separated. If not tab separated see TIP below."/>
-		<param name="uniqID1" type="text" size="30" value="" optional="false" label="Unique ID for File 1" help="Name of the column on you anno file 1 containing unique ID."/>
-		<param name="uniqID2" type="text" size="30" value="" optional="false" label="Unique ID for File 2" help="Name of the column on you anno file 2 containing unique ID."/>
-		<param name="mzID1" type="text" size="30" value="" optional="false" label="Mass/Charge for File 1" help="Name of the column on you anno file 1 containing mz."/>
-		<param name="mzID2" type="text" size="30" value="" optional="false" label="Mass/Charge for File 2" help="Name of the column on you anno file 2 containing mz."/>
-		<param name="rtID1" type="text" size="30" value="" optional="false" label="Retention Time for File 1" help="Name of the column on you anno file 2 containing rt."/>
-		<param name="rtID2" type="text" size="30" value="" optional="false" label="Retention Time for File 2" help="Name of the column on you anno file 1 containing rt."/>
-		<param name="mz" type="text" size="30" value="0.005" optional="true" label="Mass/Charge cut value" help="Window value for MZ (By default 0.005)."/>
-		<param name="rt" type="text" size="30" value="0.15" optional="true" label="Retention Time cut value" help="Window value for RT (By default 0.15)."/>
-		<param name="name1" type="text" size="30" value="F1" optional="true" label="File 1 name" help="Short name for File 1 (By default F1)."/>
-		<param name="name2" type="text" size="30" value="F2" optional="true" label="File 2 name" help="Short name for File 2 (By default F2)."/>
-	</inputs>
-	<outputs>
-		<data format="tabular" name="all" label="${tool.name} on ${on_string}: All"/>
-		<data format="tabular" name="match" label="${tool.name} on ${on_string}: Matches"/>
-		<data format="tabular" name="unmatched1" label="${tool.name} on ${on_string}: Unmatched 1"/>
-		<data format="tabular" name="unmatched2" label="${tool.name} on ${on_string}: Unmatched 2"/>
-		<data format="tabular" name="summary" label="${tool.name} on ${on_string}: Summary"/>
-		<data format="pdf" name="figure" label="${tool.name} on ${on_string}: Venn"/>
-	</outputs>
-	<macros>
-		<import>macros.xml</import>
-	</macros>
+    <description>"Matches features in 2 files based on  their mz and RT."</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">matplotlib_venn</requirement>
+        <requirement type="python-module">palettable</requirement>
+    </requirements>
+    <command interpreter="python">
+        peakCompare.py
+        --anno1 $anno1
+        --anno2 $anno2
+        --uniqID1 $uniqID1
+        --uniqID2 $uniqID2
+        --mzID1 $mzID1
+        --mzID2 $mzID2
+        --rtID1 $rtID1
+        --rtID2 $rtID2
+        --all $all
+        --matched $match
+        --unmatched1 $unmatched1
+        --unmatched2 $unmatched2
+        --summary $summary
+        --figure $figure
+        --mzcut $mz
+        --rtcut $rt
+        --name1 $name1
+        --name2 $name2
+    </command>
+    <inputs>
+        <param name="anno1" type="data" format="tabular" label="File 1" help="Input dataset 1 in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="anno2" type="data" format="tabular" label="File 2" help="Input dataset 2 in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="uniqID1" type="text" size="30" value="" optional="false" label="Unique ID for File 1" help="Name of the column on you anno file 1 containing unique ID."/>
+        <param name="uniqID2" type="text" size="30" value="" optional="false" label="Unique ID for File 2" help="Name of the column on you anno file 2 containing unique ID."/>
+        <param name="mzID1" type="text" size="30" value="" optional="false" label="Mass/Charge for File 1" help="Name of the column on you anno file 1 containing mz."/>
+        <param name="mzID2" type="text" size="30" value="" optional="false" label="Mass/Charge for File 2" help="Name of the column on you anno file 2 containing mz."/>
+        <param name="rtID1" type="text" size="30" value="" optional="false" label="Retention Time for File 1" help="Name of the column on you anno file 2 containing rt."/>
+        <param name="rtID2" type="text" size="30" value="" optional="false" label="Retention Time for File 2" help="Name of the column on you anno file 1 containing rt."/>
+        <param name="mz" type="text" size="30" value="0.005" optional="true" label="Mass/Charge cut value" help="Window value for MZ (By default 0.005)."/>
+        <param name="rt" type="text" size="30" value="0.15" optional="true" label="Retention Time cut value" help="Window value for RT (By default 0.15)."/>
+        <param name="name1" type="text" size="30" value="F1" optional="true" label="File 1 name" help="Short name for File 1 (By default F1)."/>
+        <param name="name2" type="text" size="30" value="F2" optional="true" label="File 2 name" help="Short name for File 2 (By default F2)."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="all" label="${tool.name} on ${on_string}: All"/>
+        <data format="tabular" name="match" label="${tool.name} on ${on_string}: Matches"/>
+        <data format="tabular" name="unmatched1" label="${tool.name} on ${on_string}: Unmatched 1"/>
+        <data format="tabular" name="unmatched2" label="${tool.name} on ${on_string}: Unmatched 2"/>
+        <data format="tabular" name="summary" label="${tool.name} on ${on_string}: Summary"/>
+        <data format="pdf" name="figure" label="${tool.name} on ${on_string}: Venn"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
 <help>
 
 @TIP_AND_WARNING@
@@ -68,38 +68,34 @@ This tool match the rows (features) in 2 files by by their mz and RT values.
 
 - Two input datasets are required.
 
-		@MZRTFILE@
+        @MZRTFILE@
 
-		**In addition to your datasets, you can provide:**
+    **In addition to your datasets, you can provide:**
 
-		**File Name 1**
+    **File Name 1**
 
-		- A short name to idenfiy your dataset 1
+    - A short name to idenfiy your dataset 1
 
-		**File Name 2**
+    **File Name 2**
 
-		- A short name to idenfiy your dataset 2
+    - A short name to idenfiy your dataset 2
 
 
 --------------------------------------------------------------------------------
 
 **Output Files**
 
-This tool outputs 96 different files.
+    - A TSV file containing all the pairs of features.
 
-		- A `TABULAR` file containing all the pairs of features.
+    - A TSV file containing only the matched pairs features.
 
-		- A `TABULAR` file containing only the matched pairs features.
+    - A TSV file containing the unmatched features from file 1.
 
-		- A `TABULAR` file containing the unmatched features from file 1.
+    - A TSV file containing the unmatched features from file 2.
 
-		- A `TABULAR` file containing the unmatched features from file 2.
+    - A TSV summary file.
 
-		- A `TABULAR` summary file.
-
-		- A `PDF` file with a Venn diagram of Matched vs Unmatched (combinations).
-		Venn diagram of Matched vs Unmatched (features).
-		Venn diagram of Singles vs Multiple (matched features).
+    - A PDF file with a Venn diagram of Matched vs Unmatched (combinations). Venn diagram of Matched vs Unmatched (features). Venn diagram of Singles vs Multiple (matched features).
 
 </help>
 </tool>

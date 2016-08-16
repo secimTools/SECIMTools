@@ -15,6 +15,7 @@
         --load_out $loadings
         --score_out $scores
         --figure $figures
+
         #if $group
             --group $group
         #end if
@@ -80,26 +81,20 @@ This tool performs Principal Component Analysis on the numeric input data.
 
 **Output Files**
 
-- This tool outputs 2 files in addition to the following loadings plots:
-  (1) PC1 vs PC2, (2) PC2 vs PC3 (3) PC2 vs PC3 and (4) PC1 vs PC2 vs PC3
+- A PDF containing the following 2D and 3D plots: (1) PC1 vs PC2, (2) PC2 vs PC3 (3) PC1 vs PC3 and (4) PC1 vs PC2 vs PC3.
 
-**loadings** is a TSV containing eigen-vectors/variable loadings.
-
-::
+- A TSV containing eigen-vectors/variable loadings.
 
     - Std. deviation: Standard deviations of the principal components
     - Proportion of variance explained by each principal component
     - Loadings: a list of eigen-vectors/variable loadings
 
-**scores** is a TSV containing scores of input data on principal components.
-
-::
+- A TSV containing scores of input data on principal components.
 
     - Std. deviation: Standard deviations of the principal components
     - Proportion of variance explained by each principal component
     - Scores: Scores of the input data on the principal components
 
-**  
 
 </help>
 </tool>

@@ -25,7 +25,7 @@
         </param>
     </inputs>
     <outputs>
-        <data format="tabular" name="out" />
+        <data format="tabular" name="out" label="${tool.name} on ${on_string}" />
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -70,7 +70,7 @@ This tool carries out a log transformation on values in a Wide Format dataset.
 
 **Output Files**
 
-- This tool outputs a TSV file of the log transformed data. Missing values
+- A TSV file of the log transformed data. Missing values
   remain missing and 0 values become missing.
 
 

@@ -327,7 +327,7 @@ def makeBA(x, y, ax, fh):
     mask3 = infl['dffits']
     mask = mask1 | mask2 | mask3
     # Create BA plot
-    scatter.scatter2D(ax=ax,x=mean[~mask], y=diff[~mask],colorList='r')
+    scatter.scatter2D(ax=ax,x=mean[~mask], y=diff[~mask],colorList='b')
     scatter.scatter2D(ax=ax,x=mean[mask], y=diff[mask], colorList='r')
 
     # Plot regression lines
@@ -423,12 +423,12 @@ def iterateCombo(dat, combo, pdf):
     title = buildTitle(dat, c1, c2)
     # Add plot title to the figure
     fh.formatAxis(figTitle=title)
-    # Shinking figure
-    fh.shrink(top=.85,bottom=.25,left=.15,right=.9)
+
 
     # Stablishing a tight layout for the figure
     plt.tight_layout(pad=2,w_pad=.05)
-
+    # Shinking figure
+    fh.shrink(top=.85,bottom=.25,left=.15,right=.9)
     # Output figure to pdf
     fh.addToPdf(dpi=90,pdfPages=pdf)
 

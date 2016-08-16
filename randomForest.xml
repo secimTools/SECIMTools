@@ -21,8 +21,8 @@
         <param name="number_of_estimators" type="text" size="30" value="1000" label="Number of trees in the forest" help="Run at least 1000 trees."/>
     </inputs>
     <outputs>
-        <data format="csv" name="outfile1" label="Transformed Data"/>
-        <data format="csv" name="outfile2" label="Importance Factors"/>
+        <data format="csv" name="outfile1" label="${tool.name} on ${on_string}: Transformed Data"/>
+        <data format="csv" name="outfile2" label="${tool.name} on ${on_string}: Importance Factors"/>
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -35,7 +35,7 @@
 
 This tool uses the Random forest algorithm to identify specific features that differentiate groups/classes.
 
---------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
 
 **Input**
 
@@ -68,9 +68,7 @@ This tool uses the Random forest algorithm to identify specific features that di
 
 **Output Files**
 
-- The tool generates 2 output datasets.
-
-**Transformed dataset**:: is a TSV file containing a transformed Wide Dataset where the order of the features in the file reflects their relative importance.
+- A TSV file containing a transformed Wide Dataset where the order of the features in the file reflects their relative importance.
 
         +----------+----------+----------+----------+----------+
         | sampleID | group    | feature1 | feature3 | feature2 |
@@ -90,7 +88,7 @@ This tool uses the Random forest algorithm to identify specific features that di
         | ...      | ...      | ...      | ...      | ...      |
         +----------+----------+----------+----------+----------+
 
-**rank-order list**:: is a TSV file containing the features in rank-order and their relative importance.
+- A TSV file containing the features in rank-order and their relative importance.
 
         +----------+------+
         | feature1 | 0.45 |

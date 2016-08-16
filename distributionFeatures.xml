@@ -66,10 +66,7 @@ This tool plots the distribution of your features.
 
 **Output Files**
 
-This tool outputs 1 File.
-
-        - A `PDF` file containing a boxplot for the distributions of 50 randomly
-        selected features and a desntiy plot acounting for all features.
+- A PDF containing a boxplot for the distributions of 50 randomly selected features and a desntiy plot acounting for all features.
 
 </help>
 </tool>

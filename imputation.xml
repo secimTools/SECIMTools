@@ -18,6 +18,9 @@
         --strategy $strategy
         --row_cutoff $rowCutoff
         --col_cutoff $colCutoff
+        --bayes_cutoff $bayesCutoff
+        --mu_method $muMethod
+        --distribution $distribution
         #if $noZero
             --no_zero
         #end if
@@ -38,9 +41,10 @@
 
         <param name="strategy" size="30" type="select" value="" label="Imputation Strategy" help="Recommended: KNN">
             <option value="KNN" selected="true">K-Nearest Neighbors</option>
-            <option value="mean" selected="true">Mean</option>
-            <option value="median" selected="true">Median</option>
-            <option value="most_frequent" selected="true">Mode</option>
+            <option value="Bayesian" selected="true">Bayesian</option>
+            <option value="mean" selected="true">mean</option>
+            <option value="median" selected="true">median</option>
+            <option value="most_frequent" selected="true">mode</option>
 
         </param>
 
@@ -52,9 +56,18 @@
         <param name="k" type="text" size="30" value="5" label="K value" help="If you are not using the KNN Strategy, then ignore this. K is the number of neighbors to search. Default: 5"/>
         <param name="rowCutoff" type="text" size="30" value=".5" label="Row Percent Cutoff Value" help="If you are not using the KNN Strategy, then ignore this. If this is exceeded, imputation will be done by mean instead of knn. Default: .5 (50%)"/>
         <param name="colCutoff" type="text" size="30" value=".8" label="Column Percent Cutoff Value" help="If you are not using the KNN Strategy, then ignore this. If this is exceeded, imputation will be done by mean instead of knn. Default: .8 (80%)"/>
+        <param name="bayesCutoff" type="text" size="30" value=".5" label="Bayesian Cutoff Value" help="If you are not using the Bayesian Strategy, then ignore this. For a given row, if this ratio of missing to present values is exceeded, imputation will be skipped. Must be greater than 0 and less than 1"/>
+        <param name="muMethod" size="30" type="select" value="" label="Bayesian Mu Method" help="Recommended: Mean">
+            <option value="mean" selected="true">mean</option>
+            <option value="median" selected="true">median</option>
+        </param>
+        <param name="distribution" size="30" type="select" value="" label="Bayesian Distribution" help="Recommended: Mean">
+            <option value="mean" selected="true">mean</option>
+            <option value="median" selected="true">median</option>
+        </param>
     </inputs>
     <outputs>
-        <data format="tabular" name="imputed" label="${tool.name} on ${on_string}: imputed"/>
+        <data format="tabular" name="imputed" label="${tool.name} on ${on_string}"/>
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -106,11 +119,8 @@ This tool imputes missing data in a dataset.
 
 **Output Files**
 
-- This tool outputs the wide dataset with missing values filled in
+- A wide format TSV with missing values filled in.
 
-
-
-**  
 
 </help>
 </tool>

@@ -28,8 +28,8 @@
     <param name="CVcutoff"  type="float" optional="true" size="4" label="CVcutoff [Optional]" help="The default CV cutoff will flag the top 10% of features with the largest CV. If you want to set a CV cutoff, put the number here."/>
   </inputs>
   <outputs>
-    <data format="pdf" name="CVplot"  label="CVplot" />
-    <data format="tabular" name="CVflag"  label="CVflag" />
+    <data format="pdf" name="CVplot"  label="${tool.name} on ${on_string}: Plot" />
+    <data format="tabular" name="CVflag"  label="${tool.name} on ${on_string}: Flag" />
   </outputs>
   <macros>
       <import>macros.xml</import>
@@ -78,18 +78,9 @@ data.
 
 **Output Files**
 
-- This tool outputs a CV density plot and a text file containing flags for
-  features with a large CV.
+    - A PDF of a CV density plot. If group information is given, one plot is produced for each group in addition to a combined density plot containing all groups.
 
-    **CVplot_PDF** is a PDF of a CV density plot. If group information is
-    given, one plot is produced for each group in addition to a combined density
-    plot containing all groups.
-
-    **CVflag_table** is a TSV file with feature as row and containing a summary
-    0|1 indicator flag for whether the CV for a given feature is greater than
-    the threshold value. A feature is given a '1' if the CV for that feature
-    is greater than the threshold given.  If group is specified, additional
-    group-specific 0|1 indicator flags will be present.
+    - A TSV with feature as row and containing a summary 0|1 indicator flag for whether the CV for a given feature is greater than the threshold value. A feature is given a '1' if the CV for that feature is greater than the threshold given.  If group is specified, additional group-specific 0|1 indicator flags will be present.
 
 </help>
 

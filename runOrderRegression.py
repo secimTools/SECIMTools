@@ -180,9 +180,10 @@ def makeScatter(row, pdf,des,groupName):
         lines.drawCutoff(ax=fh.ax[0],x=toPlot["x"],y=toPlot["upper"],c="r")
 
         #formatting
+        ymin, ymax = fh.ax[0].get_ylim()
         fh.formatAxis(xTitle="Run Order", yTitle="Value", 
             figTitle=u"""{} Scatter plot
-             (fitted regression line and prediction bands included)""".format(name))
+             (fitted regression line and prediction bands included)""".format(name),ylim=(ymin,ymax*1.2))
 
         #Shrink figure to add legend
         fh.shrink()
