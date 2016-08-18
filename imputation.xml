@@ -1,26 +1,30 @@
 <tool id="imputation2" name="Imputation" version="0.0.5">
-    <description>"Attempts to fill missing data by selected imputation algorithm"</description>
+    <description>"Fills missing data by selected imputation algorithm."</description>
     <requirements>
         <requirement type="python-module">rpy2</requirement>
         <requirement type="python-module">pandas</requirement>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">sklearn</requirement>
-
     </requirements>
+    <stdio>
+        <exit_code range="1:" level="warning" description="UserWarning"/>
+        <exit_code range="1:" level="warning" description="VisibleDeprecationWarning"/>
+    </stdio>
     <command interpreter="python">
         imputation.py
         --input $input
         --design $design
         --ID $uniqID
         --group $group
+
         --output $imputed
+
         --knn $k
-        --strategy $strategy
+        --strategy $imputation
         --row_cutoff $rowCutoff
         --col_cutoff $colCutoff
-        --bayes_cutoff $bayesCutoff
-        --mu_method $muMethod
         --distribution $distribution
+
         #if $noZero
             --no_zero
         #end if
@@ -39,31 +43,21 @@
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="group" type="text" size="30" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
 
-        <param name="strategy" size="30" type="select" value="" label="Imputation Strategy" help="Recommended: KNN">
-            <option value="KNN" selected="true">K-Nearest Neighbors</option>
-            <option value="Bayesian" selected="true">Bayesian</option>
-            <option value="mean" selected="true">mean</option>
-            <option value="median" selected="true">median</option>
-            <option value="most_frequent" selected="true">mode</option>
-
+        <param name="imputation" size="30" type="select" value="" label="Imputation Strategy" help="Recommended: KNN">
+            <option value="knn" selected="true">K-Nearest Neighbors</option>
+            <option value="bayesian" selected="true">Bayesian</option>
+            <option value="mean" selected="true">Mean</option>
+            <option value="median" selected="true">Median</option>
         </param>
-
-
         <param name="noZero" type="boolean" label="Count Zeroes as missing" help="Zeroes can be counted as missing or left as data"/>
         <param name="noNeg" type="boolean" label="Count Negative as missing" help="Negatives can be counted as missing or left as data"/>
         <param name="exclude" type="text" size="30" value="" label="Additional values to treat missing [Optional]" help="Seperate additional values to count as missing data with commas"/>
-
-        <param name="k" type="text" size="30" value="5" label="K value" help="If you are not using the KNN Strategy, then ignore this. K is the number of neighbors to search. Default: 5"/>
-        <param name="rowCutoff" type="text" size="30" value=".5" label="Row Percent Cutoff Value" help="If you are not using the KNN Strategy, then ignore this. If this is exceeded, imputation will be done by mean instead of knn. Default: .5 (50%)"/>
-        <param name="colCutoff" type="text" size="30" value=".8" label="Column Percent Cutoff Value" help="If you are not using the KNN Strategy, then ignore this. If this is exceeded, imputation will be done by mean instead of knn. Default: .8 (80%)"/>
-        <param name="bayesCutoff" type="text" size="30" value=".5" label="Bayesian Cutoff Value" help="If you are not using the Bayesian Strategy, then ignore this. For a given row, if this ratio of missing to present values is exceeded, imputation will be skipped. Must be greater than 0 and less than 1"/>
-        <param name="muMethod" size="30" type="select" value="" label="Bayesian Mu Method" help="Recommended: Mean">
-            <option value="mean" selected="true">mean</option>
-            <option value="median" selected="true">median</option>
-        </param>
-        <param name="distribution" size="30" type="select" value="" label="Bayesian Distribution" help="Recommended: Mean">
-            <option value="mean" selected="true">mean</option>
-            <option value="median" selected="true">median</option>
+        <param name="rowCutoff" type="text" size="30" value=".5" label="Row Percent Cutoff Value" help="Proportion of missing values allowed per group per row. If the proportion of missing samples in the row is bigger than the cutoff value specified nonthing will be imputed for that row. Default: .5 (50%)"/>
+        <param name="k" type="text" size="30" value="5" label="K value" help="If you are not using the KNN Imputation, then ignore this. K is the number of neighbors to search. Default: 5. If less then 5 neighbours are available all of them are used."/>
+        <param name="colCutoff" type="text" size="30" value=".8" label="Column Percent Cutoff Value" help="If you are not using the KNN Imputation, then ignore this. The maximum proportion of  missing data allowed in any data column. Default: .8 (80%). The imputation will not be successfull is the proportion in the data exceeds this cutoff!"/>
+        <param name="distribution" size="30" type="select" value="" label="Bayesian Distribution" help="Recommended: Poisson">
+            <option value="Poisson" selected="true">Poisson</option>
+            <option value="Normal" selected="true">Normal</option>
         </param>
     </inputs>
     <outputs>
