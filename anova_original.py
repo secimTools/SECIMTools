@@ -1,5 +1,16 @@
 #!/usr/bin/env python
-
+######################################################################################
+# DATE: 2016/August/10
+# 
+# MODULE: anova_original.py
+#
+# VERSION: 1.0
+# 
+# AUTHOR: Miguel Ibarra (miguelib@ufl.edu) ed. Matt Thoburn (mthoburn@ufl.edu) 
+#
+# DESCRIPTION: This tool runs a one way ANOVA on wide data
+#
+#######################################################################################
 # Built-in packages
 import logging
 import argparse

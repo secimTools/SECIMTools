@@ -14,7 +14,7 @@
         </param>
     </inputs>
     <outputs>
-        <data format="tabular" name="output" label="MergedFlags"/>
+        <data format="tabular" name="output" label="${tool.name} on ${on_string}: Flags"/>
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -74,7 +74,7 @@ all files must contain the same index.  Flag files can also be merged to Wide Fo
 
 **Output Files**
 
-- This tool outputs a TSV file containing all merged data sets
+- A TSV file containing all merged data sets
 
 
 </help>

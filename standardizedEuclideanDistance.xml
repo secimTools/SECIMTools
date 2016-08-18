@@ -34,15 +34,15 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact" />
+        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact. Warning: All groups must contain 3 or more samples" />
         <param name="order" type="text" size="30" label="Input runOrder name [Optional]" help="Enter run order name to calculate from. Spelling and capitalization must be exact" />
         <param name="levels" type="text" size="30" label="Adittional groups to separate by [Optional]" help="Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ',' " />
-        <param name="p" type="text" size="30" label="Percentile cutoff [Optional]" help="The percentile cutoff for standard distributions. The default is 0.95. " />
+        <param name="p" type="text" value= ".95" size="30" label="Percentile cutoff [Optional]" help="The percentile cutoff for standard distributions. The default is 0.95. " />
     </inputs>
     <outputs>
-        <data format="pdf" name="plot" label="SEDplot" />
-        <data format="tabular" name="out1" label="SEDtoMean" />
-        <data format="tabular" name="out2" label="SEDpairwise" />
+        <data format="pdf" name="plot" label="${tool.name} on ${on_string}: Plot" />
+        <data format="tabular" name="out1" label="${tool.name} on ${on_string}: SEDtoMean" />
+        <data format="tabular" name="out2" label="${tool.name} on ${on_string}: SEDpairwise" />
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -94,11 +94,11 @@ between each sample and the estimated center and (ii) the sample pairwise standa
 
 **Output Files**
 
-**SED_**:: is a PDF containing a set of figures for each group and for all groups combined.  Figures include (1) the SED for samples in the indicated group to the estimated center, (2) the pairwise SED for samples in the indicated group and (3) box-plots for the pairwise SED for samples in the indicated group.
+- A PDF containing a set of figures for each group and for all groups combined.  Figures include (1) the SED for samples in the indicated group to the estimated center, (2) the pairwise SED for samples in the indicated group and (3) box-plots for the pairwise SED for samples in the indicated group.
 
-**SEDpairwise_**:: is a TSV containing the SED values, by group, for each pairwise sample combination.
+- A TSV containing the SED values, by group, for each pairwise sample combination.
 
-**SEDtoCenter_**:: is a TSV containing the SED values for each sample to the estimated center.
+- A TSV containing the SED values for each sample to the estimated center.
 
 
 </help>

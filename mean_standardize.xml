@@ -17,9 +17,9 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Metadata File" help="Metadata file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
-        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
         <param name="std" type="select" size="30" value="" label="Mean Standardization" help="Select type of mean standardization.">
             <option value="STD" selected="true">STD</option>
             <option value="MEAN" selected="true">MEAN</option>
@@ -62,10 +62,10 @@ This tool mean standardize your samples.
 
 - In addition to your datasets, you need to provide:
 
-    **Unique Compound ID**
+    **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your compounds. In our example dataset you would input *Compound*.
+      your features. In our example dataset you would input *Compound*.
 
       @GROUP_OPTIONAL@
 

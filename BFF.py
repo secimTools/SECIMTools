@@ -1,6 +1,16 @@
 #!/usr/bin/env python
-#Coded by ibarrarellano@gmail.com
-#2016/Apr/19
+######################################################################################
+# DATE: 2016/August/10
+# 
+# MODULE: anova_lm.py
+#
+# VERSION: 1.0
+# 
+# AUTHOR: Miguel Ibarra (miguelib@ufl.edu) ed. Matt Thoburn (mthoburn@ufl.edu) 
+#
+# DESCRIPTION: This tool Blank Feature Filtering on wide data.
+#
+#######################################################################################
 
 #Standard Libraries
 import argparse

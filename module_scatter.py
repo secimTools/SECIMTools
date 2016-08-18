@@ -65,8 +65,7 @@ def scatter3D(ax,x,y,z,colorList):
         :type ax: Matplotlib Axis
         :param ax: axis with scatter plotted onto it
     """
-    
-    ax.scatter(x,y,z,c=colorList,marker='o',s=50,depthshade=False)
+    ax.scatter(xs=x,ys=y,zs=z,c=colorList,marker='o',s=50,depthshade=False)
 
     
     return ax

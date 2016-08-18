@@ -16,7 +16,7 @@
                help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     </inputs>
     <outputs>
-        <data format="tabular" name="summaryFlags" label="Summary flags"/>
+        <data format="tabular" name="summaryFlags" label="${tool.name} on ${on_string}"/>
     </outputs>
     <macros>
         <import>macros.xml</import>

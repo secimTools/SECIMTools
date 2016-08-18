@@ -30,9 +30,9 @@
     <param name="interactions" type="boolean" label="Calculate ANOVA with interactions" help="If turned on ANOVA the program will output interactions."/>
   </inputs>
   <outputs>
-    <data format="tabular" name="results_table" label="Anova_results_table"/>
-    <data format="pdf" name="qq_plots" label="Anova_qq_plots"/>
-    <data format="pdf" name="volcano_plots" label="Anova_volcano_plots"/>
+    <data format="tabular" name="results_table" label="${tool.name} on ${on_string}: Results Table"/>
+    <data format="pdf" name="qq_plots" label="${tool.name} on ${on_string}: QQ Plots"/>
+    <data format="pdf" name="volcano_plots" label="${tool.name} on ${on_string}: Volcano Plots"/>
   </outputs>
   <macros>
       <import>macros.xml</import>
@@ -70,20 +70,11 @@ The user has to specify the variables (categorical and numerical) that he/she wa
 
 **Output Files**
 
-This tool outputs 3 different files.
+- A TSV that contains the One-Way-ANOVA results and the analysis of means. File headers follow the SAS JMP Genomics conventions (http://www.jmp.com/support/help/).
 
-    - **(1) results_table** is a `TSV` table that contains the One-Way-ANOVA
-      results and the analysis of means. File headers follow the SAS JMP
-      Genomics conventions (http://www.jmp.com/support/help/).
+- A PDF containing, for each sample, various plots of the residuals. Plots include (i) q-q plots to check for normality and (ii) residuals vs fits plots to verify that the residuals are normally distributed.
 
-    - **(2) qq_plots** is a `PDF` file containing, for each sample, various
-      plots of the residuals. Plots include (i) q-q plots to check for normality
-      and (ii) residuals vs fits plots to verify that the residuals are normally
-      distributed.
-
-    - **(3) volcano_plots** is a `PDF` file containing volcano plots for
-      visualizing data-points with large changes between group means. The red
-      line shows p = 0.05.
+- A PDF containing volcano plots for visualizing data-points with large changes between group means. The red line shows p = 0.05.
 
 </help>
 </tool>

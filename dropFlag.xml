@@ -51,8 +51,8 @@
                help="Reference value to make comparison. Any rows/columns with a flag value equals,greater or less than this number will be dropped."/>
     </inputs>
     <outputs>
-        <data format="tabular" name="outWide" label="Dropped wide"/>
-        <data format="tabular" name="outFlags" label="Dropped flags"/>
+        <data format="tabular" name="outWide" label="${tool.name} on ${on_string}: Dropped wide"/>
+        <data format="tabular" name="outFlags" label="${tool.name} on ${on_string}: Dropped flags"/>
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -124,17 +124,17 @@ features and samples are dropped in separate operations.
 
 - If dropping features:
 
-    **modified_wide** file will be created that contains only the features where
+    - A TSV that contains only the features where
     the sum of all indicator flags for the feature is less than the user given
     cutoff value.
 
 - If dropping samples:
 
-    **modified_wide** file will be created that contains only the features where
+    - A TSV that contains only the features where
     the sum of all indicator flags for the feature is less than the user given
     cutoff value.
 
-    **modified_design** file will be created that contains only the samples where
+    - A TSV that contains only the samples where
     the sum of all the indicator flags for the sample is less than the user given
     cutoff value.
 

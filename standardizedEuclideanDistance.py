@@ -22,6 +22,7 @@ import argparse
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
+from numpy import alltrue
 import pandas as pd
 import scipy.stats as stats
 import matplotlib.pyplot as plt
@@ -152,6 +153,9 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
     # Create figure object with a single axis and initiate the figss
     figure = figureHandler(proj='2d', figsize=(figWidth, 8))
 
+    # Keeping the order on the colors
+    SEDData["colors"]=design["colors"]
+
     # Choose type of plot
     # Plot scatterplot to mean
     if(plotType=="scatterToMean"):
@@ -162,8 +166,9 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
                         yTitle="Standardized Euclidean Distance")
 
         #Plot scatterplot quickplot
-        scatter.scatter2D(ax=figure.ax[0],colorList=design["colors"],
+        scatter.scatter2D(ax=figure.ax[0],colorList=SEDData["colors"],
                         x=range(len(SEDData.index)), y=SEDData["SED_to_Mean"])
+
 
     #Plot scatterplot pairwise
     elif(plotType=="scatterPairwise"):
@@ -186,7 +191,7 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
                         xticks=SEDData.index.values,xTitle="Index",
                         yTitle="Standardized Euclidean Distance")
         # Plot Box plot
-        box.boxDF(ax=figure.ax[0], colors=design["colors"].values, dat=SEDData)
+        box.boxDF(ax=figure.ax[0], colors=SEDData["colors"].values, dat=SEDData)
 
     #Add a cutoof line
     cutoff.apply(lambda x: plotCutoffs(x,ax=figure.ax[0],p=p),axis=0)
@@ -406,6 +411,7 @@ def getCutOffs(wide,p):
     iters  = 20000
 
     #Calculates betaP
+    # Need to cach and solve when ps-2 ==0
     betaP=np.percentile(pd.DataFrame(stats.beta.rvs(0.5, 0.5*(ps-2),size=iters*nf).reshape(iters,nf)).sum(axis=1), p*100.0)
 
     #casting to float so it behaves well

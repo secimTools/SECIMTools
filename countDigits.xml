@@ -37,9 +37,9 @@
     <param name="group" size="30" type="text" label="Input Group name to separate by [Optional]" help="If you wish to sort by groups in a column in the Design file, enter the column name. Spelling and capitalization must be exact" />
   </inputs>
   <outputs>
-    <data format="pdf" name="figure"  label="CountDigits_Figure" />
-    <data format="tabular" name="flags" label="CountDigits_Flags" />
-    <data format="html" name="html" label="CountDigits_Counts" />
+    <data format="pdf" name="figure"  label="${tool.name} on ${on_string}: Figure" />
+    <data format="tabular" name="flags" label="C${tool.name} on ${on_string}: Flags" />
+    <data format="html" name="html" label="${tool.name} on ${on_string}: Counts" />
   </outputs>
   <macros>
       <import>macros.xml</import>
@@ -89,17 +89,11 @@ high feature values for a particular sample.
   Separating by group is recommended, where applicable. If desired, it can also output the 
   files without an html wrapper 
 
-    **Counts_table** is a TSV file with features as rows and samples as
-    columns. Values are the number of digits, before a decimal, for a given feature-sample
-    combination. The maximum, minimum, and difference are calculated for each
-    feature. If groups are given, each groups generates a separate counts_table
+    - A TSV with features as rows and samples as columns. Values are the number of digits, before a decimal, for a given feature-sample combination. The maximum, minimum, and difference are calculated for each feature. If groups are given, each groups generates a separate counts table.
 
-    **Figure.pdf** is a plot of the differences between the maximum and minimum, by
-    group if specified.
+    - A plot of the differences between the maximum and minimum, by group if specified.
 
-    **Flags** is a TSV file with features as rows with a summary 0|1 indicator
-    flag. A feature is given a '1' if the difference for that feature across
-    all groups, if specified, is greater than or equal to 2.
+    - A TSV with features as rows with a summary 0|1 indicator flag. A feature is given a '1' if the difference for that feature across all groups, if specified, is greater than or equal to 2.
 
 
 </help>

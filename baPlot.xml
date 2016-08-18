@@ -40,10 +40,10 @@
     <param name="processOnly" size="30" type="text" value="" optional="true" label="Group ID [Optional]" help="Name of the group(s) that you want to process. Separate multiple groupIDs with spaces. Leave blank to process all groups. Requires the group parameter."/>
   </inputs>
   <outputs>
-    <data format="pdf" name="ba_plots" />
-    <data format="pdf" name="outlier_dist_plots" />
-    <data format="tabular" name="flag_sample"/>
-    <data format="tabular" name="flag_feature"/>
+    <data format="pdf" name="ba_plots" label= "${tool.name} on ${on_string}: BA plot"  />
+    <data format="pdf" name="outlier_dist_plots" label= "${tool.name} on ${on_string}: Distribution"/>
+    <data format="tabular" name="flag_sample" label= "${tool.name} on ${on_string}: Flag Sample"/>
+    <data format="tabular" name="flag_feature" label= "${tool.name} on ${on_string}: Flag Feature"/>
   </outputs>
   <macros>
       <import>macros.xml</import>
@@ -95,15 +95,15 @@ See below for a more in depth description of the output files.
 
     - Here we use several measures to identify values that are outliers (or leverage points).
 
-        - (1) If the magnitude of the residuals from the linear regression on
+        (1) If the magnitude of the residuals from the linear regression on
               the BA-plot exceeds the user-defined threshold, then a value is flagged
               as an outlier. This cutoff can be adjusted by the user, the default is 3.
 
-        - (2) If a value is identified as a leverage point using Cook's D with
+        (2) If a value is identified as a leverage point using Cook's D with
               a p-value cutoff of 0.5, then the value is flagged. This cannot be
               adjusted.
 
-        - (3) If a value is identified as a leverage point using the DFFITS technique it is
+        (3) If a value is identified as a leverage point using the DFFITS technique it is
               also flagged. This cannot be adjusted.
 
     **Sample Flag Cutoff – flagging samples**
@@ -140,33 +140,11 @@ See below for a more in depth description of the output files.
 
 **Output Files**
 
-- This tool outputs 4 different files.
+- A PDF of pairwise scatter plots and BA-plots.
 
-    **ba_plots** is a PDF of pairwise scatter plots and BA-plots.
+- A PDF of bar graphs showing the proportion of values determined to be outliers for samples (top) and features (bottom).
 
-    .. image:: ${static_path}/images/secim/ba_plot.png
-        :height: 300
-        :width: 600
-
-    The left panel is a scatter plot comparing the two samples. The right
-    panel is a BA-plot where the x-axis is the mean between the two samples and y-
-    axis is the difference.  The solid red line is a regression line and dotted
-    lines are 95% confidence intervals. Data highlighted in red are outliers as
-    determined by any of the 3 criteria described above.
-
-    **outlier_dist_plots** is a PDF of bar graphs showing the proportion of values determined to be outliers for samples (top) and features (bottom).
-
-    .. image:: ${static_path}/images/secim/ba_plot_outlier_dist_sample.png
-        :height: 300
-        :width: 600
-
-    .. image:: ${static_path}/images/secim/ba_plot_outlier_dist_feature.png
-        :height: 300
-        :width: 600
-
-
-    **flag_sample** is a TSV containing a 0/1 outlier flag for each sample where '1' indicates that the sample was identified as an outlier. 
-    If a sample is a '1', you should consider removing the sample.
+- A TSV containing a 0/1 outlier flag for each sample where '1' indicates that the sample was identified as an outlier. If a sample is a '1', you should consider removing the sample.
 
     +----------+------------------------+
     | sampleID | flag_sample_BA_outlier |
@@ -181,7 +159,7 @@ See below for a more in depth description of the output files.
     +----------+------------------------+
 
 
-    **flag_feature** is a TSV containing a 0/1 flag for each feature where '1'  indicates that the feature was identified as an outlier. If a feature is a      '1', you should consider removing the feature.
+- A TSV containing a 0/1 flag for each feature where '1'  indicates that the feature was identified as an outlier. If a feature is a      '1', you should consider removing the feature.
 
     +----------+-------------------------+
     | Feature  | flag_feature_BA_outlier |

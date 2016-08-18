@@ -32,9 +32,9 @@
        
     </inputs>
     <outputs>
-        <data format="tabular" name="coefficients" label="Output file for Elastic Net Coefficients"/>
-        <data format="tabular" name="flags" label="Output file for Elastic Net Flags"/>
-        <data format="pdf" name="plots" label="Output file for Elastic Net Plots"/>
+        <data format="tabular" name="coefficients" label="${tool.name} on ${on_string}: Coefficients"/>
+        <data format="tabular" name="flags" label="${tool.name} on ${on_string}: Flags"/>
+        <data format="pdf" name="plots" label="${tool.name} on ${on_string}: Plots"/>
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -96,12 +96,11 @@ Zou, H., and Hastie, T. (2005). Regularization and variable selection via the el
 
 **Output Files**
 
+- A TSV of the values of the coefficients (including zeroes) that were produced by the tool for each pair of comparisons (in columns) 
 
-- The tool outputs three files: two tab separated files (TSV) and PDF file with the graphs. 
+- a TSV of the corresponding flags (1 for selected) for the features that were selected by the method. 
 
-- The first TSV file contains the values of the coefficients (including zeroes) that were produced by the tool for each pair of comparisons (in columns), while the second file contains the corresponding flags (1 for selected) for the features that were selected by the method. 
-
-- The PDF file contains the pairs of graphs for all pairwise comparisons. The first graph corresponds to the behavior of coefficients based on the value of the penalty, while the second graph provides the details of cross-validation that was used for the optimal penalty detections which finalized the final set of variables produced by the method.
+- a TSV of the pairs of graphs for all pairwise comparisons. The first graph corresponds to the behavior of coefficients based on the value of the penalty, while the second graph provides the details of cross-validation that was used for the optimal penalty detections which finalized the final set of variables produced by the method.
 
 </help>
 </tool>

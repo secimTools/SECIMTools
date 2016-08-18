@@ -23,7 +23,7 @@
         <param name="cutoff" type="integer" optional="true" size="4" value="30000" label="Cutoff [Optional]" help="Cutoff to use for which values to flag. This defaults to 30,000"/>
     </inputs>
     <outputs>
-        <data format="tabular" name="output" label="On/Off flags" />
+        <data format="tabular" name="output" label="${tool.name} on ${on_string}" />
     </outputs>
     <macros>
         <import>macros.xml</import>

@@ -8,10 +8,10 @@
 
 **WARNINGS:**
 
-    - (1) A row will be dropped when a pairwise comparison has a missing value.
-    - (2) This script automatically removes spaces and special characters from strings.
-    - (3) If a compound/feature name starts with a number it will prepend an '_'.
-    - (4) Input names are case sensitive and must match exactly (e.g use 'Feature' not 'feature').
+    (1) SampleIDs in the wide data that have no matching name in the design file, as well as sampleIDs in the desing file that have no match in data will be included in the analysis.
+    (2) This script automatically removes spaces and special characters from strings.
+    (3) If a compound/feature name starts with a number it will prepend an '_'.
+    (4) Input names are case sensitive and must match exactly (e.g use 'Feature' not 'feature').
 
 --------------------------------------------------------------------------------------------------
 
@@ -21,15 +21,19 @@
 
     A wide formatted dataset that contains measurements for each sample.::
     
-        +----------+---------+---------+---------+-----+
+        +---------+---------+---------+---------+-----+
         | Feature | sample1 | sample2 | sample3 | ... |
-        +==========+=========+=========+=========+=====+
-        | one      | 10      | 20      | 10      | ... |
-        | two      | 5       | 22      | 30      | ... |
-        | three    | 30      | 27      | 2       | ... |
-        | four     | 32      | 17      | 8       | ... |
-        | ...      | ...     | ...     | ...     | ... |
-        +----------+---------+---------+---------+-----+
+        +=========+=========+=========+=========+=====+
+        | one     | 10      | 20      | 10      | ... |
+        +---------+---------+---------+---------+-----+ 
+        | two     | 5       | 22      | 30      | ... |
+        +---------+---------+---------+---------+-----+
+        | three   | 30      | 27      | 2       | ... |
+        +---------+---------+---------+---------+-----+
+        | four    | 32      | 17      | 8       | ... |
+        +---------+---------+---------+---------+-----+
+        | ...     | ...     | ...     | ...     | ... |
+        +---------+---------+---------+---------+-----+
 
     **NOTE:** The 'Feature' column defines the rows within a wide formatted dataset.
 </token>
