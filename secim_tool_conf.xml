@@ -2,31 +2,31 @@
 <toolbox>
     <section id="secim2" name="SECIM Tools 2.0 (BETA)">
     <tool file="secimtools_v2/anova_lm.xml"/>
-	<tool file="secimtools_v2/anova_original.xml"/>
-	<tool file="secimtools_v2/baPlot.xml"/>
-	<tool file="secimtools_v2/BFF.xml"/>
-	<tool file="secimtools_v2/countDigits.xml"/>
-	<tool file="secimtools_v2/CVflag.xml"/>
-	<tool file="secimtools_v2/distributionSamples.xml"/>
-	<tool file="secimtools_v2/distributionFeatures.xml"/>
-	<tool file="secimtools_v2/dropFlag.xml"/>
-	<tool file="secimtools_v2/hcheatmap.xml"/>
-	<tool file="secimtools_v2/heatmap.xml"/>
-	<tool file="secimtools_v2/imputation.xml"/>
-	<tool file="secimtools_v2/lasso.xml"/>
-	<tool file="secimtools_v2/logTransform.xml"/>
-	<tool file="secimtools_v2/mergeFlags.xml"/>
-	<tool file="secimtools_v2/mmc.xml"/>
-	<tool file="secimtools_v2/onOff.xml"/>
-	<tool file="secimtools_v2/pca.xml"/>
-	<tool file="secimtools_v2/peakCompare.xml"/>
-	<tool file="secimtools_v2/randomForest.xml"/>
-	<tool file="secimtools_v2/RTflag.xml"/>
-	<tool file="secimtools_v2/runOrderRegression.xml"/>
-	<tool file="secimtools_v2/scatter.xml"/>
-	<tool file="secimtools_v2/scatter3D.xml"/>
-	<tool file="secimtools_v2/standardizedEuclideanDistance.xml"/>
-	<tool file="secimtools_v2/summarizeFlags.xml"/>
-	<tool file="secimtools_v2/SVMClassifier.xml"/>
+    <tool file="secimtools_v2/anova_original.xml"/>
+    <tool file="secimtools_v2/baPlot.xml"/>
+    <tool file="secimtools_v2/BFF.xml"/>
+    <tool file="secimtools_v2/countDigits.xml"/>
+    <tool file="secimtools_v2/CVflag.xml"/>
+    <tool file="secimtools_v2/distributionSamples.xml"/>
+    <tool file="secimtools_v2/distributionFeatures.xml"/>
+    <tool file="secimtools_v2/dropFlag.xml"/>
+    <tool file="secimtools_v2/hcheatmap.xml"/>
+    <tool file="secimtools_v2/heatmap.xml"/>
+    <tool file="secimtools_v2/imputation.xml"/>
+    <tool file="secimtools_v2/lasso.xml"/>
+    <tool file="secimtools_v2/logTransform.xml"/>
+    <tool file="secimtools_v2/mergeFlags.xml"/>
+    <tool file="secimtools_v2/mmc.xml"/>
+    <tool file="secimtools_v2/onOff.xml"/>
+    <tool file="secimtools_v2/pca.xml"/>
+    <tool file="secimtools_v2/peakCompare.xml"/>
+    <tool file="secimtools_v2/randomForest.xml"/>
+    <tool file="secimtools_v2/RTflag.xml"/>
+    <tool file="secimtools_v2/runOrderRegression.xml"/>
+    <tool file="secimtools_v2/scatter.xml"/>
+    <tool file="secimtools_v2/scatter3D.xml"/>
+    <tool file="secimtools_v2/standardizedEuclideanDistance.xml"/>
+    <tool file="secimtools_v2/summarizeFlags.xml"/>
+    <tool file="secimtools_v2/SVMClassifier.xml"/>
     </section>
 </toolbox>
