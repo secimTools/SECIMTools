@@ -54,7 +54,7 @@
         <param name="exclude" type="text" size="30" value="" label="Additional values to treat missing [Optional]" help="Seperate additional values to count as missing data with commas"/>
         <param name="rowCutoff" type="text" size="30" value=".5" label="Row Percent Cutoff Value" help="Proportion of missing values allowed per group per row. If the proportion of missing samples in the row is bigger than the cutoff value specified nonthing will be imputed for that row. Default: .5 (50%)"/>
         <param name="k" type="text" size="30" value="5" label="K value" help="If you are not using the KNN Imputation, then ignore this. K is the number of neighbors to search. Default: 5. If less then 5 neighbours are available all of them are used."/>
-        <param name="colCutoff" type="text" size="30" value=".8" label="Column Percent Cutoff Value" help="If you are not using the KNN Imputation, then ignore this. The maximum proportion of  missing data allowed in any data column. Default: .8 (80%). The imputation will not be successfull is the proportion in the data exceeds this cutoff!"/>
+        <param name="colCutoff" type="text" size="30" value=".8" label="Column Percent Cutoff Value" help="If you are not using the KNN Imputation, then ignore this. The maximum proportion of  missing data allowed in any data column. Default: .8 (80%). The imputation will not be successful is the proportion in the data exceeds this cutoff!"/>
         <param name="distribution" size="30" type="select" value="" label="Bayesian Distribution" help="Recommended: Poisson">
             <option value="Poisson" selected="true">Poisson</option>
             <option value="Normal" selected="true">Normal</option>
