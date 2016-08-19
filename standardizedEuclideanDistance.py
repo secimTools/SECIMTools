@@ -284,6 +284,12 @@ def calculateSED(dat, levels, combName, pdf, p):
             #Subsetting wide
             currentFrame = dat.wide[group.index]
 
+            # Sending error if less than 3 groups
+            if len(group.columns) < 3:
+                logger.error("Group {0} has less than 3 elements".\
+                	format(level))
+                exit()
+
             #Getting SED per group
             logger.info("Getting SED for {0}".format(level))
             pdf, SEDtoMean_G, SEDpairwise_G = prepareSED(currentFrame, group, 
@@ -411,7 +417,6 @@ def getCutOffs(wide,p):
     iters  = 20000
 
     #Calculates betaP
-    # Need to cach and solve when ps-2 ==0
     betaP=np.percentile(pd.DataFrame(stats.beta.rvs(0.5, 0.5*(ps-2),size=iters*nf).reshape(iters,nf)).sum(axis=1), p*100.0)
 
     #casting to float so it behaves well
