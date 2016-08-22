@@ -5,6 +5,15 @@ def getModelResults(model):
     """
     It gets the results stats out of the model like F,P, mss
     ess, tss, mse, NDF, DDF , R2 , ressids and fitted values.
+
+    :Arguments:
+        :type factorNames: stats.model
+        :param factorNames: ANOVA model.
+
+    :Returns:
+        :rtype preFormula: pd.DataFrame
+        :return preFormula: Results table for model results.
+
     """
     # Getting results
     f      = model.fvalue

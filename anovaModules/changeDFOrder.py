@@ -7,6 +7,21 @@ def changeDFOrder(data,combN,factors):
     change the order of the DF to get all the possible contrasts. This function 
     adds a "1_" before the name of the group, that way we can change the order
     of the groups on the dataframe.
+
+    :Arguments:
+        :type data: pd.DataFrame
+        :param data: Trans data.
+
+        :type combN: list
+        :param combN: unique combinations on the elements from the factors.
+
+        :type factors: list
+        :param factors: name of the factors (they should be present on data).
+
+    :Returns:
+        :rtype tempDF: pd.DataFrame.
+        :return tempDF: Re-Ordered data frame.    
+
     """
     # Makje a copy of trans
     tempDF = copy.deepcopy(data)
@@ -16,8 +31,9 @@ def changeDFOrder(data,combN,factors):
     for elem in combN:
         
         # NewGrpNames for current factor
-        newGrpNames = ["1_"+lvl if lvl==elem else lvl for lvl in \
+        newGrpNames = ["0_"+lvl if lvl==elem else lvl for lvl in \
                         tempDF[factors[combN.index(elem)]]]
+                        
         # Replace old nams with new names
         tempDF[factors[combN.index(elem)]]=newGrpNames
     

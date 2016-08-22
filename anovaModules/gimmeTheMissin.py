@@ -5,6 +5,18 @@ def gimmeTheMissin (partiaList,fullList):
     This function will return the missing value of an incomplete list compared
     to its complete list. ie ["y","z"] as partial list and ["x","y","z"] as full 
     will return ["x"]
+
+    :Arguments:
+        :type partialList: list
+        :param partialList: Contains lists with n-1 element.
+                            (The element we want to know)
+
+        :type fullList: list
+        :param fullList: Contains list with all the elements.
+
+    :Returns:
+        :rtype preFormula: list
+        :return preFormula: List withh all the missing values.
     """
     missings= list()
     for pElem in partiaList:

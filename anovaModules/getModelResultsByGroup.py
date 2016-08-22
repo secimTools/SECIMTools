@@ -15,8 +15,21 @@ def getModelResultsByGroup(model,levels, numerical):
      -  Coeficients
      -  Std. error
      -  T values
-     -  Probability for the t-values 
+     -  Probability for the t-values
 
+    :Arguments:
+        :type model: statsmodel.ols
+        :param model: ANOVA model
+
+        :type levels: list
+        :param levels: groups inside a factor.
+
+        :type numerical: list
+        :param numerical: Numerical factor(s) if any.
+
+    :Returns:
+        :rtype preFormula: list
+        :return preFormula: List withh all the missing values.
     """
     # Extracting the parameters we are interested in from ANOVA
     # These values are going to be used multiple times
@@ -36,24 +49,24 @@ def getModelResultsByGroup(model,levels, numerical):
     
     # Removing intercepts
     df.drop("Intercept",inplace=True,axis="index")
-
+    
     # Removing numerical factors
     for numeric in numerical:
-        if numeric in df.index.values:
+        if numeric in df.index.tolist():
             df.drop(numeric,inplace=True,axis="index") 
     
     # New Index Names
-    newIndexNames = {origIndx:re.sub(".+\[T\.|\]","",origIndx)for origIndx in df.index.values}
+    newIndexNames = {origIndx:re.sub(".+\[T\.|\]","",origIndx)for origIndx in df.index.tolist()}
     
     # Rename df indexes with new Indexes names
     df.rename(newIndexNames,inplace=True)
         
     #Getting the baseline 
-    baseLines = gimmeTheMissin(df.index.values,levels)
+    baseLines = gimmeTheMissin(df.index.tolist(),levels)
         
     # Creating pretty names for indexes
     oldIndex = dict()
-    for base,origIndx in zip(baseLines, df.index.values):
+    for origIndx,base in zip(df.index.tolist(),baseLines):
         if base == origIndx:
             df.drop(origIndx,inplace=True)
         else:

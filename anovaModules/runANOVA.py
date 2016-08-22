@@ -16,6 +16,39 @@ from anovaModules.removeAnovaDupResults import removeAnovaDupResults
 from anovaModules.getModelResultsByGroup import getModelResultsByGroup
 
 def runANOVA(dat, formula, lvlComb, categorical, levels, numerical, cutoff=4):
+    """
+    Core for processing all the data.
+
+    :Arguments:
+        :type dat: wideToDesign object.
+        :param dat: wide, design, group, anno, trans.
+
+        :type formula: dictionary 
+        :param formula: Contains the formulas in a row:formula fashion.
+
+        :type lvlComb: list.
+        :param lvlComb: list with all the levels in the factors.
+
+        :type categorical: list.
+        :param categorical: Contains the names of the categorical factors.
+
+        :type levels: list.
+        :param levels: Name of the .
+        
+        :type numerical: list.
+        :param numerical: Contains the names of the numerical factors.
+
+    :Returns:
+        :rtype results: pd.DataFrames
+        :return results: dataframe in wide format with the results of the model
+
+        :rtype residDat: pd.DataFrames
+        :return residDat: Contains the residuals of the model
+        
+        :rtype fitDat: pd.DataFrames
+        :return fitDat: dataframe with all the fitted data
+    """
+
     # Getting grandMean, variance and mean per groups
     results = startANOVAResults(wide=dat.wide,design=dat.design,groups=categorical)
 
@@ -39,7 +72,7 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical, cutoff=4):
             elem =  combs.pop()
             
             # Create tempDF to change Order
-            tempDF = changeDFOrder(dat.trans, elem, categorical)
+            tempDF = changeDFOrder(data=dat.trans, combN=elem, factors=categorical)
             
             # Running ANOVA on data
             anova = ols(formula=formula[feat], data=tempDF).fit_regularized()

@@ -74,7 +74,7 @@ def main(args):
     dat = wideToDesign(args.input,args.design,args.uniqID)
 
     # Generate formula Formula
-    preFormula,categorical,numerical,levels = preProcessing(design=dat.design,
+    preFormula,categorical,numerical,levels,dat.design = preProcessing(design=dat.design,
                         factorTypes=args.ftypes, factorNames=args.factors)
 
     # Transpose data
@@ -111,7 +111,7 @@ def main(args):
         lvlComb = list()
         generateDinamicCmbs([levels],lvlComb)
 
-        # running anova
+        # Running anova
         logger.info('Running anova models')
         results,residDat,fitDat = runANOVA(dat=dat, categorical=["_treatment_"],
                                 levels=[levels], lvlComb=lvlComb, formula=dictFormula, 
