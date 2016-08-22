@@ -285,7 +285,7 @@ def calculateSED(dat, levels, combName, pdf, p):
             currentFrame = dat.wide[group.index]
 
             # Sending error if less than 3 groups
-            if len(group.columns) < 3:
+            if len(group.index) < 3:
                 logger.error("Group {0} has less than 3 elements".\
                 	format(level))
                 exit()
