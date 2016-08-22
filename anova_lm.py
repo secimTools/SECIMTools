@@ -80,23 +80,61 @@ def main(args):
     # Transpose data
     dat.trans  = dat.transpose()
 
-    # Create combination of groups
-    nLevels =  [list(itertools.chain.from_iterable(levels))]
-    reverseLevels = copy.copy(nLevels)
-    reverseLevels.reverse()
-    lvlComb = list()
-    generateDinamicCmbs(reverseLevels,lvlComb)
+    # if interactions
+    if args.interactions:
+        logger.info("Running ANOVA on interactions")
+        dat.trans["_treatment_"] = dat.trans.apply(lambda x: \
+                                "_".join(map(str,x[categorical].values)),axis=1)
 
-    # Maps every metabolite to its formulas
-    dictFormula = {feature:"{0}~{1}".format(str(feature),preFormula) for feature \
-                    in dat.wide.index.values}
+        dat.design["_treatment_"] = dat.design.apply(lambda x: \
+                                "_".join(map(str,x[categorical].values)),axis=1)
 
-    # running anova
-    results,residDat,fitDat = runANOVA(dat=dat, categorical=categorical,
-                            levels=levels, lvlComb=lvlComb, formula=dictFormula, 
-                            numerical=numerical)
+        # if numerical adde then to the formula
+        if len(numerical)>0:
+            formula = ["C(_treatment_)"]+numerical
+        else:
+            formula = ["C(_treatment_)"]
 
-    #OUTPUT!!
+        # Concatenatig the formula
+        formula = "+".join(formula)
+
+        # Getting new formula for interactions
+        dictFormula = {feature:"{0}~{1}".format(str(feature),formula) \
+                    for feature in dat.wide.index.tolist()}
+
+        # Creating levelCombinations
+        levels=sorted(list(set(dat.trans["_treatment_"].tolist())))
+
+        # Creating levelCombinations
+        reverseLevels = copy.copy(levels)
+        reverseLevels.reverse()
+        lvlComb = list()
+        generateDinamicCmbs([levels],lvlComb)
+
+        # running anova
+        logger.info('Running anova models')
+        results,residDat,fitDat = runANOVA(dat=dat, categorical=["_treatment_"],
+                                levels=[levels], lvlComb=lvlComb, formula=dictFormula, 
+                                numerical=numerical)
+    else:
+        logger.info("Running ANOVA without interactions")
+        # Create combination of groups
+        nLevels =  [list(itertools.chain.from_iterable(levels))]
+        reverseLevels = copy.copy(nLevels)
+        reverseLevels.reverse()
+        lvlComb = list()
+        generateDinamicCmbs(reverseLevels,lvlComb)
+
+        # Maps every metabolite to its formulas
+        dictFormula = {feature:"{0}~{1}".format(str(feature),preFormula) for feature \
+                        in dat.wide.index.values}
+
+        # running anova
+        logger.info('Running anova models')
+        results,residDat,fitDat = runANOVA(dat=dat, categorical=categorical,
+                                levels=levels, lvlComb=lvlComb, formula=dictFormula, 
+                                numerical=numerical)
+
     # QQ plots    
     logger.info('Generating q-q plots.')
     qqPlot(residDat.T, fitDat.T, args.ofig)
