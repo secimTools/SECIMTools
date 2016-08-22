@@ -1,0 +1,78 @@
+<tool id="subsetData" name="Subset Data (Beta)" version="1.0,0">
+    <description>Subset your data base on groups</description>
+    <requirements>
+        <requirement type="python-module">os</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">interface</requirement>
+    </requirements>
+    <command interpreter="python">
+        subsetData.py
+        --input $input
+        --design $design
+        --uniqID $uniqID
+        --group $group
+        --keepers $tokeep
+        --outdesign $outdesign
+        --outwide $outwide
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" value="" optional="false" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="tokeep" type="text" size="30" optional="false" label="Groups to keep" help="Name of the groups on your group/treatment column that you want to use to subset your data."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="outdesign" label="${tool.name} on ${on_string}: Flags"/>
+        <data format="tabular" name="outwide" label="${tool.name} on ${on_string}: Value"/>
+    </outputs>
+    <macros>
+            <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**What it does**
+
+This tool subsets your wide and design file based on selected by user groups on the Group/Treatment column.
+------------------------------------------------------------------------------------------
+
+**Input Files**
+
+- Two input datasets are required.
+
+    @WIDE@
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File
+    (below). Extra columns will automatically be ignored.
+
+
+    @METADATA@
+
+    **In addition to your datasets, you need to provide:**
+
+    **Unique Feature ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your features. In our example dataset you would input *Compound*.
+
+   **Name of the Columns in your design fileContaining the Treatment Groups**
+
+    - The column name in your Design file that indicates treatment groups.
+
+   **Name of the groups to keep**
+
+    - The groups names in your Design file that indicates which samples you want to use to subset.
+    
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- A TSV containing the subseted wide file.
+
+- A TSV containing the subseted desing file.
+
+
+</help>
+</tool>

@@ -26,6 +26,7 @@
     <tool file="secimtools_v2/scatter3D.xml"/>
     <tool file="secimtools_v2/standardizedEuclideanDistance.xml"/>
     <tool file="secimtools_v2/summarizeFlags.xml"/>
+    <tool file="secimtools_v2/subsetData.xml"/>
     <tool file="secimtools_v2/SVMClassifier.xml"/>
     </section>
 </toolbox>
