@@ -1,0 +1,78 @@
+<tool id="Normalization" name="Normalization (Beta)" version="1.0,0">
+    <description>Normalize data with different methods.</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">logging</requirement>
+        <requirement type="python-module">logger</requirement>
+        <requirement type="python-module">interface</requirement>
+        <requirement type="python-module">flags</requirement>
+        <requirement type="python-module">math</requirement>
+        <requirement type="python-module">copy</requirement>
+    </requirements>
+    <command interpreter="python">
+        normalize.py
+        --input $input
+        --design $design
+        --uniqID $uniqID
+        --method $method
+        --outnormalized $outnormalized
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+  
+        <param name="method" size="30" type="select" value="" label="Normalization Method" help="Recommended: Mean">
+            <option value="mean" selected="true">Mean</option>
+            <option value="sum" selected="true">Sum</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="outnormalized" label="${tool.name} on ${on_string}: Normalized data"/>
+    </outputs>
+    <macros>
+            <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**What it does**
+
+This tool normalizes your data based on either the means or the sum of the Sample.
+------------------------------------------------------------------------------------------
+
+**Input Files**
+
+- Two input datasets are required.
+
+        @WIDE@
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File
+    (below). Extra columns will automatically be ignored.
+
+
+    @METADATA@
+
+    **In addition to your datasets, you need to provide:**
+
+    **Unique Feature ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your features. In our example dataset you would input *Compound*.
+
+   **Method to use for normalization**
+
+    - Method that is going to be used to normalize data (Mean/Sum).
+
+    
+--------------------------------------------------------------------------------
+
+**Output Files**
+
+- A TSV containing the normalized wide file.
+
+</help>
+</tool>
