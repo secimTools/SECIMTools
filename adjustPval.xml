@@ -1,0 +1,68 @@
+<tool id="multiCorrection" name="Multiple test correction (Beta)" version="1.0,0">
+    <description>Adjust p-values for multiple testing.</description>
+    <requirements>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">sklearn</requirement>
+        <requirement type="python-module">logging</requirement>
+        <requirement type="python-module">logger</requirement>
+        <requirement type="python-module">interface</requirement>
+    </requirements>
+    <command interpreter="python">
+        adjustPval.py
+        --input $input
+        --uniqID $uniqID
+        --pval $pval
+        --alpha $alpha
+        --outadjusted $outadjusted
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="pval" type="text" size="30" value="" label="p-value column" help="Name of the column in your Wide Dataset that has your pvalue."/>
+        <param name="alpha" type="text" size="30" value="0.5" label="alpha value" help="Value of alpha to be used on the corrections by default alpha=0.5."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="outadjusted" label="${tool.name} on ${on_string}: Adjusted pval."/>
+    </outputs>
+    <macros>
+            <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**What it does**
+
+This tool adjust p-values for multiple testing with 3 different methods: Bonferroni,Benjamin-Hochberg and Benjamin-Yekutieli.
+
+-------------------------------------------------------------------------------------------
+
+**Input Files**
+
+- Two input datasets are required.
+
+    @WIDE@
+
+    **In addition to your dataset, you need to provide:**
+
+    **Unique Feature ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your features. In our example dataset you would input *Compound*.
+
+   **Name for p-value column**
+
+    - Name of the column containing the p-value column on your wide dataset.
+
+   **alpha**
+
+    - Value of alpha to perform the test..
+    
+-------------------------------------------------------------------------------------------
+
+**Output Files**
+
+ - A TSV containing the normalized wide file.
+
+</help>
+</tool>
