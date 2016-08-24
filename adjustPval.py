@@ -66,13 +66,13 @@ def main(args):
     # Making bonferroni, Benjamini/Hochberg, Benjamini/Yekutieli
     logger.info("Runnig corrections")
     bonferroni = pd.Series(stm.multipletests(justPvals,alpha=args.alpha,
-                    returnsorted=False, method="bonferroni")[1],name="bonferroni",
+                    returnsorted=False, method="bonferroni")[1],name="pval_bonferroni",
                     index=toCorrect_df.index)
     bHochberg  = pd.Series(stm.multipletests(justPvals,alpha=args.alpha,
-                    returnsorted=False, method="fdr_bh")[1],name="bHochberg",
+                    returnsorted=False, method="fdr_bh")[1],name="pval_bHochberg",
                     index=toCorrect_df.index)
     bYekutieli = pd.Series(stm.multipletests(justPvals,alpha=args.alpha,
-                    returnsorted=False, method="fdr_by")[1],name="bYekutieli",
+                    returnsorted=False, method="fdr_by")[1],name="pval_bYekutieli",
                     index=toCorrect_df.index)
     
     # Concatenating results with pvals

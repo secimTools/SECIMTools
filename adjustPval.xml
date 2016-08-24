@@ -62,7 +62,7 @@ This tool adjust p-values for multiple testing with 3 different methods: Bonferr
 
 **Output Files**
 
- - A TSV containing the normalized wide file.
+ - A TSV containing the orignal and adjusted p-values.
 
 </help>
 </tool>
