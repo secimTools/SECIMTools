@@ -21,6 +21,7 @@
     <tool file="secimtools_v2/onOff.xml"/>
     <tool file="secimtools_v2/pca.xml"/>
     <tool file="secimtools_v2/peakCompare.xml"/>
+    <tool file="secimtools_v2/pls.xml"/>
     <tool file="secimtools_v2/randomForest.xml"/>
     <tool file="secimtools_v2/RTflag.xml"/>
     <tool file="secimtools_v2/runOrderRegression.xml"/>
