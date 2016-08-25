@@ -15,7 +15,7 @@ from anovaModules.generateDinamicCmbs import generateDinamicCmbs
 from anovaModules.removeAnovaDupResults import removeAnovaDupResults
 from anovaModules.getModelResultsByGroup import getModelResultsByGroup
 
-def runANOVA(dat, formula, lvlComb, categorical, levels, numerical, cutoff=4):
+def runANOVA(dat, formula, lvlComb, categorical, levels, numerical, cutoff=-np.log10(0.05)):
     """
     Core for processing all the data.
 

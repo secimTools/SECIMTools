@@ -148,7 +148,7 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
     nFeatures = len(SEDData.index)
 
     #Calculates the widht for the figure base on the number of features
-    figWidth = max(nFeatures/4, 12)
+    figWidth = max(nFeatures/2, 16)
 
     # Create figure object with a single axis and initiate the figss
     figure = figureHandler(proj='2d', figsize=(figWidth, 8))
