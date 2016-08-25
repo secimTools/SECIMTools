@@ -33,7 +33,7 @@ def getModelResults(model):
     
     # Creating indexes for values
     index=["f-Value","p-Value of f-Value",
-        "ModelSS","ErrorSS","TotalSS",
+        "ErrorSS","ModelSS","TotalSS",
         "MSE","NDF","DDF", "R2","resid","fitted"]
     
     # Creating results series

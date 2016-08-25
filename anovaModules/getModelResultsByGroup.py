@@ -35,7 +35,7 @@ def getModelResultsByGroup(model,levels, numerical):
     # These values are going to be used multiple times
     coef = -(model.params)
     stde = model.bse
-    t    = model.tvalues
+    t    = -(model.tvalues)
     pt   = model.pvalues
         
     #Add name to previous series
