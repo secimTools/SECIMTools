@@ -1,5 +1,5 @@
 <tool id="pls" name="Partial Least Squares (PLS) (Beta)" version="1.0.0">
-    <description>"Calculates PLS on a dataset."</description>
+    <description>"Adjust p-values based on different methods."</description>
     <requirements>
         <requirement type="python-module">sklearn</requirement>
         <requirement type="python-module">pandas</requirement>
