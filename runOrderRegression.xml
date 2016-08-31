@@ -23,6 +23,9 @@
     <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
     <param name="order" type="text" size="30" value="" label="Run Order ID" help="Name of the column in your Metadata File that contains run order."/>
   </inputs>
+  <stdio>
+    <regex match="FutureWarning" source="both" level="log" description="Python FutureWarning from secimtools runOrderRegression"/>
+  </stdio>
   <outputs>
     <data format="pdf" name="order_plots" />
     <data format="tabular" name="order_summary"/>

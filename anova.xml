@@ -22,6 +22,11 @@
     <param name="uniqID" type="text" size="30" value="" label="Unique Compound ID" help="Name of the column in your Wide Dataset that has unique compound/gene IDs."/>
     <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Metadata File that contains group classifications."/>
   </inputs>
+
+  <stdio>
+    <regex match="FutureWarning" source="both" level="log" description="Python FutureWarning from secimtools anova"/>
+  </stdio>
+
   <outputs>
     <data format="tabular" name="results_table" label="Anova_results_table"/>
     <data format="pdf" name="qq_plots" label="Anova_qq_plots"/>
