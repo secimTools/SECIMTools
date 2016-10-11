@@ -8,7 +8,7 @@
         <requirement type="python-module">interface</requirement>
     </requirements>
     <command interpreter="python">
-        adjustPval.py
+        multipleTestAdjust.py
         --input $input
         --uniqID $uniqID
         --pval $pval
