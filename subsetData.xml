@@ -12,7 +12,6 @@
         --uniqID $uniqID
         --group $group
         --keepers $tokeep
-        --outdesign $outdesign
         --outwide $outwide
     </command>
     <inputs>
@@ -23,7 +22,6 @@
         <param name="tokeep" type="text" size="30" optional="false" label="Groups to keep" help="Name of the groups on your group/treatment column that you want to use to subset your data."/>
     </inputs>
     <outputs>
-        <data format="tabular" name="outdesign" label="${tool.name} on ${on_string}: Flags"/>
         <data format="tabular" name="outwide" label="${tool.name} on ${on_string}: Value"/>
     </outputs>
     <macros>

@@ -1,16 +1,17 @@
 #!/usr/bin/env python
-######################################################################################
-# DATE: 2016/August/10
+################################################################################
+# DATE: 2016/October/10
 # 
 # MODULE: subsetData.py
 #
-# VERSION: 1.0
+# VERSION: 1.1
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu) 
 #
-# DESCRIPTION: Selects the groups to use in further analysis. 
+# DESCRIPTION: Subsets wide data based on groups or any other field on the
+#               design file. 
 #
-#######################################################################################
+################################################################################
 
 #Standard Libraries
 import os
@@ -27,8 +28,8 @@ from interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
-    parser = argparse.ArgumentParser(description="Takes a peak area/heigh \
-                                     dataset and calculates the LOD on it ")
+    parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
+                                     "dataset and calculates the LOD on it ")
 
     #Standar input for SECIMtools
     standar = parser.add_argument_group(title='Standard input', description= 
@@ -50,8 +51,8 @@ def getOptions():
     #Output Paths
     output = parser.add_argument_group(title='Output paths', description=
                                        "Paths for the output files")
-    output.add_argument("-od","--outdesign",dest="outdesign",action="store",
-                        required=True,help="Output path for flags file[CSV]")
+    #output.add_argument("-od","--outdesign",dest="outdesign",action="store",
+    #                    required=True,help="Output path for flags file[CSV]")
     output.add_argument("-ow","--outwide",dest="outwide",action="store",
                         required=True,help="Output path for bff file[CSV]")
 
@@ -73,7 +74,7 @@ def main(args):
         if keeper in dat.levels:
             pass
         else:
-            logger.error("Your group '{0}'' is not located in the column '{1}'".
+            logger.error("Your group '{0}' is not located in the column '{1}'".
                 format(keeper,dat.group))
             exit()
 
@@ -82,19 +83,12 @@ def main(args):
     selectedWide = [dat.wide[group.index] for name,group in  \
                     dat.design.groupby(dat.group) if name in keepers]
 
-    # If the groups to keep are located on the design the subset the design
-    selectedDesing = [group for name,group in  dat.design.groupby(dat.group) \
-                    if name in keepers]
-
-    # Makin design file complete again
-    selectedDesing =  pd.concat(selectedDesing)
-
     # Makin wide file complete again
     selectedWide = pd.concat(selectedWide, axis=1)
 
     # Outputing results to final files.
-    logger.info(u"""Output wide file.""")
-    selectedDesing.to_csv(os.path.abspath(args.outdesign), sep='\t')
+    #logger.info(u"""Output wide file.""")
+    #dat.design.to_csv(os.path.abspath(args.outdesign), sep='\t')
 
     logger.info(u"""Output design file.""")
     selectedWide.to_csv(os.path.abspath(args.outwide), sep='\t')
@@ -115,4 +109,6 @@ if __name__ == '__main__':
                 keepers: {4}
                 """.format(args.input, args.design, args.uniqID, args.group,
                     args.keepers))
+
+    # Main script
     main(args)

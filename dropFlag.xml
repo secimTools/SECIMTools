@@ -13,11 +13,11 @@
         --outFlags $outFlags
         --flagDrop $flagToDrop
         --value $reference
+        --flagfiletype $typeofdrop
 
-        #if $group
-        --group $group
+        #if $flagUniqID
+        --flagUniqID $flagUniqID
         #end if
-
         #if str( $conditional ) == '0'
         --condition '0'
         #end if
@@ -27,6 +27,7 @@
         #if str( $conditional ) == '2'
         --condition '2'
         #end if
+
 
     </command>
     <inputs>
@@ -38,17 +39,21 @@
                help="Input flagged dataset containing the flag value for each feature"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID"
                help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="flagUniqID" type="text" size="30" value="" label="Unique Feature ID for Flag"
+               help="Name of the column in your Flag file that has unique Feature IDs."/>
         <param name="flagToDrop" type="text" size="30" value="" label="Flag to Drop" 
                help="Name of the column/row in your Flag File to drop."/>
-        <param name="conditional" size="30" type="select" value="" label="Condition of drop" help="Select type of conditional to compare in flags.">
+        <param name="conditional" size="30" type="select" value="" label="Condition of drop." help="Select type of conditional to compare in flags.">
             <option value="0" selected="true">Equals to</option>
-            <option value="1" selected="true">Greater than</option>
-            <option value="2" selected="true">Less than</option>
+            <option value="1" selected="false">Greater than</option>
+            <option value="2" selected="false">Less than</option>
         </param>
-        <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]"
-               help="Name of the column in your Design File that contains group classifications."/>
-        <param name="reference" type="float" size="30"  value="1" label="Cutoff Value"
+        <param name="reference" type="text" size="30"  value="1" label="Cutoff Value"
                help="Reference value to make comparison. Any rows/columns with a flag value equals,greater or less than this number will be dropped."/>
+        <param name="typeofdrop" type="select" size="30" display="radio" value="row" label="Type of drop to be used." help="Select whether you want to drop by rows or by columns, default rows.">
+	        <option value="row">Drop by Rows</option>
+	        <option value="column">Drop by Columns</option>
+    	</param>
     </inputs>
     <outputs>
         <data format="tabular" name="outWide" label="${tool.name} on ${on_string}: Dropped wide"/>

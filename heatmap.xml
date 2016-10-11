@@ -14,12 +14,21 @@
 		--input $input
 		--design $design
 		--uniqID $uniqID
+		#if $dendogram
+		--dendogram
+		#end if
+		--labels $labels
 		--heatmap $heatmap
 	</command>
 	<inputs>
 		<param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
 	    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
 	    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+	    <param name="dendogram" type="boolean" value="False" label="Add dendogram on heatmap" help="It will print a dendogram over the heatmap"/>
+		<param name="labels" type="select" label="Remove labels from plots" multiple="true" display="checkboxes">
+			<option value="x">X-axis labels</option>
+			<option value="y">Y-axis labels</option>
+		</param>
 	</inputs>
 	<outputs>
     	<data format="pdf" name="heatmap" label="${tool.name} on ${on_string}"/>

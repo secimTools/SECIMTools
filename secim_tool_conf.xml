@@ -10,7 +10,6 @@
     <tool file="secimtools_v2/distributionSamples.xml"/>
     <tool file="secimtools_v2/distributionFeatures.xml"/>
     <tool file="secimtools_v2/dropFlag.xml"/>
-    <tool file="secimtools_v2/hcheatmap.xml"/>
     <tool file="secimtools_v2/heatmap.xml"/>
     <tool file="secimtools_v2/imputation.xml"/>
     <tool file="secimtools_v2/lasso.xml"/>

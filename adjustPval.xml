@@ -1,4 +1,4 @@
-<tool id="multiCorrection" name="Multiple test correction (Beta)" version="1.0,0">
+<tool id="multiTestAdjustment" name="Multiple Testing Adjustment (Beta)" version="1.0,0">
     <description>Adjust p-values for multiple testing.</description>
     <requirements>
         <requirement type="python-module">pandas</requirement>

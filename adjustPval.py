@@ -2,13 +2,13 @@
 ################################################################################
 # DATE: 2016/August/23
 # 
-# MODULE: subsetData.py
+# MODULE: adjustPval.py
 #
 # VERSION: 1.0
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu) 
 #
-# DESCRIPTION: Selects the groups to use in further analysis. 
+# DESCRIPTION: Adjust pvalues. 
 #
 ################################################################################
 

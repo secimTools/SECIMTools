@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/August/23
+# DATE: 2016/October/4
 # 
 # MODULE: subsetData.py
 #
-# VERSION: 1.0
+# VERSION: 1.1
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu) 
 #
-# DESCRIPTION: Selects the groups to use in further analysis. 
+# DESCRIPTION: Normalizes data based on sum, median or mean.
 #
 ################################################################################
 
@@ -27,8 +27,8 @@ from interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
-    parser = argparse.ArgumentParser(description="Takes a peak area/heigh \
-                                     dataset and calculates the LOD on it ")
+    parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
+                                     "dataset and calculates the LOD on it ")
 
     #Standar input for SECIMtools
     standar = parser.add_argument_group(title='Standard input', description= 
@@ -41,8 +41,9 @@ def getOptions():
                         required=True, help="Name of the column with unique" \
                         "dentifiers.")
     standar.add_argument("-m","--method", dest="method", action='store', 
-                        required=True, choices=["mean","sum"], help="Name of the groups "\
-                        "in your group/treatment column that you want to keep.")
+                        required=True, choices=["mean","sum","median"], 
+                        help="Name of the groups in your group/treatment column"\
+                        " that you want to keep.")
 
     #Output Paths
     output = parser.add_argument_group(title='Output paths', description=
@@ -64,7 +65,10 @@ def main(args):
     toNormalize_df =  dat.wide.T
 
     logger.info("Normalizing data using {0} method".format(args.method))
+
+    # Normalizing by mean
     if args.method == "mean":
+
         # Getting the mean
         toNormalize_df["mean"] = toNormalize_df.mean(axis=1)
 
@@ -74,8 +78,9 @@ def main(args):
         # Dropping extra column
         toNormalize_df.drop("mean", axis=1, inplace=True)
 
-
+    # Normalizing by sum
     elif args.method == "sum":
+
         # Getting the sum
         toNormalize_df["sum"] = toNormalize_df.sum(axis=1)
 
@@ -84,6 +89,18 @@ def main(args):
 
         # Dropping extra column
         toNormalize_df.drop("sum", axis=1, inplace=True)
+
+    # Normalizing by median
+    elif args.method == "median":
+
+        # Getting the median
+        toNormalize_df["median"] = toNormalize_df.median(axis=1)
+
+        # Dividing by the mean
+        toNormalize_df = toNormalize_df.apply(lambda x: x/x["median"], axis=1)
+
+        # Dropping extra column
+        toNormalize_df.drop("median", axis=1, inplace=True)
 
 
     # Transposing normalized data

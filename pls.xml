@@ -1,5 +1,5 @@
 <tool id="pls" name="Partial Least Squares (PLS) (Beta)" version="1.0.0">
-    <description>"Adjust p-values based on different methods."</description>
+    <description>"Calculates a Partial Least Squares Discriminant Analysis."</description>
     <requirements>
         <requirement type="python-module">sklearn</requirement>
         <requirement type="python-module">pandas</requirement>

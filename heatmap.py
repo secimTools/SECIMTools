@@ -23,7 +23,6 @@
 #Standar Libraries
 import os
 import argparse
-#import warnings
 import logging
 
 #AddOn Libraries
@@ -64,15 +63,62 @@ def getOptions():
     optional = parser.add_argument_group(title='Optional input', 
                                          description="""Changes parameters for 
                                          the prorgram.""")
-    optional.add_argument("-log", "--log", dest="log", action='store', 
-                         required=False, default=False, 
-                         help="Path and name of log file")
+    optional.add_argument("-den", "--dendogram", dest="dendogram", action='store_true', 
+                         required=False, help="Indicate wether you want to use "\
+                         "a dendogram or not in the heatmap.")
+    optional.add_argument("-l", "--labels", dest="labels", action='store', 
+                         required=False, choices=["x","y","x,y","None"], help="Indicate wich"\
+                         "labels if any that you want to remove from the plot.")
 
     args = parser.parse_args()
     return (args)
 
-def main():
+def main(args):
     """Runs eveything"""
+    # Importing data
+    dat = wideToDesign(args.input, args.design, args.uniqID)
+
+    # dat.wide.convert_objects(convert_numeric=True)
+    dat.wide = dat.wide.applymap(float)
+
+    # Getting labels to drop from arguments
+    x=True
+    y=True
+    if "x" in args.labels:
+        x=False
+    if "y" in args.labels:
+        y=False
+
+
+    #Plotting with dendogram Hierarchical cluster heatmap (HCH)
+    if args.dendogram==True:
+        # Replace NaNs
+        dat.wide.fillna(float(0),inplace=True)
+
+        # Creating axis
+        logger.info("Plotting HCHeatmap")
+        hcFig = hm.plotHCHeatmap(dat.wide,hcheatmap=True,xlbls=x,ylbls=y)
+
+        # Saving figures
+        hcFig.savefig(args.heatmap,format="pdf")
+
+    #Plotting without a dendogram single heatmap
+    else:
+        # Creating figure Handler object
+        hmapFigureH = figureHandler(proj='2d', figsize=(13,13))
+        logger.info(u"""Figure created""")
+
+        # Creating axis
+        hm.plotHeatmap(dat.wide,hmapFigureH.ax[0],xlbls=x,ylbls=y)
+
+        # formating axis
+        hmapFigureH.formatAxis(xTitle="sampleID")
+
+        # Saving figure
+        hmapFigureH.export(out=args.heatmap,dpi=300)
+
+
+if __name__ == '__main__':
     #Import data
     args = getOptions()
 
@@ -85,25 +131,5 @@ def main():
                 uniqID: {2}
                 """.format(args.input, args.design, args.uniqID))
 
-    # Importing data
-    dat = wideToDesign(args.input, args.design, args.uniqID)
-
-    # dat.wide.convert_objects(convert_numeric=True)
-    dat.wide = dat.wide.applymap(float)
-
-    # Creating figure Handler object
-    hmapFigureH = figureHandler(proj='2d', figsize=(13,13))
-    logger.info(u"""Figure created""")
-
-    # Creating axis
-    hm.plotHeatmap(dat.wide,hmapFigureH.ax[0])
-
-    # formating axis
-    hmapFigureH.formatAxis(xTitle="sampleID")
-
-    # Saving figure
-    hmapFigureH.export(out=args.heatmap,dpi=300)
-
-
-if __name__ == '__main__':
-    main()
+    # Calling main method
+    main(args)
