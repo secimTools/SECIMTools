@@ -17,6 +17,7 @@
 import os
 import logging
 import argparse
+from itertools import chain
 
 #AddOn Libraries
 import numpy as np
@@ -42,9 +43,9 @@ def getOptions():
                         required=True, help="Name of the column with unique" \
                         "dentifiers.")
     standar.add_argument("-g","--group", dest="group", action='store', 
-                        required=True, help="Name of column in design file" \
+                        required=False, help="Name of column in design file" \
                         "with Group/treatment information.")
-    standar.add_argument("-k","--keepers", dest="keepers", action='store', 
+    standar.add_argument("-dp","--drops", dest="drops", action='store', 
                         required=True, help="Name of the groups in your"\
                         "group/treatment column that you want to keep.")
 
@@ -61,36 +62,40 @@ def getOptions():
 
 def main(args):
     # Importing data trough
-    dat = wideToDesign(args.input, args.design, args.uniqID, args.group)
+    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group)
 
     # Treating data as numeric
     dat.wide = dat.wide.applymap(float)
 
     # Spliting keepers
-    keepers = args.keepers.split(",")
+    drops = args.drops.split(",")
 
-    # Making sure all the groups to keep actually exist on the design column
-    for keeper in keepers:
-        if keeper in dat.levels:
-            pass
-        else:
-            logger.error("Your group '{0}' is not located in the column '{1}'".
-                format(keeper,dat.group))
-            exit()
+    # Making sure all the groups to drop actually exist on the design column
+    if args.group:
+        for todrop in drops:
+            if todrop in dat.levels:
+                pass
+            else:
+                logger.error("Your group '{0}' is not located in the column '{1}'".
+                    format(todrop,dat.group))
+                # This may not be the best way to end the script
+                exit()
 
-    # If the groups to keep are located on the design the subset the wide
-    logger.info(u"""Selected groups to keep""")
-    selectedWide = [dat.wide[group.index] for name,group in  \
-                    dat.design.groupby(dat.group) if name in keepers]
+    # If the subsetting is going to be made by group the select de sampleIDs 
+    # from the design file
+    logger.info(u"Getting sampleNames to drop")
+    if args.group:
+        iToDrop=[group.index.tolist() for name,group in dat.design.groupby(dat.group) 
+                if name in drops]
+        iToDrop=list(chain(iToDrop))[0]
+    else:
+        iToDrop=drops
 
-    # Makin wide file complete again
-    selectedWide = pd.concat(selectedWide, axis=1)
+    # Dropping elements
+    selectedWide = dat.wide.drop(iToDrop, axis=1, inplace=False)
 
-    # Outputing results to final files.
-    #logger.info(u"""Output wide file.""")
-    #dat.design.to_csv(os.path.abspath(args.outdesign), sep='\t')
-
-    logger.info(u"""Output design file.""")
+    # Output wide results
+    logger.info(u"""Output wide file.""")
     selectedWide.to_csv(os.path.abspath(args.outwide), sep='\t')
 
 
@@ -106,9 +111,9 @@ if __name__ == '__main__':
                 Design: {1}
                 uniqID: {2}
                 group: {3}
-                keepers: {4}
+                ToDrop: {4}
                 """.format(args.input, args.design, args.uniqID, args.group,
-                    args.keepers))
+                    args.drops))
 
     # Main script
     main(args)
