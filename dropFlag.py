@@ -55,7 +55,7 @@ def getOptions():
     required.add_argument('-id',"--ID",dest="uniqID",action="store",
                         required=True,help="Name of the column with unique "\
                         "identifiers.")
-    required.add_argument('-fid',"--FID",dest="flagUniqID",action="store",
+    required.add_argument('-fid',"--flagUniqID",dest="flagUniqID",action="store",
                         required=False, default=False,help="Name of the column "\
                         "with unique identifiers in the flag files.")
     required.add_argument('-fd',"--flagDrop",dest="flagDrop",action='store',
