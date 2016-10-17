@@ -83,11 +83,11 @@ def main(args):
     # Stablishing figure layout (x,y,colspan,rowspan)
     axisLayout = [(0,0,1,3),(3,0,1,1)]
 
-    # Iterating over groups
-    if args.group:
-
-        # Saving figure
-        with PdfPages(os.path.abspath(args.figure)) as pdf:
+    # Saving figure
+    with PdfPages(os.path.abspath(args.figure)) as pdf:
+        
+        # Iterating over groups
+        if args.group:
 
             #iterating over groups
             for name, group in dat.design.groupby(args.group):
@@ -112,28 +112,28 @@ def main(args):
                 # Adding figure to pdf object
                 figure.addToPdf(pdf)
 
-            # Creating axisLayout for figure and figure object
-            # (x,y,colspan,rowspan)
-            figure = figureHandler(proj='2d', numAx=2, numRow=4, numCol=1, 
-                                    figsize=(8,13), arrangement=axisLayout)
+        # Creating axisLayout for figure and figure object
+        # (x,y,colspan,rowspan)
+        figure = figureHandler(proj='2d', numAx=2, numRow=4, numCol=1, 
+                                figsize=(8,13), arrangement=axisLayout)
 
-            # Adding figure Title
-            figure.formatAxis(figTitle="Distribution by Features All",xlim="ignore",
-                                ylim="ignore",axnum=0,showX=False)
+        # Adding figure Title
+        figure.formatAxis(figTitle="Distribution by Features All",xlim="ignore",
+                            ylim="ignore",axnum=0,showX=False)
 
-            # Printing boxPlot
-            logger.info(u"Plotting Boxplot All")
-            box.boxDF(ax=figure.ax[0], colors=colors, dat=wide, vert=False,rot=0)
+        # Printing boxPlot
+        logger.info(u"Plotting Boxplot All")
+        box.boxDF(ax=figure.ax[0], colors=colors, dat=wide, vert=False,rot=0)
 
-            # Plot density plot
-            logger.info(u"Plotting Density Plot All")
-            dis.plotDensityDF(data=dat.wide.T.unstack(), ax=figure.ax[1], colors=colors[0])
+        # Plot density plot
+        logger.info(u"Plotting Density Plot All")
+        dis.plotDensityDF(data=dat.wide.T.unstack(), ax=figure.ax[1], colors=colors[0])
 
-            # Adding figure to pdf object
-            figure.addToPdf(pdf)
+        # Adding figure to pdf object
+        figure.addToPdf(pdf)
 
-            #Ending script
-            logger.info(u"Ending script")
+        #Ending script
+        logger.info(u"Ending script")
 
 if __name__ == '__main__':
     # Command line options
