@@ -39,7 +39,7 @@
                help="Input flagged dataset containing the flag value for each feature"/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID"
                help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="flagUniqID" type="text" size="30" value="" label="Unique Feature ID for Flag"
+        <param name="flagUniqID" type="text" size="30" value="" label="Unique ID for Flag file (feature ID or sample ID)"
                help="Name of the column in your Flag file that has unique Feature IDs."/>
         <param name="flagToDrop" type="text" size="30" value="" label="Flag to Drop" 
                help="Name of the column/row in your Flag File to drop."/>

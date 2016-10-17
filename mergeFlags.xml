@@ -1,17 +1,22 @@
-<tool id="mergeFlags2" name="Merge Flags (Beta)" version="2.0.0">
+<tool id="mergeFlags2" name="Merge Flags (Beta)" version="2.1.0">
     <description>Merge flags with same index together</description>
     <requirements>
         <requirement type="python-module">pandas</requirement>
     </requirements>
     <command interpreter="python">mergeFlags.py
-        --input $input
-        --output $output
+        --input "$input"
+        --output "$output"
+        #set names = '" "'.join( [ str( $i.display_name ) for $i in $input ] )
+        --filename "${names}"
+        #if $flagUniqID
+        --flagUniqID $flagUniqID
+        #end if
     </command>
     <inputs>
         <param name="input" format="tabular" type="data"  label="Wide Dataset" multiple="true"
                help="Input dataset in wide format and tab separated.CTRL+CLICK to select multiple.
-               If not tab separated see TIP below." >
-        </param>
+               If not tab separated see TIP below." />
+        <param name="flagUniqID" type="text" size="30" value="" label="Unique ID for Flag file (feature ID or sample ID)" help="Name of the column in your Flag file that has unique Feature IDs."/>
     </inputs>
     <outputs>
         <data format="tabular" name="output" label="${tool.name} on ${on_string}: Flags"/>
