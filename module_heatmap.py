@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 from manager_color import colorHandler
 
 
-def plotHeatmap(data,ax):
+def plotHeatmap(data,ax,xlbls=True,ylbls=True):
     """
     This function creates and plots a heatmap or a hcheatmap (hiearchical
     cluster heat map)
@@ -54,9 +54,10 @@ def plotHeatmap(data,ax):
     cmap = colors.mpl_colormap
 
     # Draw the full plot
-    sns.heatmap(data,linewidths=0.0,ax=ax,cmap=cmap)
+    sns.heatmap(data,linewidths=0.0,ax=ax,cmap=cmap,xticklabels=xlbls,
+                yticklabels=ylbls)
 
-def plotHCHeatmap(data,hcheatmap=True):
+def plotHCHeatmap(data,hcheatmap=True,xlbls=True,ylbls=True):
     """
     This function creates and plots a heatmap or a hcheatmap (hiearchical
     cluster heat map)
@@ -81,7 +82,8 @@ def plotHCHeatmap(data,hcheatmap=True):
 
     # Draw the full plot
     hmap = sns.clustermap(data,row_cluster=hcheatmap,col_cluster=hcheatmap,
-                        linewidths=0.0,figsize=(13,13),cmap=cmap)
+                        linewidths=0.0,figsize=(13,13),cmap=cmap,
+                        xticklabels=xlbls,yticklabels=ylbls)
 
     #Rotate axis
     plt.setp(hmap.ax_heatmap.yaxis.get_majorticklabels(), rotation=0)
