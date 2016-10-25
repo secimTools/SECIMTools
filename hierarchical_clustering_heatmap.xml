@@ -1,4 +1,4 @@
-<tool id="heatmap2" name="Heatmap (Beta)" version="1.0,0">
+<tool id="hch" name="Hierarchical Clustering Heatmap (Beta)" version="1.0,0">
 	<description>Calculates means per group and plots a heatmap.</description>
 	<requirements>
 		<requirement type="python-module">numpy</requirement>
@@ -10,7 +10,7 @@
 	    <requirement type="python-module">palettable</requirement>
 	</requirements>
 	<command interpreter="python">
-		heatmap.py
+		hierarchical_clustering_heatmap.py
 		--input $input
 		--design $design
 		--uniqID $uniqID

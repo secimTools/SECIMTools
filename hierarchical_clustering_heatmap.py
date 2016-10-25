@@ -2,7 +2,7 @@
 ################################################################################
 # DATE: 2016/Jun/01
 #
-# SCRIPT: hcheatmap.py
+# SCRIPT: hierarchical_clustering_heatmap.py
 #
 # VERSION: 2.0
 # 
