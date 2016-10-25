@@ -9,7 +9,7 @@
     <tool file="secimtools_v2/distributionSamples.xml"/>
     <tool file="secimtools_v2/distributionFeatures.xml"/>
     <tool file="secimtools_v2/dropFlag.xml"/>
-    <tool file="secimtools_v2/heatmap.xml"/>
+    <tool file="secimtools_v2/hierarchical_clustering_heatmap.xml"/>
     <tool file="secimtools_v2/imputation.xml"/>
     <tool file="secimtools_v2/lasso.xml"/>
     <tool file="secimtools_v2/linear_discriminant_analysis.xml"/>
