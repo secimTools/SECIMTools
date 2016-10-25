@@ -12,6 +12,7 @@
     <tool file="secimtools_v2/heatmap.xml"/>
     <tool file="secimtools_v2/imputation.xml"/>
     <tool file="secimtools_v2/lasso.xml"/>
+    <tool file="secimtools_v2/linear_discriminant_analysis.xml"/>
     <tool file="secimtools_v2/logTransform.xml"/>
     <tool file="secimtools_v2/mergeFlags.xml"/>
     <tool file="secimtools_v2/mmc.xml"/>
