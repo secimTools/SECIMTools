@@ -13,7 +13,7 @@
 #
 #              makeScatter is to be called from other scripts which require a graph
 #######################################################################################
-def scatter2D(ax,x,y,colorList):
+def scatter2D(ax,x,y,colorList,ec='black'):
     """
     This function is to be called by makeScatter2D, creates a 2D scatter plot on a given axis with
     colors determined by the given colorHandler or an optional override
@@ -31,12 +31,15 @@ def scatter2D(ax,x,y,colorList):
         :type colorList: list 
         :param colorList: list of colors to be used for plotting
 
+        :type ec: str 
+        :param ec: Edge color for markers
+
     :Return:
         :type ax: Matplotlib Axis
         :param ax: axis with scatter plotted onto it
 
     """ 
-    ax.scatter(x,y,color=colorList,marker='o',s=50,edgecolors='black')
+    ax.scatter(x,y,color=colorList,marker='o',s=50,edgecolors=ec)
     
     return ax
 def scatter3D(ax,x,y,z,colorList):

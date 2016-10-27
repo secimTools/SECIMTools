@@ -67,9 +67,6 @@ def getOptions(myopts=None):
                         help="Name of output file to store scatter plots for 3 \
                         principal components.")
 
-    development = parser.add_argument_group(title='Development Settings')
-    development.add_argument("--debug",dest="debug",action='store_true',
-                        required=False,help="Add debugging log output.")
     args = parser.parse_args()
     return(args)
 
@@ -139,7 +136,7 @@ def runPCA(wide):
 
     #Crete labels(index) for the infor
     labels = np.array(['#Std. deviation', '#Proportion of variance explained',
-                        '#Cumulative proportion of variance explained'])
+                        '#Cumulative propowidertion of variance explained'])
 
     #Create dataFrame for block output
     block = pd.DataFrame([sd, propVar, cumPropVar],index=labels)
@@ -197,11 +194,13 @@ def plotScatterplot(data,fh,block,x,y,dat,title,group=False):
         :param title: title for axis
 
         :type group: string
-        :param group: Name of the column that contains the group information on the design file.
+        :param group: Name of the column that contains the group information on 
+                        the design file.
 
     :Return:
         :rtype fh: figureHandler.
-        :returns ax: figureHandler containing ax with the scatter plot and legend.
+        :returns ax: figureHandler containing ax with the scatter plot and 
+                    legend.
 
     """
     logger.info(u"Creating scatter plot for components {0} vs {1} ".
@@ -215,7 +214,8 @@ def plotScatterplot(data,fh,block,x,y,dat,title,group=False):
         colorList = list('b') #blue
         ucGroups = dict()
     
-    scatter.scatter2D(ax=fh.ax[0],x=list(data[x]),y=list(data[y]),colorList=colorList)
+    scatter.scatter2D(ax=fh.ax[0],x=list(data[x]),y=list(data[y]),ec="gray",
+                    colorList=colorList)
 
     fh.despine(fh.ax[0])
 
@@ -304,26 +304,7 @@ def plotPCA(dat,data,block,PC1,PC2,PC3,outpath,group=False):
 
     pdfOut.close()
 
-def main():
-    # Command line options
-    args = getOptions()
-
-    #Set logger
-    global logger
-    logger = logging.getLogger()
-    if args.debug:
-        sl.setLogger(logger, logLevel="debug")
-    else:
-        sl.setLogger(logger)
-
-    #Starting script
-    logger.info(u"""Importing data with following parameters:
-                Input: {0}
-                Design: {1}
-                uniqID: {2}
-                group: {3}
-                """.format(args.input, args.design, args.uniqID, args.group))
-
+def main(args):
     #Loading data trought Interface
     dat = wideToDesign(args.input, args.design, args.uniqID,group=args.group)
 
@@ -331,12 +312,17 @@ def main():
     if np.isnan(dat.wide.values).any():
         dat.wide = dropMissing(dat.wide)
 
+    # Transpose data for cases were width is greater than height this will avoid
+    # problems downstream.
+    if dat.wide.shape[0] < dat.wide.shape[1]:
+        dat.wide=dat.wide.T
+
     #Run PCA
     loadings,scores,block = runPCA(dat.wide)
  
     #print loadings
     #Getting output tables
-    loadOut=createOutput(loadings, dat.wide.columns)
+    loadOut=createOutput(loadings,dat.wide.columns)
     scoreOut=createOutput(scores,dat.wide.index)
 
     # Save output
@@ -358,4 +344,20 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # Command line options
+    args = getOptions()
+
+    #Set logger
+    logger = logging.getLogger()
+    sl.setLogger(logger)
+
+    #Starting script
+    logger.info(u"""Importing data with following parameters:
+                Input: {0}
+                Design: {1}
+                uniqID: {2}
+                group: {3}
+                """.format(args.input, args.design, args.uniqID, args.group))
+
+    # Run Main Script
+    main(args)
