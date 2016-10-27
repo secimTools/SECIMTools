@@ -6,6 +6,7 @@
 # VERSION: 0.9
 # 
 # AUTHOR: Matt Thoburn (mthoburn@ufl.edu)
+#         Miguel A. Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This module contains methods to plot a bar graph in matplotlib
 #
@@ -41,6 +42,48 @@ def quickBar(ax,x,y):
     ax.set_xticks(ticks)
     ax.set_xticklabels(x,rotation='vertical')
     return ax
+
+def quickHBar(ax, xticks, values, colors="b",lw=None):
+    """
+    This function draws an horizontal bar graph
+
+    :Arguments:
+        :type ax: matplotlib Axis2D
+        :param ax: Axis on which bar graph will be drawn
+
+        :type xticks: list
+        :param xticks: Listo of labels for the bars
+
+        :type values: list
+        :param values: listo of values for the bars
+
+        :type colors: list
+        :param colors: list of colors to be used on the plot. They should match the
+                        number and order of the bars.
+
+    :Return:
+        :type ax: Matplotlib Axis
+        :param ax: axis with bars graphed onto it
+    """
+    # Calculate width for bards
+    width = 1/float(len(values)) + .5
+
+    # Calculates positions for bars
+    ticks = np.arange(len(xticks)) + 0.5
+
+    # Horizontal barplot
+    ax.barh(bottom=ticks, width=values, height=0.8, color=colors, align='center',
+            linewidth=lw)
+
+    # Setting ticks
+    ax.set_yticks(ticks)
+
+    # Stablishing ticks rotation
+    ax.set_yticklabels(xticks,rotation='horizontal')
+
+    # Return axis
+    return ax
+
 def drawBars(ax,data,colors,dat=False):
     """
     This function draws a vertical bar graph
@@ -79,6 +122,7 @@ def drawBars(ax,data,colors,dat=False):
     ax.set_xticklabels(dat.levels) #name ticks with group names
     
     return ax
+
 #DEPREICATED vvv
 def drawBar(ax,groups,ch,dat,field):
     """

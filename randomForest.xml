@@ -9,9 +9,11 @@
         --design $design
         --ID $uniqID
         --group $group
-        --num $number_of_estimators
+        --snum $number_of_estimators
+        --num $number_of_factors
         --out $outfile1
         --out2 $outfile2
+        --figure $figure
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
@@ -19,10 +21,12 @@
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
         <param name="number_of_estimators" type="text" size="30" value="1000" label="Number of trees in the forest" help="Run at least 1000 trees."/>
+        <param name="number_of_factors" type="text" size="30" value="20" label="Number of factors to plot" help="Plots 20 most important factors."/>
     </inputs>
     <outputs>
         <data format="csv" name="outfile1" label="${tool.name} on ${on_string}: Transformed Data"/>
         <data format="csv" name="outfile2" label="${tool.name} on ${on_string}: Importance Factors"/>
+        <data format="pdf" name="figure" label="${tool.name} on ${on_string}: Variable Importance Plot"/>
     </outputs>
     <macros>
         <import>macros.xml</import>
@@ -68,35 +72,37 @@ This tool uses the Random forest algorithm to identify specific features that di
 
 **Output Files**
 
-- A TSV file containing a transformed Wide Dataset where the order of the features in the file reflects their relative importance.
+    - A TSV file containing a transformed Wide Dataset where the order of the features in the file reflects their relative importance.
 
-        +----------+----------+----------+----------+----------+
-        | sampleID | group    | feature1 | feature3 | feature2 |
-        +==========+==========+==========+==========+==========+
-        | sample1  | human    | 68       | 0.1      | 4.1      |
-        +----------+----------+----------+----------+----------+
-        | sample2  | human    | 71       | 0.31     | 4.6      |
-        +----------+----------+----------+----------+----------+
-        | sample3  | nonhuman | 62       | 0.09     | 3.8      |
-        +----------+----------+----------+----------+----------+
-        | sample4  | human    | 75       | 0.65     | 4.4      |
-        +----------+----------+----------+----------+----------+
-        | sample5  | nonhuman | 58       | 0.23     | 3.2      |
-        +----------+----------+----------+----------+----------+
-        | sample6  | nonhuman | 60       | 0.77     | 3.1      |
-        +----------+----------+----------+----------+----------+
-        | ...      | ...      | ...      | ...      | ...      |
-        +----------+----------+----------+----------+----------+
+            +----------+----------+----------+----------+----------+
+            | sampleID | group    | feature1 | feature3 | feature2 |
+            +==========+==========+==========+==========+==========+
+            | sample1  | human    | 68       | 0.1      | 4.1      |
+            +----------+----------+----------+----------+----------+
+            | sample2  | human    | 71       | 0.31     | 4.6      |
+            +----------+----------+----------+----------+----------+
+            | sample3  | nonhuman | 62       | 0.09     | 3.8      |
+            +----------+----------+----------+----------+----------+
+            | sample4  | human    | 75       | 0.65     | 4.4      |
+            +----------+----------+----------+----------+----------+
+            | sample5  | nonhuman | 58       | 0.23     | 3.2      |
+            +----------+----------+----------+----------+----------+
+            | sample6  | nonhuman | 60       | 0.77     | 3.1      |
+            +----------+----------+----------+----------+----------+
+            | ...      | ...      | ...      | ...      | ...      |
+            +----------+----------+----------+----------+----------+
 
-- A TSV file containing the features in rank-order and their relative importance.
+    - A TSV file containing the features in rank-order and their relative importance.
 
-        +----------+------+
-        | feature1 | 0.45 |
-        +==========+======+
-        | feature3 | 0.34 |
-        +----------+------+
-        | feature2 | 0.22 |
-        +----------+------+
+            +----------+------+
+            | feature1 | 0.45 |
+            +==========+======+
+            | feature3 | 0.34 |
+            +----------+------+
+            | feature2 | 0.22 |
+            +----------+------+
+
+    - A PDF file containing a Variable Importance Plot for the most important features, this value is cutomizable. 
 
 **To plot the 2 most important features** use the SECIM scatterplot tool on the transformed dataset to plot the features againt each other and evaluate the separation levels.
 

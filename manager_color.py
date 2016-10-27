@@ -366,7 +366,7 @@ class colorHandler:
         #Hex colors ("#A912F4")
         self.hex_colors = self.palette.hex_colors
 
-        #mpl_colors as (0-1)
+        #mpl_colors as (0-1) python default
         self.mpl_colors = self.palette.mpl_colors
 
         #A continous interpolated matplotlib
@@ -397,13 +397,35 @@ class colorHandler:
         #Requires matplotlib to be installed.
         self.save_continuous_image = self.palette.save_continuous_image
 
+    def chompColors(self,start,end):
+        """
+        Chomps colors from the original palette.
+
+        Usefull when just want an specific part of the palette.
+
+        If you want to chomp it 
+        :Arguments:
+            :type start: int
+            :param start: Possition to start the subsetting
+
+            :type start: end
+            :param start: Possition to end the subsetting
+        """
+        # Subsetting colors as python default
+        self.mpl_colors = self.mpl_colors[int(start):int(end)]
+
+        # Re calculate new colormap based on the colors.
+        self.mpl_colormap = matplotlib.colors.LinearSegmentedColormap.from_list(
+                            colors=self.mpl_colors, 
+                            name='subseted')
+
     def getColorsCmapPalette(self,elements):
         """ 
-        Gets a list  of colors from a given list of elements
+        Gets a list  of colors for a given list of elements
 
         :Arguments:
             :type elements: list
-            :param elements: list of elements to get colors to.
+            :param elements: list of elements to get colors from.
 
         :Returns:
             :rtype design: list
@@ -414,7 +436,7 @@ class colorHandler:
         #Creates a np array of the list rangin form 0-1
         colPosition = np.arange(0,1,1.0/len(elements))
 
-        #Get and array of positions in the colormap 
+        #Get an array of positions in the colormap 
         colPosition = np.array([x+(1.0/(len(elements)*2)) for x in colPosition])
 
         #Get list of colors out of the positions
@@ -552,4 +574,3 @@ class colorHandler:
 
         #Return list of colors
         return colors
-
