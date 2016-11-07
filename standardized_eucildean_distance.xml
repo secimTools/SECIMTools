@@ -35,7 +35,7 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact. Warning: All groups must contain 3 or more samples." />
+        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications." />
         <param name="order" type="text" size="30" label="Input Run Order Name [Optional]" help="Enter run order name to calculate from. Spelling and capitalization must be exact." />
         <param name="levels" type="text" size="30" label="Adittional groups to separate by [Optional]" help="Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ','." />
         <param name="p" type="text" value= ".95" size="30" label="Percentile of cutoff" help="The percentile cutoff for standard distributions. The default is 0.95. " />
@@ -72,15 +72,20 @@ The goal of the tool is to compare the samples and to find the ones that are dif
 
 @UNIQID@
 
-**Group/Treatment [Optional]**
-    
-    - Enter group name to calculate from. Spelling and capitalization must be exact. Warning: All groups must contain 3 or more samples.
+@GROUP_OPTIONAL@
+
+    - **Warning:** All groups must contain 3 or more samples.
+    - **NOTE:** Groups with one element will be excluded from the test.
+
+
+@RUNORDER_OPTIONAL@
 
 **Adittional groups to separate by [Optional]**
 
     - Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ','.
+    - **Warning:** All groups must contain 3 or more samples.
+    - **NOTE:** Groups with one element will be excluded from the test.
 
-**NOTE:** Groups with one element will be excluded from the test.
 
 **Percentile cutoff**
 
