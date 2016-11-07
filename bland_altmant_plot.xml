@@ -1,0 +1,110 @@
+<tool id="baPlot2" name="Bland-Altman (BA) Plot" version="2.0.0">
+  <description>Create pairwise BA plots to identify outliers.</description>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">statsmodels</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">palettable</requirement>
+  </requirements>
+  <command interpreter="python">
+      bland_altmant_plot.py
+      --input $input
+      --design $design
+      --ID $uniqID
+      --figure $ba_plots
+      --flag_dist $outlier_dist_plots
+      --flag_sample $flag_sample
+      --flag_feature $flag_feature
+      --resid_cutoff $resid_cutoff
+      --sample_flag_cutoff $sample_cutoff
+      --feature_flag_cutoff $feature_cutoff
+
+      #if $group
+          --group $group
+
+          #if $processOnly:
+            --process_only $processOnly
+          #end if
+      #end if
+
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+    <param name="uniqID" size="30" type="text" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique feature IDs."/>
+    <param name="resid_cutoff" type="text" size="30" value="3" label="Outlier Cutoff" help="Residual cutoff value, this value will flag samples whose residuals are ≥ to cutoff value."/>
+    <param name="sample_cutoff" type="text" size="30" value="0.2" label="Sample Flag Cutoff" help="Flag a sample as 1, if the proportion of features within a sample that are outliers exceeds this cutoff.[Number between 0-1]."/>
+    <param name="feature_cutoff" type="text" size="30" value="0.05" label="Feature Flag Cutoff" help="Flag a feature, if the proportion of times this feature was identified as an outlier exceeds this cutoff.[Number between 0-1]."/>
+    <param name="group" type="text" size="30"  value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
+    <param name="processOnly" size="30" type="text" value="" optional="true" label="Group ID [Optional]" help="Name of the group(s) that you want to process. Separate multiple groupIDs with spaces. Leave blank to process all groups. Requires the group parameter."/>
+  </inputs>
+  <outputs>
+    <data format="pdf" name="ba_plots" label= "${tool.name} on ${on_string}: BA plot"  />
+    <data format="pdf" name="outlier_dist_plots" label= "${tool.name} on ${on_string}: Distribution"/>
+    <data format="tabular" name="flag_sample" label= "${tool.name} on ${on_string}: Flag Sample"/>
+    <data format="tabular" name="flag_feature" label= "${tool.name} on ${on_string}: Flag Feature"/>
+  </outputs>
+  <macros>
+      <import>macros.xml</import>
+  </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The Bland-Altman plot (BA-Plot) is used to look at the concordance of data between pairs of samples, particularly between replicates.  The script generates BA-plots for all pairwise combinations of samples.  If both grouping variable name and a specific group name are provided than BA-Plots are generated only for pairwise combinations within the specified group.
+In addition to generating the BA-plots, a linear regression fit is produced between the values that correspond to the pair of samples to identify (flag) any unusual outlying values. The flags produced by the regression fit are used to generate distribution plots and text files for (i) each sample (column) and for (ii) each feature (row).
+
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+
+**Outlier Cutoff – flagging values**
+
+- Residual cutoff value, this value will flag samples whose residuals are ≥ to cutoff value.
+
+        (1) If the magnitude of the residuals from the linear regression on the BA-plot exceeds the user-defined threshold, then a value is flagged as an outlier. This cutoff can be adjusted by the user, the default is 3.
+
+        (2) If a value is identified as a leverage point using Cook's D with a p-value cutoff of 0.5, then the value is flagged. This cannot be adjusted.
+
+        (3) If a value is identified as a leverage point using the DFFITS technique it is also flagged. This cannot be adjusted.
+
+**Sample Flag Cutoff – flagging samples**
+
+    - Flag a sample as 1, if the proportion of features within a sample that are outliers exceeds this cutoff.[Number between 0-1].
+
+**Feature Flag Cutoff  – flagging features**
+
+    - Flag a feature, if the proportion of times this feature was identified as an outlier exceeds this cutoff.[Number between 0-1].
+
+@GROUP@
+
+**Group ID**
+
+    - Name of the group(s) that you want to process. Separate multiple groupIDs with spaces. Leave blank to process all groups. Requires the group parameter.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+This tool outputs four (or five) different files depending on the input settings:  a PDF file of scatter plots and BA-plots for each pair of samples; a PDF file of bar graphs for samples showing the number of data points flagged as outliers; and two TSV files containing flags: one for samples and one for features.  The last TSV file containing flags for each group will be created only if the grouping variable name has been specified in the tool input.  If a sample (feature) is flagged, the user should consider removing it in the further analysis.
+
+</help>
+</tool>
+

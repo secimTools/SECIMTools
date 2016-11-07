@@ -122,19 +122,16 @@ A wide formated dataset that contains M/Z and RT mesuarementes for each sample:
 <token name="@UNIQID@">
 **Unique Feature ID**
 
-    - The column name in your wide dataset that contains the unique IDs for
-      your features.
+    - Name of the column in your Wide Dataset that has unique Feature IDs.
 </token>
 <token name="@RUNORDER@">
 **Run Order ID**
 
-    - The column name in your Design file that contains the order samples were
-      run.
+    - The column name in your Design file that contains the order samples were run.
 </token>
 <token name="@RUNORDER_OPTIONAL@">
 **Run Order ID [Optional]**
 
-    - The column name in your Design file that contains the order samples were
-      run.
+    - The column name in your Design file that contains the order samples were run.
 </token>
 </macros>
