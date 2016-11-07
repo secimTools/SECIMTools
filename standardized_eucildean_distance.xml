@@ -59,7 +59,7 @@ The goal of the tool is to compare the samples and to find the ones that are dif
 **NOTE:** Because of the nauture of the tool groups and samples where only one or two samples per group are avaialbe in the wide dataset will be discarded from the analysis.
 
 
-**Input Files**
+**Input**
 
     - Two input datasets are required.
 

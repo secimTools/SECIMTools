@@ -45,7 +45,7 @@
 
 The tool fits analysis of variance (ANOVA) fixed effects model with multiple grouping variables, their interactions and numerical characteristics.  The analysis is performed row wise independently for each feature. The user can choose whether to include interactions between grouping variables in the model or to use pure additive model.  Numerical characteristics of the samples can be included for both scenarios.
 
-**Input Files**
+**Input**
 
     - Two input datasets are required.
 

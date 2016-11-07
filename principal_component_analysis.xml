@@ -46,11 +46,8 @@ The tool performs principal component analysis (PCA) of the data.  Visual summar
 
 **Note**
 
-- This tool currently treats all variables as continuous numeric
-  variables. Running the tool on categorical variables might result in
-  incorrect results. 
-- Rows containing non-numeric (or missing) data in any
-  of the chosen columns will be skipped from the analysis.
+- This tool currently treats all variables as continuous numeric variables. Running the tool on categorical variables might result in incorrect results. 
+- Rows containing non-numeric (or missing) data in any of the chosen columns will be skipped from the analysis.
 
 --------------------------------------------------------------------------------
 

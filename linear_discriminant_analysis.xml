@@ -1,4 +1,4 @@
-<tool id="lda" name="Linea Discriminant Analysis (LDA) (Beta)" version="1.0.0">
+<tool id="lda" name="Linear Discriminant Analysis (LDA)" version="1.0.0">
     <description>Calculates linear discriminant analysis.</description>
     <requirements>
         <requirement type="python-module">sklearn</requirement>
@@ -21,8 +21,8 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment" help="Enter group name to calculate from. Spelling and capitalization must be exact."/>
-        <param name="nComponents" type="text" size="30" value="2" label="Number of components [Optional]" help="Enter number of components to use to perform the analysis default: number_of_groups - 1."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="nComponents" type="text" size="30" value="" label="Number of components [Optional]" help="Enter number of components to use to perform the analysis default: number_of_groups - 1."/>
     </inputs>
     <outputs>
         <data format="tabular" name="out" label="${tool.name} on ${on_string}: weights"/>
@@ -35,55 +35,50 @@
 
 @TIP_AND_WARNING@
 
-.. class:: infomark
-
 **Tool Description**
 
-This tool performs linead Discriminant Analysis on the numeric input data.
+The tool performs linear discriminat analysis (LDA) of the data.  LDA is a supervised method based on projection of data on the linear subspace where the maximization of separation between the treatment groups and mizmimization of separation within the groups is achieved.  The subspace diminesion defines the number of components that will be used to describe the variability within the data.  Due to the LDA specification, the subspace dimension has to be smaller than the number of treatment goups involved .  The user has an option to spacify the dimension of the subspace ([number of groups - 1] is the default.)  Visual summarries are provided in the from of 2D plot for colored by groups and applied to components pairwise.
+
+More detils about the method are avaialble via references:
+
+http://scikit-learn.org/stable/modules/lda_qda.html#lda-qda
+
+Trevor J.. Hastie, Tibshirani, R. J., and Friedman, J. H. (2011). The elements of statistical learning: data mining, inference, and prediction. Springer. p106-119
 
 --------------------------------------------------------------------------------
 
-.. class:: warningmark
-
 **Note**
 
-- This tool currently treats all variables as continuous numeric
-  variables. Running the tool on categorical variables might result in
-  incorrect results. 
-- Rows containing non-numeric (or missing) data in any
-  of the chosen columns will be skipped from the analysis.
+- This tool currently treats all variables as continuous numeric variables. Running the tool on categorical variables might result in incorrect results. 
+- Rows containing non-numeric (or missing) data in any of the chosen columns will be skipped from the analysis.
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
 
 
-    @METADATA@
+@METADATA@
 
-**In addition to your datasets, you need to provide:**
+@UNIQID@
 
-**Unique Feature ID**
+@GROUP@
 
-    - The column name in your wide dataset that contains the unique IDs for your features. In our example dataset you would input *Feature*.
+**Number of components [Optional]**
 
-**Number of components**
-
-    - The number of components that you want ot use to perform the linear discriminant analysis if not number is provided number of groups - 1 is going to be used instead.
+    - Enter number of components to use to perform the analysis default: number_of_groups - 1.
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-    - A PDF containing the 2D plots for all possible level combinations.
-
-    - A TSV containing scores of the model.
+Two different outputs are produced by Linear Discriminant Analysis (LDA) tool: a TSV file containing scores and a PDF file of scatter plots for each pair of components.  Treatment groups are colored differently.
 
 </help>
 </tool>
