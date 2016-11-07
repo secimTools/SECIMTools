@@ -22,7 +22,7 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
     </inputs>
@@ -36,10 +36,11 @@
 
 @TIP_AND_WARNING@
 
-**What it does**
+**Tool Description**
 
 This tool plots the distribution of your features.
-**NOTE:** This script works best with log transformed data 
+
+**NOTE:** This script works best with log transformed data.
 
 
 --------------------------------------------------------------------------------
@@ -68,7 +69,7 @@ This tool plots the distribution of your features.
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A PDF containing a boxplot for the distributions of 50 randomly selected features and a desntiy plot acounting for all features.
 

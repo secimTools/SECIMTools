@@ -1,5 +1,5 @@
 <tool id="peakCompare2" name="Peak Compare (Beta)" version="2.0.0">
-    <description>"Matches features in 2 files based on  their mz and RT."</description>
+    <description>Matches features in 2 files based on  their mz and RT.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">matplotlib</requirement>
@@ -30,8 +30,8 @@
     <inputs>
         <param name="anno1" type="data" format="tabular" label="File 1" help="Input dataset 1 in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="anno2" type="data" format="tabular" label="File 2" help="Input dataset 2 in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="uniqID1" type="text" size="30" value="" optional="false" label="Unique ID for File 1" help="Name of the column on you annotation file 1 containing unique ID."/>
-        <param name="uniqID2" type="text" size="30" value="" optional="false" label="Unique ID for File 2" help="Name of the column on you annotation file 2 containing unique ID."/>
+        <param name="uniqID1" type="text" size="30" value="" optional="false" label="Unique Feature ID for File 1" help="Name of the column on you annotation file 1 containing unique ID."/>
+        <param name="uniqID2" type="text" size="30" value="" optional="false" label="Unique Feature ID for File 2" help="Name of the column on you annotation file 2 containing unique ID."/>
         <param name="mzID1" type="text" size="30" value="" optional="false" label="Mass/Charge for File 1" help="Name of the column on you annotation file 1 containing mz."/>
         <param name="mzID2" type="text" size="30" value="" optional="false" label="Mass/Charge for File 2" help="Name of the column on you annotation file 2 containing mz."/>
         <param name="rtID1" type="text" size="30" value="" optional="false" label="Retention Time for File 1" help="Name of the column on you annotation file 2 containing rt."/>
@@ -58,7 +58,7 @@
 
 .. class:: infomark
 
-**What it does**
+**Tool Description**
 
 This tool match the rows (features) in 2 files by by their mz and RT values.
 
@@ -83,7 +83,7 @@ This tool match the rows (features) in 2 files by by their mz and RT values.
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
     - A TSV file containing all the pairs of features.
 

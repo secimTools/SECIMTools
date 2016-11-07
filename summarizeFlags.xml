@@ -1,5 +1,5 @@
 <tool id="Summary Flags2" name="Summary Flags (Beta)" version="2.0.0">
-    <description>Summarize flags of a given flags file</description>
+    <description>Summarize flags of a given flags file.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -11,7 +11,7 @@
     </command>
     <inputs>
         <param name="flags" type="data" format="tabular" label="Flag File"
-               help="Input flagged dataset containing the flag value for each feature"/>
+               help="Input flagged dataset containing the flag value for each feature."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID"
                help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     </inputs>
@@ -25,7 +25,7 @@
 
 @TIP_AND_WARNING@
 
-**What it does**
+**Tool Description**
 
 This tool takes a flag wide formatted file and summarizes the information 
 of the flags. It will output a flag file with the flag information plus the sum
@@ -43,13 +43,13 @@ given metabolite are on.
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - If dropping features:
 
     **Flag summary file**
 
-    A flag file with the summary data per row.:
+    A flag file with the summary data per row:
 
     +-------+------+------+------+-----+--+---------+--------+--------+
     |Feature|flag_A|flag_B|flag_C|flag_sum|flag_mean|flag_any|flag_all|

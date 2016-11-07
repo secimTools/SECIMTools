@@ -1,5 +1,5 @@
 <tool id="anovaMultiple2" name="ANOVA Fixed Efects (BETA)" version="1.0.0">
-  <description> Performs Multiple-Way ANOVA with Covariates.</description>
+  <description>Performs Multiple-Way ANOVA with Covariates.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">scipy</requirement>
@@ -23,10 +23,10 @@
   </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-    <param name="factor" type="text" size="30" value="" label="Group(s)/Treatment(s)" help="List with the name of the columns (comma separated) in your Design File that you want to use for ANOVA.(ie. treatment1,treatment2,weight)"/>
-    <param name="factorTypes" type="text" size="30" value="" label=" Type of Group(s)/Treatment(s)" help="List with the type of the columns used. 'C' for Categorical and  'N' for numerical, they should match in order the groups used. (ie. C,C,N)"/>
+    <param name="factor" type="text" size="30" value="" label="Group(s)/Treatment(s)" help="List with the name of the columns (comma separated) in your Design File that you want to use for ANOVA.(ie. treatment1,treatment2,weight)."/>
+    <param name="factorTypes" type="text" size="30" value="" label=" Type of Group(s)/Treatment(s)" help="List with the type of the columns used. 'C' for Categorical and  'N' for numerical, they should match in order the groups used. (ie. C,C,N)."/>
     <param name="interactions" type="boolean" label="Calculate ANOVA with interactions" help="If turned on ANOVA the program will output interactions."/>
   </inputs>
   <outputs>
@@ -40,6 +40,8 @@
 <help>
 
 @TIP_AND_WARNING@
+
+**Tool Description**
 
 The tool performs Multiple-Way ANOVA analysis with possible continuous covariates and interactions. 
 The analysis is performed row wise independently for each feature. The user has to specify the categorical (factors) variable(s) they want to run analysis over and well as numerical covariate(s) that user wants to account in the model.  The user can also choose whether to include interactions between factors variables in the model or to use simple additive model.
@@ -68,7 +70,7 @@ The user has to specify the variables (categorical and numerical) that he/she wa
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A TSV that contains the One-Way-ANOVA results and the analysis of means. File headers follow the SAS JMP Genomics conventions (http://www.jmp.com/support/help/).
 

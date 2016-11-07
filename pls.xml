@@ -1,5 +1,5 @@
 <tool id="pls" name="Partial Least Squares (PLS) (Beta)" version="1.0.0">
-    <description>"Calculates a Partial Least Squares Discriminant Analysis."</description>
+    <description>Adjust p-values based on different methods.</description>
     <requirements>
         <requirement type="python-module">sklearn</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -21,11 +21,11 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact."/>
         <param name="toCompare" type="text" size="30" label="Name of the groups to compare" help="Comma separated names of the 2 groups in your Group/Treatment column that you want to compare."/>
-        <param name="nComp" type="text" size="30" value="2" label="Number of componentes [Optional]" help="Enter number of components to use to perform the analysis default:2."/>
+        <param name="nComp" type="text" size="30" value="2" label="Number of components [Optional]" help="Enter number of components to use to perform the analysis default:2."/>
     </inputs>
     <outputs>
         <data format="tabular" name="outScores" label="${tool.name} on ${on_string}: scores"/>
@@ -41,7 +41,7 @@
 
 .. class:: infomark
 
-**What it does**
+**Tool Description**
 
 This tool performs Partial Least Sqares Analysis on the numeric input data.
 
@@ -80,7 +80,7 @@ This tool performs Partial Least Sqares Analysis on the numeric input data.
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A PDF containing the 2D plots for all possible level combinations.
 

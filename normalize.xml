@@ -21,7 +21,7 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
   
         <param name="method" size="30" type="select" value="" label="Normalization Method" help="Default: Mean">
@@ -40,7 +40,7 @@
 
 @TIP_AND_WARNING@
 
-**What it does**
+**Tool Description**
 
 This tool normalizes your data based on either the means or the sum of the Sample.
 ------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ This tool normalizes your data based on either the means or the sum of the Sampl
     
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A TSV containing the normalized wide file.
 

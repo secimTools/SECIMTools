@@ -17,7 +17,7 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
         <param name="std" type="select" size="30" value="" label="Mean Standardization" help="Select type of mean standardization.">
@@ -46,7 +46,7 @@
 
 @TIP_AND_WARNING@
 
-**Syntax**
+**Tool Description**
 
 This tool mean standardize your samples.
 
@@ -71,7 +71,7 @@ This tool mean standardize your samples.
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 This tool outputs 2 different files.
 

@@ -12,7 +12,7 @@
     <requirement type="python-module">copy</requirement>
     </requirements>
     <command interpreter="python">
-            BFF.py
+        BFF.py
       --input $input
       --design $design
       --uniqID $uniqID
@@ -24,11 +24,11 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
     <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     <param name="group" type="text" size="30" value="group" optional="true" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
     <param name="blank" type="text" size="30" optional="true" label="Blank Name" help="Name of the group in your Design File that contains the blanks. Used to calculate baseline in filtering."/>
-    <param name="bff" type="text" size="30" value="5000" optional="true" label="Default Limit of Detection [Optional]" help="Default value to use as limit of detection."/>
+    <param name="bff" type="text" size="30" value="5000" optional="true" label="Default Limit of Detection" help="Default value to use as limit of detection."/>
     </inputs>
     <outputs>
         <data format="tabular" name="outflags" label="${tool.name} on ${on_string}: Flags"/>
@@ -50,7 +50,7 @@
 
 @TIP_AND_WARNING@
 
-**What it does**
+**Tool Description**
 
 This tool uses blanks, if present in the data, to flag features below a detection limit.
 The BFFValue = (3 * SD of the blanks) + (the average of the blanks).  A feature is 
@@ -88,7 +88,7 @@ less than 100.
     
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A TSV containing BFF_Values for each feature/group combination.
 

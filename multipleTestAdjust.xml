@@ -31,7 +31,7 @@
 
 @TIP_AND_WARNING@
 
-**What it does**
+**Tool Description**
 
 This tool adjust p-values for multiple testing with 3 different methods: Bonferroni,Benjamin-Hochberg and Benjamin-Yekutieli.
 
@@ -60,7 +60,7 @@ This tool adjust p-values for multiple testing with 3 different methods: Bonferr
     
 -------------------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
  - A TSV containing the adjusted p-values.
 

@@ -1,5 +1,5 @@
 <tool id="lasso2" name="Lasso / Elastic Net" version="0.0.5">
-    <description>"Lasso / Elastic Net Feature Selection"</description>
+    <description>Lasso / Elastic Net Feature Selection.</description>
     <requirements>
         <requirement type="python-module">rpy2</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -24,9 +24,9 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
+        <param name="group" type="text" size="30" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact."/>
         <param name="alpha" type="text" value=".5" size="30" label="Alpha" help="Default .5"/>
 
        
@@ -45,7 +45,7 @@
 
 .. class:: infomark
 
-**What it does**
+**Tool Description**
 
 The tool performs feature selection for each pairwise comparison of the levels of the group variable specified by user. The selection method is performed based on the logistic regression with Elastic Net penalty (with LASSO being a special case.) 
 
@@ -56,7 +56,7 @@ Variable section is performed for all levels of alpha specified by the user in t
 
 The best subset of selected variables for a given alpha is selected by a cross validation procedure. 
 
-More details about the Elastic Net and LASSO penalties can be found in the paper 
+More details about the Elastic Net and LASSO penalties can be found in the paper .
 
 Zou, H., and Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67(2), 301-320..
 
@@ -94,7 +94,7 @@ Zou, H., and Hastie, T. (2005). Regularization and variable selection via the el
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A TSV of the values of the coefficients (including zeroes) that were produced by the tool for each pair of comparisons (in columns) 
 

@@ -1,5 +1,5 @@
 <tool id="scatter2" name="Scatter Plot 2D (Beta)" version="2.0.0">
-    <description>"A standalone tool for Scatter Plots"</description>
+    <description>A standalone tool for Scatter Plots.</description>
     <requirements>
         <requirement type="python-module">pandas</requirement>
         <requirement type="python-module">numpy</requirement>
@@ -42,12 +42,11 @@
 
         <param name="x" type="text" size="30" value="" label="X Group Title" help="Name of the column for X values."/>
         <param name="y" type="text" size="30" value="" label="Y Group Title" help="Name of the column for Y values."/>
-        <param name="pca" type="boolean" label="Use PCA Data?" help="Using a PCA output or standard dataset"/>
-
-        <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
-        <param name="group" type="text" size="30" value="" label="Input Group name to separate by [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
-        <param name="paletteGroup" type="text" size="30" label="Palette Group [Optional]" help="See Palettable's website"/>
-        <param name="palette" type="text" size="30" label="Palette [Optional]" help="See Palettable's website"/>
+        <param name="pca" type="boolean" label="Use PCA Data?" help="Using a PCA output or standard dataset."/>
+        <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="group" type="text" size="30" value="" label="Input Group name to separate by [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact."/>
+        <param name="paletteGroup" type="text" size="30" label="Palette Group [Optional]" help="See Palettable's website."/>
+        <param name="palette" type="text" size="30" label="Palette [Optional]" help="See Palettable's website."/>
 
     </inputs>
     <outputs>
@@ -62,9 +61,9 @@
 
 .. class:: infomark
 
-**What it does**
+**Tool Description**
 
-This tool creates a 2D Scatter Plot of your data
+This tool creates a 2D Scatter Plot of your data.
 
 --------------------------------------------------------------------------------
 
@@ -89,9 +88,9 @@ This tool creates a 2D Scatter Plot of your data
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
-- A PDF of your Scatter Plot
+- A PDF of your Scatter Plot.
 
 
 </help>

@@ -1,5 +1,5 @@
 <tool id="subsetData" name="Subset Data (Beta)" version="1.0,0">
-    <description>Subset your data base on groups</description>
+    <description>Subset your data base on groups.</description>
     <requirements>
         <requirement type="python-module">os</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -20,7 +20,7 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" value="" optional="false" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications. If none provided the drop will be performed by 'sampleID'. [Optional]"/>
+        <param name="group" type="text" size="30" value="" optional="false" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications. If none provided the drop will be performed by 'sampleID'."/>
         <param name="toDrop" type="text" size="30" optional="false" label="Group(s)/Sample(s) to drop" help="Name of the Group(s)/Sample(s), comma separeted, that will be removed from your wide datset."/>
     </inputs>
     <outputs>
@@ -36,7 +36,7 @@
 Subset Data
 -----------
 
-**What it does**
+**Tool Description**
 
 This tool subsets your wide and design file based on selected by user groups on the Group/Treatment column.
 
@@ -71,7 +71,7 @@ This tool subsets your wide and design file based on selected by user groups on 
     
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
     - A TSV containing the subseted wide file.
 

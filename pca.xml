@@ -1,5 +1,5 @@
 <tool id="pca2" name="Principal Component Analysis (Beta)" version="2.0.0">
-    <description>"Calculates PCA on a dataset and plots the first 3 principal components"</description>
+    <description>Calculates PCA on a dataset and plots the first 3 principal components.</description>
     <requirements>
         <requirement type="python-module">sklearn</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -22,7 +22,7 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact"/>
     </inputs>
@@ -40,7 +40,7 @@
 
 .. class:: infomark
 
-**What it does**
+**Tool Description**
 
 This tool performs Principal Component Analysis on the numeric input data.
 
@@ -79,21 +79,21 @@ This tool performs Principal Component Analysis on the numeric input data.
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A PDF containing the following 2D and 3D plots: (1) PC1 vs PC2, (2) PC2 vs PC3 (3) PC1 vs PC3 and (4) PC1 vs PC2 vs PC3.
 
 - A TSV containing eigen-vectors/variable loadings.
 
-    - Std. deviation: Standard deviations of the principal components
-    - Proportion of variance explained by each principal component
-    - Loadings: a list of eigen-vectors/variable loadings
+    - Std. deviation: Standard deviations of the principal components.
+    - Proportion of variance explained by each principal component.
+    - Loadings: a list of eigen-vectors/variable loadings.
 
 - A TSV containing scores of input data on principal components.
 
-    - Std. deviation: Standard deviations of the principal components
-    - Proportion of variance explained by each principal component
-    - Scores: Scores of the input data on the principal components
+    - Std. deviation: Standard deviations of the principal components.
+    - Proportion of variance explained by each principal component.
+    - Scores: Scores of the input data on the principal components.
 
 
 </help>

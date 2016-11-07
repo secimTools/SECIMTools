@@ -1,5 +1,5 @@
 <tool id="standarizedEuclideanDistance2" name="Standarized Euclidean Distance (Beta)" version="2.0.0">
-    <description>Calculate the Euclidean distance for a set of multivariate data</description>
+    <description>Calculate the Euclidean distance for a set of multivariate data.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -32,12 +32,12 @@
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact. Warning: All groups must contain 3 or more samples" />
-        <param name="order" type="text" size="30" label="Input Run Order Name [Optional]" help="Enter run order name to calculate from. Spelling and capitalization must be exact" />
-        <param name="levels" type="text" size="30" label="Adittional groups to separate by [Optional]" help="Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ',' " />
-        <param name="p" type="text" value= ".95" size="30" label="Percentile cutoff [Optional]" help="The percentile cutoff for standard distributions. The default is 0.95. " />
+        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact. Warning: All groups must contain 3 or more samples." />
+        <param name="order" type="text" size="30" label="Input Run Order Name [Optional]" help="Enter run order name to calculate from. Spelling and capitalization must be exact." />
+        <param name="levels" type="text" size="30" label="Adittional groups to separate by [Optional]" help="Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ','." />
+        <param name="p" type="text" value= ".95" size="30" label="Percentile of cutoff" help="The percentile cutoff for standard distributions. The default is 0.95. " />
     </inputs>
     <outputs>
         <data format="pdf" name="plot" label="${tool.name} on ${on_string}: Plot" />
@@ -51,8 +51,7 @@
 
 @TIP_AND_WARNING@
 
-
-**What it does**
+**Tool Description**
 
 This tool estimates the variance and calculates (i) the standardized Euclidean distance (SED)
 between each sample and the estimated center and (ii) the sample pairwise standardized euclidean distance by group.
@@ -77,7 +76,7 @@ between each sample and the estimated center and (ii) the sample pairwise standa
     **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Feature*
+      your features. In our example dataset you would input *Feature*.
 
 
     @GROUP@
@@ -92,7 +91,7 @@ between each sample and the estimated center and (ii) the sample pairwise standa
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A PDF containing a set of figures for each group and for all groups combined.  Figures include (1) the SED for samples in the indicated group to the estimated center, (2) the pairwise SED for samples in the indicated group and (3) box-plots for the pairwise SED for samples in the indicated group.
 

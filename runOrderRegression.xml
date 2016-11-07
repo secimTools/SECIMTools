@@ -20,7 +20,7 @@
   </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
     <param name="order" type="text" size="30" value="" label="Run Order ID" help="Name of the column in your Design File that contains run order."/>
@@ -36,7 +36,7 @@
 
 @TIP_AND_WARNING@
 
-**What it does**
+**Tool Description**
 
 This tool uses linear regression to identify potential relationships between the order samples were run in and their values.  If a linear relationship with run order is identified, further exploration may be warranted.   
 
@@ -72,7 +72,7 @@ This tool uses linear regression to identify potential relationships between the
 
 -----------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
 - A PDF containing the regression plots, one plot for each
     feature, where the x-axis is run order and the y-axis is value.  Only plots

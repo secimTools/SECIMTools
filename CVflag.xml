@@ -1,5 +1,5 @@
 <tool id="CVflag2" name="CV flags (Beta)" version="2.0.0">
-  <description>Calculate CV flags</description>
+  <description>Calculate CV flags.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">pandas</requirement>
@@ -22,7 +22,7 @@
   </command>
   <inputs>
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below"/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
     <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="If you wish to sort by a column in the Design file, enter the column name. Spelling and capitalization must be exact" />
     <param name="CVcutoff"  type="float" optional="true" size="4" label="CV cutoff [Optional]" help="The default CV cutoff will flag the top 10% of features with the largest CV. If you want to set a CV cutoff, put the number here."/>
@@ -38,8 +38,7 @@
 
 @TIP_AND_WARNING@
 
-
-**What it does**
+**Tool Description**
 
 This tool calculates the coefficient of variation. Can be used to identify and flag
 features with larger than expected variability. Recommend using log transformed
@@ -63,7 +62,7 @@ data.
     **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your featuress. In our example dataset you would input *Feature*
+      your featuress. In our example dataset you would input *Feature*.
 
     **Cvcutoff**   [Optional]
 
@@ -76,7 +75,7 @@ data.
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
     - A PDF of a CV density plot. If group information is given, one plot is produced for each group in addition to a combined density plot containing all groups.
 

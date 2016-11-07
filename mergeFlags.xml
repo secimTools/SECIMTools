@@ -1,5 +1,5 @@
 <tool id="mergeFlags2" name="Merge Flags (Beta)" version="2.1.0">
-    <description>Merge flags with same index together</description>
+    <description>Merge flags with same index together.</description>
     <requirements>
         <requirement type="python-module">pandas</requirement>
     </requirements>
@@ -28,7 +28,7 @@
 
 @TIP_AND_WARNING@
 
-**What it does**
+**Tool Description**
 
 This tool takes in any number of flag files containing the same index and merges them
 together into one easy-to-read table.  Since merging is done by index (e.g. 'Feature'),
@@ -57,7 +57,7 @@ all files must contain the same index.  Flag files can also be merged to Wide Fo
 
 
 
-    - Indexes (e.g. Feature column) must be the same for the data sets
+    - Indexes (e.g. Feature column) must be the same for the data sets.
 
     **In addition to your flag datasets, you may provide an optional dataset:**
 
@@ -77,9 +77,9 @@ all files must contain the same index.  Flag files can also be merged to Wide Fo
 
 --------------------------------------------------------------------------------
 
-**Output Files**
+**Output**
 
-- A TSV file containing all merged data sets
+- A TSV file containing all merged data sets.
 
 
 </help>

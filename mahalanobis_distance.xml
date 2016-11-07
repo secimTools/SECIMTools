@@ -1,5 +1,5 @@
 <tool id="mahalanobisDistance" name="Mahalanobis Distance">
-    <description>Use mahalanobis distance formula to create mahalanobis figure</description>
+    <description>Use mahalanobis distance formula to create mahalanobis figure.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -23,7 +23,7 @@
 
 @TIP_AND_WARNING@
 
-**What it does**
+**Tool Description**
 
 Mahalanobis Distance (MD; http://en.wikipedia.org/wiki/Mahalanobis_distance) is
 a method used to measure the distance between a point and the center of a
@@ -35,9 +35,9 @@ after accounting for the correlation structure in the data.
 
         where:
 
-        - Yi is the data for the ith row
-        - Y is the row of means
-        - S is the estimated covariance matrix for the data
+        - Yi is the data for the ith row.
+        - Y is the row of means.
+        - S is the estimated covariance matrix for the data.
 
 
         This program calculates the Mahalanobis Distance, then generates a plot showing each feature (x-axis) and its
@@ -53,9 +53,9 @@ after accounting for the correlation structure in the data.
 
 --------------------------------------------------------------------------------
 
-**Output File**
+**Output**
 
-- Mahalanobis figure in the format of a png
+- Mahalanobis figure in the format of a png.
 
 
     </help>
