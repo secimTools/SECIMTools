@@ -1,4 +1,4 @@
-<tool id="standarizedEuclideanDistance2" name="Standarized Euclidean Distance (Beta)" version="2.0.0">
+<tool id="standarizedEuclideanDistance2" name="Standardized Euclidean Distance (SED)" version="2.0.0">
     <description>Calculate the Euclidean distance for a set of multivariate data.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
@@ -8,7 +8,8 @@
         <requirement type="python-module">sklearn</requirement>
         <requirement type="python-module">palettable</requirement>
     </requirements>
-    <command interpreter="python">standardizedEuclideanDistance.py
+    <command interpreter="python">
+        standardized_eucildean_distance.py
         --input $input
         --design $design
         --ID $uniqID
@@ -53,51 +54,43 @@
 
 **Tool Description**
 
-This tool estimates the variance and calculates (i) the standardized Euclidean distance (SED)
-between each sample and the estimated center and (ii) the sample pairwise standardized euclidean distance by group.
+The goal of the tool is to compare the samples and to find the ones that are different from the others using the standardized Eucledian distance between the samples.  The tool estimates the variance of features and calculates the standardized Euclidean distance (SED) between each sample and the estimated center and the pairwise standardized euclidean distances between the samples. If the group variable is provided then the same distance plots are provided for each group individually and for all groups together.
+
+**NOTE:** Because of the nauture of the tool groups and samples where only one or two samples per group are avaialbe in the wide dataset will be discarded from the analysis.
 
 
-**Input**
+**Input Files**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+@METADATA@
 
+@UNIQID@
 
-    @METADATA@
+**Group/Treatment [Optional]**
+    
+    - Enter group name to calculate from. Spelling and capitalization must be exact. Warning: All groups must contain 3 or more samples.
 
+**Adittional groups to separate by [Optional]**
 
-    **In addition to your datasets, you need to provide:**
+    - Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ','.
 
-    **Unique Feature ID**
+**NOTE:** Groups with one element will be excluded from the test.
 
-    - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Feature*.
+**Percentile cutoff**
 
-
-    @GROUP@
-
-    **NOTE:** Groups with one element will be excluded from the test.
-
-
-    **Percentile cutoff**  [Optional]
-
-    - Select a confidence interval cutoff for the standard distribution.  The
-      default is 0.95.
+- The percentile cutoff for standard distributions. The default is 0.95.
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-- A PDF containing a set of figures for each group and for all groups combined.  Figures include (1) the SED for samples in the indicated group to the estimated center, (2) the pairwise SED for samples in the indicated group and (3) box-plots for the pairwise SED for samples in the indicated group.
-
-- A TSV containing the SED values, by group, for each pairwise sample combination.
-
-- A TSV containing the SED values for each sample to the estimated center.
+The tool will always output three different files: a PDF file containing 2D scatter plots and boxplots for the distances and two TSV files containing distances from the sample to the estimated mean and from the sample to other samples.  If the grouping variable is specified by the user the distances are computed both within the groups and for the entire dataset.
 
 
 </help>

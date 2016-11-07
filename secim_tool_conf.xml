@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <toolbox>
     <section id="secim2" name="SECIM Tools 2.0 (BETA)">
-    <tool file="secimtools_v2/anova_lm.xml"/>
+    <tool file="secimtools_v2/anova_fixed.xml"/>
     <tool file="secimtools_v2/baPlot.xml"/>
-    <tool file="secimtools_v2/BFF.xml"/>
+    <tool file="secimtools_v2/blank_feature_filtering_flags.xml"/>
     <tool file="secimtools_v2/countDigits.xml"/>
     <tool file="secimtools_v2/CVflag.xml"/>
     <tool file="secimtools_v2/distributionSamples.xml"/>
@@ -27,7 +27,7 @@
     <tool file="secimtools_v2/runOrderRegression.xml"/>
     <tool file="secimtools_v2/scatter.xml"/>
     <tool file="secimtools_v2/scatter3D.xml"/>
-    <tool file="secimtools_v2/standardizedEuclideanDistance.xml"/>
+    <tool file="secimtools_v2/standardized_eucildean_distance.xml"/>
     <tool file="secimtools_v2/summarizeFlags.xml"/>
     <tool file="secimtools_v2/subsetData.xml"/>
     <tool file="secimtools_v2/SVMClassifier.xml"/>
