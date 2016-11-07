@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/May/06, rev: 2016/June/03
+# DATE: 2016/10/31
 #
 # SCRIPT: pca.py
 #
 # VERSION: 1.1
 # 
-# AUTHOR: Miguel A Ibarra (miguelib@ufl.edu) Edited by: Matt Thoburn (mthoburn@ufl.edu)
+# AUTHOR: Coded by: Miguel A Ibarra (miguelib@ufl.edu) 
+#         Edited by: Matt Thoburn (mthoburn@ufl.edu)
+#         Last review  by: Miguel A Ibarra (miguelib@ufl.edu) 
 # 
 # DESCRIPTION: This script takes a a wide format file and makes a principal 
 #   component analysis (PCA) on it.
@@ -21,6 +23,7 @@ import os
 import math
 import logging
 import argparse
+from itertools import combinations
 from argparse import RawDescriptionHelpFormatter
 
 # Add-on packages
@@ -49,23 +52,34 @@ def getOptions(myopts=None):
                                     formatter_class=RawDescriptionHelpFormatter)
     standard = parser.add_argument_group(title='Standard input', 
                                 description='Standard input for SECIM tools.')
-    standard.add_argument( "-i","--input", dest="input", action='store', required=True, 
-                        help="Input dataset in wide format.")
-    standard.add_argument("-d" ,"--design",dest="design", action='store', required=True,
-                        help="Design file.")
-    standard.add_argument("-id", "--ID",dest="uniqID", action='store', required=True, 
-                        help="Name of the column with unique identifiers.")
-    standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
-                        default=False,help="Name of the column with groups.")
+    standard.add_argument( "-i","--input", dest="input", action='store', 
+                        required=True, help="Input dataset in wide format.")
+    standard.add_argument("-d" ,"--design",dest="design", action='store', 
+                        required=True, help="Design file.")
+    standard.add_argument("-id", "--ID",dest="uniqID", action='store', 
+                        required=True, help="Name of the column with unique"\
+                        " identifiers.")
+    standard.add_argument("-g", "--group",dest="group", action='store', 
+                        required=False,  default=False, help="Name of the"\
+                        " column with groups.")
 
     output = parser.add_argument_group(title='Required output')
-    output.add_argument("-lo","--load_out",dest="lname",action='store',required=True, 
-                        help="Name of output file to store loadings. TSV format.")
-    output.add_argument("-so","--score_out",dest="sname",action='store',required=True,
-                        help="Name of output file to store scores. TSV format.")
-    output.add_argument("-f","--figure",dest="figure",action="store",required=False,
-                        help="Name of output file to store scatter plots for 3 \
-                        principal components.")
+    output.add_argument("-lo","--load_out",dest="lname",action='store',
+                        required=True, help="Name of output file to store "\
+                        "loadings. TSV format.")
+    output.add_argument("-so","--score_out",dest="sname",action='store',
+                        required=True, help="Name of output file to store "\
+                        "scores. TSV format.")
+    output.add_argument("-f","--figure",dest="figure",action="store",
+                        required=False, help="Name of output file to store"\
+                        "scatter plots for 3 principal components.")
+
+    plot = parser.add_argument_group(title='Plot options')
+    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
+                        default="tableau", help="Name of the palette to use.")
+    plot.add_argument("-col","--color",dest="color",action="store",required=False, 
+                        default="Tableau_20", help="Name of a valid color scheme"\
+                        " on the selected palette")
 
     args = parser.parse_args()
     return(args)
@@ -127,7 +141,10 @@ def runPCA(wide):
     scores = pca.fit_transform(wide)
 
     #Get loadings
-    loadings = pca.components_
+    if  len(wide.columns)>len(wide.index):
+        loadings = pca.components_.T
+    else:
+        loadings = pca.components_
 
     #Get aditional information out of PCA, this will mimic the output from R
     sd = scores.std(axis=0)
@@ -170,139 +187,102 @@ def createOutput(item,index):
     #Return 
     return itemOut
 
-def plotScatterplot(data,fh,block,x,y,dat,title,group=False):
+def plotScatterplot2D(loadings,pdf,dat,nloads=3):
     """
-    Creates an scater plot for 2 given components. It returns the ax with
-    the figure.
+    Plots Scatterplots 2D for a number of loadngs for PCA.
+
     :Arguments:
-        :type data: pandas.core.frame.DataFrame
-        :param data: Data frame with the data to plot.
+        :type loadings: pandas.DataFrame
+        :param loadings: Loadings of the PCA.
 
-        :type ax: ax:matplotlib.axes._subplots.AxesSubplot.
-        :param ax: empty axes.
+        :type pdf: pdf object
+        :param pdf: PDF object to save all the generated figures.
 
-        :type x: string
-        :param x: Name of the first set of data.
+        :type dat: interface.wideToDesign
+        :param dat: wideToDesign instance providing acces to all input data.
 
-        :type y: string
-        :param y: name of the second set of data.
-
-        :type dat: interface.wideToDesign object.
-        :param dat: All standard data parsed
-
-        :type title: string
-        :param title: title for axis
-
-        :type group: string
-        :param group: Name of the column that contains the group information on 
-                        the design file.
-
-    :Return:
-        :rtype fh: figureHandler.
-        :returns ax: figureHandler containing ax with the scatter plot and 
-                    legend.
-
+        :type nloads: int
+        :param nloads: Number of principal components to create pairwise combs.
     """
-    logger.info(u"Creating scatter plot for components {0} vs {1} ".
-                format(x,y))
-    if group:
-        glist=list(dat.design[group])
-        ch = colorHandler("tableau","Tableau_20")
-        colorList, ucGroups = ch.getColorsByGroup(design=dat.design,group=group,uGroup=sorted(set(glist)))
-    else:
-        glist = list()
-        colorList = list('b') #blue
-        ucGroups = dict()
-    
-    scatter.scatter2D(ax=fh.ax[0],x=list(data[x]),y=list(data[y]),ec="gray",
-                    colorList=colorList)
+    # Selecting amount of pairwise combinations to plot scaterplots for loads.
+    for x, y in list(combinations(loadings.columns.tolist()[:nloads],2)):
 
-    fh.despine(fh.ax[0])
+        # Create a single-figure figure handler object
+        fh = figureHandler(proj="2d")
 
-    if group:
-        fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=group)
+        # Create a title for the figure
+        title = "{0} vs {1}".format(x,y)
+
+        # Get colors
+        if  dat.group:
+            colorDes,ucGroups,combName=palette.getColors(design=dat.design,
+                                                        groups=[dat.group])
+            colorList = colorDes.colors.tolist()
+        else:
+            colorList = list(palette.mpl_colors[0]) #First color on the palette
+            ucGroups = dict()
+
+        # Plot the scatterplot based on data
+        scatter.scatter2D(x=list(loadings[x]), y=list(loadings[y]),
+                         colorList=colorList, ax=fh.ax[0])
+
+        # Create legend
+        fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=dat.group)
+
+        # Shrink axis to fit legend
         fh.shrink()
 
-    #Get Variance
-    varx=block.loc["#Proportion of variance explained",int(x.replace("PC",""))-1]
-    vary=block.loc["#Proportion of variance explained",int(y.replace("PC",""))-1]
-    fh.formatAxis(figTitle=title,xTitle=x+" {0:.2f}%".format(varx*100),
-        yTitle=y+" {0:.2f}%".format(vary*100),grid=False)
+        # Despine axis
+        fh.despine(fh.ax[0])
 
-    return fh
+        # Formatting axis
+        fh.formatAxis(figTitle=title,xTitle="Loadings on {0}".format(x),
+            yTitle="Loadings on {0}".format(y),grid=False)
 
-def plotPCA(dat,data,block,PC1,PC2,PC3,outpath,group=False):
+        # Adding figure to pdf
+        fh.addToPdf(dpi=600,pdfPages=pdf)
+
+def plotScatterplot3D(data,pdf,dat):
     """
-    This function creates a PDF file with 3 scatter plots for the combinations 
-    of the 3 principal components. PC1 vs PC2, PC1 vs PC3, PC2 vs PC3.
+    Plots Scatterplots 3D for a given number of loadngs for PCA.
 
     :Arguments:
-        :type dat: interface.wideToDesign object.
-        :param dat: All standard data parsed
+        :type data: pandas.DataFrame
+        :param data: Loadings of the PCA.
 
-        :type data: pandas.core.frame.DataFrame
-        :param data: Data frame with the data to plot.
-        
-        :type PC1: string
-        :param PC1:Name of the first set of data.
+        :type pdf: pdf object
+        :param pdf: PDF object to save all the generated figures.
 
-        :type PC2: string
-        :param PC2:Name of the second set of data.
-
-        :type PC3: string
-        :param PC3:Name of the third set of data.
-
-        :type outpath: string
-        :param outpath: Path for the output file
-
-        :type group: string
-        :param group: Name of the column that contains the group information on the design file.
-
-    :Return:
-        :rtype PDF: file
-        :retrn PDF: file with the 3 scatter plots for PC1 vs PC2, PC1 vs PC3, PC2  vs PC3.
+        :type dat: interface.wideToDesign
+        :param dat: wideToDesign instance providing acces to all input data.
     """
-    logger.info(u"Plotting principal components")
-    #Creatig output PDF
-    pdfOut = PdfPages(os.path.abspath(outpath))
-
-    #Creating the figure
-    title = "{0} vs {1}".format(PC1,PC2)
-    fh1 = figureHandler(proj="2d")
-
-    #Plotting
-    fh1 = plotScatterplot(data,fh1,block,PC1,PC2,dat,title,group,)
-    fh1.addToPdf(dpi=90,pdfPages=pdfOut)
-
-    title = "{0} vs {1}".format(PC1,PC3)
-    fh2 = figureHandler(proj="2d")
-
-    fh2 = plotScatterplot(data,fh2,block,PC1,PC3,dat,title,group)
-    fh2.addToPdf(dpi=90,pdfPages=pdfOut)
-
-    title = "{0} vs {1}".format(PC2,PC3)
-    fh3 = figureHandler(proj="2d")
-
-    fh3 = plotScatterplot(data,fh3,block,PC2,PC3,dat,title,group)
-    fh3.addToPdf(dpi=90,pdfPages=pdfOut)
     
-    fh4 = figureHandler(proj="3d")
-    if group:
-        glist=list(dat.design[group])
-        ch = colorHandler("tableau","Tableau_20")
-        colorList, ucGroups = ch.getColorsByGroup(design=dat.design,group=group,uGroup=sorted(set(glist)))
-    else:
-        glist = list()
-        colorList = list('b') #blue
-        ucGroups = dict()
-        
-    ax = scatter.scatter3D(ax=fh4.ax[0],colorList=colorList,x=list(data[PC1]),y=list(data[PC2]),z=list(data[PC3]))
-    if group:
-        fh4.makeLegend(ax=fh4.ax[0],ucGroups=ucGroups,group=group)
-    fh4.format3D(xTitle=PC1,yTitle=PC2,zTitle=PC3)
-    fh4.addToPdf(dpi=90,pdfPages=pdfOut)
+    # Open figure handler with 3D projection
+    fh = figureHandler(proj="3d")
 
-    pdfOut.close()
+    # Getting colors by group
+    if dat.group:
+        colorDes,ucGroups,combName=palette.getColors(design=dat.design,
+                                                    groups=[dat.group])
+        colorList = colorDes.colors.tolist()
+    else:
+        colorList = list(palette.mpl_colors[0]) #First color on the palette
+        ucGroups = dict()
+    
+    # Plot scatterplot3D 
+    ax = scatter.scatter3D(ax=fh.ax[0], colorList=colorList,
+                        x=list(data["PC1"]), y=list(data["PC2"]),
+                        z=list(data["PC3"]))
+
+    # Make legends
+    if dat.group:
+        fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=dat.group)
+
+    # Add Titles to the PCA
+    fh.format3D(xTitle="PC1",yTitle="PC2",zTitle="PC3")
+
+    # Add Figure to the PDf
+    fh.addToPdf(dpi=600, pdfPages=pdf)
 
 def main(args):
     #Loading data trought Interface
@@ -311,21 +291,14 @@ def main(args):
     #Dropping missing values
     if np.isnan(dat.wide.values).any():
         dat.wide = dropMissing(dat.wide)
-
-    # Transpose data for cases were width is greater than height this will avoid
-    # problems downstream.
-    if dat.wide.shape[0] < dat.wide.shape[1]:
-        dat.wide=dat.wide.T
-
-    #Run PCA
+    
+    # RunPCA
     loadings,scores,block = runPCA(dat.wide)
- 
-    #print loadings
-    #Getting output tables
-    loadOut=createOutput(loadings,dat.wide.columns)
-    scoreOut=createOutput(scores,dat.wide.index)
 
-    # Save output
+    # Creatting outputs
+    loadOut=createOutput(loadings,dat.wide.columns)
+    scoreOut=createOutput(scores,dat.wide.index)  
+    
     # Save loads
     with open(os.path.abspath(args.lname),"w") as LOADS:
         block.to_csv(LOADS,sep="\t", header=False)
@@ -337,7 +310,10 @@ def main(args):
         scoreOut.to_csv(SCORES,sep="\t", index_label=dat.uniqID)
 
     #Plotting scatter plot 3D
-    plotPCA(dat,loadOut,block,"PC1","PC2","PC3",args.figure,args.group)
+    logger.info(u"Plotting PCA scores")
+    with PdfPages(os.path.abspath(args.figure)) as pdfOut:
+        plotScatterplot2D(loadings=loadOut, pdf=pdfOut, dat=dat)
+        plotScatterplot3D(data=loadOut, pdf=pdfOut, dat=dat)
 
     #Ending script
     logger.info(u"Finishing running of PCA")
@@ -358,6 +334,11 @@ if __name__ == '__main__':
                 uniqID: {2}
                 group: {3}
                 """.format(args.input, args.design, args.uniqID, args.group))
+
+    # Stablishing color palette
+    palette = colorHandler(pal=args.palette, col=args.color)
+    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+                args.palette))
 
     # Run Main Script
     main(args)
