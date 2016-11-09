@@ -1,4 +1,4 @@
-<tool id="scatter3D2" name="Scatter Plot 3D (Beta)" version="2.0.0">
+<tool id="scatter3D2" name="Scatter Plot 3D" version="2.0.0">
     <description>A standalone tool for 3D Scatter Plots.</description>
     <requirements>
         <requirement type="python-module">pandas</requirement>
@@ -6,7 +6,7 @@
         <requirement type="python-module">matplotlib</requirement>
     </requirements>
     <command interpreter="python">
-        scatter3D.py
+        scatter_plot_3D.py
         --input $input
         --ID $uniqID
         
@@ -52,7 +52,7 @@
         <param name="rotation" type="text" size="30" value="" label="Camera rotation for viewing [Optional]" help="Ideal viewing rotation may be a process of trial and error."/>
         <param name="elevation" type="text" size="30" value="" label="Camera elevation for viewing [Optional]" help="Ideal viewing elevation may be a process of trial and error."/>
         <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="group" type="text" size="30" value="" label="Input Group name to separate by [Optional]" help="Enter group name to calculate from. Spelling and capitalization must be exact."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
         <param name="paletteGroup" type="text" size="30" label="Palette Group [Optional]" help="See Palettable's website."/>
         <param name="palette" type="text" size="30" label="Palette [Optional]" help="See Palettable's website."/>
 
@@ -67,38 +67,66 @@
 
 @TIP_AND_WARNING@
 
-.. class:: infomark
-
 **Tool Description**
 
-This tool creates a 3D Scatter Plot of your data
+The tool provides a 3D scatter plot of your data.  User has option to plot the outputs produced by other tools such as the principal component analysis (PCA) tool, the random forest (RF) tool as well as datasets uploaded by user. 
+NOTE: The user also has an option to choose the color palette if he/she does not have the default one using the web site:  http://www.palettable.io/
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
 
+@UNIQID@
 
-    @METADATA@
+**X Group Title**
 
-**In addition to your datasets, you need to provide:**
+    - Name of the column for X values.
 
-**Unique Feature ID**
+**Y Group Title**
 
-- The column name in your wide dataset that contains the unique IDs for
-  your features. In our example dataset you would input *Feature*.
+    - Name of the column for Y values.
+
+**Z Group Title**
+
+    - Name of the column for Z values.
+
+**Use PCA Data?**
+
+    - Using a PCA output or standard dataset.
+
+**Camera rotation for viewing [Optional]:**
+
+    - Ideal viewing rotation may be a process of trial and error.
+
+**Camera elevation for viewing [Optional]:**
+
+    - Ideal viewing elevation may be a process of trial and error.
+
+@METADATA@
+
+@GROUP_OPTIONAL@
+
+**Palette Group [Optional]**
+
+    - See Palettable's website.
+
+**Palette [Optional]**
+
+    - See Palettable's website.
+
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-- A PDF of your Scatter Plot
+The too produces a PDF file with the 3D scatter plot.  The coloring of the features by group and corresponding legend will be included in the plot if the user provide the design file and grouping variable.
 
 </help>
 </tool>

@@ -1,4 +1,4 @@
-<tool id="RTflag2" name="RT flags (Beta)" version="2.0.0">
+<tool id="RTflag2" name="Retention Time (RT) Flags" version="2.0.0">
   <description>Calculate RT flags.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
@@ -10,7 +10,8 @@
   <stdio>
     <exit_code range="1:" level="warning" description="RuntimeWarning"/>
   </stdio>
-  <command interpreter="python">RTflag.py
+  <command interpreter="python">
+      retention_time_flags.py
       --input $input
       --design $design
       --ID $uniqID
@@ -46,51 +47,42 @@
 
 **Tool Description**
 
-This tool identifies features with the following characteristics:
-    (1) features whose coefficient of variation in retention time is greater than 95% (default value) of all features and.
-    (2) features where the difference in the retention time between the 95th and 10th percentiles (default values) is greater than 0.2 minutes.
-    (3) features where the difference between the retention time maximum and median is greater than 0.1 minutes.
-    (4) features where the difference between the retention time minimum and median is greater than 0.1 minutes.
-    (5) features where the retention time minimum or maximum is greater than 3 times the standard deviation away from the mean.
+**NOTE:** The tool is primarily intended for metabolomics data analysis and retention time flagging.  The goal of the tool is to identify potential problems with the instrument/data processing and pre-processing.
+
+The tool identifies the abnormalities of the feature’s retention time. The following feature characteristics are investigated with each characteristic having a separate flag column in the output file. 
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
 
+@METADATA@
 
-    @METADATA@
+@UNIQID@
 
-**In addition to your datasets, you need to provide:**
+**Percentile Cutoff**
 
-    **Unique Feature ID**
+    - Percenctile cutoff in minutes. The default value used is 0.2 minutes.
 
-        - The column name in your wide dataset that contains the unique IDs for
-          your features. In our example dataset you would input *Feature*.
+**CVcutoff**
 
-    **Cvcutoff**  [Optional]
+    - The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here.
 
-        - The column name in your design file that contains group information. In
-          our example design file we would put *group1*.
+**90th percentile [Optional]**
 
-    **90th percentile**  [Optional]
-
-        - The default is to flag features when the difference in the retention time between the 95th and 5th percentiles is greater
-          than 0.2 minutes. The user has the option to select the 90th and 10th percentiles instead.
+    - Check this box to use a 90th percentile. The default is a 95th percentile (NO).
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-- A PDF density plot of the coefficients of variation for the retention time.
-
-- A TSV containing the 5 retention time 0/1 indicator flags for each feature.
+The tool outputs two files: a TSV file with flags for each feature, where each flagging method results are saved in a separate column and a PDF file containing a density plot of the coefficients of variation (CV) for the retention time.
 
 </help>
 </tool>
