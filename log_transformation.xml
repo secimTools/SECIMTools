@@ -1,4 +1,4 @@
-<tool id="logTransform2" name="Log Transformation (Beta)" version="2.0.0">
+<tool id="logTransform2" name="Log Transformation" version="2.0.0">
     <description>Transform your data using the log.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
@@ -7,7 +7,8 @@
         <requirement type="python-module">interface</requirement>
         <requirement type="python-module">logger</requirement>
     </requirements>
-    <command interpreter="python">logTransform.py
+    <command interpreter="python">
+        log_transformation.py
         --input $input
         --design $design
         --ID $uniqID
@@ -32,46 +33,38 @@
     </macros>
 <help>
 
-    @TIP_AND_WARNING@
+@TIP_AND_WARNING@
 
 **Tool Description**
 
-This tool carries out a log transformation on values in a Wide Format dataset.
-
+This tool carries out a log transformation of values in a Wide Format dataset. Three different options are available for the logarithm: base 2, base e and base 10.
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
 
+@METADATA@
 
-    @METADATA@
+@UNIQID@
 
-    **In addition to your datasets, you need to provide:**
+**Log Transformation**
 
-    **Unique Feature ID**
-
-    - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Feature*
-
-      @GROUP@
-
-    **The base which to calculate the logarithm**
-
-    - Choices are the base 10 and base 2 log, as well as the natrual log.
+    - Select type of log.
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-- A TSV file of the log transformed data. Missing values
-  remain missing and 0 values become missing.
+A wide format dataset will be output with log transformed values. 
+**NOTE:** If the original dataset has 0 or negative values they will be replaced with blank values after log transform since the logarithms are not defined for non-positive values.  The values, that are missing in the original dataset will remain missing. 
+
 
 
 </help>

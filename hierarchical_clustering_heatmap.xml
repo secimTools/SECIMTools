@@ -1,5 +1,5 @@
-<tool id="hch" name="Hierarchical Clustering Heatmap (Beta)" version="1.0,0">
-	<description>Calculates means per group and plots a heatmap.</description>
+<tool id="hch" name="Hierarchical Cluster Heatmap" version="1.0,0">
+	<description>Plots a heatmap.</description>
 	<requirements>
 		<requirement type="python-module">numpy</requirement>
 	    <requirement type="python-module">pandas</requirement>
@@ -42,7 +42,7 @@
 
 **Tool Description**
 
-This tool plots a heatmap of your data.
+This tool generates a hierarchical cluster heatmap from a wide format dataset.  This script works best for the log-transformed data without missingness.  The user has an option to add hierarchical clustering structure on the top of the heatmap figure and the names of the features.
 
 **NOTE:** This script works best with log transformed data.
 
@@ -50,29 +50,32 @@ This tool plots a heatmap of your data.
 
 **Input**
 
-- Two input datasets are required.
+	- Two input datasets are required.
 
-		@WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File
-    (below). Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
 
 
-    @METADATA@
+@METADATA@
 
-    **In addition to your datasets, you need to provide:**
+@UNIQID@
 
-    **Unique Feature ID**
+**Add dendogram on heatmap**
 
-    - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Compound*.
+	- It will print a dendogram over the heatmap.
+
+**Remove labels from plots**
+
+	- X-axis labels
+	- Y-axis labels
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-	- A PDF containing a heatmap for your data.
-
+The tool outputs single PDF file with the hierarchical cluster heatmap.  Based on the user settings hierarchical clustering structure tree or feature IDs may be included in the heatmap. 
 
 </help>
 </tool>

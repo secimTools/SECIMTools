@@ -1,4 +1,4 @@
-<tool id="imputation2" name="Imputation" version="0.0.5">
+<tool id="imputation2" name="Imputation (Mean, Median, K-Nearest Neighbours (KNN), Stochastic)" version="0.0.5">
     <description>Fills missing data by selected imputation algorithm.</description>
     <requirements>
         <requirement type="python-module">rpy2</requirement>
@@ -41,9 +41,8 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact."/>
-
-        <param name="imputation" size="30" type="select" value="" label="Imputation Strategy" help="Recommended: KNN">
+        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="imputation" size="30" type="select" value="" label="Imputation Strategy" help="Choose imputation strategy.">
             <option value="knn" selected="true">K-Nearest Neighbors</option>
             <option value="bayesian" selected="true">Bayesian</option>
             <option value="mean" selected="true">Mean</option>
@@ -55,7 +54,7 @@
         <param name="rowCutoff" type="text" size="30" value=".5" label="Row Percent Cutoff Value" help="Proportion of missing values allowed per group per row. If the proportion of missing samples in the row is bigger than the cutoff value specified nonthing will be imputed for that row. Default: .5 (50%)."/>
         <param name="k" type="text" size="30" value="5" label="K value" help="If you are not using the KNN Imputation, then ignore this. K is the number of neighbors to search. Default: 5. If less then 5 neighbours are available all of them are used."/>
         <param name="colCutoff" type="text" size="30" value=".8" label="Column Percent Cutoff Value" help="If you are not using the KNN Imputation, then ignore this. The maximum proportion of  missing data allowed in any data column. Default: .8 (80%). The imputation will not be successful is the proportion in the data exceeds this cutoff!"/>
-        <param name="distribution" size="30" type="select" value="" label="Bayesian Distribution" help="Recommended: Poisson.">
+        <param name="distribution" size="30" type="select" value="" label="Bayesian Distribution" help="RChoose between normal and Poisson distributions.">
             <option value="Poisson" selected="true">Poisson</option>
             <option value="Normal" selected="true">Normal</option>
         </param>
@@ -70,15 +69,22 @@
 
 @TIP_AND_WARNING@
 
-.. class:: infomark
-
 **Tool Description**
 
-This tool imputes missing data in a dataset.
+The tool performs the imputation procedure for the missing data based on the three conceptually different methods: naive imputation (mean, median), K-nearest neighbor imputation (KNN) and stochastic imputation (based on normal and Poisson distributions.)  The user has to specify which method to use.
+
+Imputations are performed separately for each group of samples since the treatment groups are expected to be different.  If only single sample (column) is available for the given group, nothing is imputed and the sample is kept intact.  User has an option to select which values should be treated as missing.  The default value is an empty cell in the dataset.  In addition, there is an option in the tool to treat zeroes, negative values and user-defined value(s) as missing and subsequently impute those. 
+
+Naive imputation computes the mean (or median) of the given feature within samples available for the given group and uses that value to impute the same feature among the missing samples.  Feature values for all missing samples in the group are getting the same value equal to the mean (median) of the available samples provided the allowed missing threshold is met.
+
+K-Nearest Neighbors (KNN) imputation is based on the procedure where k (default 5) nearest neighbor samples for the given sample within each group are considered.  Those neighboring samples are used to produce the missing value for the current samples.  If less than k neighbors are available for the current sample in the current group than the maximum available number of neighbors is used.  If proportion of missing for each row (within a feature) is bigger than the specified (default 0.5) column (sample) mean is imputed instead of values from KNN algorithm.  Proportion of missing values per each column (sample) specified by the user (default 0.8) determines whether sample should be imputed or not.  Samples with the higher proportion of missing values than specified are not imputed and the imputation process is interrupted.  The algorithm is deterministic and always imputes the same missing values for the same settings.  
+
+More details on the algorithm are available via the link:
+https://www.bioconductor.org/packages/devel/bioc/manuals/impute/man/impute.pdf
+
+Stochastic imputation is based on the assumption that each feature within the given group follows some underlying distribution.  As a result all the missing values are generated from that underlying distribution.  The parameter(s) of the underlying distribution is (are) estimated from the observed features.  Two distribution options are available: normal (recommended for logged and negative data) and Poisson (recommended for nonnegative counts.)  The normal distribution parameters are estimated by the mean and standard deviation of the observed samples for the given feature.  If all observed values for the feature are the same then the standard deviation is assumed to be 1/3 of the absolute value of the mean.  The Poisson distribution parameter is estimated by the mean of the observed values for the given feature and is expected to be positive for the imputation procedure to work correctly.
 
 --------------------------------------------------------------------------------
-
-.. class:: warningmark
 
 **Note**
 
@@ -92,28 +98,55 @@ This tool imputes missing data in a dataset.
 
 **Input**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
 
+@METADATA@
 
-    @METADATA@
+@UNIQID@
 
-**In addition to your datasets, you need to provide:**
+@GROUP@
 
-**Unique Feature ID**
+**Imputation Strategy.**
 
-- The column name in your wide dataset that contains the unique IDs for
-  your features. In our example dataset you would input *Feature*.
+    - Choose imputation strategy.
 
+**Count Zeroes as missing.**
+
+    - Zeroes can be counted as missing or left as data.
+
+**Count Negative as missing.**
+
+    - Negatives can be counted as missing or left as data.
+
+**Additional values to treat missing [Optional].**
+
+    - Seperate additional values to count as missing data with commas.
+
+**Row Percent Cutoff Value.**
+    
+    - Proportion of missing values allowed per group per row. If the proportion of missing samples in the row is bigger than the cutoff value specified nonthing will be imputed for that row. Default: .5 (50%).
+
+**K value.**
+
+    - If you are not using the KNN Imputation, then ignore this. K is the number of neighbors to search. Default: 5. If less then 5 neighbours are available all of them are used.
+
+**Column Percent Cutoff Value.**
+    
+    - If you are not using the KNN Imputation, then ignore this. The maximum proportion of missing data allowed in any data column. Default: .8 (80%). The imputation will not be successful is the proportion in the data exceeds this cutoff!
+
+**Bayesian Distribution.*
+
+    - Choose between normal and Poisson distributions.
 --------------------------------------------------------------------------------
 
 **Output**
 
-- A wide format TSV with missing values filled in.
+The output consists of a TSV file with the data imputed based on the selected method. The values that cannot be imputed because of the selected thresholds will be exported unchanged i.e. the imputed file still can have some values missing based on the threshold values.
 
 
 </help>

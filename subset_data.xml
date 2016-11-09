@@ -1,12 +1,12 @@
-<tool id="subsetData" name="Subset Data (Beta)" version="1.0,0">
-    <description>Subset your data base on groups.</description>
+<tool id="subsetData" name="Subset of Data" version="1.0,0">
+    <description>Subset your data base on groups or features.</description>
     <requirements>
         <requirement type="python-module">os</requirement>
         <requirement type="python-module">pandas</requirement>
         <requirement type="python-module">interface</requirement>
     </requirements>
     <command interpreter="python">
-        subsetData.py
+        subset_data.py
         --input $input
         --design $design
         --uniqID $uniqID
@@ -33,47 +33,38 @@
 
 @TIP_AND_WARNING@
 
-Subset Data
------------
-
 **Tool Description**
 
-This tool subsets your wide and design file based on selected by user groups on the Group/Treatment column.
+The tool creates new wide format dataset and desing dataset based on the existing wide and desing datasets where only groups specified by the user are present.  User has to choose which group(s) to include in the new datasets.
 
 --------------------------------------------------------------------------------
 
-**Input Files**
+**Input**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File
-    (below). Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
 
+@METADATA@
 
-    @METADATA@
+@UNIQID@
 
-    **In addition to your datasets, you need to provide:**
+**Group/Treatment [Optional]**
 
-    **Unique Feature ID**
+    - Name of the column in your Design File that contains group classifications. If none provided the drop will be performed by 'sampleID'.
 
-    - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Compound*.
+**Group(s)/Sample(s) to drop**
 
-   **Name of the Columns in your design fileContaining the Treatment Groups**
-
-    - The column name in your Design file that indicates treatment groups.
-
-   **Name of the groups to keep**
-
-    - The groups names in your Design file that indicates which samples you want to use to subset.
+    - Name of the Group(s)/Sample(s), comma separeted, that will be removed from your wide datset.
     
 --------------------------------------------------------------------------------
 
 **Output**
 
-    - A TSV containing the subseted wide file.
+This tool will output two TSV files: a TSV file containing the subset of the original wide format dataset and a TSV file containing the subset of the original design dataset.  Both datasets will contain only the samples belonging to groups selected by the user.
 
 
 </help>

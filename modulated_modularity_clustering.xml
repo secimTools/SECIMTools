@@ -1,4 +1,4 @@
-<tool id="mmc_python" name="Modulated Modularity Clustering">
+<tool id="mmc_python" name="Modulated Modularity Clustering (MMC)">
     <description>Modulated Modularity Clustering (MMC).</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
@@ -8,7 +8,7 @@
 
     </requirements>
     <command interpreter="python">
-        mmc.py
+        modulated_modularity_clustering.py
         --input $input
         --design $design
         --ID $uniqID
@@ -48,58 +48,47 @@
 
 Modulated Modularity Clustering method (MMC) was designed to detect latent structure in the data from weighted graphs. The method searches for optimal community structure and detects the magnitude of pairwise relationships. The optimal number of clusters and the optimal cluster size are selected by the method during the dataset analysis. The user does not specify any thresholds and tuning parameters and the algorithm is completely automatic.  
 
-The boundaries for the optimization parameter sigma that are pre-specified by the user are adjusted automatically in the algorithm, provided the optimal value is attained closed to the boundary. The number of value used for the parameter sigma increases precision of computations but also increases the computation time. Overall for large datasets (> 10000 features) it may take several days for the algorithm to complete so the algorithm should be executed with caution for large datasets. 
+The boundaries for the optimization parameter sigma that are pre-specified by the user are adjusted automatically in the algorithm, provided the optimal value is attained closed to the boundary. The number of value used for the parameter sigma increases precision of computations but also increases the computation time. Overall for large datasets (greater than 10000 features) it may take several days for the algorithm to complete so the algorithm should be executed with caution for large datasets. 
 
 More details about the method can be found in the paper .
 
 Stone, E. A., and  Ayroles, J. F. (2009). Modulated modularity clustering as an exploratory tool for functional genomic inference. PLoS Genet, 5(5), e1000479.
 
+--------------------------------------------------------------------------------
 
-- Two input datasets are required.
+**Input**
 
-    @WIDE@
+    - Two input datasets are required.
 
-        **NOTE:** The sample IDs must match the sample IDs in the Design File
-        (below). Extra columns will automatically be ignored.
+@WIDE@
 
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below). Extra columns will automatically be ignored.
 
-    @METADATA@
+@METADATA@
 
-    **In addition to your datasets, you need to provide:**
+@UNIQID@
 
+**Lower sigma value**
 
-    **Unique Feature ID**
+    - Default: 0.05.
 
-    - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Compound*.
-   
+**High sigma value**
 
-    @GROUP@
+    - Default: 0.50.
 
+**Sigma values**
 
-.. class:: infomark
+    - Number of values of sigma to search. Default: 451.
 
-Script parameters:
+**Correlation method**
 
-Lower sigma value: Decimal from 0 to 1, must be less than high sigma value. The default value is 0.05.
-
-High sigma value: Decimal from 0 to 1, must be greater than lower sigma value. The default value is 0.50.
-
-Sigma values: Natural Number; higher values may increase computation time. The default value is 451.
-
-Correlation method: 'pearson' (standard correlation coefficient, default value),  'kendall' (Kendall Tau correlation coefficient), 
-or 'spearman' (Spearman rank correlation).
-
-
+    - Correlation method for preliminary correlation before clustering. Default: pearson.
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-- A TSV of MMC Algorithm Summaries.
-
-- A PDF of unsorted, unsorted, and smoothed dependency heatmaps produced by MMC.
-
+The tool produces four files: a single TSV file and three PDF files.  The TSV file contains the algorithm summaries and is auxiliary. The PDF files contain unsorted, sorted, and sorted and smoothed dependency heatmaps produced by MMC algorithm respectively. 
 
 
 </help>

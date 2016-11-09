@@ -1,5 +1,5 @@
-<tool id="lasso2" name="Lasso / Elastic Net" version="0.0.5">
-    <description>Lasso / Elastic Net Feature Selection.</description>
+<tool id="lasso2" name="LASSO/Elastic Net Variable Selection," version="1.0.0">
+    <description>Feature Selection using LASSO/Elastic Net.</description>
     <requirements>
         <requirement type="python-module">rpy2</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -10,26 +10,22 @@
         <exit_code range="1:" level="warning" description="RuntimeWarning"/>
     </stdio>
     <command interpreter="python">
-        lasso.py
+        lasso_enet_var_select.py
         --input $input
         --design $design
         --ID $uniqID
         --group $group
         --alpha $alpha
-
         --coefficients $coefficients
         --flags $flags
         --plots $plots
-
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Input Group name to separate by" help="Enter group name to calculate from. Spelling and capitalization must be exact."/>
-        <param name="alpha" type="text" value=".5" size="30" label="Alpha" help="Default .5"/>
-
-       
+        <param name="group" type="text" size="30" label="Group/Treatment." help="Name of the column in your Design File that contains group classifications."/>
+        <param name="alpha" type="text" value=".5" size="30" label="α" help="Default .5"/>
     </inputs>
     <outputs>
         <data format="tabular" name="coefficients" label="${tool.name} on ${on_string}: Coefficients"/>
@@ -43,26 +39,22 @@
 
 @TIP_AND_WARNING@
 
-.. class:: infomark
-
 **Tool Description**
 
 The tool performs feature selection for each pairwise comparison of the levels of the group variable specified by user. The selection method is performed based on the logistic regression with Elastic Net penalty (with LASSO being a special case.) 
 
-The penalty structure is controlled by alpha parameter (defined within [0;1] range) with the default value alpha = 0.5, that can be changed by the user. 
-The value alpha = 1 corresponds to LASSO penalty with the strictest selection rule, while the value of the penalty alpha = 0 corresponds to ridge penalty which does not perform variable selection. 
+The penalty structure is controlled by α parameter (defined within [0;1] range) with the default value α = 0.5, that can be changed by the user. 
+The value α = 1 corresponds to LASSO penalty with the strictest selection rule, while the value of the penalty α = 0 corresponds to ridge penalty which does not perform variable selection. 
 
-Variable section is performed for all levels of alpha specified by the user in the range (0;1] with the value 1 corresponding the least number of variables and the most strict selection criterion (LASSO), while the value 0 corresponds only to the estimate shrinkage and no selection (ridge). 
+Variable section is performed for all levels of α specified by the user in the range (0;1] with the value 1 corresponding the least number of variables and the most strict selection criterion (LASSO), while the value 0 corresponds only to the estimate shrinkage and no selection (ridge). 
 
-The best subset of selected variables for a given alpha is selected by a cross validation procedure. 
+The best subset of selected variables for a given α is selected by a cross validation procedure. 
 
 More details about the Elastic Net and LASSO penalties can be found in the paper .
 
 Zou, H., and Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67(2), 301-320..
 
 --------------------------------------------------------------------------------
-
-.. class:: warningmark
 
 **Note**
 
@@ -76,31 +68,28 @@ Zou, H., and Hastie, T. (2005). Regularization and variable selection via the el
 
 **Input**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File (below).
-    Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
 
-    @METADATA@
+@METADATA@
 
-**In addition to your datasets, you need to provide:**
+@UNIQID@
 
-**Unique Feature ID**
+@GROUP@
 
-- The column name in your wide dataset that contains the unique IDs for
-  your features. In our example dataset you would input *Feature*.
+**α**
+
+    - Default .5
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-- A TSV of the values of the coefficients (including zeroes) that were produced by the tool for each pair of comparisons (in columns) 
-
-- a TSV of the corresponding flags (1 for selected) for the features that were selected by the method. 
-
-- a TSV of the pairs of graphs for all pairwise comparisons. The first graph corresponds to the behavior of coefficients based on the value of the penalty, while the second graph provides the details of cross-validation that was used for the optimal penalty detections which finalized the final set of variables produced by the method.
+Three files are outputted.  The first TSV file contains the values of the coefficients (including zeroes) for each feature that were produced by the tool for each pair of comparisons (in columns.)  Those coefficients are produced for the transformed data (part of the LASSO/EN method) and should be interpreted with caution.  The second TSV file contains the corresponding flags for each feature with one (1) corresponding to selected features.  The feature is selected when the corresponding coefficient is not zero.  The third PDF file contains the pairs of graphs for each pairwise comparison between the groups.  For each pairwise comparison the first graph displays the behavior of the coefficients based on the value of the penalty and the shrinkage parameter.  The second graph provides the details of cross-validation procedure that is used for detection of the optimal penalty and for feature selection. 
 
 </help>
 </tool>

@@ -1,10 +1,11 @@
-<tool id="dropFlag2" name="Drop Flags (Beta)" version="2.0.0">
+<tool id="dropFlag2" name="Drop Flagged Features or Samples." version="2.0.0">
     <description>Drop flagged values from data.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">pandas</requirement>
     </requirements>
-    <command interpreter="python">dropFlag.py
+    <command interpreter="python">
+        drop_flags.py
         --input $input
         --design $design
         --ID $uniqID
@@ -68,81 +69,50 @@
 
 **Tool Description**
 
-This tool takes a Wide formatted dataset, a Design dataset and a file
-containing 0/1 indicator flags and drops values based on a user selected
-cutoff value. For feature 0/1 indicator flags, features are dropped from the Wide
-dataset if the sum of all 0/1 indicator flags for a given feature is greater
-than the cutoff value input by the user. For sample 0/1 indicator flags, samples
-are dropped from the Wide dataset if the sum of all 0/1 indicator flags for a
-given sample is greater than the cutoff value input by the user. Note that
-features and samples are dropped in separate operations.
+The tool either drops features (rows) or samples (columns) from the wide format dataset based on the flags from the flag file specified by user.  The user has to specify a flag file and its type.  The flag file should be either wide format flag file used for features or design format flag file used for samples.  The difference between the flag file formats is described in the beginning of the user manual.  For the flag file the user has to specify the name of the column that has feature (sample) names as well as the name of the column containing flags.  Either flag files produced by SECIM Tools or imported separately to Galaxy can be used in this tool.  User has an option to specify which value of the flag column should indicate dropping. 
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-    @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File
-    (below). Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
 
+@METADATA@
 
-    @METADATA@
+@FLAGS@
 
-    **In addition to your datasets, you need to provide:**
+@UNIQID@
 
-    **Unique Feature ID**
+**Unique ID for Flag file (feature ID or sample ID).**
 
-    - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Feature*.
+    - Name of the column in your Flag file that has unique Feature IDs.
 
-      @GROUP_OPTIONAL@
+**Flag to Drop.**
 
-    **Flag 0/1 Indicator File:** A flag indicator file corresponding to flagged
-    (0/1) values for features (shown below) or samples::
+    - Name of the column/row in your Flag File to drop.
 
-        +----------+---------+---------+---------+-----+
-        | Feature  | flag_A | flag_B   | flag_C  | ... |
-        +==========+=========+=========+=========+=====+
-        | one      | 0       | 0       | 0       | ... |
-        | two      | 0       | 1       | 1       | ... |
-        | three    | 0       | 1       | 0       | ... |
-        | four     | 1       | 0       | 0       | ... |
-        | ...      | ...     | ...     | ...     | ... |
-        +----------+---------+---------+---------+-----+
+**Condition of drop.**
 
+    -Select type of conditional to compare in flags.
 
-    **Cutoff Value**
+**Cutoff Value**
 
-    If the sum of all the flags for a feature or sample is greater than this
-    value, then that feature or sample will be dropped from the wide dataset.
+    - Reference value to make comparison. Any rows/columns with a flag value equals,greater or less than this number will be dropped.
 
-    **Drop rows or columns**
+**Type of drop to be used.**
 
-    Select either rows or columns for dropping.
-
+    - Select whether you want to drop by rows or by columns, default rows.
+    
 --------------------------------------------------------------------------------
 
 **Output**
 
-- If dropping features:
-
-    - A TSV that contains only the features where
-    the sum of all indicator flags for the feature is less than the user given
-    cutoff value.
-
-- If dropping samples:
-
-    - A TSV that contains only the features where
-    the sum of all indicator flags for the feature is less than the user given
-    cutoff value.
-
-    - A TSV that contains only the samples where
-    the sum of all the indicator flags for the sample is less than the user given
-    cutoff value.
-
+This tool outputs two TSV files.  The first TSV file is a wide format dataset obtained from the input wide format dataset where flagged features (or samples) have been dropped.  The drooping mechanism that has been applied (features or samples) applied depended on the settings specified by the user and on the structure of the flag file.  The second TSV file is the flag file from the tool input where the corresponding flagged features (rows) or samples (columns) have been dropped.  The flag file produced contains only features (or rows) that have not been dropped from the wide format dataset. 
 
 </help>
 </tool>

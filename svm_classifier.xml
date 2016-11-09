@@ -1,0 +1,114 @@
+
+<tool id="SVMClassifier2" name="Support Vector Machine (SVM) Classifier" version="2.0.0">
+  <description>For classification.</description>
+  <requirements>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">sklearn</requirement>
+  </requirements>
+  <command interpreter="python">
+      svm_classifier.py
+      --train_wide $train_wide
+      --train_design $train_design
+      --test_wide $test_wide
+      --test_design $test_design
+      --group $group
+      --ID $uniqID
+      --kernel $kernel
+      --degree $degree
+      --C $C
+      --a $a
+      --b $b
+      --outfile1 $outfile1
+      --accuracy_on_training $accuracy_on_training
+  </command>
+  <inputs>
+    <param name="train_wide" type="data" format="tabular" label="Training Wide Dataset" help="Dataset missing? See TIP below."/>
+    <param name="train_design" type="data" format="tabular" label="Training Design Dataset" help="Dataset missing? See TIP below."/>
+    <param name="test_wide" type="data" format="tabular" label="Target Wide Dataset" help="Dataset missing? See TIP below."/>
+    <param name="test_design" type="data" format="tabular" label="Target Design Dataset" help="Dataset missing? See TIP below."/>
+    <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+    <param name="kernel" type="select" size="30" display="radio" value="rbf" label="SVM kernel function">
+        <option value="rbf">Radial Basis function (Gaussians)</option>
+        <option value="linear">Linear</option>
+        <option value="poly">Polynomial</option>
+        <option value="sigmoid">Sigmoid</option>
+    </param>
+    <param name="degree" size="30" type="text" value="3" label="Polynomial degree" help='Only used for the polynomial kernel.'/>
+    <param name="C" size="30" type="text" value="1" label="Regularization parameter C" help='Penalizes potential overfitting, and must have a positive value C > 0.'/>
+    <param name="a" size="30" type="text" value="0.0" label="coefficient a" help='Used in the kernel functions above.  Must be greater than zero. However, the value zero is the default and translates to a = 1/n_features, where n_features is the number of features same as the length of the descrition vector same as the number of dimensions.'/>
+    <param name="b" size="30" type="text" value="0.0" label="coefficient b" help='Independent term in kernel function. It is only significant in polynomial and sigmoid kernels.'/>
+  </inputs>
+  <outputs>
+    <data format="csv" name="outfile1" label="${tool.name} on ${on_string}: Classified target"/>
+    <data name="accuracy_on_training" format='tabular' label="${tool.name} on ${on_string}: Accuracy on the trainig set"/>
+  </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+**TIP:**
+If your data is not TAB delimited, use *Text Manipulation-&gt;Convert*.
+
+**WARNINGS:**
+    - (1) This script automatically removes spaces and special characters from strings.
+    - (2) If a feature name starts with a number it will prepend an '_'.
+
+------------------------------------------------------------------------------
+
+**Tool Description**
+
+The tool performs support vector machine (SVM) classification of the samples.  Given a set of supervised training samples belonging to two categories, the SVM training algorithm builds a model based on these samples and the model can be used for predicting the categories of new and unclassified samples. Besides linear classification, SVM can also perform different types of classification with other kernel functions.
+To use the SVM tool, users need to input a training dataset with known categories in the design file and a target dataset. With the choice of a kernel function, the SVM classification is performed for the target data.  The tool also evaluates the accuracy of the SVM algorithm on the training dataset. The support for multiple groups in implemented according to a one-vs-one scheme.
+
+------------------------------------------------------------------------------
+
+**Input**
+
+    - Four input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
+
+@METADATA@
+
+@GROUP@
+
+@UNIQID@
+
+**SVM kernel function**
+
+**Polynomial degree**
+
+    - Only used for the polynomial kernel.
+
+**Regularization parameter C**
+
+    - penalizes potential overfitting, and must have a positive value C greater 0.
+
+**Coefficent A**
+
+    - Used in the kernel functions above.  Must be greater than zero. However,
+      the value zero is the default and translates to a = 1/n_features, where
+      n_features is the number of features same as the length of the descrition
+      vector same as the number of dimensions.
+
+**Coefficent B**
+
+    - Independent term in kernel function. It is only significant in
+      polynomial and sigmoid kernels.
+
+------------------------------------------------------------------------------
+
+**Output**
+
+This tool will output two different files: a TSV file of the target dataset with an additional column called “predicted class” that contains the group information for the indicated feature estimated by the SVM algorithm, and a TSV file containing the accuracy (percentage) on the training dataset and associated parameters that depend on the kernel selection. 
+
+**NOTE:** Some knowledge about the SVM classifier algorithm and different kernel types is recommended for users who plan to use the tool frequently and interpret the results.
+
+
+</help>
+</tool>

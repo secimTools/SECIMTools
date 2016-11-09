@@ -4,21 +4,20 @@
     <tool file="secimtools_v2/anova_fixed.xml"/>
     <tool file="secimtools_v2/bland_altmant_plot.xml"/>
     <tool file="secimtools_v2/blank_feature_filtering_flags.xml"/>
-    <tool file="secimtools_v2/countDigits.xml"/>
-    <tool file="secimtools_v2/CVflag.xml"/>
-    <tool file="secimtools_v2/distributionSamples.xml"/>
-    <tool file="secimtools_v2/distributionFeatures.xml"/>
-    <tool file="secimtools_v2/dropFlag.xml"/>
+    <tool file="secimtools_v2/coefificient_variation_flags.xml"/>
+    <tool file="secimtools_v2/distribution_features.xml"/>
+    <tool file="secimtools_v2/distribution_samples.xml"/>
+    <tool file="secimtools_v2/drop_flags.xml"/>
     <tool file="secimtools_v2/hierarchical_clustering_heatmap.xml"/>
     <tool file="secimtools_v2/imputation.xml"/>
-    <tool file="secimtools_v2/lasso.xml"/>
+    <tool file="secimtools_v2/lasso_enet_var_select.xml"/>
     <tool file="secimtools_v2/linear_discriminant_analysis.xml"/>
-    <tool file="secimtools_v2/logTransform.xml"/>
-    <tool file="secimtools_v2/mergeFlags.xml"/>
-    <tool file="secimtools_v2/mmc.xml"/>
-    <tool file="secimtools_v2/multipleTestAdjust.xml"/>
+    <tool file="secimtools_v2/log_transformation.xml"/>
+    <tool file="secimtools_v2/magnitud_difference_flags.xml"/>
+    <tool file="secimtools_v2/merge_flags.xml"/>
+    <tool file="secimtools_v2/modulated_modularity_clustering.xml"/>
+    <tool file="secimtools_v2/multiple_testing_adjustment.xml"/>
     <tool file="secimtools_v2/normalize.xml"/>
-    <tool file="secimtools_v2/onOff.xml"/>
     <tool file="secimtools_v2/principal_component_analysis.xml"/>
     <tool file="secimtools_v2/peakCompare.xml"/>
     <tool file="secimtools_v2/pls.xml"/>
@@ -28,8 +27,9 @@
     <tool file="secimtools_v2/scatter.xml"/>
     <tool file="secimtools_v2/scatter3D.xml"/>
     <tool file="secimtools_v2/standardized_eucildean_distance.xml"/>
-    <tool file="secimtools_v2/summarizeFlags.xml"/>
-    <tool file="secimtools_v2/subsetData.xml"/>
-    <tool file="secimtools_v2/SVMClassifier.xml"/>
+    <tool file="secimtools_v2/subset_data.xml"/>
+    <tool file="secimtools_v2/summarize_flags.xml"/>
+    <tool file="secimtools_v2/svm_classifier.xml"/>
+    <tool file="secimtools_v2/threshold_based_flags.xml"/>
     </section>
 </toolbox>
