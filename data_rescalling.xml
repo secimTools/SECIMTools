@@ -1,4 +1,4 @@
-<tool id="Normalization" name="Normalization (Beta)" version="1.0,0">
+<tool id="data_rescalling" name="Data Re-Scaling" version="1.0,0">
     <description>Normalize data with different methods.</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
@@ -12,7 +12,7 @@
         <requirement type="python-module">copy</requirement>
     </requirements>
     <command interpreter="python">
-        normalize.py
+        data_rescalling.py
         --input $input
         --design $design
         --uniqID $uniqID
@@ -23,8 +23,7 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-  
-        <param name="method" size="30" type="select" value="" label="Normalization Method" help="Default: Mean">
+        <param name="method" size="30" type="select" value="" label="Normalization Method" help="Method that is going to be used to normalize data (Mean/Sum/Median).">
             <option value="mean" selected="true">Mean</option>
             <option value="sum" selected="true">Sum</option>
             <option value="median" selected="true">Median</option>
@@ -42,38 +41,32 @@
 
 **Tool Description**
 
-This tool normalizes your data based on either the means or the sum of the Sample.
+The tool performs re-scaling of the data in the wide format.  Each individual sample (column) in the dataset is re-scaled by dividing all the feature values within that column by the mean, median or sum of those feature values.  Each sample (column) is re-scaled independently from the other samples.
+
 ------------------------------------------------------------------------------------------
 
 **Input Files**
 
-- Two input datasets are required.
+    - Two input datasets are required.
 
-        @WIDE@
+@WIDE@
 
-    **NOTE:** The sample IDs must match the sample IDs in the Design File
-    (below). Extra columns will automatically be ignored.
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
 
+@METADATA@
 
-    @METADATA@
+@UNIQID@
 
-    **In addition to your datasets, you need to provide:**
+**Normalization Method**
 
-    **Unique Feature ID**
+    - Method that is going to be used to normalize data (Mean/Sum/Median).
 
-    - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Compound*.
-
-   **Method to use for normalization**
-
-    - Method that is going to be used to normalize data (Mean/Sum).
-
-    
 --------------------------------------------------------------------------------
 
 **Output**
 
-- A TSV containing the normalized wide file.
+A wide format dataset will be outputted with the new values that were obtained during the re-scaling procedure with the method selected by the user.
 
 </help>
 </tool>

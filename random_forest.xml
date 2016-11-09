@@ -1,0 +1,83 @@
+<tool id="random-fores2t" name="Random Forest (RF)" version="2.0.0">
+    <description>For feature selection.</description>
+    <requirements>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">sklearn</requirement>
+    </requirements>
+    <command interpreter="python">
+        random_forest.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --group $group
+        --snum $number_of_estimators
+        --num $number_of_factors
+        --out $outfile1
+        --out2 $outfile2
+        --figure $figure
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="number_of_estimators" type="text" size="30" value="1000" label="Number of trees in the forest" help="Run at least 1000 trees."/>
+        <param name="number_of_factors" type="text" size="30" value="20" label="Number of factors to plot" help="Plots 20 most important factors."/>
+    </inputs>
+    <outputs>
+        <data format="csv" name="outfile1" label="${tool.name} on ${on_string}: Transformed Data"/>
+        <data format="csv" name="outfile2" label="${tool.name} on ${on_string}: Importance Factors"/>
+        <data format="pdf" name="figure" label="${tool.name} on ${on_string}: Variable Importance Plot"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The tool performs the idetification of the features that are different between the treatment groups based on the random forest (RF) algorithm.  Based on the Classification and Regression Trees (CART), random forests are an ensemble learning method for classification, regression and variable importance evaluation.
+
+More details about the algorithm can be found in the book:
+Breiman, L. (2001). Random forests. Machine learning, 45(1), 5-32.
+
+--------------------------------------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
+
+
+@METADATA@
+
+@UNIQID@
+
+@GROUP@
+
+**Number of Trees in the Forest**
+
+    - Run at least 1000 trees.
+
+**Number of factors to plot**
+
+    - Plots 20 most important factors.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+This tool will always output three different files: a TSV file with features ranked according to their relative importance, a TSV file where ranked features from the wide format dataset are saved in columns in the order that corresponds to their relative importance and a PDF file with the variable importance plot for the first 50 components.  In the second TSV file samples are saved as rows where the corresponding sample name and group the sample belongs to are saved in the first and second column respectively.
+
+**NOTE:** User has the option to use the outputted TSV file further and to plot any two (or three) features using the Scatter Plot 2D or Scatter Plot 2D tools and the outputted TSV files.  The plot of two (or three) most important features is recommended since it is probably the most meaningful but other features can be also considered for plotting. 
+
+**To plot the 2 most important features** use the SECIM scatterplot tool on the transformed dataset to plot the features againt each other and evaluate the separation levels.
+
+</help>
+</tool>

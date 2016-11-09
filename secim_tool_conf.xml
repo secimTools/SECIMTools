@@ -5,6 +5,7 @@
     <tool file="secimtools_v2/bland_altmant_plot.xml"/>
     <tool file="secimtools_v2/blank_feature_filtering_flags.xml"/>
     <tool file="secimtools_v2/coefificient_variation_flags.xml"/>
+    <tool file="secimtools_v2/data_rescalling.xml"/>
     <tool file="secimtools_v2/distribution_features.xml"/>
     <tool file="secimtools_v2/distribution_samples.xml"/>
     <tool file="secimtools_v2/drop_flags.xml"/>
@@ -16,12 +17,11 @@
     <tool file="secimtools_v2/magnitud_difference_flags.xml"/>
     <tool file="secimtools_v2/merge_flags.xml"/>
     <tool file="secimtools_v2/modulated_modularity_clustering.xml"/>
+    <tool file="secimtools_v2/mzrt_match.xml"/>    
     <tool file="secimtools_v2/multiple_testing_adjustment.xml"/>
-    <tool file="secimtools_v2/normalize.xml"/>
     <tool file="secimtools_v2/principal_component_analysis.xml"/>
-    <tool file="secimtools_v2/peakCompare.xml"/>
-    <tool file="secimtools_v2/pls.xml"/>
-    <tool file="secimtools_v2/randomForest.xml"/>
+    <tool file="secimtools_v2/partial_least_squares.xml"/>
+    <tool file="secimtools_v2/random_forest.xml"/>
     <tool file="secimtools_v2/retention_time_flags.xml"/>
     <tool file="secimtools_v2/run_order_regression.xml"/>
     <tool file="secimtools_v2/scatter_plot_2D.xml"/>
