@@ -14,7 +14,10 @@
         --Y $y
         --Z $z
         --figure $figure
-        --pca $pca
+        
+        #if $pca
+            --pca
+        #end if
 
         #if $design
             --design $design

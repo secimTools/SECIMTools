@@ -19,8 +19,8 @@ import pandas
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
-def getOptions(myOpts=None):
-    description=""
+def getOptions():
+    description="Stand alone function to plot Scatter Plots 2D"
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
     standard = parser.add_argument_group(title='Standard input', 
@@ -75,7 +75,6 @@ def main(args):
     palette = args.palette
 
     usePCA = args.pca
-    print usePCA
 
     if usePCA:
         wide = pandas.DataFrame.from_csv(data,header=3,sep="\t")

@@ -495,12 +495,19 @@ def main(args):
                                                             groups=levels)
     #Open pdfPages
     with PdfPages(os.path.abspath(args.figure)) as pdf:
+
         # Calculate SED
         SEDtoMean,SEDpairwise=calculateSED(dat, ugColors, combName, pdf, args.p)
 
 
-    #Outputing files for tsv files
-    SEDtoMean.to_csv(os.path.abspath(args.toMean), sep='\t')
+    #Outputing files for SEDtoMean
+    SEDtoMean.to_csv(os.path.abspath(args.toMean),columns=["SED_to_Mean"], sep='\t')
+
+    #Outputing files for SEDpairwise
+    if args.group:
+        SEDpairwise.drop(["colors_y","colors_x","colors"],axis=1,inplace=True)
+    else:
+        SEDpairwise.drop(["colors"],axis=1,inplace=True)
     SEDpairwise.to_csv(os.path.abspath(args.pairwise), sep='\t')
 
     #Ending script

@@ -27,11 +27,11 @@
         #end if
 
         #if $paletteGroup
-            --pallete_group $paletteGroup
+            --palette_group $paletteGroup
         #end if
 
         #if $palette
-            --pallete $palette
+            --palette $palette
         #end if
     </command>
     <inputs>
