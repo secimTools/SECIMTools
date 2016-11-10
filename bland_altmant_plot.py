@@ -488,6 +488,7 @@ def main(args):
     flag_sample = Flags(index=dat.sampleIDs)
     flag_sample.addColumn(column='flag_sample_BA_outlier', 
             mask=(propSample >= args.sampleCutoff))
+    flag_sample.df_flags.index.name = "sampleID"
     flag_sample.df_flags.to_csv(args.flagSample, sep='\t')
 
     # Create metabolite level flags
@@ -514,4 +515,5 @@ if __name__ == '__main__':
     # Plotting import info 
     logger.info('Importing Data')
 
+    # Running script
     main(args)
