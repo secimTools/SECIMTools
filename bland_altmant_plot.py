@@ -76,7 +76,8 @@ def getOptions():
     group1.add_argument('-id',"--ID", dest="uniqID", action='store', 
             required=True, help="Name of the column with unique identifiers.")
     group1.add_argument('-g',"--group", dest="group", action='store', 
-            required=False, help="Group/treatment identifier in design file [Optional].")
+            required=False, help="Group/treatment identifier in design file"\
+            " [Optional].")
 
     group2 = parser.add_argument_group(title='Required input', 
             description='Additional required input for this tool.')
@@ -92,7 +93,8 @@ def getOptions():
     group3 = parser.add_argument_group(title='Optional Settings')
     group3.add_argument('-po',"--process_only", dest="processOnly",
             action='store', nargs='+', default=False, required=False, 
-            help="Only process the given groups (list groups separated by spaces) [Optional].")
+            help="Only process the given groups (list groups separated by"\
+            " spaces) [Optional].")
     group3.add_argument('-rc',"--resid_cutoff", dest="residCutoff",
             action='store', default=3, type=int, required=False, 
             help="Cutoff value for flagging outliers [default=3].")
@@ -119,7 +121,8 @@ def getOptions():
     return args
 
 def summarizeFlags(dat, flags, combos):
-    """ Given a set of flags calculate the proportion of times a feature is flagged.
+    """ Given a set of flags calculate the proportion of times a feature is 
+        flagged.
 
     :Arguments:
         :type dat: interface.wideToDesign
@@ -134,8 +137,8 @@ def summarizeFlags(dat, flags, combos):
 
     :Returns:
         :rtype: tuple of pandas.DataFrame
-        :return: Two DataFrames, the first has the proportion of samples that were
-            flagged. The second has the proportion of features flagged.
+        :return: Two DataFrames, the first has the proportion of samples that
+            were flagged. The second has the proportion of features flagged.
 
     """
     # Create a data frame that is the same dimensions as wide. Where each cell
@@ -150,7 +153,7 @@ def summarizeFlags(dat, flags, combos):
 
     for sampleID in dat.sampleIDs:
         # Get list of flags that contain the current sampleID
-        flagList = ['flag_{0}_{1}'.format(c[0], c[1]) for c in combos if sampleID in c]
+        flagList = ["flag_{0}_{1}".format(c[0], c[1]) for c in combos if sampleID in c]
 
         # Sum the flags in flags for the current sampleID
         flagSum.ix[:, sampleID] = flags[flagList].sum(axis=1).values
@@ -165,7 +168,9 @@ def summarizeFlags(dat, flags, combos):
     return propSample, propFeature
 
 def plotFlagDist(propSample, propFeature, pdf):
-    """ Plot the distribution of proportion of samples and features that were outliers.
+    """ 
+    Plot the distribution of proportion of samples and features that 
+    were outliers.
 
     :Arguments:
         :type propSample: pandas.DataFrame
@@ -194,18 +199,34 @@ def plotFlagDist(propSample, propFeature, pdf):
     ## Open pdf for plotting
     ppFlag = PdfPages(pdf)
 
+    # Open figure handler instance
     fh = figureHandler(proj='2d')
     keys = list(propSample.head(30).keys())
+
+    # Plotting quickBar
     bar.quickBar(ax=fh.ax[0],y=list(propSample.head(30).get_values()),x=keys)
-    fh.formatAxis(xTitle='Sample ID',yTitle='Proportion of features that were outliers.',xlim=(0,len(keys) + 1),ylim="ignore")
+
+    # Formating axis
+    fh.formatAxis(xlim=(0,len(keys) + 1), ylim="ignore", xTitle="Sample ID", 
+                yTitle="Proportion of features that were outliers.")
+
+    # Save Figure in PDF
     ppFlag.savefig(fh.fig, bbox_inches='tight')
+
     ## Plot samples
-    
+    # Open figure handler instance
     fh = figureHandler(proj='2d')
     keys = list(propFeature.head(30).keys())
+
+    # Plot bar plot
     bar.quickBar(ax=fh.ax[0],y=list(propFeature.head(30).get_values()),x=keys)
-    fh.formatAxis(xTitle='Feature ID',yTitle='Proportion of samples that a feature was an outlier.',xlim=(0,len(keys) + 1),ylim="ignore")
-    ppFlag.savefig(fh.fig, bbox_inches='tight')
+
+    # Format Axis
+    fh.formatAxis(xlim=(0,len(keys) + 1), ylim="ignore", xTitle="Feature ID",
+        yTitle="Proportion of samples that a feature was an outlier.")
+
+    # Plot samples
+    ppFlag.savefig(fh.fig, bbox_inches="tight")
 
     ## Close pdf
     ppFlag.close()
@@ -277,7 +298,8 @@ def runRegression(x, y):
     (dffits, thresh) = infl.dffits
     DF = abs(dffits) > thresh
 
-    influence = pd.DataFrame({'cooksD': CD[0], 'cooks_pval': CD[1], 'dffits': DF}, index=fitted.index)
+    influence = pd.DataFrame({'cooksD': CD[0], 'cooks_pval': CD[1], 'dffits': DF},
+                 index=fitted.index)
 
     # Get Residuals
     presid = pd.Series(results.resid_pearson, index=results.resid.index)
@@ -326,6 +348,7 @@ def makeBA(x, y, ax, fh):
     mask2 = infl['cooks_pval'] <= 0.5
     mask3 = infl['dffits']
     mask = mask1 | mask2 | mask3
+    
     # Create BA plot
     scatter.scatter2D(ax=ax,x=mean[~mask], y=diff[~mask],colorList='b')
     scatter.scatter2D(ax=ax,x=mean[mask], y=diff[mask], colorList='r')
@@ -335,6 +358,7 @@ def makeBA(x, y, ax, fh):
     ax.plot(mean, fitted, 'r')
     ax.axhline(0, color='k')
     ax.plot(mean, upper, 'r:')
+
     #Adjust axes
     fh.formatAxis(axnum=1,xlim='ignore',ylim='ignore',axTitle='Bland-Altman Plot',
         xTitle='Mean\n{0} & {1}'.format(x.name, y.name),
@@ -421,14 +445,16 @@ def iterateCombo(dat, combo, pdf):
 
     # Build plot title
     title = buildTitle(dat, c1, c2)
+
     # Add plot title to the figure
     fh.formatAxis(figTitle=title)
 
-
     # Stablishing a tight layout for the figure
     plt.tight_layout(pad=2,w_pad=.05)
+
     # Shinking figure
     fh.shrink(top=.85,bottom=.25,left=.15,right=.9)
+    
     # Output figure to pdf
     fh.addToPdf(dpi=90,pdfPages=pdf)
 
