@@ -14,7 +14,7 @@
         #end if
     </command>
     <inputs>
-        <param name="input" format="tabular" type="data"  label="Wide Dataset" multiple="true" help="Name of the column in your Wide Dataset that has unique Feature IDs." />
+        <param name="input" format="tabular" type="data"  label="Wide Dataset" multiple="true" help="Input dataset in wide format and tab separated.CTRL+CLICK to select multiple. If not tab separated see TIP below." />
         <param name="flagUniqID" type="text" size="30" value="" label="Unique ID for Flag file (feature ID or sample ID)" help="Name of the column in your Flag file that has unique Feature IDs."/>
     </inputs>
     <outputs>
