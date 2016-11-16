@@ -145,6 +145,7 @@ def main(args):
 
     # Round results to 4 digits and save
     results = results.round(4)
+    results.index.name="rowID"
     results.to_csv(args.oname, sep="\t")
 
 if __name__ == '__main__':
