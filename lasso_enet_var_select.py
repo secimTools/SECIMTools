@@ -1,41 +1,42 @@
-######################################################################################
-# DATE: 2016/August/10
+################################################################################
+# DATE: 2016/November/18
 # 
 # MODULE: lasso.py
 #
 # VERSION: 1.0
 # 
-# AUTHOR: Matt Thoburn (mthoburn@ufl.edu) ed. Miguel Ibarra (miguelib@ufl.edu)
+# AUTHOR:  Miguel Ibarra (miguelib@ufl.edu), Matt Thoburn (mthoburn@ufl.edu).
 #
 # DESCRIPTION: This runs an Elastic Net or Lasso Test on wide data
 #
-#######################################################################################
-import numpy as np
-from numpy import genfromtxt
-import pandas
+################################################################################
+#Built in packages
+import os
+import sys
+import logging
+import argparse
+import itertools as it
+from argparse import RawDescriptionHelpFormatter
 
 #R
 import rpy2
+import rpy2.robjects.numpy2ri
 import rpy2.robjects as robjects
+from rpy2.robjects import pandas2ri
 from rpy2.robjects.packages import importr
 from rpy2.robjects.vectors import StrVector
-import rpy2.robjects.numpy2ri
 from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
-from rpy2.robjects import pandas2ri
-#Add Ons
-
 
 #Local packages
-from interface import wideToDesign
 import logger as sl
-#Built in packages
-import logging
-import argparse
-from argparse import RawDescriptionHelpFormatter
-import sys
-import itertools as it
+from interface import wideToDesign
 
-import os
+# External Packages
+import pandas
+import numpy as np
+from numpy import genfromtxt
+
+
 
 def getOptions(myOpts=None):
     description="""  
@@ -45,79 +46,75 @@ def getOptions(myOpts=None):
                                     formatter_class=RawDescriptionHelpFormatter)
     standard = parser.add_argument_group(title='Standard input', 
                                 description='Standard input for SECIM tools.')
-    standard.add_argument( "-i","--input", dest="input", action='store', required=True, 
-                        help="Input dataset in wide format.")
-    standard.add_argument("-d" ,"--design",dest="design", action='store', required=True,
-                        help="Design file.")
-    standard.add_argument("-id", "--ID",dest="uniqID", action='store', required=True, 
-                        help="Name of the column with unique identifiers.")
-    standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
-                        default=False,help="Name of the column with groups.")
-    standard.add_argument("-a","--alpha",dest="alpha",action="store",required=True,
-                        help="TODO")
+    standard.add_argument( "-i","--input", dest="input", action='store', 
+                        required=True, help="Input dataset in wide format.")
+    standard.add_argument("-d" ,"--design",dest="design", action='store', 
+                        required=True, help="Design file.")
+    standard.add_argument("-id", "--ID",dest="uniqID", action='store', 
+                        required=True, help="Name of the column with unique"\
+                        " identifiers.")
+    standard.add_argument("-g", "--group", dest="group", action='store', 
+                        required=False, default=False, help="Name of the column"\
+                        " with groups.")
+    standard.add_argument("-a", "--alpha", dest="alpha", action="store",
+                        required=True, help="Alpha Value.")
 
     output = parser.add_argument_group(title='Required output')
-    output.add_argument("-c","--coefficients",dest="coefficients",action="store",required=False,
-                        help="Path of en coefficients file.")
-    output.add_argument("-f","--flags",dest="flags",action="store",required=False,
-                        help="Path of en flag file.")
-    output.add_argument("-p","--plots",dest="plots",action="store",required=False,
-                        help="Path of en coefficients file.")                            
+    output.add_argument("-c", "--coefficients", dest="coefficients", 
+                        action="store", required=False, help="Path of en"\
+                        " coefficients file.")
+    output.add_argument("-f", "--flags", dest="flags", action="store", 
+                        required=False, help="Path of en flag file.")
+    output.add_argument("-p", "--plots", dest="plots", action="store", 
+                        required=False, help="Path of en coefficients file.")                            
     args = parser.parse_args()
     return(args)
 
 def main(args):
     #Get R ready
-    #print os.path.realpath("alexScript2.R")
+    # Get current pathway
     myPath = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
     
-    my_r_script_path = os.path.join(myPath, "alexScript2.R")
-    print my_r_script_path
-    #print os.path.abspath(".")
-    #exit()
-    #os.chdir("/home/mthoburn/Desktop/work/galaxy/tools/GalaxyTools")
-    #os.chdir(os.path.abspath("."))
-    #print os.getcwd()
+    # Stablish path for LASSO script
+    my_r_script_path = os.path.join(myPath, "lasso_enet.R")
+    logger.info(my_r_script_path)
+
+    # Activate pandas2ri
     pandas2ri.activate()
+
+    # Running LASSO R sctrip
     with open(my_r_script_path, 'r') as f:
         rFile = f.read()
-    alexScript = STAP(rFile, "alexScript2")
+    lassoEnetScript = STAP(rFile, "lasso_enet")
     
-    #Input
-    dat = args.input
-    design = args.design
-    uniqID = args.uniqID
-    group = args.group
-    alpha = args.alpha
-    
-    coef = args.coefficients
-    flags = args.flags
-    plots = args.plots
+    # Importing data trought interface
+    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group)
+    dat.trans = dat.transpose()
+    dat.trans.columns.name=""
 
-    data = wideToDesign(dat,design,uniqID,group=group)
-    data.trans = data.transpose()
-    data.trans.columns.name=""
+    # Dropping nan columns from design
+    removed = dat.design[dat.design[dat.group]== "nan"]
+    dat.design = dat.design[dat.design[dat.group] != "nan"]
+    dat.trans.drop(removed.index.values, axis=0, inplace=True)
+    logger.info("{0} removed from analysis".format(removed.index.values))
+    dat.design.rename(columns={dat.group:"group"}, inplace=True)
+    dat.trans.rename(columns={dat.group:"group"}, inplace=True)
 
-
-    #data.trans.to_csv("test-data/alex.tsv",sep='\t')
     #Generate a group List
-    datG = data.design.groupby(data.group)
-    groupList = list()
-    for title, group in datG:
-        if len(group.index) > 2:
-            groupList.append(title)
-    #print groupList
+    groupList = [title for title, group in dat.design.groupby("group") 
+                if len(group.index) > 2]
 
     #Turn group list into pairwise combinations
     comboMatrix = np.array(list(it.combinations(groupList,2)))
     comboLength = len(comboMatrix)
 
-
     #Run R
-    returns = alexScript.lassoEN(data.trans,data.design,comboMatrix,comboLength,alpha,plots)
-    robjects.r['write.table'](returns[0],file=coef,sep='\t',quote=False, row_names = False, col_names = True)
-    robjects.r['write.table'](returns[1],file=flags,sep='\t',quote=False, row_names = False, col_names = True)
-    #pandas2ri.ri2pandas(returns[1]).to_csv("test-data/en_flags.tsv",sep='\t')
+    returns = lassoEnetScript.lassoEN(dat.trans, dat.design, comboMatrix, 
+                                    comboLength,args.alpha,args.plots)
+    robjects.r['write.table'](returns[0],file=args.coefficients,sep='\t',
+                            quote=False, row_names = False, col_names = True)
+    robjects.r['write.table'](returns[1],file=args.flags,sep='\t',
+                            quote=False, row_names = False, col_names = True)
 
 
 if __name__ == '__main__':
@@ -126,7 +123,15 @@ if __name__ == '__main__':
 
     # Activate Logger
     logger = logging.getLogger()
-
     sl.setLogger(logger)
 
+    # Import data
+    logger.info(u"Importing data with the folowing parameters: "\
+        "\n\tWide:  {0}"\
+        "\n\tDesign:{1}"\
+        "\n\tUniqID:{2}"\
+        "\n\tUniqID:{3}".\
+        format(args.input,args.design,args.uniqID,args.alpha))
+
+    # Run main script
     main(args)
