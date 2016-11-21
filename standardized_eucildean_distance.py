@@ -509,8 +509,13 @@ def main(args):
 
 
     #Outputing files for tsv files
-    SEDtoMean.to_csv(os.path.abspath(args.toMean), sep='\t')
-    SEDpairwise.to_csv(os.path.abspath(args.pairwise), sep='\t')
+    SEDtoMean.to_csv(os.path.abspath(args.toMean), index_label="sampleID",
+                    columns=["SED_to_Mean"],sep='\t')
+    SEDpairwise.drop(["colors"],axis=1,inplace=True)
+    if args.group:
+        SEDpairwise.drop(["colors_x","colors_y"],axis=1,inplace=True)
+    SEDpairwise.to_csv(os.path.abspath(args.pairwise),index_label="sampleID",
+                    sep='\t')
 
     #Ending script
     logger.info("Script complete.")
