@@ -4,6 +4,7 @@ import re
 import sys
 
 # Add-on packages
+import numpy as np
 import pandas as pd
 
 
@@ -122,6 +123,9 @@ class wideToDesign:
 
             # Drop design rows that are not in the wide data set
             self.design = self.design[self.design.index.isin(self.sampleIDs)]
+
+            # Removing characters from data!!!!!!(EXPERIMENTAL)
+            self.wide.replace(r'\D',np.nan,regex=True,inplace=True)
 
         except:
             print "Error:", sys.exc_info()[0]

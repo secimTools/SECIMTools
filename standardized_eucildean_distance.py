@@ -36,6 +36,7 @@ import manager_color as ch
 import module_lines as lines
 import  module_scatter as  scatter
 from interface import wideToDesign
+from manager_color import colorHandler
 from manager_figure import figureHandler
 
 def getOptions():
@@ -92,6 +93,14 @@ def getOptions():
                          sort by separeted by comas.""")
     optional.add_argument("-lg","--log",dest="log",action="store",required=False, 
                         default=False,help="Log file")
+
+    plot = parser.add_argument_group(title='Plot options')
+    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
+                        default="tableau", help="Name of the palette to use.")
+    plot.add_argument("-col","--color",dest="color",action="store",required=False, 
+                        default="Tableau_10", help="Name of a valid color scheme"\
+                        " on the selected palette")
+
 
     args = parser.parse_args()
     return(args)
@@ -287,7 +296,7 @@ def calculateSED(dat, levels, combName, pdf, p):
             # Sending error if less than 3 groups
             if len(group.index) < 3:
                 logger.error("Group {0} has less than 3 elements".\
-                	format(level))
+                    format(level))
                 exit()
 
             #Getting SED per group
@@ -485,7 +494,7 @@ def main(args):
     #Parsing data with interface
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
                         anno=anno)
-
+    
     #Removing groups with just one sample
     if args.group:
         dat.removeSingle()
@@ -495,19 +504,12 @@ def main(args):
                                                             groups=levels)
     #Open pdfPages
     with PdfPages(os.path.abspath(args.figure)) as pdf:
-
         # Calculate SED
         SEDtoMean,SEDpairwise=calculateSED(dat, ugColors, combName, pdf, args.p)
 
 
-    #Outputing files for SEDtoMean
-    SEDtoMean.to_csv(os.path.abspath(args.toMean),columns=["SED_to_Mean"], sep='\t')
-
-    #Outputing files for SEDpairwise
-    if args.group:
-        SEDpairwise.drop(["colors_y","colors_x","colors"],axis=1,inplace=True)
-    else:
-        SEDpairwise.drop(["colors"],axis=1,inplace=True)
+    #Outputing files for tsv files
+    SEDtoMean.to_csv(os.path.abspath(args.toMean), sep='\t')
     SEDpairwise.to_csv(os.path.abspath(args.pairwise), sep='\t')
 
     #Ending script
@@ -530,6 +532,11 @@ if __name__ == '__main__':
                 \tRun Order: {4}
                 """ .format(args.input, args.design, args.uniqID, args.group, 
                     args.order))
+
+    # Stablishing color palette
+    palette = colorHandler(pal=args.palette, col=args.color)
+    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+                args.palette))
 
     #Main script
     main(args)
