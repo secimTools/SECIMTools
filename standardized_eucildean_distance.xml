@@ -24,7 +24,7 @@
         	--levels $levels
         #end if
         #if $p
-            --p $p
+            --per $p
         #end if
 
         #if $order
