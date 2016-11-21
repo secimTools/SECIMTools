@@ -375,7 +375,7 @@ def getSED(wide):
 
     #Calculate variance
     variance = wide.var(axis=1,ddof=1)
-
+    
     #Flag if variance == 0
     variance[variance==0]=1
 
@@ -395,7 +395,7 @@ def getSED(wide):
     #Converts to NaN the diagonal
     for index, row in SEDpairwise.iterrows():
         SEDpairwise.loc[index, index] = np.nan
-
+    print SEDtoMean
     #Returning data
     return SEDtoMean,SEDpairwise
 
@@ -462,11 +462,6 @@ def main(args):
     Main Script 
     """
 
-    #Getting palettes for data and cutoffs
-    global cutPalette
-    dataPalette = ch.colorHandler(pal="tableau",col="Tableau_10")
-    cutPalette = ch.colorHandler(pal="tableau",col="TrafficLight_9")
-
     #Checking if levels
     subGroups = []
     if args.levels and args.group:
@@ -511,6 +506,8 @@ def main(args):
     #Outputing files for tsv files
     SEDtoMean.to_csv(os.path.abspath(args.toMean), index_label="sampleID",
                     columns=["SED_to_Mean"],sep='\t')
+
+
     SEDpairwise.drop(["colors"],axis=1,inplace=True)
     if args.group:
         SEDpairwise.drop(["colors_x","colors_y"],axis=1,inplace=True)
@@ -539,7 +536,8 @@ if __name__ == '__main__':
                     args.order))
 
     # Stablishing color palette
-    palette = colorHandler(pal=args.palette, col=args.color)
+    dataPalette = colorHandler(pal=args.palette, col=args.color)
+    cutPalette = ch.colorHandler(pal=args.palette,col="TrafficLight_9")
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
 
