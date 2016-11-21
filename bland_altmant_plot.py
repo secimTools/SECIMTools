@@ -288,6 +288,8 @@ def runRegression(x, y):
     """
     # Fit linear regression
     # Drop missing values for the regression
+    y=y.apply(float)
+    x=x.apply(float)
     model = sm.OLS(y, x, missing='drop')
     results = model.fit()
 
@@ -335,6 +337,9 @@ def makeBA(x, y, ax, fh):
 
     """
     # Make BA plot
+    x=x.apply(float)
+    y=y.apply(float)
+
     diff = x - y
     mean = (x + y) / 2
 
@@ -387,11 +392,7 @@ def makeScatter(x, y, ax, fh):
         :returns: A matplotlib axis with a scatter plot.
 
     """
-    # Get Names of the combo
-    xname = x.name
-    yname = y.name
-
-    #logger.debug('{0}, {1}'.format(x.name, y.name))
+    #logger.info('{0}, {1}'.format(x.name, y.name))
     # Get Upper and Lower CI from regression
     lower, upper, fitted, resid, infl = runRegression(x, y)
 
@@ -405,7 +406,7 @@ def makeScatter(x, y, ax, fh):
     lines.drawCutoff(x=x2,y=fitted,ax=ax)
     lines.drawCutoff(x=x2,y=upper,ax=ax)
     # Adjust plot
-    fh.formatAxis(axnum=0,xTitle=xname,yTitle=yname,axTitle='Scatter plot',grid=False)
+    fh.formatAxis(axnum=0,xTitle=x.name,yTitle=y.name,axTitle='Scatter plot',grid=False)
 
 def iterateCombo(dat, combo, pdf):
     """ A function to iterate generate all plots and flags.
