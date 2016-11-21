@@ -130,7 +130,7 @@ if __name__ == '__main__':
         "\n\tWide:  {0}"\
         "\n\tDesign:{1}"\
         "\n\tUniqID:{2}"\
-        "\n\tUniqID:{3}".\
+        "\n\tAlpha: {3}".\
         format(args.input,args.design,args.uniqID,args.alpha))
 
     # Run main script
