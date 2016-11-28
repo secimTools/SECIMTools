@@ -85,13 +85,17 @@ def main(args):
     # from the design file
     logger.info(u"Getting sampleNames to drop")
     if args.group:
-        iToDrop=[group.index.tolist() for name,group in dat.design.groupby(dat.group) 
-                if name in drops]
-        iToDrop=list(chain(iToDrop))[0]
+        iToDrop=list()
+        for name,group in dat.design.groupby(dat.group):
+            if name in drops:
+                iToDrop+=(group.index.tolist())
     else:
         iToDrop=drops
 
     # Dropping elements
+    #for name,group in dat.design.groupby(dat.group) :
+    #    if name in drops:
+    #        print group.index.tolist()
     selectedWide = dat.wide.drop(iToDrop, axis=1, inplace=False)
 
     # Output wide results
