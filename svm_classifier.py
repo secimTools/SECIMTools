@@ -89,8 +89,15 @@ def main(args):
     #trainig the SVM
     classes=train[args.group].copy()
     del train[args.group]
-    model= svm.SVC(kernel=args.kernel, C=float(args.C), gamma=float(args.a), 
-                    coef0=float(args.b), degree=int(args.degree))
+    try:
+        logger.info("Running SVM model")
+        model= svm.SVC(kernel=args.kernel, C=float(args.C), gamma=float(args.a), 
+                        coef0=float(args.b), degree=int(args.degree))
+    except:
+        logger.info("Model failed with gamma = {0} trying automatica gamma"\
+                    "instead.".format(float(args.a)))
+        model= svm.SVC(kernel=args.kernel, C=float(args.C), gamma="auto", 
+                        coef0=float(args.b), degree=int(args.degree))
     model.fit(train,classes)
 
     #predicting classes with the SVM
