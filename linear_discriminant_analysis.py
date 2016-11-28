@@ -69,7 +69,7 @@ def getOptions(myopts=None):
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-o","--out",dest="out",action='store',required=True, 
                         help="Name of output file to store scores. TSV format.")
-    output.add_argument("-f","--figure",dest="figure",action="store",required=False,
+    output.add_argument("-f","--figure",dest="figure",action="store",required=True,
                         help="Name of output file to store scatter plots for scores")
 
     plot = parser.add_argument_group(title='Plot options')
@@ -127,13 +127,11 @@ def runLDA(dat,nComp):
         :rtype scores_df: pandas.DataFrame
         :return scores_df: Scores of the LDA.
     """
-    logger.info(u"Runing LDA on data")
-
     #Initialize LDA class and stablished number of coponents
     lda = LinearDiscriminantAnalysis(n_components=nComp)
 
     #Get scores of LDA (Fit LDA)
-    scores = lda.fit_transform(dat.wide.T,dat.transpose()["group"])
+    scores = lda.fit_transform(dat.wide.T,dat.transpose()[dat.group])
 
     # If no number the componentes specified asign the max number of componentes
     # calculated by the meythod.
@@ -188,7 +186,7 @@ def plotScores(scores, pdf, dat):
         fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=dat.group)
 
         # Shrink axis to fit legend
-        fh.shrink()
+        fh.shrink(right=.6)
 
         # Despine axis
         fh.despine(fh.ax[0])
@@ -209,6 +207,7 @@ def main(args):
         dat.wide = dropMissing(dat.wide)
 
     #Run LDA
+    logger.info(u"Runing LDA on data")
     scores_df = runLDA(dat, nComp=args.nComponents)
  
     # Save scores
