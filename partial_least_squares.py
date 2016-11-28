@@ -50,18 +50,22 @@ def getOptions(myopts=None):
                                     formatter_class=RawDescriptionHelpFormatter)
     standard = parser.add_argument_group(title='Standard input', 
                                 description='Standard input for SECIM tools.')
-    standard.add_argument( "-i","--input", dest="input", action='store', required=True, 
-                        help="Input dataset in wide format.")
-    standard.add_argument("-d" ,"--design",dest="design", action='store', required=True,
-                        help="Design file.")
-    standard.add_argument("-id", "--ID",dest="uniqID", action='store', required=True, 
-                        help="Name of the column with unique identifiers.")
-    standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
-                        default=False,help="Name of the column with groups.")
-    standard.add_argument("-t", "--toCompare",dest="toCompare", action='store', required=False, 
-                        default=True,help="Name of the elements to compare in group col.")
+    standard.add_argument( "-i","--input", dest="input", action='store', 
+                        required=True, help="Input dataset in wide format.")
+    standard.add_argument("-d" ,"--design",dest="design", action='store', 
+                        required=True, help="Design file.")
+    standard.add_argument("-id", "--ID",dest="uniqID", action='store',
+                        required=True,  help="Name of the column with unique"\
+                        " identifiers.")
+    standard.add_argument("-g", "--group",dest="group", action='store',
+                        required=False, default=False, help="Name of the column"\
+                        " with groups.")
+    standard.add_argument("-t", "--toCompare",dest="toCompare", action='store', 
+                        required=False, default=True, help="Name of"
+                        " the elements to compare in group col.")
     standard.add_argument("-n", "--nComp",dest="nComp", action='store', 
-                        required=False,  default=3, type = int,help="Number of components.")
+                        required=False,  default=3, type = int, help="Number"\
+                        " of components.")
 
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-os","--outScores",dest="outScores",action='store',required=True, 
@@ -77,6 +81,34 @@ def getOptions(myopts=None):
     args = parser.parse_args()
     return(args)
 
+def dropMissing(wide):
+    """
+    Drops missing data out of the wide file
+
+    :Arguments:
+        :type wide: pandas.core.frame.DataFrame
+        :param wide: DataFrame with the wide file data
+
+    :Returns:
+        :rtype wide: pandas.core.frame.DataFrame
+        :return wide: DataFrame with the wide file data without missing data
+    """
+    #Warning
+    logger.warn("Missing values were found")
+
+    #Count of original
+    nRows = len(wide.index)      
+
+    #Dropping 
+    wide.dropna(inplace=True)    
+
+    #Count of dropped
+    nRowsNoMiss = len(wide.index)  
+
+    #Warning
+    logger.warn("{} rows were dropped because of missing values.".
+                format(nRows - nRowsNoMiss))
+    return wide
 
 def runPLS(trans, group,toCompare,nComp):
     """
@@ -228,14 +260,19 @@ def plotScores(scores,pdf,dat):
         # Adding figure to pdf
         fh1.addToPdf(dpi=90,pdfPages=pdf)
 
-
-
 def main(args):
+    # Splitting groups to compare
+    toCompare = args.toCompare.split(",")
+
     # Loading data trought Interface
     dat = wideToDesign(args.input, args.design, args.uniqID,group=args.group)
 
-    # Splitting groups to compare
-    toCompare = args.toCompare.split(",")
+    # Treat everything as numeric
+    dat.wide = dat.wide.applymap(float)
+
+    #Dropping missing values
+    if np.isnan(dat.wide.values).any():
+        dat.wide = dropMissing(dat.wide)
 
     # Transpose data
     dat.trans = dat.transpose()
@@ -256,7 +293,6 @@ def main(args):
 
     #Ending script
     logger.info(u"Finishing running of PLS")
-
 
 if __name__ == '__main__':
     # Command line options

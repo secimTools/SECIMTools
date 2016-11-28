@@ -202,6 +202,9 @@ def main(args):
     #Loading data trought Interface
     dat = wideToDesign(args.input, args.design, args.uniqID,group=args.group)
 
+    # Treat everything as numeric
+    dat.wide = dat.wide.applymap(float)
+    
     #Dropping missing values
     if np.isnan(dat.wide.values).any():
         dat.wide = dropMissing(dat.wide)

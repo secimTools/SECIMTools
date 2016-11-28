@@ -13,7 +13,7 @@
         --design $design
         --ID $uniqID
         --group $group
-        --toCompare $toCompare
+        --toCompare "$toCompare"
         --nComp $nComp
         --outScores $outScores
         --outWeights $outWeights
