@@ -156,10 +156,6 @@ def main(args):
         dat.wide = dat.wide[dat.design.index.values]
         logger.info(u"Sorting by runOrderf")
 
-    # Set palette of colors
-    palette = colorHandler(pal="tableau", col="Tableau_20")
-    logger.info(u"Using tableau Tableau_20 palette")
-
     # Get colors for each sample based on the group
     dat.design,uGroups,combName=palette.getColors(design=dat.design,groups=levels)
 
@@ -182,6 +178,10 @@ if __name__ == '__main__':
     # Setting logging
     logger = logging.getLogger()
     sl.setLogger(logger)
+
+    # Set palette of colors
+    palette = colorHandler(pal="tableau", col="Tableau_10")
+    logger.info(u"Using tableau Tableau_10 palette")
 
     # main
     main(args)
