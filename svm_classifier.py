@@ -1,5 +1,6 @@
 # Built-in packages
 import os, sys
+import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
@@ -8,6 +9,9 @@ import numpy as np
 from pandas import DataFrame as DF
 from pandas import read_csv, read_table
 from sklearn import svm
+
+# Local packages
+import logger as sl
 from interface import wideToDesign
 
 def getOptions(myOpts=None):
@@ -121,6 +125,10 @@ def main(args):
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
+
+    # Turn on logging
+    logger = logging.getLogger()
+    sl.setLogger(logger)
 
     # Main
     main(args)
