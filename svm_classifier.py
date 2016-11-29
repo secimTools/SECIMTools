@@ -56,34 +56,73 @@ def getOptions(myOpts=None):
 
     return(args)
 
+def dropMissing(wide):
+    """
+    Drops missing data out of the wide file
+
+    :Arguments:
+        :type wide: pandas.core.frame.DataFrame
+        :param wide: DataFrame with the wide file data
+
+    :Returns:
+        :rtype wide: pandas.core.frame.DataFrame
+        :return wide: DataFrame with the wide file data without missing data
+    """
+    #Warning
+    logger.warn("Missing values were found")
+
+    #Count of original
+    nRows = len(wide.index)      
+
+    #Dropping 
+    wide.dropna(inplace=True)    
+
+    #Count of dropped
+    nRowsNoMiss = len(wide.index)  
+
+    #Warning
+    logger.warn("{} rows were dropped because of missing values.".
+                format(nRows - nRowsNoMiss))
+    return wide
+
 def correctness(x):
-    if x[group]==x['predicted_class']:
+    if x[args.group]==x['predicted_class']:
         return 1
     else:
         return 0
 
-def accuracy(data):
+def getAccuracy(data):
     data['correct']=data.apply(correctness,axis=1)
     accuracy=float(data['correct'].sum())/data.shape[0]
     return accuracy
 
 def main(args):
-    # Load training dataset trought the interface
-    train = wideToDesign(wide=args.train_wide, design= args.train_design, 
-                uniqID=args.uniqID, group=args.group).transpose()
-
     # Load test dataset
     test_design=read_table(args.test_design)
 
-    # If groups
+    # Loading target dataset trought the interface
     if args.group in test_design.columns:
         target = wideToDesign(wide=args.test_wide,design = args.test_design, 
-                uniqID=args.uniqID, group=args.group).transpose()
-
-    # If not groups
+                uniqID=args.uniqID, group=args.group)
     else:
         target = wideToDesign(wide=args.test_wide,design=args.test_design, 
-                uniqID=args.uniqID).transpose()
+                uniqID=args.uniqID)
+    
+    # Load training dataset trought the interface
+    train = wideToDesign(wide=args.train_wide, design= args.train_design, 
+                        uniqID=args.uniqID, group=args.group)
+    
+    #Dropping missing values on train
+    train.wide = train.wide.applymap(float)
+    if np.isnan(train.wide.values).any():
+        train.wide = dropMissing(train.wide)
+    train = train.transpose()
+
+    #Dropping missing values on target
+    target.wide = target.wide.applymap(float)
+    if np.isnan(target.wide.values).any():
+        target.wide = dropMissing(target.wide)
+    target = target.transpose()
 
     # make sure test and train have the same features
     for i in target.columns:
@@ -98,7 +137,7 @@ def main(args):
         model= svm.SVC(kernel=args.kernel, C=float(args.C), gamma=float(args.a), 
                         coef0=float(args.b), degree=int(args.degree))
     except:
-        logger.info("Model failed with gamma = {0} trying automatica gamma"\
+        logger.info("Model failed with gamma = {0} trying automatic gamma "\
                     "instead.".format(float(args.a)))
         model= svm.SVC(kernel=args.kernel, C=float(args.C), gamma="auto", 
                         coef0=float(args.b), degree=int(args.degree))
@@ -118,8 +157,7 @@ def main(args):
     train['predicted_class']=model.predict(train)
     train[args.group]=classes
 
-
-    accuracy=str(accuracy(train)*100)+' percent'
+    accuracy=str(getAccuracy(train)*100)+' percent'
     os.system("echo %s > %s"%(accuracy,args.accuracy_on_training))
 
 if __name__ == '__main__':
