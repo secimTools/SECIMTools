@@ -1,0 +1,84 @@
+<tool id="compadducID" name="Compounds/Adducts identification" version="2.0.0">
+    <description>Identifies compounds/adducts based on m/z and retention time.</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">matplotlib_venn</requirement>
+        <requirement type="python-module">palettable</requirement>
+    </requirements>
+    <command interpreter="python">
+        compound_identification.py
+        --anno $anno
+        --uniqID $uniqID
+        --mzID $mzID
+        --rtID $rtID
+        --library "$library"
+        --output $output
+    </command>
+    <inputs>
+        <param name="anno" type="data" format="tabular" label="Annotation File" help="Input dataset 1 in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" optional="false" label="Unique Feature ID for Annotation file" help="Name of the column on you annotation file containing unique ID."/>
+        <param name="mzID" type="text" size="30" value="" optional="false" label="Mass/Charge for annotation file." help="Name of the column on you annotation file containing m/z."/>
+        <param name="rtID" type="text" size="30" value="" optional="false" label="Retention Time for annotation file" help="Name of the column on you annotation file containing Retention Time."/>
+        <param name="library" size="30" type="select" value="" label="Compound/Adduct Library" help="Library that is going to be used on the compound/adduct identification process.">
+            <option value="comp_neg_met" selected="true">Negative Metabolite</option>
+            <option value="comp_neg_trp" selected="true">Negative Tryptophan</option>
+            <option value="comp_pos_met" selected="true">Positive Metabolite</option>
+            <option value="comp_pos_trp" selected="true">Positive Tryptophan</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="output" label="identified_compounds_adducts_on_${anno.name}"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+This tools identifies compounds or adducts for a given annotation file based on different libraries.
+
+The possible libraries to choose from are:
+    - Negative Metabolite
+    - Negative Tryptophan
+    - Positive Metabolite
+    - Positive Tryptophan
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@MZRTFILE@
+
+**Unique Feature ID for Annotation file**
+
+    - Name of the column on you annotation file containing unique ID.
+
+
+**Mass/Charge for Annotation file**
+
+    - Name of the column on you annotation file containing m/z.
+
+**Retention Time for Annotation file**
+
+    - Name of the column on you annotation file containing Retention Time.
+
+**Library**
+
+    - Library that is going to be used on the compound/adduct identification process.
+
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+TODO
+
+</help>
+</tool>
+

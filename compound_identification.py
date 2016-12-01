@@ -121,21 +121,43 @@ def identiyOnTarget (library,target,MZCut,RTCut):
     #print identified_df.T["met_356"]
     return identified_df
 
-def main(args):
+def selectLibraryFile (lib):
+    # Get current pathway
+    myPath = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+    fol = "compound_adduct_libraries/"
+
     # Setting library path
-    if args.library == "neg":
-        path_lib =  os.path.abspath("metabolite_dictionaries/Negative_Garrett_"\
-            "MetaboliteStd_Library_TG_edited091516.csv")
-    elif args.library == "pos":
-        path_lib = os.path.abspath("metabolite_dictionaries/Negative_Garrett_"\
-            "MetaboliteStd_Library_TG_edited091516.csv")
+    if   lib == "comp_neg_met":
+        file = fol+"library_Negative_Garrett_MetaboliteStd_Library_TG_edited091516.csv"
+    elif lib == "comp_neg_trp":
+        file = fol+"library_Negative_Tryptophan_specific_metabolites4-15-2016TG-15-2016TG.csv"
+    elif lib == "comp_pos_met":
+        file = fol+"library_Positive_Garrett_MetaboliteStd_Library_RP_edited110316JG.csv"
+    elif lib == "comp_pos_trp":
+        file = fol+"library_Positive_Tryptophan_specific_metabolites4-15-2016TG-15-2016TG.csv"
     else:
         logger.error("Select a valid library.")
 
+    # UniqID,mz and rt colum names on library file
+    uid  = "name"
+    mz   = "mz"
+    rt   = "rt"
+
+    # Stablish path for LASSO script
+    lib_path = os.path.join(myPath, file)
+    logger.info(lib_path)
+
+    # Returning stuff
+    return lib_path,uid,mz,rt
+
+def main(args):
+    # Setting library path
+    lib_path,lib_id,lib_mz,lib_rt = selectLibraryFile(lib=args.library)
+
     # Loading library file
     logger.info("Loading {0} library file".format(args.library))
-    library = interface.annoFormat(anno=path_lib, uniqID="name", mz="mz", 
-                                rt="retention")
+    library = interface.annoFormat(anno=lib_path, uniqID=lib_id, mz=lib_mz, 
+                                    rt=lib_rt)
     # Read target file
     target = interface.annoFormat(anno=args.anno, uniqID=args.uniqID,
                                 mz=args.mzID, rt=args.rtID)
