@@ -4,7 +4,8 @@
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">pandas</requirement>
     </requirements>
-    <command interpreter="python">onOff.py
+    <command interpreter="python">
+        threshold_based_flags.py
         --input $input
         --design $design
         --ID $uniqID
