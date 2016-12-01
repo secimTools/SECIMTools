@@ -91,7 +91,6 @@ def main(args):
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group)
     dat.trans = dat.transpose()
     dat.trans.columns.name=""
-
     # Dropping nan columns from design
     removed = dat.design[dat.design[dat.group]== "nan"]
     dat.design = dat.design[dat.design[dat.group] != "nan"]
