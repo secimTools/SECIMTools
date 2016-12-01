@@ -17,7 +17,7 @@
       --design $design
       --uniqID $uniqID
       --group $group
-      --blank $blank
+      --blank "$blank"
       --bff $bff
       --criteria $cv
       --outflags $outflags

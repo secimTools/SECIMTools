@@ -12,7 +12,7 @@
       --input $input
       --design $design
       --ID $uniqID
-      --factors $factor
+      --factors "$factor"
       --factorTypes $factorTypes
       --out $results_table
       --fig $qq_plots

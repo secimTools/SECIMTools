@@ -25,7 +25,7 @@
           --group $group
 
           #if $processOnly:
-            --process_only $processOnly
+            --process_only "$processOnly"
           #end if
       #end if
 
