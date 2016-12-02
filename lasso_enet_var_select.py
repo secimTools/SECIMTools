@@ -70,6 +70,35 @@ def getOptions(myOpts=None):
     args = parser.parse_args()
     return(args)
 
+def dropMissing(wide):
+    """
+    Drops missing data out of the wide file
+
+    :Arguments:
+        :type wide: pandas.core.frame.DataFrame
+        :param wide: DataFrame with the wide file data
+
+    :Returns:
+        :rtype wide: pandas.core.frame.DataFrame
+        :return wide: DataFrame with the wide file data without missing data
+    """
+    #Warning
+    logger.warn("Missing values were found")
+
+    #Count of original
+    nRows = len(wide.index)      
+
+    #Dropping 
+    wide.dropna(inplace=True)    
+
+    #Count of dropped
+    nRowsNoMiss = len(wide.index)  
+
+    #Warning
+    logger.warn("{} rows were dropped because of missing values.".
+                format(nRows - nRowsNoMiss))
+    return wide
+
 def main(args):
     #Get R ready
     # Get current pathway
@@ -89,12 +118,24 @@ def main(args):
     
     # Importing data trought interface
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group)
+
+    # Dropping missing values
+    # Treat everything as numeric
+    dat.wide = dat.wide.applymap(float)
+
+    #Dropping missing values
+    if np.isnan(dat.wide.values).any():
+        dat.wide = dropMissing(dat.wide)
+
+    # Transpossing data
     dat.trans = dat.transpose()
     dat.trans.columns.name=""
+
     # Dropping nan columns from design
     removed = dat.design[dat.design[dat.group]== "nan"]
     dat.design = dat.design[dat.design[dat.group] != "nan"]
     dat.trans.drop(removed.index.values, axis=0, inplace=True)
+
     logger.info("{0} removed from analysis".format(removed.index.values))
     dat.design.rename(columns={dat.group:"group"}, inplace=True)
     dat.trans.rename(columns={dat.group:"group"}, inplace=True)
