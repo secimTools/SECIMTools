@@ -12,20 +12,22 @@
         --uniqID $uniqID
         --mzID $mzID
         --rtID $rtID
-        --library "$library"
+        --library $library
+        --libuniqID $libuniqID
+        --libmzID $libmzID
+        --librtID $librtID
         --output $output
     </command>
     <inputs>
         <param name="anno" type="data" format="tabular" label="Annotation File" help="Input dataset 1 in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" optional="false" label="Unique Feature ID for Annotation file" help="Name of the column on you annotation file containing unique ID."/>
-        <param name="mzID" type="text" size="30" value="" optional="false" label="Mass/Charge for annotation file." help="Name of the column on you annotation file containing m/z."/>
-        <param name="rtID" type="text" size="30" value="" optional="false" label="Retention Time for annotation file" help="Name of the column on you annotation file containing Retention Time."/>
-        <param name="library" size="30" type="select" value="" label="Compound/Adduct Library" help="Library that is going to be used on the compound/adduct identification process.">
-            <option value="comp_neg_met" selected="true">Negative Metabolite</option>
-            <option value="comp_neg_trp" selected="true">Negative Tryptophan</option>
-            <option value="comp_pos_met" selected="true">Positive Metabolite</option>
-            <option value="comp_pos_trp" selected="true">Positive Tryptophan</option>
-        </param>
+        <param name="uniqID" type="text" size="30" value="" optional="false" label="Annotation Unique Feature ID column" help="Name of the column on you annotation file containing unique ID"/>
+        <param name="mzID" type="text" size="30" value="" optional="false" label="Annotation Mass/Charge column." help="Name of the column on you annotation file containing m/z."/>
+        <param name="rtID" type="text" size="30" value="" optional="false" label="Annotation Retention Time" help="Name of the column on you annotation file containing Retention Time."/>
+        <param name="library" type="data" format="tabular" label="Library File" help="Library dataset. If not tab separated see TIP below."/>
+        <param name="libuniqID" type="text" size="30" value="" optional="false" label="Library compound name colum" help="Name of the column on you library file containing the compounds/adducts names to use for the identification."/>
+        <param name="libmzID" type="text" size="30" value="" optional="false" label="Library Mass/Charge column" help="Name of the column on you library file containing m/z."/>
+        <param name="librtID" type="text" size="30" value="" optional="false" label="Library Retention Time column" help="Name of the column on you library file containing Retention Time."/>
+
     </inputs>
     <outputs>
         <data format="tabular" name="output" label="identified_compounds_adducts_on_${anno.name}"/>
@@ -39,45 +41,49 @@
 
 **Tool Description**
 
-This tools identifies compounds or adducts for a given annotation file based on different libraries.
-
-The possible libraries to choose from are:
-    - Negative Metabolite
-    - Negative Tryptophan
-    - Positive Metabolite
-    - Positive Tryptophan
+This tools identifies compounds or adducts in a given annotation file based on a library.
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-    - Two input datasets are required.
+    - Two input datasets are required, a library file and an annotation target file.
 
 @MZRTFILE@
 
-**Unique Feature ID for Annotation file**
+**Annotation Unique Feature ID column**
 
     - Name of the column on you annotation file containing unique ID.
 
 
-**Mass/Charge for Annotation file**
+**Annotation Mass/Charge column**
 
     - Name of the column on you annotation file containing m/z.
 
-**Retention Time for Annotation file**
+**Annotation Retention Time**
 
     - Name of the column on you annotation file containing Retention Time.
 
-**Library**
+**Library File**
 
-    - Library that is going to be used on the compound/adduct identification process.
+**Library compound name colum**
+
+    - Name of the column on you library file containing the compounds/adducts names to use.
+
+**Library Mass/Charge column**
+
+    - Name of the column on you library file containing m/z.
+
+**Library Retention Time column**
+
+    - Name of the column on you library file containing Retention Time.
 
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-TODO
+This tool outputs a copy of the original annotation input file with an additional column for the identified compopunds/adducts from the library file.
 
 </help>
 </tool>

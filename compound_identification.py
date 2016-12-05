@@ -39,17 +39,26 @@ def getOptions(myopts=False):
     required.add_argument('-a', "--anno", dest="anno", action="store",
                         required=True, help="Out path for first file")
     required.add_argument("-id", "--uniqID", dest="uniqID", action="store",
-                        required=True, default="rowID", help="Name of the"\
+                        required=True, default="", help="Name of the"\
                         "column in file that contains the uniqID")
     required.add_argument("-mzi", "--mzID", dest="mzID", action="store",
-                        required=True, default="MZ", help="Name of the column"\
+                        required=True, default="", help="Name of the column"\
                         " in file that contains MZ")
     required.add_argument("-rti", "--rtID", dest="rtID", action="store",
-                        required=True, default="RT", help="Name of the column"\
+                        required=True, default="", help="Name of the column"\
                         " in file that contains RT")
     required.add_argument('-lib',"--library",dest="library",action='store',
-                        required=True, default="neg",help="Library to use for"\
+                        required=True, default="",help="Library to use for"\
                         "the matching.")
+    required.add_argument("-lid", "--libuniqID", dest="libid", action="store",
+                        required=True, default="", help="Name of the"\
+                        "column in the library file that contains the uniqID")
+    required.add_argument("-lmzi", "--libmzID", dest="libmz", action="store",
+                        required=True, default="", help="Name of the column"\
+                        " in the library file that contains MZ")
+    required.add_argument("-lrti", "--librtID", dest="librt", action="store",
+                        required=True, default="", help="Name of the column"\
+                        " in the library file that contains RT")
 
     output = parser.add_argument_group(title='Output files', 
                                     description='Output paths for the program')
@@ -121,47 +130,14 @@ def identiyOnTarget (library,target,MZCut,RTCut):
     #print identified_df.T["met_356"]
     return identified_df
 
-def selectLibraryFile (lib):
-    # Get current pathway
-    myPath = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-    fol = "compound_adduct_libraries/"
-
-    # Setting library path
-    if   lib == "comp_neg_met":
-        file = fol+"library_Negative_Garrett_MetaboliteStd_Library_TG_edited091516.csv"
-    elif lib == "comp_neg_trp":
-        file = fol+"library_Negative_Tryptophan_specific_metabolites4-15-2016TG-15-2016TG.csv"
-    elif lib == "comp_pos_met":
-        file = fol+"library_Positive_Garrett_MetaboliteStd_Library_RP_edited110316JG.csv"
-    elif lib == "comp_pos_trp":
-        file = fol+"library_Positive_Tryptophan_specific_metabolites4-15-2016TG-15-2016TG.csv"
-    else:
-        logger.error("Select a valid library.")
-
-    # UniqID,mz and rt colum names on library file
-    uid  = "name"
-    mz   = "mz"
-    rt   = "rt"
-
-    # Stablish path for LASSO script
-    lib_path = os.path.join(myPath, file)
-    logger.info(lib_path)
-
-    # Returning stuff
-    return lib_path,uid,mz,rt
-
 def main(args):
-    # Setting library path
-    lib_path,lib_id,lib_mz,lib_rt = selectLibraryFile(lib=args.library)
-
     # Loading library file
-    logger.info("Loading {0} library file".format(args.library))
-    library = interface.annoFormat(anno=lib_path, uniqID=lib_id, mz=lib_mz, 
-                                    rt=lib_rt)
+    library = interface.annoFormat(anno=args.library, uniqID=args.libid, 
+                                    mz=args.libmz, rt=args.librt)
     # Read target file
     target = interface.annoFormat(anno=args.anno, uniqID=args.uniqID,
                                 mz=args.mzID, rt=args.rtID)
-
+                                
     # Matching target file with library file
     logger.info("Identifying compounds")
     identified_df = identiyOnTarget(library=library, target=target, MZCut=0.005,
