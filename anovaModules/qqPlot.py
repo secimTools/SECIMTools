@@ -81,7 +81,8 @@ def qqPlot(tresid, tfit, oname):
                 grid=False,showX=False,showY=False)
 
             # Format axis 2
-            fig.formatAxis(axnum=2,showX=False,showY=False)
+            fig.formatAxis(axnum=2,grid=False,showX=False,showY=False,
+                axTitle=" ")
 
             # Format axis 3
             fig.formatAxis(axnum=3,axTitle="Fitted Values vs Residuals",

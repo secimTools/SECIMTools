@@ -69,7 +69,9 @@ def volcano(combo, results, oname, cutoff=4):
             lines.drawCutoffHoriz(y=cutoff, ax=volcanoPlot.ax[0])
 
             # Format axis (volcanoPlot)
-            volcanoPlot.formatAxis(axTitle=key,grid=False)
+            volcanoPlot.formatAxis(axTitle=key, grid=False,
+                yTitle="-log10(p-value) for Diff of treatment = {0}".format(key),
+                xTitle="Diff of treatment = {0}".format(key))
 
             # Add figure to PDF
             volcanoPlot.addToPdf(pdfPages=pdf)
