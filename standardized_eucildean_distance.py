@@ -98,7 +98,7 @@ def getOptions():
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
-                        default="Tableau_10", help="Name of a valid color scheme"\
+                        default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
 
 
@@ -123,6 +123,35 @@ def plotCutoffs(cut_S,ax,p):
             cl=cutPalette.ugColors[cut_S.name],
             lb="{0} {1}% Cutoff: {2}".format(cut_S.name,round(p*100,3),
             round(float(cut_S.values[0]),1)),ls="--",lw=2)
+
+def dropMissing(wide):
+    """
+    Drops missing data out of the wide file
+
+    :Arguments:
+        :type wide: pandas.core.frame.DataFrame
+        :param wide: DataFrame with the wide file data
+
+    :Returns:
+        :rtype wide: pandas.core.frame.DataFrame
+        :return wide: DataFrame with the wide file data without missing data
+    """
+    #Warning
+    logger.warn("Missing values were found")
+
+    #Count of original
+    nRows = len(wide.index)      
+
+    #Dropping 
+    wide.dropna(inplace=True)    
+
+    #Count of dropped
+    nRowsNoMiss = len(wide.index)  
+
+    #Warning
+    logger.warn("{} rows were dropped because of missing values.".
+                format(nRows - nRowsNoMiss))
+    return wide
 
 def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, levels):
     """
@@ -375,7 +404,7 @@ def getSED(wide):
 
     #Calculate variance
     variance = wide.var(axis=1,ddof=1)
-    
+
     #Flag if variance == 0
     variance[variance==0]=1
 
@@ -395,7 +424,7 @@ def getSED(wide):
     #Converts to NaN the diagonal
     for index, row in SEDpairwise.iterrows():
         SEDpairwise.loc[index, index] = np.nan
-    print SEDtoMean
+
     #Returning data
     return SEDtoMean,SEDpairwise
 
@@ -462,6 +491,10 @@ def main(args):
     Main Script 
     """
 
+    #Getting palettes for data and cutoffs
+    global cutPalette
+    cutPalette = ch.colorHandler(pal="tableau",col="TrafficLight_9")
+
     #Checking if levels
     subGroups = []
     if args.levels and args.group:
@@ -490,6 +523,13 @@ def main(args):
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
                         anno=anno)
     
+    # Treat everything as numeric
+    dat.wide = dat.wide.applymap(float)
+
+    #Dropping missing values
+    if np.isnan(dat.wide.values).any():
+        dat.wide = dropMissing(dat.wide)
+
     #Removing groups with just one sample
     if args.group:
         dat.removeSingle()
@@ -506,8 +546,6 @@ def main(args):
     #Outputing files for tsv files
     SEDtoMean.to_csv(os.path.abspath(args.toMean), index_label="sampleID",
                     columns=["SED_to_Mean"],sep='\t')
-
-
     SEDpairwise.drop(["colors"],axis=1,inplace=True)
     if args.group:
         SEDpairwise.drop(["colors_x","colors_y"],axis=1,inplace=True)
@@ -537,7 +575,6 @@ if __name__ == '__main__':
 
     # Stablishing color palette
     dataPalette = colorHandler(pal=args.palette, col=args.color)
-    cutPalette = ch.colorHandler(pal=args.palette,col="TrafficLight_9")
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
 

@@ -14,15 +14,28 @@ def getOptions():
     description = """"""
     parser = argparse.ArgumentParser(description=description)
 
-    group1 = parser.add_argument_group(title='Standard input', description='Standard input for SECIM tools.')
-    group1.add_argument("--input", dest="fname", action='store', required=True, help="Input dataset in wide format.")
-    group1.add_argument("--design", dest="dname", action='store', required=True, help="Design file.")
-    group1.add_argument("--ID", dest="uniqID", action='store', required=True, help="Name of the column with unique identifiers.")
-    group1.add_argument("--output", dest="output", action='store', required=True, help="Output path for the created flag file.")
-    group1.add_argument("--group", dest="group", action='store', required=True, default=None, help="Add the option to separate sample IDs by treatement name. ")
+    group1 = parser.add_argument_group(title='Standard input', 
+            description='Standard input for SECIM tools.')
+    group1.add_argument("-i", "--input", dest="fname", action='store', 
+                        required=True, help="Input dataset in wide format.")
+    group1.add_argument("-d", "--design", dest="dname", action='store', 
+                        required=True, help="Design file.")
+    group1.add_argument("-id", "--ID", dest="uniqID", action='store', 
+                        required=True, help="Name of the column with unique:"\
+                        " identifiers.")
+    group1.add_argument("-o", "--output", dest="output", action='store', 
+                        required=True, help="Output path for the created "\
+                        "flag file.")
+    group1.add_argument("-g", "--group", dest="group", action='store', 
+                        required=True, default=None, help="Add the option to "\
+                        "separate sample IDs by treatement name. ")
 
-    group2 = parser.add_argument_group(title='Optional input', description='Optional input for On/Off tool.')
-    group2.add_argument("--cutoff", dest="cutoff", action='store', default=30000, type=int, required=False, help="Cutoff to use for which values to flag. This defaults to 30,000")
+    group2 = parser.add_argument_group(title='Optional input', 
+            description='Optional input for On/Off tool.')
+    group2.add_argument("-c", "--cutoff", dest="cutoff", action='store', 
+                        required=False, default=30000, type=int, 
+                        help="Cutoff to use for which values to flag. This "\
+                        "defaults to 30,000")
 
     args = parser.parse_args()
 
@@ -47,7 +60,8 @@ def main(args):
         meanOn = mask.mean(axis=1)
 
         # Add mean column of boolean values to flags
-        df_offFlags.addColumn(column='flag_feature_' + title + '_off', mask=meanOn > 0.5)
+        df_offFlags.addColumn(column='flag_feature_' + title + '_off', 
+                            mask=meanOn > 0.5)
 
     # flag_met_off column
     maskFlagMetOff = df_offFlags.df_flags.any(axis=1)

@@ -24,34 +24,35 @@ def getOptions(myOpts = None):
 
     # Get command line arguments.
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c",'--correlation',
-            choices=('pearson', 'kendall', 'spearman'),
-            default='pearson',
-            help=(
-                "Compute correlation coefficients using either "
-                "'pearson' (standard correlation coefficient), "
-                "'kendall' (Kendall Tau correlation coefficient), or "
-                "'spearman' (Spearman rank correlation)."))
+    parser.add_argument("-c",'--correlation', 
+                        choices=('pearson', 'kendall', 'spearman'),
+                        default='pearson',
+                        help=("Compute correlation coefficients using either "
+                        "'pearson' (standard correlation coefficient), "
+                        "'kendall' (Kendall Tau correlation coefficient), or "
+                        "'spearman' (Spearman rank correlation)."))
     parser.add_argument("-i",'--input', required=True,
-            help=(
-                'Path to the data file, which is expected to be in '
-                'tabular (tsv) format '
-                'with row and column labels, and for which the rows '
-                'are to be clustered.'))
-    parser.add_argument("-d","--design",dest="design",required=True,help="Path of design file")
-    parser.add_argument("-id","--ID",dest="uniqID",required=True,help="Unique Identifier")
+                        help=('Path to the data file, which is expected to be in'
+                        'tabular (tsv) format '
+                        'with row and column labels, and for which the rows '
+                        'are to be clustered.'))
+    parser.add_argument("-d","--design", dest="design", required=True, 
+                        help="Path of design file")
+    parser.add_argument("-id","--ID",dest="uniqID",required=True, 
+                        help="Unique Identifier")
     parser.add_argument("-sl",'--sigmaLow', type=float, default=0.05,
-            help='Low value of sigma (Default: 0.05).')
+                        help='Low value of sigma (Default: 0.05).')
     parser.add_argument("-sh",'--sigmaHigh', type=float, default=0.50,
-            help='High value of sigma (Default: 0.50).')
+                        help='High value of sigma (Default: 0.50).')
     parser.add_argument("-sn",'--sigmaNum', type=float, default=451,
-            help='Number of values of sigma to search (Default: 451).')
+                        help='Number of values of sigma to search (Default: 451).')
 
     # Specify output file names relative to the directory
     # containing the input csv file.
-    parser.add_argument('-f',"--figure",dest="figure",required=True,help="MMC Heatmaps")
-    parser.add_argument('-o',"--out",dest="out",required=True,help="Output TSV name")
-
+    parser.add_argument('-f', "--figure", dest="figure", required=True,
+                        help="MMC Heatmaps")
+    parser.add_argument('-o',"--out", dest="out", required=True, 
+                        help="Output TSV name")
 
     args = parser.parse_args()
     return args

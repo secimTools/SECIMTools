@@ -48,7 +48,7 @@ def getOptions():
     #Output Paths
     output = parser.add_argument_group(title='Output paths', description=
                                        "Paths for the output files")
-    output.add_argument("-on","--outnormalized",dest="outnormalized",action="store",
+    output.add_argument("-o","--out",dest="out",action="store",
                         required=True,help="Output path for flags file[TSV]")
 
     args = parser.parse_args()
@@ -107,7 +107,7 @@ def main(args):
     normalized_df = toNormalize_df.T
 
     # Saving data
-    normalized_df.to_csv(os.path.abspath(args.outnormalized),sep="\t")
+    normalized_df.to_csv(os.path.abspath(args.out),sep="\t")
 
 if __name__ == '__main__':
     #Import data

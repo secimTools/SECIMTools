@@ -58,10 +58,10 @@ def getOptions(myopts=None):
                         required=True,  help="Name of the column with unique"\
                         " identifiers.")
     standard.add_argument("-g", "--group",dest="group", action='store',
-                        required=False, default=False, help="Name of the column"\
+                        required=True, default=False, help="Name of the column"\
                         " with groups.")
     standard.add_argument("-t", "--toCompare",dest="toCompare", action='store', 
-                        required=False, default=True, help="Name of"
+                        required=True, default=True, help="Name of"
                         " the elements to compare in group col.")
     standard.add_argument("-n", "--nComp",dest="nComp", action='store', 
                         required=False,  default=3, type = int, help="Number"\
@@ -194,7 +194,7 @@ def plotScatterplot(data,fh,x,y,design,title,group=False):
                 format(x,y))
     if group:
         glist=list(design[group])
-        ch = colorHandler("tableau","BlueRed_6")
+        ch = colorHandler("tableau","Tableau_20")
         colorList, ucGroups = ch.getColorsByGroup(design=design,group=group,uGroup=sorted(set(glist)))
     else:
         glist = list()

@@ -76,7 +76,7 @@ def getOptions(myopts=None):
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
-                        default="Tableau_10", help="Name of a valid color scheme"\
+                        default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
 
 
@@ -136,7 +136,7 @@ def runLDA(dat,nComp):
     # If no number the componentes specified asign the max number of componentes
     # calculated by the meythod.
     if nComp is None:
-        nComp = len(lda.means_)
+        nComp = scores.shape[1]
 
     # Create column names for scores file
     LVNames = ["Component_{0}".format(i+1) for i in range(nComp)]
@@ -169,7 +169,7 @@ def plotScores(scores, pdf, dat):
     for x, y in list(combinations(scores.columns.tolist(),2)):
 
         # Create a single-figure figure handler object
-        fh = figureHandler(proj="2d")
+        fh = figureHandler(proj="2d", figsize=(14,8))
 
         # Create a title for the figure
         title = "{0} vs {1}".format(x,y)
@@ -186,7 +186,7 @@ def plotScores(scores, pdf, dat):
         fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=dat.group)
 
         # Shrink axis to fit legend
-        fh.shrink(right=.6)
+        fh.shrink()
 
         # Despine axis
         fh.despine(fh.ax[0])

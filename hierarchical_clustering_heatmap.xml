@@ -1,5 +1,5 @@
-<tool id="hch" name="Hierarchical Cluster Heatmap" version="1.0,0">
-	<description>Plots a heatmap.</description>
+<tool id="hch" name="Hierarchical Clustering Heatmap (Beta)" version="1.0,0">
+	<description>Calculates means per group and plots a heatmap.</description>
 	<requirements>
 		<requirement type="python-module">numpy</requirement>
 	    <requirement type="python-module">pandas</requirement>
@@ -18,7 +18,7 @@
 		--dendogram
 		#end if
 		--labels $labels
-		--heatmap $heatmap
+		--fig $fig
 	</command>
 	<inputs>
 		<param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
@@ -31,7 +31,7 @@
 		</param>
 	</inputs>
 	<outputs>
-    	<data format="pdf" name="heatmap" label="${tool.name} on ${on_string}"/>
+    	<data format="pdf" name="fig" label="${tool.name} on ${on_string}"/>
 	</outputs>
 	<macros>
 			<import>macros.xml</import>
@@ -42,7 +42,7 @@
 
 **Tool Description**
 
-This tool generates a hierarchical cluster heatmap from a wide format dataset.  This script works best for the log-transformed data without missingness.  The user has an option to add hierarchical clustering structure on the top of the heatmap figure and the names of the features.
+This tool plots a heatmap of your data.
 
 **NOTE:** This script works best with log transformed data.
 
@@ -50,32 +50,29 @@ This tool generates a hierarchical cluster heatmap from a wide format dataset.  
 
 **Input**
 
-	- Two input datasets are required.
+- Two input datasets are required.
 
-@WIDE@
+		@WIDE@
 
-**NOTE:** The sample IDs must match the sample IDs in the Design File
-(below). Extra columns will automatically be ignored.
+    **NOTE:** The sample IDs must match the sample IDs in the Design File
+    (below). Extra columns will automatically be ignored.
 
 
-@METADATA@
+    @METADATA@
 
-@UNIQID@
+    **In addition to your datasets, you need to provide:**
 
-**Add dendogram on heatmap**
+    **Unique Feature ID**
 
-	- It will print a dendogram over the heatmap.
-
-**Remove labels from plots**
-
-	- X-axis labels
-	- Y-axis labels
+    - The column name in your wide dataset that contains the unique IDs for
+      your features. In our example dataset you would input *Compound*.
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-The tool outputs single PDF file with the hierarchical cluster heatmap.  Based on the user settings hierarchical clustering structure tree or feature IDs may be included in the heatmap. 
+	- A PDF containing a heatmap for your data.
+
 
 </help>
 </tool>

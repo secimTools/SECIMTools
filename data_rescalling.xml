@@ -17,7 +17,7 @@
         --design $design
         --uniqID $uniqID
         --method $method
-        --outnormalized $outnormalized
+        --out $out
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
@@ -30,7 +30,7 @@
         </param>
     </inputs>
     <outputs>
-        <data format="tabular" name="outnormalized" label="${tool.name} on ${on_string}: Normalized data"/>
+        <data format="tabular" name="out" label="${tool.name} on ${on_string}: Normalized data"/>
     </outputs>
     <macros>
             <import>macros.xml</import>

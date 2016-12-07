@@ -49,14 +49,14 @@ def getOptions():
                         required=True, help="Input dataset in wide format.")
     standar.add_argument("-d","--design",dest="design", action='store', 
                         required=True, help="Design file.")
-    standar.add_argument("-ID","--uniqID",dest="uniqID",action="store",
+    standar.add_argument("-id","--uniqID",dest="uniqID",action="store",
                         required=True, help="""Name of the column with unique 
                         dentifiers.""")
 
     #Output Paths
     output = parser.add_argument_group(title='Output paths', description=
                                        "Paths for the output files")
-    output.add_argument("-hm","--heatmap",dest="heatmap",action="store",
+    output.add_argument("-f","--fig",dest="fig",action="store",
                         required=True,help="Output path for heatmap file[PDF]")
 
     #Optional Input
@@ -66,7 +66,7 @@ def getOptions():
     optional.add_argument("-den", "--dendogram", dest="dendogram", action='store_true', 
                          required=False, help="Indicate wether you want to use "\
                          "a dendogram or not in the heatmap.")
-    optional.add_argument("-l", "--labels", dest="labels", action='store', 
+    optional.add_argument("-l", "--labels", dest="labels", action='store', default="None",
                          required=False, choices=["x","y","x,y","None"], help="Indicate wich"\
                          "labels if any that you want to remove from the plot.")
 
@@ -100,12 +100,12 @@ def main(args):
         hcFig = hm.plotHCHeatmap(dat.wide,hcheatmap=True,xlbls=x,ylbls=y)
 
         # Saving figures
-        hcFig.savefig(args.heatmap,format="pdf")
+        hcFig.savefig(args.fig,format="pdf")
 
     #Plotting without a dendogram single heatmap
     else:
         # Creating figure Handler object
-        hmapFigureH = figureHandler(proj='2d', figsize=(13,13))
+        hmapFigureH = figureHandler(proj='2d', figsize=(14,14))
         logger.info(u"""Figure created""")
 
         # Creating axis
@@ -115,7 +115,7 @@ def main(args):
         hmapFigureH.formatAxis(xTitle="sampleID")
 
         # Saving figure
-        hmapFigureH.export(out=args.heatmap,dpi=300)
+        hmapFigureH.export(out=args.fig,dpi=300)
 
 
 if __name__ == '__main__':

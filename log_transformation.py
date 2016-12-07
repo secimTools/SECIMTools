@@ -19,18 +19,18 @@ def getOptions():
     description = """ One-Way ANOVA """
     parser = argparse.ArgumentParser(description=description, 
                         formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument("--input", dest="input", action='store', required=True, 
-                        help="Input dataset in wide format.")
-    parser.add_argument("--design", dest="design", action='store', required=True, 
-                        help="Design file.")
-    parser.add_argument("--ID", dest="uniqID", action='store', required=True, 
-                        help="Name of the column with unique identifiers.")
-    parser.add_argument("--log", dest="log", action='store', required=True,
-                        choices=['log', 'log10', 'log2'],  default=None, 
-                        help="Group/treatment identifiers. Can be multiple names \
-                        separated by a space.")
-    parser.add_argument("--out", dest="oname", action='store', required=True, 
-                        help="Output file name.")
+    parser.add_argument("-i","--input", dest="input", action='store', 
+                        required=True, help="Input dataset in wide format.")
+    parser.add_argument("-d","--design", dest="design", action='store', 
+                        required=True, help="Design file.")
+    parser.add_argument("-id","--ID", dest="uniqID", action='store', 
+                        required=True, help="Name of the column with unique"\
+                        " identifiers.")
+    parser.add_argument("-l", "--log", dest="log", action='store', 
+                        required=True, choices=['log', 'log10', 'log2'], 
+                        default=None,  help="Type of log to be used")
+    parser.add_argument("-o","--out", dest="oname", action='store', 
+                        required=True, help="Output file name.")
     parser.add_argument("--debug", dest="debug", action='store_true', 
                         required=False, help="Add debugging log output.")
     args = parser.parse_args()
@@ -77,11 +77,11 @@ if __name__ == '__main__':
         sl.setLogger(logger)
 
     # Import data
-    logger.info(u"Importing data with the folowing parameters: \
-        \n\tWide:  {0}\
-        \n\tDesign:{1}\
-        \n\tUniqID:{2}\
-        \n\tLog:   {3}".\
+    logger.info(u"Importing data with the folowing parameters: "\
+        "\n\tWide:  {0}"\
+        "\n\tDesign:{1}"\
+        "\n\tUniqID:{2}"\
+        "\n\tLog:   {3}".\
         format(args.input,args.design,args.uniqID,args.log))
 
     main(args)

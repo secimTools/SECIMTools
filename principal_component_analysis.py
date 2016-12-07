@@ -208,7 +208,7 @@ def plotScatterplot2D(loadings,pdf,dat,nloads=3):
     for x, y in list(combinations(loadings.columns.tolist()[:nloads],2)):
 
         # Create a single-figure figure handler object
-        fh = figureHandler(proj="2d")
+        fh = figureHandler(proj="2d", figsize=(14,8))
 
         # Create a title for the figure
         title = "{0} vs {1}".format(x,y)
