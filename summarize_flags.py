@@ -37,20 +37,20 @@ import logger as sl
 
 """Function to pull arguments"""
 def getOptions():
-    parser = argparse.ArgumentParser(description="Drops rows or columns given \
-                                    an specific cut value and condition")
+    parser = argparse.ArgumentParser(description="Drops rows or columns given "\
+                                    "an specific cut value and condition")
     
-    required = parser.add_argument_group(title='Required Input', 
-                                        description='Requiered input to the \
-                                        program.')
+    required = parser.add_argument_group(title="Required Input", 
+                                        description="Requiered input to the "\
+                                        "program.")
     required.add_argument('-f',"--flags",dest="flagFile", action="store",
                         required=True,help="Flag file.")
     required.add_argument('-id',"--ID",dest="uniqID",action="store",
-                        required=True,help="Name of the column with unique \
-                        identifiers.")
+                        required=True,help="Name of the column with unique "\
+                        "identifiers.")
 
-    output = parser.add_argument_group(title='Output', description='Output of \
-                                        the script.')
+    output = parser.add_argument_group(title="Output", description="Output of "\
+                                        "the script.")
     output.add_argument('-os',"--outSummary",dest="outSummary",action="store",
                         required=True,help="Output file for Drops.")
 
@@ -58,49 +58,49 @@ def getOptions():
     return(args);
 
 def main():
-    #Gettign arguments from parser
-    args = getOptions()
-
-    #Stablishing logger
-    logger = logging.getLogger()
-    sl.setLogger(logger)
-
-    #Starting script
-    logger.info(u'Importing data with following parameters: \
-        \n\tFlags: {0}\
-        \n\tID: {1}\
-        \n\tSummary: {2}'.format(args.flagFile,args.uniqID,args.outSummary))
-
     # Convert flag file to DataFrame
-    df_flags = pd.DataFrame.from_csv(args.flagFile, sep='\t')
+    flags_df = pd.DataFrame.from_csv(args.flagFile, sep='\t')
 
     #Creating flag object
-    df_offFlags = Flags(index=df_flags.index)
+    offFlags_df = Flags(index=flags_df.index)
 
     #Get sum flags colum
-    flagSum = df_flags.sum(axis=1)
-    df_offFlags.addColumn("flag_sum",flagSum)
+    flagSum = flags_df.sum(axis=1)
+    offFlags_df.addColumn("flag_sum",flagSum)
 
     #Get mean flags column
-    df_offFlags.df_flags.loc[:,"flag_mean"] = df_flags.mean(axis=1)
+    offFlags_df.flags_df.loc[:,"flag_mean"] = flags_df.mean(axis=1)
 
     #Calculate flag at least one off
-    maskAny = df_flags.any(axis=1)
-    df_offFlags.addColumn("flag_any_off", maskAny)
+    maskAny = flags_df.any(axis=1)
+    offFlags_df.addColumn("flag_any_off", maskAny)
 
     #Calculate flag all off
-    maskAll = df_flags.all(axis=1)
-    df_offFlags.addColumn("flag_all_off", maskAll)
+    maskAll = flags_df.all(axis=1)
+    offFlags_df.addColumn("flag_all_off", maskAll)
 
     #Concatenate flags and summary flags
-    df_offFlags = pd.concat([df_flags,df_offFlags.df_flags],axis=1)
+    offFlags_df = pd.concat([flags_df,offFlags_df.flags_df],axis=1)
 
     #Output flags
-    df_offFlags.to_csv(args.outSummary, sep='\t')
+    offFlags_df.to_csv(args.outSummary, sep='\t')
 
     # Finishing script
     logger.info("Script complete.")
 
 if __name__ == '__main__':
-    main()
-    
+    # Getting arguments from parser
+    args = getOptions()
+
+    # Stablishing logger
+    logger = logging.getLogger()
+    sl.setLogger(logger)
+
+    # Starting script
+    logger.info(u"Importing data with following parameters: "\
+        "\n\tFlags: {0}"\
+        "\n\tID: {1}"\
+        "\n\tSummary: {2}".format(args.flagFile,args.uniqID,args.outSummary))
+
+    # Main script
+    main(args)

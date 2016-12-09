@@ -15,6 +15,7 @@
 
 #Standard Libraries
 import os
+import re
 import logging
 import argparse
 from itertools import chain
@@ -60,6 +61,44 @@ def getOptions():
     args = parser.parse_args()
     return (args)
 
+def cleanStr(x):
+    """ Clean strings so they behave.
+
+    For some modules, uniqIDs and groups cannot contain spaces, '-', '*',
+    '/', '+', or '()'. For example, statsmodel parses the strings and interprets
+    them in the model.
+
+    :Arguments:
+        x (str): A string that needs cleaning
+
+    :Returns:
+        x (str): The cleaned string.
+
+        self.origString (dict): A dictionary where the key is the new
+            string and the value is the original string. This will be useful
+            for reverting back to original values.
+
+    """
+    if isinstance(x, str):
+        val = x
+        x = re.sub(r'^-([0-9].*)', r'__\1', x)
+        x = x.replace(' ', '_')
+        x = x.replace('.', '_')
+        x = x.replace('-', '_')
+        x = x.replace('*', '_')
+        x = x.replace('/', '_')
+        x = x.replace('+', '_')
+        x = x.replace('(', '_')
+        x = x.replace(')', '_')
+        x = x.replace('[', '_')
+        x = x.replace(']', '_')
+        x = x.replace('{', '_')
+        x = x.replace('}', '_')
+        x = x.replace('"', '_')
+        x = x.replace('\'', '_')
+        x = re.sub(r'^([0-9].*)', r'_\1', x)
+    return x
+
 def main(args):
     # Importing data trough
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group)
@@ -92,6 +131,9 @@ def main(args):
     else:
         iToDrop=drops
 
+    # Remove weird characters
+    iToDrop = [cleanStr(x) for x in iToDrop]
+    
     # Dropping elements
     #for name,group in dat.design.groupby(dat.group) :
     #    if name in drops:
