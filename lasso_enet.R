@@ -231,19 +231,19 @@ lassoEN <- function(Dataset_varsel,Design_file,pairs_comparison,pairs_length,alp
   
   }
   dev.off()
-  returnList <- list(elasticnet_coefficients,elasticnet_flags)
+  returnList <- list(elasticnet_coefficients[-1,], elasticnet_flags[-1,])
   return(returnList)
   # Writing coefficients to the table.
   # CSV
-  write.table( elasticnet_coefficients, file = "elasticnet_coefficients.csv", append = FALSE, quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE )
+  write.table( elasticnet_coefficients[-1,], file = "elasticnet_coefficients.csv", append = FALSE, quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE )
   # TSV
-  write.table( elasticnet_coefficients, file = "elasticnet_coefficients.tsv", append = FALSE, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE )
+  write.table( elasticnet_coefficients[-1,], file = "elasticnet_coefficients.tsv", append = FALSE, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE )
   
   
   # Writing flags to the table.
   # CSV
-  write.table( elasticnet_flags, file = "elasticnet_flags.csv", append = FALSE, quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE )
+  write.table( elasticnet_flags[-1,], file = "elasticnet_flags.csv", append = FALSE, quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE )
   # TSV
-  write.table( elasticnet_flags, file = "elasticnet_flags.tsv", append = FALSE, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE )
+  write.table( elasticnet_flags[-1,], file = "elasticnet_flags.tsv", append = FALSE, quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE )
 }
 
