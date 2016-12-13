@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def getModelResults(model):
+def getModelResults(model,feat):
     """
     It gets the results stats out of the model like F,P, mss
     ess, tss, mse, NDF, DDF , R2 , ressids and fitted values.
@@ -29,15 +29,18 @@ def getModelResults(model):
     fitted = model.fittedvalues
     
     # Puttign al the results together
-    anovaResults=[f,p,mss,ess,tss,mse,NDF,DDF,R2,resid,fitted]
+    anovaResults=[f,p,mss,ess,tss,mse,NDF,DDF,R2]#,resid,fitted]
     
     # Creating indexes for values
-    index=["f-Value","p-Value_of_f-Value",
+    index=["f-Value","p-Value of f-Value",
         "ErrorSS","ModelSS","TotalSS",
-        "MSE","NDF","DDF", "R2","resid","fitted"]
+        "MSE","NDF","DDF", "R2"]#,"resid","fitted"]
     
     # Creating results series
     results = pd.Series(data=anovaResults, index=index)
+
+    # Adding name to this serie of results
+    results.name=feat
     
     # Return series
-    return results
+    return results,resid,fitted

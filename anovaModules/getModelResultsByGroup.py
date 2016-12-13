@@ -37,15 +37,18 @@ def getModelResultsByGroup(model,levels, numerical):
     stde = model.bse
     t    = -(model.tvalues)
     pt   = model.pvalues
+    log  = -np.log10(model.pvalues)
         
     #Add name to previous series
-    t.name    ="t-Value for Diff"
-    stde.name ="StdError for Diff"
-    coef.name ="Diff of"
-    pt.name   ="Prob>|t| for Diff"
+    t.name    ="t-Value_for_Diff"
+    stde.name ="StdError_for_Diff"
+    coef.name ="Diff_of"
+    pt.name   ="Prob>|t|_for_Diff"
+    log.name  ="-log10(p-value)"
+
 
     # Concat all dataframes
-    df = pd.concat([coef,stde,t,pt],axis=1)
+    df = pd.concat([coef,stde,t,pt,log],axis=1)
     
     # Removing intercepts
     df.drop("Intercept",inplace=True,axis="index")

@@ -7,15 +7,18 @@ import pandas as pd
 from statsmodels.formula.api import ols
 
 # Importing anova packages
+from anovaModules.reformatData import reformatData
 from anovaModules.preProcessing import preProcessing
 from anovaModules.changeDFOrder import changeDFOrder
+from anovaModules.flagSignificant import flagSignificant
 from anovaModules.getModelResults import getModelResults
 from anovaModules.startANOVAResults import startANOVAResults
 from anovaModules.generateDinamicCmbs import generateDinamicCmbs
 from anovaModules.removeAnovaDupResults import removeAnovaDupResults
 from anovaModules.getModelResultsByGroup import getModelResultsByGroup
 
-def runANOVA(dat, formula, lvlComb, categorical, levels, numerical, cutoff=-np.log10(0.05)):
+
+def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
     """
     Core for processing all the data.
 
@@ -53,15 +56,18 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical, cutoff=-np.l
     results = startANOVAResults(wide=dat.wide,design=dat.design,groups=categorical)
 
     # Creating a list of anova results for each metabolite
-    modelResults=list()
+    full_results     = list()
+    resids_list      = list()
+    fitted_list      = list()
+    significant_list = list()
 
     # iterating over all the formula keys
     for feat in formula.keys():
         combs=copy.copy(lvlComb)
 
         # Creating list for fullRes and IndexToDrop
-        fullRes     =list()
-        indexToDrop =list()
+        comb_results = list()
+        indexToDrop  = list()
 
         # Reverse list
         combs.reverse()
@@ -78,68 +84,55 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical, cutoff=-np.l
             anova = ols(formula=formula[feat], data=tempDF).fit_regularized()
 
             # Saving a dataframe for anova results
-            aGrpRes = getModelResultsByGroup(anova,levels,numerical)
+            group_results = getModelResultsByGroup(anova,levels,numerical)
             
             # Dropping duplicates
-            aGrpRes = removeAnovaDupResults(indexToDrop,df=aGrpRes)
+            group_results = removeAnovaDupResults(indexToDrop,df=group_results)
 
             # Appending results to list
-            fullRes.append(aGrpRes)
+            comb_results.append(group_results)
 
             # Appending current indexes to indextoDrop list
-            indexToDrop= indexToDrop+aGrpRes.index.tolist()
+            indexToDrop= indexToDrop+group_results.index.tolist()
             
         # Creating one df with all the results
-        fullRes = pd.concat(fullRes)
+        comb_results = pd.concat(comb_results)
 
-        # Calculating -log10 of pval
-        fullRes["log10(p-value)"] = -np.log10(fullRes["Prob>|t| for Diff"])
-
-        # Flagging lpval > cuttof
-        fullRes["Sig Index for Diff"] = np.where(np.abs(fullRes["log10(p-value)"])\
-                                                 > cutoff,int(0),int(1));fullRes
-
-        # Stacking results
-        fullRes = fullRes.T.stack(level=0)
+        # Calculating flags for significant pvals
+        significant  = flagSignificant(fullRes=comb_results)
 
         # Getting general results for anova
-        aRes = getModelResults(anova)
+        model_results,resid,fitted = getModelResults(model=anova,feat=feat)
 
-        # We need to create a Series with all the results values
-        index=[]
-        data=[]
+        # Appending resids and fitted to lists
+        resids_list.append(resid)
+        fitted_list.append(fitted)
 
-        # For general data
-        for result in aRes.index.tolist():
-            index.append(result)
-            data.append(aRes[result])
+        # Reformating data
+        comb_results = reformatData(df=comb_results, feat=feat)
+        significant  = reformatData(df=significant, feat=feat)
 
-        # For group data
-        for indexName,combName in fullRes.index:
-            index.append("{0} {1}".format(indexName,combName))
-            data.append(fullRes[indexName][combName])
+        # Appending flags to significant flags
+        significant_list.append(significant)
 
-        # Creating dataframe 
-        fullRes = pd.Series(data=data, index=index, name=feat)
-
-        # Append to all results lits
-        modelResults.append(fullRes)
+        # Concatenating model_results and comb_results and append it
+        # to full_results list
+        full_results.append(pd.concat([comb_results,model_results]))
 
     # Concatenating results lists into a dataframe
-    modelResults=pd.concat(modelResults, axis=1)
+    full_results = pd.concat(full_results, axis=1)
+    significant = pd.concat(significant_list, axis=1)
 
     # Transpose modelResults dataframe
-    modelResults = modelResults.T
+    full_results = full_results.T
+    significant = significant.T
 
     # Creating pd.Series for Ressids and Fitted Values
-    residDat = pd.concat(modelResults["resid"].tolist(), axis=1)
-    fitDat = pd.concat(modelResults["fitted"].tolist(), axis=1)
+    residDat = pd.concat(resids_list, axis=1)
+    fitDat   = pd.concat(fitted_list, axis=1)
 
-    # Removing Ressids and Fitted values from modelResults
-    modelResults.drop(["fitted","resid"],axis=1,inplace=True)
-
-    # Transpose modelResults and concatenate with results 
-    results = pd.concat([results,modelResults], axis=1)
+    # Transpose full_results and concatenate with results 
+    results = pd.concat([results,full_results], axis=1)
 
     # Return results
-    return results, residDat, fitDat
+    return results, significant, residDat, fitDat

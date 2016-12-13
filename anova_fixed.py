@@ -13,6 +13,7 @@
 #######################################################################################
 # Built-in packages
 import re
+import os
 import copy
 import logging
 import argparse
@@ -34,6 +35,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 # Local Packages
 import logger as sl
 from interface import wideToDesign
+from generalModules.drop_missing import dropMissing
 
 # Importing anova packages
 from anovaModules.qqPlot import qqPlot
@@ -61,6 +63,8 @@ def getOptions():
             required=False, help="Ask for interactions to run ANOVA")
     parser.add_argument('-o',"--out", dest="oname", action="store", 
             required=True, help="Output file name.")
+    parser.add_argument('-fl',"--flags", dest="flags", action="store", 
+            required=True, help="Flags file name.")
     parser.add_argument('-f1',"--fig", dest="ofig", action="store", 
             required=True, help="Output figure name for q-q plots [pdf].")
     parser.add_argument('-f2',"--fig2", dest="ofig2", action="store", 
@@ -68,35 +72,6 @@ def getOptions():
     args = parser.parse_args()
 
     return(args)
-
-def dropMissing(wide):
-    """
-    Drops missing data out of the wide file
-
-    :Arguments:
-        :type wide: pandas.core.frame.DataFrame
-        :param wide: DataFrame with the wide file data
-
-    :Returns:
-        :rtype wide: pandas.core.frame.DataFrame
-        :return wide: DataFrame with the wide file data without missing data
-    """
-    #Warning
-    logger.warn("Missing values were found")
-
-    #Count of original
-    nRows = len(wide.index)      
-
-    #Dropping 
-    wide.dropna(inplace=True)    
-
-    #Count of dropped
-    nRowsNoMiss = len(wide.index)  
-
-    #Warning
-    logger.warn("{} rows were dropped because of missing values.".
-                format(nRows - nRowsNoMiss))
-    return wide
 
 def main(args):
     # Import data
@@ -149,7 +124,7 @@ def main(args):
 
         # Running anova
         logger.info('Running anova models')
-        results,residDat,fitDat = runANOVA(dat=dat, categorical=["_treatment_"],
+        results,significant,residDat,fitDat = runANOVA(dat=dat, categorical=["_treatment_"],
                                 levels=[levels], lvlComb=lvlComb, formula=dictFormula, 
                                 numerical=numerical)
     else:
@@ -167,7 +142,7 @@ def main(args):
 
         # running anova
         logger.info('Running anova models')
-        results,residDat,fitDat = runANOVA(dat=dat, categorical=categorical,
+        results,significant,residDat,fitDat = runANOVA(dat=dat, categorical=categorical,
                                 levels=levels, lvlComb=lvlComb, formula=dictFormula, 
                                 numerical=numerical)
 
@@ -181,8 +156,12 @@ def main(args):
 
     # Round results to 4 digits and save
     results = results.round(4)
-    results.index.name="rowID"
-    results.to_csv(args.oname, sep="\t")
+    results.index.name = dat.uniqID
+    results.to_csv(os.path.abspath(args.oname), sep="\t")
+
+    # Flags
+    significant.index.name = dat.uniqID
+    significant.to_csv(os.path.abspath(args.flags), sep="\t")
 
 if __name__ == '__main__':
     # Command line options
