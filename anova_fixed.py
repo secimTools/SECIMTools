@@ -82,7 +82,7 @@ def main(args):
 
     #Dropping missing values
     if np.isnan(dat.wide.values).any():
-        dat.wide = dropMissing(dat.wide)
+        dat.wide = dropMissing(dat.wide,logger=logger)
 
     # Generate formula Formula
     preFormula,categorical,numerical,levels,dat.design = preProcessing(design=dat.design,

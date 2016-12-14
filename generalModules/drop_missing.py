@@ -1,6 +1,6 @@
 import pandas as pd
 
-def dropMissing(wide):
+def dropMissing(wide,logger):
     """
     Drops missing data out of the wide file
 
