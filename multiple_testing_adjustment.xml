@@ -62,7 +62,7 @@ Benjamini, Y., and Yekutieli, D. (2001). The control of the false discovery rate
 
 **Output**
 
-The tool produces two TSV files,the first one is for the corrected p-values that contains five columns: the first one is the column with unique feature IDs, the second one is the column of the original p-values and the last three contain adjusted p-values.  Every column of p-values corresponds to different adjustment method, which is reflected in the column name. The second file is a TSV file containing flags where all the values that did not pass the alpha value are flagged as 1. 
+The tool produces two TSV files, the first one contains five columns: a column with unique feature IDs, a column of the original p-values and the last three columns contain adjusted p-values.  Every column of p-values corresponds to different adjustment method, which is reflected in the column name. The second file is a TSV file containing flags where all the non-significant values are flagged as 1.
 
 </help>
 </tool>
