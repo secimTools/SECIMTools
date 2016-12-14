@@ -11,18 +11,20 @@
         multiple_testing_adjustment.py
         --input $input
         --uniqID $uniqID
-        --pval $pval
+        --pval "$pval"
         --alpha $alpha
         --outadjusted $outadjusted
+        --flags $flags
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="pval" type="text" size="30" value="" label="p-value column" help="Name of the column in your Wide Dataset that has your pvalue."/>
-        <param name="alpha" type="text" size="30" value="0.5" label="α" help="Value of α to be used on the corrections by default α=0.5."/>
+        <param name="alpha" type="text" size="30" value="0.05" label="α" help="Value of α to be used on the corrections by default α=0.05."/>
     </inputs>
     <outputs>
         <data format="tabular" name="outadjusted" label="${tool.name} on ${on_string}: Adjusted pval."/>
+        <data format="tabular" name="flags" label="${tool.name} on ${on_string}: Flags."/>
     </outputs>
     <macros>
             <import>macros.xml</import>
@@ -54,13 +56,13 @@ Benjamini, Y., and Yekutieli, D. (2001). The control of the false discovery rate
 
 **α**
 
-    - Value of α to be used on the corrections by default α=0.5.
+    - Value of α to be used on the corrections by default α=0.05.
     
 -------------------------------------------------------------------------------------------
 
 **Output**
 
-The tool produces a single TSV file that contains five columns: the first one is the column with unique feature IDs, the second one is the column of the original p-values and the last three contain adjusted p-values.  Every column of p-values corresponds to different adjustment method, which is reflected in the column name.
+The tool produces two TSV files,the first one is for the corrected p-values that contains five columns: the first one is the column with unique feature IDs, the second one is the column of the original p-values and the last three contain adjusted p-values.  Every column of p-values corresponds to different adjustment method, which is reflected in the column name. The second file is a TSV file containing flags where all the values that did not pass the alpha value are flagged as 1. 
 
 </help>
 </tool>
