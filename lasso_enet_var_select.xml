@@ -41,18 +41,10 @@
 
 **Tool Description**
 
-The tool performs feature selection for each pairwise comparison of the levels of the group variable specified by user. The selection method is performed based on the logistic regression with Elastic Net penalty (with LASSO being a special case.) 
-
-The penalty structure is controlled by α parameter (defined within [0;1] range) with the default value α = 0.5, that can be changed by the user. 
-The value α = 1 corresponds to LASSO penalty with the strictest selection rule, while the value of the penalty α = 0 corresponds to ridge penalty which does not perform variable selection. 
-
-Variable section is performed for all levels of α specified by the user in the range (0;1] with the value 1 corresponding the least number of variables and the most strict selection criterion (LASSO), while the value 0 corresponds only to the estimate shrinkage and no selection (ridge). 
-
-The best subset of selected variables for a given α is selected by a cross validation procedure. 
-
-More details about the Elastic Net and LASSO penalties can be found in the paper .
-
-Zou, H., and Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67(2), 301-320..
+The tool performs selection of features that are different for each pairwise comparison between the groups in the grouping variable specified by the user.  The selection is performed based on the logistic regression with Elastic Net shrinkage (with LASSO being a special case.)
+The selection method is defined by shrinkage parameter α (defined within [0;1] range) with the default value α = 0.5, that can be changed by the user.  Variable selection can be performed for any value of α specified by the user in the range (0;1] with the value 1 corresponding the least number of variables and the most strict selection criterion (LASSO), while the value 0 corresponds only to the estimate shrinkage without variable selection (ridge).
+The best subset of variables for a given α is selected by a cross validation procedure.  More details about the Elastic Net and LASSO methods can be found in the paper and in the link:
+Zou, H., and Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67(2), 301-320.
 
 --------------------------------------------------------------------------------
 
@@ -89,7 +81,8 @@ Extra columns will automatically be ignored.
 
 **Output**
 
-Three files are outputted.  The first TSV file contains the values of the coefficients (including zeroes) for each feature that were produced by the tool for each pair of comparisons (in columns.)  Those coefficients are produced for the transformed data (part of the LASSO/EN method) and should be interpreted with caution.  The second TSV file contains the corresponding flags for each feature with one (1) corresponding to selected features.  The feature is selected when the corresponding coefficient is not zero.  The third PDF file contains the pairs of graphs for each pairwise comparison between the groups.  For each pairwise comparison the first graph displays the behavior of the coefficients based on the value of the penalty and the shrinkage parameter.  The second graph provides the details of cross-validation procedure that is used for detection of the optimal penalty and for feature selection. 
+Three files are outputted.  The first TSV file contains the values of the coefficients (including zeroes) for each feature that were produced by the tool for each pair of comparisons (in columns.)  Those coefficients are produced for the transformed data (part of the LASSO/EN method) and should be interpreted with caution.  The second TSV file contains the corresponding flags for each feature with one (1) corresponding to selected features.  The feature is selected when the corresponding coefficient is not zero.  The third PDF file contains the pairs of graphs for each pairwise comparison between the groups.  For each pairwise comparison the first graph displays the behavior of the coefficients based on the value of the penalty and the shrinkage parameter.  The second graph provides the details of cross-validation procedure that is used for detection of the optimal penalty and for feature selection.  For the cross-validation procedure the results for the error are displayed together with the confidence bands and with the corresponding number of selected features.  Two vertical lines highlight the number of features selected by the LASSO/EN.  The first line corresponds to the smallest cross-validation error and the second line corresponds to the most regularized model with the error within one standard deviation from the smallest error.  The TSV files contain flags and coefficients that correspond to the smallest cross-validation error.
+ 
 
 </help>
 </tool>
