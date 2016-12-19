@@ -137,7 +137,7 @@ def setflagByGroup(args, wide, dat):
         for title, group in dat.design.groupby(args.group):
 
             # Open figure handler
-            fh=figureHandler(proj='2d')
+            fh=figureHandler(proj='2d',figsize=(14,8))
 
             # Get xmin
             xmin=-np.nanpercentile(CV['cv_'+title].values,99)*0.2
@@ -255,7 +255,7 @@ def setflag(args, wide, dat, groupName=''):
     logger.info("Plotting Data")
     if groupName == "":
         # Initiate figure instance
-        fh=figureHandler(proj="2d")
+        fh=figureHandler(proj="2d", figsize=(14,8))
 
         # Calculate xmin
         xmin=-np.nanpercentile(DATstat['cv'].values,99)*0.2

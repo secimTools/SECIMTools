@@ -258,7 +258,7 @@ def plotScatterplot3D(data,pdf,dat):
     """
     
     # Open figure handler with 3D projection
-    fh = figureHandler(proj="3d")
+    fh = figureHandler(proj="3d", figsize=(14,8))
 
     # Getting colors by group
     if dat.group:
