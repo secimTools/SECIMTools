@@ -248,7 +248,7 @@ def plotScores(scores,pdf,dat):
     """
     for LV1,LV2 in  list(itertools.combinations(scores.columns.tolist(),2)):
         # Creating a figure handler object
-        sFig = figureHandler(proj="2d")
+        sFig = figureHandler(proj="2d", figsize=(14,8))
 
         # Creating title for the figure
         title = "{0} vs {1}".format(LV1,LV2)
