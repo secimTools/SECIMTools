@@ -91,15 +91,9 @@ def identiyOnTarget (library,target,MZCut,RTCut):
         :rtype identified_df: pd.DataFrame.
 
     """
-
-    # Creating datafram for identified features 
-    #colnames =  target.anno.columns.tolist()
-    #colnames.extend([library.uniqID])
-    #identified_df = pd.DataFrame(columns=colnames)
-
     # Iterating over each element on the Target file to assess against library
     identified_feats=list()
-    for target_rowID,target_MZRT in target.anno.iterrows():
+    for target_rowID,target_MZRT in target.data.iterrows():
 
         # Calculating MZ and RT cuts
         mzMin = target_MZRT[target.mz] - MZCut
@@ -109,16 +103,18 @@ def identiyOnTarget (library,target,MZCut,RTCut):
 
         # For those with not idenfied compound imput a blank
         target_MZRT.loc["compound"]=np.nan
+        target_MZRT = pd.concat([target_MZRT,pd.Series(index=library.anno)])
 
         # Iterate over the library file to idenfy compouns/adducts
-        for library_rowID, library_MZRT in library.anno.iterrows():
+        for library_rowID, library_MZRT in library.data.iterrows():
 
                 #Match found between anno1 and anno2
                 if ((mzMin<library_MZRT[library.mz] and library_MZRT[library.mz]<mzMax) and 
                     (rtMin<library_MZRT[library.rt] and library_MZRT[library.rt]<rtMax)):        
 
                     # Creating a series with the data that we want
-                    target_MZRT.loc["compound"]=library_rowID            
+                    target_MZRT.loc["compound"] = library_rowID
+                    target_MZRT.loc[library.anno]=library_MZRT[library.anno]
 
         # Adding features aggain to identified feats
         identified_feats.append(target_MZRT)
@@ -127,15 +123,16 @@ def identiyOnTarget (library,target,MZCut,RTCut):
     identified_df = pd.concat(identified_feats, axis=1)
     identified_df = identified_df.T
     
-    #print identified_df.T["met_356"]
+    # Return identified_df
     return identified_df
 
 def main(args):
     # Loading library file
-    library = interface.annoFormat(anno=args.library, uniqID=args.libid, 
-                                    mz=args.libmz, rt=args.librt)
+    library = interface.annoFormat(data=args.library, uniqID=args.libid, 
+                                    mz=args.libmz, rt=args.librt, anno=True)
+
     # Read target file
-    target = interface.annoFormat(anno=args.anno, uniqID=args.uniqID,
+    target = interface.annoFormat(data=args.anno, uniqID=args.uniqID,
                                 mz=args.mzID, rt=args.rtID)
                                 
     # Matching target file with library file
@@ -145,8 +142,8 @@ def main(args):
 
     # Saving identified compounds to file
     logger.info("Exporting results")
-    identified_df.index.name="rowID"
-    identified_df.to_csv(os.path.abspath(args.output),sep="\t")
+    identified_df.to_csv(os.path.abspath(args.output), sep="\t", 
+                        index_label=args.uniqID)
 
 if __name__=='__main__':
     #Get info

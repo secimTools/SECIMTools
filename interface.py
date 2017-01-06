@@ -309,7 +309,7 @@ class wideToDesign:
 
 class annoFormat:
     """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, anno, uniqID, mz, rt, clean_string=True):
+    def __init__(self, data, uniqID, mz, rt, anno=False, clean_string=True):
         """ Import and set-up data.
 
         Import data both wide formated data and a design file. Set-up basic
@@ -378,21 +378,26 @@ class annoFormat:
             self.rt = rt
 
             #Trying to import
-            self.anno = pd.read_table(anno)
+            self.data = pd.read_table(data)
 
             if clean_string:
-                self.anno[self.uniqID] = self.anno[self.uniqID].apply(lambda x: self._cleanStr(x))
-                self.anno.rename(columns= lambda x:self._cleanStr(x),inplace=True)
+                self.data[self.uniqID] = self.data[self.uniqID].apply(lambda x: self._cleanStr(x))
+                self.data.rename(columns= lambda x:self._cleanStr(x),inplace=True)
 
             # Make sure index is a string and not numeric
-            self.anno[self.uniqID] = self.anno[self.uniqID].astype(str)
+            self.data[self.uniqID] = self.data[self.uniqID].astype(str)
 
             # Set index to uniqID column
-            self.anno.set_index(self.uniqID, inplace=True)
+            self.data.set_index(self.uniqID, inplace=True)
 
-            # Ignoring not mz or rt columns
-            self.anno = self.anno[[self.mz,self.rt]]
-                
+            # If not annotation then ignoring additional columns
+            self.anno = None
+            if not(anno):
+                self.data = self.data[[self.mz,self.rt]]
+            else:
+                self.anno = self.data.columns.tolist()
+                self.anno.remove(self.mz)
+                self.anno.remove(self.rt)                
         except:
             print "Please make sure that your data file have columns called '{0}','{1}' and '{2}'.".format(uniqID,mz,rt)
             raise ValueError

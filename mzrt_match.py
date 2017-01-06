@@ -132,7 +132,7 @@ def matchFiles (anno1,anno2,MZCut,RTCut,reverse=False):
     unmatched_df = pd.DataFrame(columns=["rowID1","MZ1","RT1","rowID2","MZ2","RT2"])
 
     #Iterating over annotation 1 and comparing with annotation 2
-    for rowID1,MZRT1 in anno1.anno.iterrows():
+    for rowID1,MZRT1 in anno1.data.iterrows():
 
         #Setting  flag_unmatch
         flag_unmatch = True
@@ -144,7 +144,7 @@ def matchFiles (anno1,anno2,MZCut,RTCut,reverse=False):
         rtMax = MZRT1[anno1.rt] + RTCut
 
         #Iterating over annotation 2 and comparing with anotation 1
-        for rowID2,MZRT2 in anno2.anno.iterrows():
+        for rowID2,MZRT2 in anno2.data.iterrows():
 
                 #Match found between anno1 and anno2
                 if ((mzMin<MZRT2[anno2.mz] and MZRT2[anno2.mz]<mzMax) and 
@@ -304,11 +304,11 @@ def writeOutput(paths,files):
 def main(args):
     """Function to call all other functions"""
     #Read annotation file 1
-    anno1 = interface.annoFormat(anno=args.anno1, uniqID=args.uniqID1, 
+    anno1 = interface.annoFormat(data=args.anno1, uniqID=args.uniqID1, 
                                 mz=args.mzID1, rt=args.rtID1)
-
+    
     #Read annotation file 1
-    anno2 = interface.annoFormat(anno=args.anno2, uniqID=args.uniqID2, 
+    anno2 = interface.annoFormat(data=args.anno2, uniqID=args.uniqID2, 
                                 mz=args.mzID2, rt=args.rtID2)
 
     #Matching files anno1 vs anno2
