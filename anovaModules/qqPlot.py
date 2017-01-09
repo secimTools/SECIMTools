@@ -73,20 +73,20 @@ def qqPlot(tresid, tfit, oname):
             lines.drawCutoffHoriz(ax=fig.ax[3],y=0)
 
             # Format axis 0
-            fig.formatAxis(figTitle=col,axnum=0,grid=False,showX=False,
-                yTitle="Sample Quantiles")
+            fig.formatAxis(figTitle=col,axnum=0,grid=False,showX=True,
+                yTitle="Sample Quantiles", xTitle=" ")
 
             # Format axis 1
-            fig.formatAxis(axnum=1,axTitle="Distribution of P-values",
-                grid=False,showX=False,showY=False)
+            fig.formatAxis(axnum=1,axTitle="Standardized Ressiduals",
+                grid=False,showX=False,showY=True, xTitle=" ")
 
             # Format axis 2
-            fig.formatAxis(axnum=2,grid=False,showX=False,showY=False,
-                axTitle=" ")
+            fig.formatAxis(axnum=2,grid=False,showX=True,showY=True,
+                axTitle=" ",xTitle=" ")
 
             # Format axis 3
-            fig.formatAxis(axnum=3,axTitle="Fitted Values vs Residuals",
-                xTitle="Fitted Values",yTitle="Standardized Residuals",
+            fig.formatAxis(axnum=3,axTitle="Fitted Values vs Residual Values",
+                xTitle="Fitted Values",yTitle="Residual Values",
                 grid=False)
 
             #Add figure to pdf
