@@ -77,7 +77,7 @@ def qqPlot(tresid, tfit, oname):
                 yTitle="Sample Quantiles", xTitle=" ")
 
             # Format axis 1
-            fig.formatAxis(axnum=1,axTitle="Standardized Ressiduals",
+            fig.formatAxis(axnum=1,axTitle="Standardized Residuals",
                 grid=False,showX=False,showY=True, xTitle=" ")
 
             # Format axis 2
