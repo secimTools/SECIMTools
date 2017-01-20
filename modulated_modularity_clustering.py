@@ -1,27 +1,40 @@
-
-from contextlib import contextmanager
-import argparse
+#!/usr/bin/env python
+################################################################################
+# DATE: 2017/01/17
+# 
+# MODULE: modulated_modularity_clustering.py
+#
+# VERSION: 1.1
+# 
+# EDITED: Miguel Ibarra (miguelib@ufl.edu) Matt Thoburn (mthoburn@ufl.edu) 
+#
+# DESCRIPTION: This tool runs modulated modularity clustering (mmc)
+#
+################################################################################
+# Built-in packages
 import csv
-#from functools import partial
-#import shutil as sh
-
-import pandas as pd
-import numpy as np
-
-import scipy
-from numpy.testing import assert_allclose
-
-from module_mmc import expansion, get_clustering
 import logging
-import logger as sl
-import module_heatmap as hm
-from interface import wideToDesign
-from manager_figure import figureHandler
+import argparse
+from contextlib import contextmanager
+
+# Add on modules
+import scipy
+import numpy as np
+import pandas as pd
+from numpy.testing import assert_allclose
 from matplotlib.backends.backend_pdf import PdfPages
+
+# Local Packages
+import logger as sl
+from interface import wideToDesign
+
+# Graphing packages
+import module_heatmap as hm
+from manager_figure import figureHandler
+from module_mmc import expansion, get_clustering
 
 
 def getOptions(myOpts = None):
-
     # Get command line arguments.
     parser = argparse.ArgumentParser()
     parser.add_argument("-c",'--correlation', 
@@ -33,9 +46,8 @@ def getOptions(myOpts = None):
                         "'spearman' (Spearman rank correlation)."))
     parser.add_argument("-i",'--input', required=True,
                         help=('Path to the data file, which is expected to be in'
-                        'tabular (tsv) format '
-                        'with row and column labels, and for which the rows '
-                        'are to be clustered.'))
+                        'tabular (tsv) format with row and column labels, '
+                        'and for which the rows are to be clustered.'))
     parser.add_argument("-d","--design", dest="design", required=True, 
                         help="Path of design file")
     parser.add_argument("-id","--ID",dest="uniqID",required=True, 
@@ -127,34 +139,42 @@ def nontechnical_analysis(args, df, mask, C, clustering):
                     degrees[old_i],
                     )
             writer.writerow(row)
+
     #Create Output
     fh1=figureHandler(proj="2d")
     fh2=figureHandler(proj="2d")
     fh3=figureHandler(proj="2d")
-    # Draw the first heatmap.
-    # Plot using something like http://stackoverflow.com/questions/15988413/
-    hm.plotHeatmap(C,fh1.ax[0])
 
-    # Prepare to create the sorted heatmaps.
-    C_new = C[np.ix_(new_to_old_idx, new_to_old_idx)]
+    # Prepare to create the sorted heatmaps. (fh2)
+    C_sorted = C[np.ix_(new_to_old_idx, new_to_old_idx)]
     clustering_new = clustering[np.ix_(new_to_old_idx)]
 
-    # Draw the second heatmap (reordered according to the clustering).
-    hm.plotHeatmap(C_new,fh2.ax[0])
-
     # Draw the third heatmap (smoothed).
-    # Make a smoothed correlation array.
+    # Make a smoothed correlation array. (fh3)
     S = expansion(clustering_new)
     block_mask = S.dot(S.T)
     denom = np.outer(S.sum(axis=0), S.sum(axis=0))
-    small = S.T.dot(C_new).dot(S) / denom
+    small = S.T.dot(C_sorted).dot(S) / denom
     C_all_smoothed = S.dot(small).dot(S.T)
-    C_smoothed = (
-            C_all_smoothed * (1 - block_mask) +
-            C_new * block_mask)
+    C_smoothed = (C_all_smoothed * (1 - block_mask) + C_sorted * block_mask)
 
-    # Draw the heatmap.
-    hm.plotHeatmap(C_smoothed,fh3.ax[0])
+    # Getting list of names for heatmaps 2 and 3
+    hpnames = [remaining_row_names[old_i] for old_i in new_to_old_idx]
+
+    # Plot using something like http://stackoverflow.com/questions/15988413/
+    # Drawing heatmaps
+    # Draw first heatmap [C]    
+    hm.plotHeatmap(C,fh1.ax[0],xlbls=remaining_row_names,ylbls=remaining_row_names)
+    fh1.formatAxis()
+
+    # Draw second heatmap [C_sorted](reordered according to the clustering).
+    hm.plotHeatmap(C_sorted,fh2.ax[0],xlbls=hpnames,ylbls=hpnames)
+    fh2.formatAxis()
+
+    # Draw the heatmap [C_smoothed](smoothed version of C_sorted)
+    hm.plotHeatmap(C_smoothed,fh3.ax[0],xlbls=hpnames,ylbls=hpnames)
+    fh3.formatAxis()
+
     #Create output from maps
     with PdfPages(args.figure) as pdf:
         fh1.addToPdf(pdf)
@@ -162,38 +182,31 @@ def nontechnical_analysis(args, df, mask, C, clustering):
         fh3.addToPdf(pdf)
 
 def main(args):
-
-    data = wideToDesign(args.input,args.design,args.uniqID)
-    df = data.wide
-   
-    p, n = df.shape
-    logger.info('original number of variables in the input file: ' + str(p))
-    logger.info('number of observations per variable: ' + str(n))
+    # Import data through the SECIMTools interface 
+    data = wideToDesign(wide=args.input,design=args.design,uniqID=args.uniqID)
+    logger.info('Number of variables: {0}'.format(data.wide.shape[0]))
+    logger.info('Number of observations per variable: {0}'.format(data.wide.shape[1]))
 
     ## If there is no variance in a row, the correlations cannot be computed.
-    drops = []
-    i = 0
-    for i in range(0,df.shape[0]):
-        if ((df.iloc[i]-df.iloc[i].mean()).sum()**2)==0.0:
-            drops.append(i)
-    df = df.drop(df.index[drops])
- 
-    logger.info("Table arranged\n")
+    data.wide["variance"]=data.wide.apply(lambda x: ((x-x.mean()).sum()**2),axis=1)
+    data.wide = data.wide[data.wide["variance"]!=0.0]
+    data.wide.drop("variance",axis=1,inplace=True)
+    logger.info("Table arranged")
+
     # Compute the matrix of correlation coefficients.
-    C = df.T.corr(method=args.correlation).values
-    
-    logger.info("Correlated\n")
+    C = data.wide.T.corr(method=args.correlation).values
+    logger.info("Correlated")
     
     # For now, ignore the possibility that a variable
     # will have negligible variation.
-    mask = np.ones(df.shape[0], dtype=bool)
+    mask = np.ones(data.wide.shape[0], dtype=bool)
 
     # Count the number of variables not excluded from the clustering.
     p = np.count_nonzero(mask)
 
     # Consider all values of tuning parameter sigma in this array.
-    sigmas, step = np.linspace(
-            args.sigmaLow, args.sigmaHigh, num=args.sigmaNum, retstep=True)
+    sigmas, step = np.linspace(args.sigmaLow, args.sigmaHigh, num=args.sigmaNum,
+                                retstep=True)
 
     # Compute the clustering for each of the several values of sigma.
     # Each sigma corresponds to a different affinity matrix,
@@ -201,30 +214,26 @@ def main(args):
     # The goal is to the clustering whose modularity is greatest
     # across all joint (sigma, partition) pairs.
     # In practice, we will look for an approximation of this global optimum.
-    
-    logger.info("Begin clustering\n")
-
+    #exit()
+    logger.info("Begin clustering")
     clustering, sigma, m = get_clustering(C, sigmas)
 
-    # Count the number of clusters.
-    k = clustering.max() + 1
-
     # Report a summary of the results of the technical analysis.
-    logger.info('after partition refinement:')
-    logger.info('  sigma: ' + str(sigma))
-    logger.info('  number of clusters: ' + str(k))
-    logger.info('  modulated modularity: ' + str(m))
-
+    logger.info("After partition refinement:")
+    logger.info("Sigma: {0}".format(sigma))
+    logger.info("Number of clusters: {0}".format(clustering.max()+1))
+    logger.info("Modulated modularity: {0}".format(m))
 
     # Run the nontechnical analysis using the data frame and the less nerdy
     # of the outputs from the technical analysis.
-    nontechnical_analysis(args, df, mask, C, clustering)
+    nontechnical_analysis(args, data.wide, mask, C, clustering)
 
 if __name__ == '__main__':
     args = getOptions()
 
     # Activate Logger
     logger = logging.getLogger()
-
     sl.setLogger(logger)
+
+    # Starting program
     main(args)
