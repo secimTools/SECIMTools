@@ -57,7 +57,7 @@ def getOptions():
     args = parser.parse_args()
     return(args);
 
-def main():
+def main(args):
     # Convert flag file to DataFrame
     flags_df = pd.DataFrame.from_csv(args.flagFile, sep='\t')
 
