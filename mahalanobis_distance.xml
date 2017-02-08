@@ -1,0 +1,125 @@
+<tool id="penalizedMahalanobisDistance" name="Penalized Mahalanobis Distance (PMD)" version="1.0.0">
+    <description>Calculate a penalized version of the Mahalanobis distance</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">scipy</requirement>
+        <requirement type="python-module">sklearn</requirement>
+        <requirement type="python-module">palettable</requirement>
+    </requirements>
+    <command interpreter="python">
+        mahalanobis_distance.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --figure $plot
+        --distanceToMean $out1
+        --distancePairwise $out2
+        
+        #if $group
+            --group $group
+        #end if
+        
+        #if $levels
+            --levels $levels
+        #end if
+
+        #if $p
+            --per $p
+        #end if
+
+        #if $order
+            --order $order
+        #end if
+
+        #if $penalty
+            --penalty $penalty
+        #end if
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications." />
+        <param name="order" type="text" size="30" label="Input Run Order Name [Optional]" help="Enter run order name to calculate from. Spelling and capitalization must be exact." />
+        <param name="levels" type="text" size="30" label="Adittional groups to separate by [Optional]" help="Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ','." />
+        <param name="p" type="text" value= ".95" size="30" label="Percentile of cutoff" help="The percentile cutoff for standard distributions. The default is 0.95." />
+        <param name="penalty" type="text" value= "0.5" size="30" label="λ Penalty" help="λ Penalty to use in the distance. The default is λ=0.5." />
+    </inputs>
+    <outputs>
+        <data format="pdf" name="plot" label="${tool.name} on ${on_string}: plot" />
+        <data format="tabular" name="out1" label="${tool.name} on ${on_string}: toMean" />
+        <data format="tabular" name="out2" label="${tool.name} on ${on_string}: pairwise" />
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The Penalized Mahalanobis Distance (PMD) tool can be used to compare samples within a group accounting for the correlation structure between metabolites. The SED relies solely on geometric distance and ignores the dependency structure between features. The Mahalanobis distance (MD) goes beyond that and incorporates the correlation structure inside the distance measurement. Classic MD relies on the estimate of the inverse of features variance-covariance matrix S-1. For sample x and sample’s mean y Mahalanobis distance to the mean has the form:
+
+MD(x,y)=SquareRoot((x-y)T S (x-y))
+
+When correlation structure and dependency between metabolites is ignored the variance-covariance matrix  S-1 simplifies to diagonal matrix with diagonal values  1/sigma2 for i=1,2,...,n. In this case MD simplifies to standardized Euclidian distance described earlier.
+
+When the number of features is bigger than the number of samples the inverse of features variance-covariance matrix S-1 does not exist and classic MD cannot be defined. This is the case for all omics data. 
+
+To account for correlation structure in omics data the penalized Mahalanobis distance is introduces in SECIMTools. The PMD tool is based on the penalized version of features variance-covariance matrix Sλ where penalty parameter λ is customized by the user. Based on the penalty structure the inverse Sλ-1 exists for all non-zero values of the penalty. The PMD has the form:
+
+MD(x,y)=SquareRoot((x-y)T Sλ (x-y))
+
+In case that non-omics data are used and the inverse S-1 exists, the tool computes classic MD instead of PMD and user is provided with a warning. The details about the penalty λ and computation of PMD are provided Supplementary File 3. PMD provides outputs analogous to SED outputs.
+
+**NOTE:** Because of the nauture of the tool groups and samples where only one or two samples per group are avaialbe in the wide dataset will be discarded from the analysis.
+
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+@GROUP_OPTIONAL@
+
+    - **Warning:** All groups must contain 3 or more samples.
+    - **NOTE:** Groups with one element will be excluded from the test.
+
+
+@RUNORDER_OPTIONAL@
+
+**Adittional groups to separate by [Optional]**
+
+    - Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ','.
+    - **Warning:** All groups must contain 3 or more samples.
+    - **NOTE:** Groups with one element will be excluded from the test.
+
+
+**Percentile cutoff**
+
+- The percentile cutoff for standard distributions. The default is 0.95.
+
+**λ Penalty**
+
+- λ Penalty to use in the distance. The default is λ=0.5.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+The tool will always output three different files: a PDF file containing 2D scatter plots and boxplots for the distances and two TSV files containing distances from the sample to the estimated mean and from the sample to other samples.  If the grouping variable is specified by the user the distances are computed both within the groups and for the entire dataset.
+
+
+</help>
+</tool>

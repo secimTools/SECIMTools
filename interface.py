@@ -10,7 +10,7 @@ import pandas as pd
 
 class wideToDesign:
     """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, wide, design, uniqID, group=False, anno=False, clean_string=True, keepSample=True):
+    def __init__(self, wide, design, uniqID, group=False, runOrder=False, anno=False, clean_string=True, keepSample=True, logger=None):
         """ Import and set-up data.
 
         Import data both wide formated data and a design file. Set-up basic
@@ -70,6 +70,13 @@ class wideToDesign:
                 trt1, tr2, control.
 
         """
+        # Setting logger
+        if logger is None:
+            self.logger = False
+        else:
+            self.logger = logger
+
+        # Saving original str
         self.origString = dict()
 
         # Import wide formatted data file
@@ -134,6 +141,9 @@ class wideToDesign:
         # Save annotations
         self.anno = anno
 
+        # Save runOrder
+        self.runOrder = runOrder
+
         # Set up group information
         if group:
             if clean_string:
@@ -142,11 +152,20 @@ class wideToDesign:
             else:
                 self.group = group
 
-            # combine group and anno
-            if self.anno:
+            # combine group, anno and runorder
+            if self.runOrder and self.anno:
+                keep = [self.group, ] + [self.runOrder, ] + self.anno
+            elif self.runOrder and not self.anno:
+                keep = [self.group, ] + [self.runOrder, ]
+            elif not self.runOrder and self.anno:
                 keep = [self.group, ] + self.anno
             else:
                 keep = [self.group, ]
+
+            #if self.anno:
+            #    keep = [self.group, ] + self.anno
+            #else:
+            #    keep = [self.group, ]
 
             self.design = self.design[keep]   # Only keep group columns in the design file
             self.design[self.group] = self.design[self.group].astype(str)   # Make sure groups are strings
@@ -285,7 +304,8 @@ class wideToDesign:
         return self.wide[self.wide[self.uniqID] == ID]
 
     def keep_sample(self, sampleIDs):
-        """ Keep only the given sampleIDs in the wide and design file.
+        """ 
+        Keep only the given sampleIDs in the wide and design file.
 
         :Arguments:
             :param list sampleIDs: A list of sampleIDs to keep.
@@ -300,11 +320,48 @@ class wideToDesign:
         self.design = self.design[self.design.index.isin(self.sampleIDs)]
 
     def removeSingle(self):
-        for level,current in self.design.groupby(self.group):
-            if len(current) < 2:
-                self.design.drop(current.index, inplace=True)
-                self.wide.drop(current.index, axis=1, inplace=True)
-                print "Your group '{0}' has only one element, this group is going to be remove to perform further calculations.".format(level)
+        """
+        Removes groups with just one sample
+        """
+        if self.group:
+            for level,current in self.design.groupby(self.group):
+                if len(current) < 2:
+                    self.design.drop(current.index, inplace=True)
+                    self.wide.drop(current.index, axis=1, inplace=True)
+                    if self.logger:
+                        self.logger.warn("Your group '{0}' has only one element, "\
+                            "this group is going to be removed from "\
+                            "further calculations.".format(level))
+                    else:                        
+                        print "Your group '{0}' has only one element, this "\
+                        "group is going to be remove to perform further "\
+                        "calculations.".format(level)
+
+    def dropMissing(self):
+        """
+        Drops rows with missing data
+        """
+        # Asks if any missing value
+        if np.isnan(self.wide.values).any():
+            # Count original number of rows
+            n_rows = len(self.wide.index)
+
+            # Drop missing values
+            self.wide.dropna(inplace=True)
+
+            # Count the dropped rows
+            n_rows_keeped = len(self.wide.index)
+
+            # Logging!!!
+            if self.logger:
+                self.logger.warn("Missing values were found on wide data "\
+                    "[{0}] rows were dropped.".
+                    format(n_rows - n_rows_keeped))
+            else:
+                print "Missing values were found on wide data "\
+                    "[{0}] rows were dropped.".format(n_rows - n_rows_keeped)
+
+
 
 
 class annoFormat:
