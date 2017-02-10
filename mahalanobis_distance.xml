@@ -61,19 +61,9 @@
 
 **Tool Description**
 
-The Penalized Mahalanobis Distance (PMD) tool can be used to compare samples within a group accounting for the correlation structure between metabolites. The SED relies solely on geometric distance and ignores the dependency structure between features. The Mahalanobis distance (MD) goes beyond that and incorporates the correlation structure inside the distance measurement. Classic MD relies on the estimate of the inverse of features variance-covariance matrix S-1. For sample x and sample’s mean y Mahalanobis distance to the mean has the form:
+The Penalized Mahalanobis Distance (PMD) tool can be used to compare samples within a group accounting for the correlation structure between metabolites. The standardized Euclidian distance (SED) relies solely on geometric distance and ignores the dependency structure between features. The Mahalanobis distance (MD) goes beyond that and incorporates the correlation structure inside the distance measurement. Classic MD relies on the estimate of the inverse of features variance-covariance matrix.  When correlation structure and dependency between metabolites is ignored the inverse variance-covariance matrix simplifies to diagonal matrix with diagonal values equal to 1 divided over variances for the given feature  In this case MD simplifies to SED.  When the number of features is bigger than the number of samples the inverse of features variance-covariance matrix does not exist and classic MD cannot be defined. This is the case for most omics data.  
+In this tool the penalized Mahalanobis distance is introduced to account for correlation structure in omics data.  The PMD tool is based on the penalized version of features variance-covariance matrix where penalty parameter λ is customized by the user.  The penalty parameter ranges from the smallest to the largest of non-zero eigenvalues of the estimated variance-covariance matrix. Please note that variance covariance matrixes are always symmetric and non-negative definite which makes all eigenvalues are nonnegative.  The estimate of the variance-covariance matrix is computed separately for each group if the grouping variable is provided. If no grouping variable is supplied all dataset is treated as a single group.  The user-customizable parameter λ=0 corresponds to the smallest eigenvalue as penalty in each matrix while λ=1 corresponds to the largest eigenvalue as penalty in each matrix.  The default value λ=0.5  corresponds to the medial of eigenvalues for each matrix.  Based on the penalty structure the inverse of the variance-covariance matrix exists for all non-zero values of the penalty.  In case the inverse of the variance covariance matrix exists λ parameter is ignored. In this case the tool computes classic MD instead of PMD and user is provided with a warning.  The details about the penalty structure and computation of PMD are provided Supplementary File 3. 
 
-MD(x,y)=SquareRoot((x-y)T S (x-y))
-
-When correlation structure and dependency between metabolites is ignored the variance-covariance matrix  S-1 simplifies to diagonal matrix with diagonal values  1/sigma2 for i=1,2,...,n. In this case MD simplifies to standardized Euclidian distance described earlier.
-
-When the number of features is bigger than the number of samples the inverse of features variance-covariance matrix S-1 does not exist and classic MD cannot be defined. This is the case for all omics data. 
-
-To account for correlation structure in omics data the penalized Mahalanobis distance is introduces in SECIMTools. The PMD tool is based on the penalized version of features variance-covariance matrix Sλ where penalty parameter λ is customized by the user. Based on the penalty structure the inverse Sλ-1 exists for all non-zero values of the penalty. The PMD has the form:
-
-MD(x,y)=SquareRoot((x-y)T Sλ (x-y))
-
-In case that non-omics data are used and the inverse S-1 exists, the tool computes classic MD instead of PMD and user is provided with a warning. The details about the penalty λ and computation of PMD are provided Supplementary File 3. PMD provides outputs analogous to SED outputs.
 
 **NOTE:** Because of the nauture of the tool groups and samples where only one or two samples per group are avaialbe in the wide dataset will be discarded from the analysis.
 
