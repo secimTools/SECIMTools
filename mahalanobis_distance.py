@@ -384,10 +384,18 @@ def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
     else:
         dataType = "pairwise"
 
+    # Getting ty of distance header
+    if disType == "Mahalanobis":
+        distType1 = "Penalized"
+        distType2 = disType
+    else: 
+        distType1 = "Standardized"
+        distType2 = disType
+ 
     # Adds Figure title, x axis limits and set the xticks
-    figure.formatAxis(figTitle="{0} for Standardized {1} Distance for {2} {3}".
-                    format(plotType, disType, df_distance.name, dataType), 
-                    yTitle="Standardized {0} Distance".format(disType),
+    figure.formatAxis(figTitle="{0} for {1} {2} Distance for {3} {4}".
+                    format(plotType, distType1, distType2, df_distance.name, dataType), 
+                    yTitle="{0} {1} Distance".format(distType1, distType2),
                     xTitle="Index", ylim="ignore", xlim=(-0.5,-0.5+ns),  
                     xticks=df_distance.index.values)
 
