@@ -80,9 +80,8 @@ def main(args):
     # Treat everything as numeric
     dat.wide = dat.wide.applymap(float)
 
-    #Dropping missing values
-    if np.isnan(dat.wide.values).any():
-        dat.wide = dropMissing(dat.wide,logger=logger)
+    # Cleaning from missing data
+    dat.dropMissing()
 
     # Generate formula Formula
     preFormula,categorical,numerical,levels,dat.design = preProcessing(design=dat.design,
