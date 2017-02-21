@@ -117,16 +117,26 @@ class wideToDesign:
                 if sample in self.wide.columns:
                     self.sampleIDs.append(sample)
                 else:
-                    print "WARNING - Sample {0} missing on wide dataset".format(sample)
+                    if self.logger:
+                        self.logger.warn("Sample {0} missing on wide dataset".format(sample))
+                    else:
+                        print "WARNING - Sample {0} missing on wide dataset".format(sample)
 
 
             for sample in self.wide.columns.tolist():
                 if not (sample in self.design.index):
                     if keepSample:
-                        print "WARNING - Sample {0} missing on design file".format(sample)
+                        if self.logger:
+                            self.logger.warn("Sample {0} missing on design file".format(sample))
+                        else:
+                            print "WARNING - Sample {0} missing on design file".format(sample)
                     else:
-                        print "ERROR - Sample {0} missing on design file".format(sample)
-                        raise
+                        if self.logger:
+                            self.logger.error("Sample {0} missing on design file".format(sample))
+                            raise
+                        else:
+                            print "ERROR - Sample {0} missing on design file".format(sample)
+                            raise
 
             # Drop design rows that are not in the wide data set
             self.design = self.design[self.design.index.isin(self.sampleIDs)]
