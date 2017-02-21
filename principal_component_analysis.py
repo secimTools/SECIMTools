@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/10/31
+# DATE: 2017/02/21
 #
-# SCRIPT: pca.py
+# SCRIPT: principal_component_analysis.py
 #
-# VERSION: 1.1
+# VERSION: 2.2
 # 
 # AUTHOR: Coded by: Miguel A Ibarra (miguelib@ufl.edu) 
 #         Edited by: Matt Thoburn (mthoburn@ufl.edu)
@@ -64,12 +64,15 @@ def getOptions(myopts=None):
                         " column with groups.")
 
     output = parser.add_argument_group(title='Required output')
-    output.add_argument("-lo","--load_out",dest="lname",action='store',
+    output.add_argument("-lo","--load_out",dest="load_out",action='store',
                         required=True, help="Name of output file to store "\
                         "loadings. TSV format.")
-    output.add_argument("-so","--score_out",dest="sname",action='store',
+    output.add_argument("-so","--score_out",dest="score_out",action='store',
                         required=True, help="Name of output file to store "\
                         "scores. TSV format.")
+    output.add_argument("-su","--summary_out",dest="summary_out",action='store',
+                        required=True, help="Name of output file to store "\
+                        "summaries of the components. TSV format.")
     output.add_argument("-f","--figure",dest="figure",action="store",
                         required=False, help="Name of output file to store"\
                         "scatter plots for 3 principal components.")
@@ -83,35 +86,6 @@ def getOptions(myopts=None):
 
     args = parser.parse_args()
     return(args)
-
-def dropMissing(wide):
-    """
-    Drops missing data out of the wide file
-
-    :Arguments:
-        :type wide: pandas.core.frame.DataFrame
-        :param wide: DataFrame with the wide file data
-
-    :Returns:
-        :rtype wide: pandas.core.frame.DataFrame
-        :return wide: DataFrame with the wide file data without missing data
-    """
-    #Warning
-    logger.warn("Missing values were found")
-
-    #Count of original
-    nRows = len(wide.index)      
-
-    #Dropping 
-    wide.dropna(inplace=True)    
-
-    #Count of dropped
-    nRowsNoMiss = len(wide.index)  
-
-    #Warning
-    logger.warn("{} rows were dropped because of missing values.".
-                format(nRows - nRowsNoMiss))
-    return wide
 
 def runPCA(wide):
     """
@@ -134,6 +108,13 @@ def runPCA(wide):
                         proportion of the variance explained.
     """
     logger.info(u"Runing PCA on data")
+    
+    # Scalling data
+    wide_s = wide.copy()
+    wide_s["var"] = wide.std(axis=1)
+    wide_s = wide_s.apply(lambda x: x/math.sqrt(x["var"]),axis=1)
+    wide_s = wide_s.drop("var", axis=1)
+
     #Initialize PCA class with default values
     pca = PCA()
 
@@ -141,59 +122,25 @@ def runPCA(wide):
     scores = pca.fit_transform(wide)
 
     #Get loadings
-    if  len(wide.columns)>len(wide.index):
-        loadings = pca.components_.T
-    else:
-        loadings = pca.components_
+    loadings = pca.components_
 
-    #Get aditional information out of PCA, this will mimic the output from R
-    sd = scores.std(axis=0)
-    propVar = pca.explained_variance_ratio_
-    cumPropVar = propVar.cumsum()
+    #Get aditional information out of PCA (summary)
+    sd     = scores.std(axis=0)
+    var    = pca.explained_variance_ratio_
+    cumVar = var.cumsum()
 
-    #Crete labels(index) for the infor
-    labels = np.array(['#Std. deviation', '#Proportion of variance explained',
-                        '#Cumulative propowidertion of variance explained'])
+    # Create summay frame
+    summary = np.array([sd,var,cumVar]).T
 
-    #Create dataFrame for block output
-    block = pd.DataFrame([sd, propVar, cumPropVar],index=labels)
+    return scores,loadings,summary
 
-    return loadings,scores,block
-
-def createOutput(item,index):
-    """
-    Runs PCA over a wide formated dataset
-
-    :Arguments:
-        :type item: numpy.ndarray
-        :param item: Contains the data eiter loads or scores
-
-        :type index: numpy.ndarray
-        :param index: Contains the index for each item, could either be 
-                        column names (sampleID) or row names (rowID).
-    :Returns:
-        :rtype itemOut: pandas.core.frame.DataFrame
-        :return itemOut: data frame with full output structure containing item,
-                         index and block.
-    """
-
-    logger.info(u"Creating output file")
-    #Create header
-    header = np.array(['PC{}'.format(x + 1) for x in range(item.shape[1])])
-
-    #Creating dataframe
-    itemOut=pd.DataFrame(data=item,index=index,columns=header)
-
-    #Return 
-    return itemOut
-
-def plotScatterplot2D(loadings,pdf,dat,nloads=3):
+def plotScatterplot2D(data,pdf,dat,nloads=3):
     """
     Plots Scatterplots 2D for a number of loadngs for PCA.
 
     :Arguments:
-        :type loadings: pandas.DataFrame
-        :param loadings: Loadings of the PCA.
+        :type data: pandas.DataFrame
+        :param data: Loadings of the PCA.
 
         :type pdf: pdf object
         :param pdf: PDF object to save all the generated figures.
@@ -204,8 +151,16 @@ def plotScatterplot2D(loadings,pdf,dat,nloads=3):
         :type nloads: int
         :param nloads: Number of principal components to create pairwise combs.
     """
+    # Get colors
+    if  dat.group:
+        colorDes,ucGroups,combName=palette.getColors(design=dat.design,
+                                                    groups=[dat.group])
+    else:
+        colorList = list(palette.mpl_colors[0]) #First color on the palette
+        ucGroups = dict()
+
     # Selecting amount of pairwise combinations to plot scaterplots for loads.
-    for x, y in list(combinations(loadings.columns.tolist()[:nloads],2)):
+    for x, y in list(combinations(data.columns.tolist()[:nloads],2)):
 
         # Create a single-figure figure handler object
         fh = figureHandler(proj="2d", figsize=(14,8))
@@ -213,17 +168,12 @@ def plotScatterplot2D(loadings,pdf,dat,nloads=3):
         # Create a title for the figure
         title = "{0} vs {1}".format(x,y)
 
-        # Get colors
-        if  dat.group:
-            colorDes,ucGroups,combName=palette.getColors(design=dat.design,
-                                                        groups=[dat.group])
-            colorList = colorDes.colors.tolist()
-        else:
-            colorList = list(palette.mpl_colors[0]) #First color on the palette
-            ucGroups = dict()
+        # Get specific color list
+        if dat.group:
+            colorList = [ucGroups[dat.design[dat.group][idx]] for idx in data[x].index]
 
         # Plot the scatterplot based on data
-        scatter.scatter2D(x=list(loadings[x]), y=list(loadings[y]),
+        scatter.scatter2D(x=list(data[x]), y=list(data[y]),
                          colorList=colorList, ax=fh.ax[0])
 
         # Create legend
@@ -236,8 +186,8 @@ def plotScatterplot2D(loadings,pdf,dat,nloads=3):
         fh.despine(fh.ax[0])
 
         # Formatting axis
-        fh.formatAxis(figTitle=title,xTitle="Loadings on {0}".format(x),
-            yTitle="Loadings on {0}".format(y),grid=False)
+        fh.formatAxis(figTitle=title,xTitle="Scores on {0}".format(x),
+            yTitle="Scores on {0}".format(y),grid=False)
 
         # Adding figure to pdf
         fh.addToPdf(dpi=600,pdfPages=pdf)
@@ -286,34 +236,37 @@ def plotScatterplot3D(data,pdf,dat):
 
 def main(args):
     #Loading data trought Interface
-    dat = wideToDesign(args.input, args.design, args.uniqID,group=args.group)
+    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
+                        logger=logger)
 
-    #Dropping missing values
-    if np.isnan(dat.wide.values).any():
-        dat.wide = dropMissing(dat.wide)
-    
+    # Cleaning from missing data
+    dat.dropMissing()
+
+    # Transpossing matrix
+    dat.wide = dat.wide.T
+
     # RunPCA
-    loadings,scores,block = runPCA(dat.wide)
+    scores, loadings, summary = runPCA(dat.wide)
 
-    # Creatting outputs
-    loadOut=createOutput(loadings,dat.wide.columns)
-    scoreOut=createOutput(scores,dat.wide.index)  
-    
-    # Save loads
-    with open(os.path.abspath(args.lname),"w") as LOADS:
-        block.to_csv(LOADS,sep="\t", header=False)
-        loadOut.to_csv(LOADS,sep="\t", index_label='sampleID')
-    
-    # Save scores
-    with open(os.path.abspath(args.sname),"w") as SCORES:
-        block.to_csv(SCORES,sep="\t", header=False)
-        scoreOut.to_csv(SCORES,sep="\t", index_label=dat.uniqID)
+    # Create name of the components
+    header = ["PC{0}".format(x+1) for x in range(summary.shape[0])]
+
+    # Convert loadings and scores to Pandas DataFrame rename index in summary
+    scores   = pd.DataFrame(data=scores, index=dat.wide.index, columns=header)
+    loadings = pd.DataFrame(data=loadings, index=header, columns=dat.wide.columns)
+    summary  = pd.DataFrame(data=summary, index=header, columns=["standar_deviation",
+                "proportion_of_variance_explained","cumulative_proportion_of_variance_explained"])
+
+    # Save Scores, Loadings and Summary
+    scores.to_csv(args.score_out, sep="\t", index_label='sampleID')
+    loadings.to_csv(args.load_out, sep="\t", index_label=dat.uniqID)
+    summary.to_csv(args.summary_out, sep="\t", index_label="PCs")
 
     #Plotting scatter plot 3D
     logger.info(u"Plotting PCA scores")
     with PdfPages(os.path.abspath(args.figure)) as pdfOut:
-        plotScatterplot2D(loadings=loadOut, pdf=pdfOut, dat=dat)
-        plotScatterplot3D(data=loadOut, pdf=pdfOut, dat=dat)
+        plotScatterplot2D(data=scores, pdf=pdfOut, dat=dat)
+        plotScatterplot3D(data=scores, pdf=pdfOut, dat=dat)
 
     #Ending script
     logger.info(u"Finishing running of PCA")
