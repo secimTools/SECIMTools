@@ -8,6 +8,9 @@
         <requirement type="python-module">sklearn</requirement>
         <requirement type="python-module">palettable</requirement>
     </requirements>
+    <stdio>
+        <exit_code range="1:" level="warning" description="RuntimeWarning"/>
+    </stdio>
     <command interpreter="python">
         mahalanobis_distance.py
         --input $input
