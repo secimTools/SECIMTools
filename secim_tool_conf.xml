@@ -16,6 +16,7 @@
     <tool file="secimtools_v2/linear_discriminant_analysis.xml"/>
     <tool file="secimtools_v2/log_transformation.xml"/>
     <tool file="secimtools_v2/magnitud_difference_flags.xml"/>
+    <tool file="secimtools_v2/mahalanobis_distance.xml"/>
     <tool file="secimtools_v2/merge_flags.xml"/>
     <tool file="secimtools_v2/modulated_modularity_clustering.xml"/>
     <tool file="secimtools_v2/mzrt_match.xml"/>    
