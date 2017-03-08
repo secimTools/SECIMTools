@@ -4,14 +4,15 @@
 # 
 # MODULE: modulated_modularity_clustering.py
 #
-# VERSION: 1.1
+# VERSION: 1.2
 # 
-# EDITED: Miguel Ibarra (miguelib@ufl.edu) Matt Thoburn (mthoburn@ufl.edu) 
+# ADDAPTED: Miguel Ibarra (miguelib@ufl.edu) Matt Thoburn (mthoburn@ufl.edu) 
 #
 # DESCRIPTION: This tool runs modulated modularity clustering (mmc)
 #
 ################################################################################
 # Built-in packages
+import os
 import csv
 import logging
 import argparse
@@ -30,6 +31,7 @@ from interface import wideToDesign
 
 # Graphing packages
 import module_heatmap as hm
+from manager_color import colorHandler
 from manager_figure import figureHandler
 from module_mmc import expansion, get_clustering
 
@@ -37,36 +39,56 @@ from module_mmc import expansion, get_clustering
 def getOptions(myOpts = None):
     # Get command line arguments.
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c",'--correlation', 
-                        choices=('pearson', 'kendall', 'spearman'),
-                        default='pearson',
+
+    # Standard requierments for SECIM tools
+    standard = parser.add_argument_group(title='Standard input', 
+                                description='Standard input for SECIM tools.')
+    standard.add_argument( "-i","--input", dest="input", action='store', 
+                        required=True, help="Input dataset in wide format.")
+    standard.add_argument("-d" ,"--design",dest="design", action='store', 
+                        required=True, help="Design file.")
+    standard.add_argument("-id", "--ID",dest="uniqID", action='store', 
+                        required=True, help="Nam of the column with unique"\
+                        " identifiers.")
+    # Tool specific requierements
+    tool = parser.add_argument_group(title='Tool input', 
+                                description='Specific input for the tools.')
+    tool.add_argument("-c",'--correlation', dest="correlation", default="pearson",
+                        choices=("pearson", "kendall", "spearman"),
                         help=("Compute correlation coefficients using either "
                         "'pearson' (standard correlation coefficient), "
                         "'kendall' (Kendall Tau correlation coefficient), or "
                         "'spearman' (Spearman rank correlation)."))
-    parser.add_argument("-i",'--input', required=True,
-                        help=('Path to the data file, which is expected to be in'
-                        'tabular (tsv) format with row and column labels, '
-                        'and for which the rows are to be clustered.'))
-    parser.add_argument("-d","--design", dest="design", required=True, 
-                        help="Path of design file")
-    parser.add_argument("-id","--ID",dest="uniqID",required=True, 
-                        help="Unique Identifier")
-    parser.add_argument("-sl",'--sigmaLow', type=float, default=0.05,
-                        help='Low value of sigma (Default: 0.05).')
-    parser.add_argument("-sh",'--sigmaHigh', type=float, default=0.50,
-                        help='High value of sigma (Default: 0.50).')
-    parser.add_argument("-sn",'--sigmaNum', type=float, default=451,
-                        help='Number of values of sigma to search (Default: 451).')
-
-    # Specify output file names relative to the directory
-    # containing the input csv file.
-    parser.add_argument('-f', "--figure", dest="figure", required=True,
+    tool.add_argument("-sl",'--sigmaLow',dest="sigmaLow", type=float, 
+                        default=0.05, help="Low value of sigma (Default: 0.05).")
+    tool.add_argument("-sh",'--sigmaHigh',dest="sigmaHigh", type=float, 
+                        default=0.50, help="High value of sigma (Default: 0.50).")
+    tool.add_argument("-sn",'--sigmaNum',dest="sigmaNum", type=float, 
+                        default=451, help="Number of values of sigma to search"\
+                        " (Default: 451).")
+    # Tool output
+    output = parser.add_argument_group(title='Output paths', 
+                        description='Output paths for the tools.')
+    output.add_argument('-f', "--figure", dest="figure", required=True,
                         help="MMC Heatmaps")
-    parser.add_argument('-o',"--out", dest="out", required=True, 
+    output.add_argument('-o',"--out", dest="out", required=True, 
                         help="Output TSV name")
+    # Plotting options
+    plot = parser.add_argument_group(title='Plot options')
+    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
+                        default="diverging", help="Name of the palette to use.")
+    plot.add_argument("-col","--color",dest="color",action="store",required=False, 
+                        default="Spectral_10", help="Name of a valid color scheme"\
+                        " on the selected palette")
 
     args = parser.parse_args()
+
+    # Standardize paths
+    args.out    = os.path.abspath(args.out)
+    args.input  = os.path.abspath(args.input)
+    args.design = os.path.abspath(args.design)
+    args.figure = os.path.abspath(args.figure)
+
     return args
 
 def nontechnical_analysis(args, df, mask, C, clustering):
@@ -164,16 +186,19 @@ def nontechnical_analysis(args, df, mask, C, clustering):
     # Plot using something like http://stackoverflow.com/questions/15988413/
     # Drawing heatmaps
     # Draw first heatmap [C]    
-    hm.plotHeatmap(C,fh1.ax[0],xlbls=remaining_row_names,ylbls=remaining_row_names)
-    fh1.formatAxis()
+    hm.plotHeatmap(C,fh1.ax[0], cmap=palette.mpl_colormap, xlbls=remaining_row_names,
+                    ylbls=remaining_row_names)
+    fh1.formatAxis(xTitle="sampleID", figTitle="Correlations")
 
     # Draw second heatmap [C_sorted](reordered according to the clustering).
-    hm.plotHeatmap(C_sorted,fh2.ax[0],xlbls=hpnames,ylbls=hpnames)
-    fh2.formatAxis()
+    hm.plotHeatmap(C_sorted,fh2.ax[0], cmap=palette.mpl_colormap, xlbls=hpnames,
+                    ylbls=hpnames)
+    fh2.formatAxis(xTitle="sampleID", figTitle="Re-Ordered correlations")
 
     # Draw the heatmap [C_smoothed](smoothed version of C_sorted)
-    hm.plotHeatmap(C_smoothed,fh3.ax[0],xlbls=hpnames,ylbls=hpnames)
-    fh3.formatAxis()
+    hm.plotHeatmap(C_smoothed,fh3.ax[0], cmap=palette.mpl_colormap, xlbls=hpnames,
+                    ylbls=hpnames)
+    fh3.formatAxis(xTitle="sampleID", figTitle="Smoothed correlations")
 
     #Create output from maps
     with PdfPages(args.figure) as pdf:
@@ -183,23 +208,24 @@ def nontechnical_analysis(args, df, mask, C, clustering):
 
 def main(args):
     # Import data through the SECIMTools interface 
-    data = wideToDesign(wide=args.input,design=args.design,uniqID=args.uniqID)
-    logger.info('Number of variables: {0}'.format(data.wide.shape[0]))
-    logger.info('Number of observations per variable: {0}'.format(data.wide.shape[1]))
+    dat = wideToDesign(wide=args.input,design=args.design,uniqID=args.uniqID, 
+                        logger=logger)
+    logger.info('Number of variables: {0}'.format(dat.wide.shape[0]))
+    logger.info('Number of observations per variable: {0}'.format(dat.wide.shape[1]))
 
     ## If there is no variance in a row, the correlations cannot be computed.
-    data.wide["variance"]=data.wide.apply(lambda x: ((x-x.mean()).sum()**2),axis=1)
-    data.wide = data.wide[data.wide["variance"]!=0.0]
-    data.wide.drop("variance",axis=1,inplace=True)
+    dat.wide["variance"]=dat.wide.apply(lambda x: ((x-x.mean()).sum()**2),axis=1)
+    dat.wide            = dat.wide[dat.wide["variance"]!=0.0]
+    dat.wide.drop("variance",axis=1,inplace=True)
     logger.info("Table arranged")
 
     # Compute the matrix of correlation coefficients.
-    C = data.wide.T.corr(method=args.correlation).values
+    C = dat.wide.T.corr(method=args.correlation).values
     logger.info("Correlated")
     
     # For now, ignore the possibility that a variable
     # will have negligible variation.
-    mask = np.ones(data.wide.shape[0], dtype=bool)
+    mask = np.ones(dat.wide.shape[0], dtype=bool)
 
     # Count the number of variables not excluded from the clustering.
     p = np.count_nonzero(mask)
@@ -226,7 +252,8 @@ def main(args):
 
     # Run the nontechnical analysis using the data frame and the less nerdy
     # of the outputs from the technical analysis.
-    nontechnical_analysis(args, data.wide, mask, C, clustering)
+    nontechnical_analysis(args, dat.wide, mask, C, clustering)
+    logger.info("Script Complete!")
 
 if __name__ == '__main__':
     args = getOptions()
@@ -234,6 +261,17 @@ if __name__ == '__main__':
     # Activate Logger
     logger = logging.getLogger()
     sl.setLogger(logger)
+
+    # Starting script
+    logger.info("Importing data with following parameters:"\
+                "\n\tInput: {0}"\
+                "\n\tDesign: {1}"\
+                "\n\tuniqID: {2}".format(args.input, args.design, args.uniqID))
+
+    # Stablishing color palette
+    palette = colorHandler(pal=args.palette, col=args.color)
+    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+                args.palette))
 
     # Starting program
     main(args)
