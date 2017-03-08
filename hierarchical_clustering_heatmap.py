@@ -111,7 +111,7 @@ def main(args):
     logger.info("Plotting heatmaps")
     if args.dendogram==True:
         fh = hm.plotHCHeatmap(dat.wide, hcheatmap=True, cmap=palette.mpl_colormap,
-                             xlbls=x, sylbls=y)
+                             xlbls=x, ylbls=y)
         fh.savefig(args.fig, format="pdf")
 
     #Plotting without a dendogram single heatmap
