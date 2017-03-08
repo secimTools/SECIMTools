@@ -49,33 +49,45 @@ def getOptions():
     description = """ One-Way ANOVA """
     parser = argparse.ArgumentParser(description=description,
                              formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument('-i',"--input", dest="input", action='store', 
+
+    standard = parser.add_argument_group(description="Required Input")
+    standard.add_argument('-i',"--input", dest="input", action='store', 
             required=True, help="Input dataset in wide format.")
-    parser.add_argument('-d',"--design", dest="design", action='store', 
+    standard.add_argument('-d',"--design", dest="design", action='store', 
             required=True, help="Design file.")
-    parser.add_argument('-id',"--ID", dest="uniqID", action='store', 
+    standard.add_argument('-id',"--ID", dest="uniqID", action='store', 
             required=True, help="Name of the column with unique identifiers.")
-    parser.add_argument('-f',"--factors", dest="factors", action='store', 
+    standard.add_argument('-f',"--factors", dest="factors", action='store', 
             required=True, help="Factors to run ANOVA")
-    parser.add_argument('-t',"--factorTypes", dest="ftypes", action='store', 
+
+    tool = parser.add_argument_group(description="Tool Input")
+    tool.add_argument('-t',"--factorTypes", dest="ftypes", action='store', 
             required=True, help="Type of factors to run ANOVA")
-    parser.add_argument('-in',"--interactions", dest="interactions", action="store_true", 
+    tool.add_argument('-in',"--interactions", dest="interactions", action="store_true", 
             required=False, help="Ask for interactions to run ANOVA")
-    parser.add_argument('-o',"--out", dest="oname", action="store", 
+
+    output = parser.add_argument_group(description="Output")
+    output.add_argument('-o',"--out", dest="oname", action="store", 
             required=True, help="Output file name.")
-    parser.add_argument('-fl',"--flags", dest="flags", action="store", 
+    output.add_argument('-fl',"--flags", dest="flags", action="store", 
             required=True, help="Flags file name.")
-    parser.add_argument('-f1',"--fig", dest="ofig", action="store", 
+    output.add_argument('-f1',"--fig", dest="ofig", action="store", 
             required=True, help="Output figure name for q-q plots [pdf].")
-    parser.add_argument('-f2',"--fig2", dest="ofig2", action="store", 
+    output.add_argument('-f2',"--fig2", dest="ofig2", action="store", 
             required=True, help="Output figure name for volcano plots [pdf].")
     args = parser.parse_args()
+
+    # Standardized paths
+    args.ofig  = os.path.abspath(args.ofig)
+    args.ofig2 = os.path.abspath(args.ofig2)
+    args.oname = os.path.abspath(args.oname)
+    args.flags = os.path.abspath(args.flags)
 
     return(args)
 
 def main(args):
     # Import data
-    dat = wideToDesign(args.input,args.design,args.uniqID)
+    dat = wideToDesign(args.input,args.design,args.uniqID,logger=logger)
 
     # Treat everything as numeric
     dat.wide = dat.wide.applymap(float)
@@ -156,19 +168,19 @@ def main(args):
     # Round results to 4 digits and save
     results = results.round(4)
     results.index.name = dat.uniqID
-    results.to_csv(os.path.abspath(args.oname), sep="\t")
+    results.to_csv(args.oname, sep="\t")
 
     # Flags
     significant.index.name = dat.uniqID
-    significant.to_csv(os.path.abspath(args.flags), sep="\t")
+    significant.to_csv(args.flags, sep="\t")
 
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
 
+    # Setting up logger
     logger = logging.getLogger()
     sl.setLogger(logger)
-
     logger.info(u"""Importing data with following parameters: \
         \n\tWide: {0}\
         \n\tDesign: {1}\
@@ -176,4 +188,5 @@ if __name__ == '__main__':
         \n\tFactors: {3}"""
         .format(args.input, args.design, args.uniqID, args.factors))
 
+    # Calling main script
     main(args)

@@ -41,10 +41,10 @@ def getModelResultsByGroup(model,levels, numerical):
         
     #Add name to previous series
     t.name    ="t-Value_for_Diff"
-    stde.name ="StdError_for_Diff"
-    coef.name ="Diff_of"
-    pt.name   ="Prob>|t|_for_Diff"
-    log.name  ="-log10(p-value)"
+    stde.name ="stdError_for_Diff"
+    coef.name ="fiff_of"
+    pt.name   ="Prob_greater_than_t_for_Diff"
+    log.name  ="-log10_p-value_"
 
 
     # Concat all dataframes

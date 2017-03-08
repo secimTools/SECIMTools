@@ -32,7 +32,7 @@ def getModelResults(model,feat):
     anovaResults=[f,p,mss,ess,tss,mse,NDF,DDF,R2]#,resid,fitted]
     
     # Creating indexes for values
-    index=["f-Value","p-Value of f-Value",
+    index=["f-Value","p-Value_of_f-Value",
         "ErrorSS","ModelSS","TotalSS",
         "MSE","NDF","DDF", "R2"]#,"resid","fitted"]
     
