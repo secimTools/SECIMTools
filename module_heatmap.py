@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 from manager_color import colorHandler
 
 
-def plotHeatmap(data,ax,xlbls=True,ylbls=True):
+def plotHeatmap(data,ax,cmap=False,xlbls=True,ylbls=True):
     """
     This function creates and plots a heatmap or a hcheatmap (hiearchical
     cluster heat map)
@@ -50,14 +50,16 @@ def plotHeatmap(data,ax,xlbls=True,ylbls=True):
     # You can have two possible ways to create a pallete.
     # 1) sns.diverging_palette (a seaborn function)
     # 2) palettable.colorbrewer.diverging.[color].mpl_colors 
-    colors = colorHandler(pal="diverging", col="Spectral_10")
-    cmap = colors.mpl_colormap
+
+    if not cmap:
+        colors = colorHandler(pal="diverging", col="Spectral_10")
+        cmap = colors.mpl_colormap
 
     # Draw the full plot
     sns.heatmap(data,linewidths=0.0,ax=ax,cmap=cmap,xticklabels=xlbls,
                 yticklabels=ylbls)
 
-def plotHCHeatmap(data,hcheatmap=True,xlbls=True,ylbls=True):
+def plotHCHeatmap(data,hcheatmap=True,cmap=False,xlbls=True,ylbls=True):
     """
     This function creates and plots a heatmap or a hcheatmap (hiearchical
     cluster heat map)
@@ -77,8 +79,9 @@ def plotHCHeatmap(data,hcheatmap=True,xlbls=True,ylbls=True):
     # You can have two possible ways to create a pallete.
     # 1) sns.diverging_palette (a seaborn function)
     # 2) palettable.colorbrewer.diverging.[color].mpl_colors 
-    colors = colorHandler(pal="diverging", col="Spectral_10")
-    cmap = colors.mpl_colormap
+    if not cmap:
+        colors = colorHandler(pal="diverging", col="Spectral_10")
+        cmap = colors.mpl_colormap
 
     # Draw the full plot
     hmap = sns.clustermap(data,row_cluster=hcheatmap,col_cluster=hcheatmap,
