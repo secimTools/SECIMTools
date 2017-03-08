@@ -42,11 +42,11 @@ def volcano(combo, results, oname, cutoff=4):
     """
     # Getting data for lpvals
     lpvals = {col.split("_")[-1]:results[col] for col in results.columns.tolist() \
-            if col.startswith("-log10(p-value)")}
+            if col.startswith("-log10_p-value_")}
 
     # Gettign data for diffs
     difs   = {col.split("_")[-1]:results[col] for col in results.columns.tolist() \
-            if col.startswith("Diff_of")}
+            if col.startswith("diff_of")}
 
     # Making plots
     with PdfPages(oname) as pdf:

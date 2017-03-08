@@ -42,8 +42,8 @@ def getModelResultsByGroup(model,levels, numerical):
     #Add name to previous series
     t.name    ="t-Value_for_Diff"
     stde.name ="stdError_for_Diff"
-    coef.name ="fiff_of"
-    pt.name   ="Prob_greater_than_t_for_Diff"
+    coef.name ="diff_of"
+    pt.name   ="prob_greater_than_t_for_diff"
     log.name  ="-log10_p-value_"
 
 
