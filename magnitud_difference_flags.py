@@ -53,8 +53,8 @@ def getOptions(myopts=None):
     standard.add_argument('-id',"--ID", dest="uniqID", action='store', 
                         required=True, help="Name of the column with uniq IDs.")
     standard.add_argument('-g',"--group", dest="group", action='store', 
-                         required=False, default=False, help="Add the option to \
-                        separate sample IDs by treatement name. ")
+                         required=False, default=False, help="Add the option to "\
+                        "separate sample IDs by treatement name. ")
 
     output = parser.add_argument_group(description="Output options")
     output.add_argument("-f","--figure",dest="figure",action="store",
@@ -70,11 +70,11 @@ def getOptions(myopts=None):
     optional.add_argument('-bug',"--debug", dest="debug", action='store_true', 
                         required=False, help="Add debugging log output.")
     optional.add_argument('-ht',"--html", dest="html", action='store', 
-                        required=False, default=None,  help="Path for html\
-                        output file (this option is just for galaxy")
+                        required=False, default=None,  help="Path for html"\
+                        " output file (this option is just for galaxy")
     optional.add_argument('-htp',"--htmlPath", dest="htmlPath", action='store', 
-                        required=False, default=None,  help="Path for html\
-                        output file (this option is just for galaxy")
+                        required=False, default=None,  help="Path for html "\
+                        "output file (this option is just for galaxy")
     if myopts:
         args = parser.parse_args(myopts)
     else:
@@ -177,8 +177,8 @@ def createHTML():
     title = etree.SubElement(head, "title")
     title.text = "Count Digits Results List"
     body = etree.SubElement(html, "body")
-    div = etree.SubElement(body, "div",style="background-color:black; \
-                color:white; text-align:center; margin-bottom:5% padding:4px;")
+    div = etree.SubElement(body, "div",style="background-color:black; "\
+                "color:white; text-align:center; margin-bottom:5% padding:4px;")
     h1 = etree.SubElement(div,"h1")
     ul = etree.SubElement(body,"ul",style="text-align:left; margin-left:5%;")
     h1.text="Output"
@@ -262,10 +262,14 @@ def saveFlags(count):
 def main(args):
     #parsing data with interface
     dat = wideToDesign(wide=args.input, design=args.design, uniqID=args.uniqID, 
-                        group=args.group)
+                        group=args.group, logger=logger)
 
+    # Removing groups with just one elemen from dat
+    dat.removeSingle()
+
+    # Create folder for counts if html found
     if args.html is not None:
-        # Create folder for counts if html found
+        logger.info(u"Using html output file")
         folderDir = args.htmlPath
         try:
             os.makedirs(folderDir)
@@ -273,21 +277,15 @@ def main(args):
             logger.error("Error. {}".format(e))
 
         # Initiation zip files
-        html = createHTML()
-        folderDir=folderDir+"/"+args.counts
-        logger.info(u"Using html output file")
+        html      = createHTML()
+        folderDir =folderDir+"/"+args.counts
     else:
         folderDir=args.counts
-        html=args.html
-
-        
+        html     =args.html
 
     # Use group separation or not depending on user input
     with PdfPages(os.path.abspath(args.figure)) as pdf:
         if args.group:
-            # Removing groups with just one elemen from dat
-            dat.removeSingle()
-
             # Count Digits per group
             logger.info(u"Counting digits per group")
             countDigitsByGroup(dat, args, folderDir, pdf, html=html)
@@ -310,7 +308,7 @@ def main(args):
         with open(args.html,"w") as  htmlOut:
             print >> htmlOut,etree.tostring(html,pretty_print=True)
 
-    
+    # Finishing script    
     logger.info(u"Count Digits Complete!")
 
 if __name__ == '__main__':
@@ -325,12 +323,12 @@ if __name__ == '__main__':
         sl.setLogger(logger)
 
     # Starting script with the following parameters
-    logger.info(u"Importing data with following parameters: \
-                \n\tWide: {0}\
-                \n\tDesign: {1}\
-                \n\tUnique ID: {2}\
-                \n\tGroup: {3}\
-                \n\tHtml: {4}".\
+    logger.info(u"Importing data with following parameters: "\
+                "\n\tWide: {0}"\
+                "\n\tDesign: {1}"\
+                "\n\tUnique ID: {2}"\
+                "\n\tGroup: {3}"\
+                "\n\tHtml: {4}".\
     format(args.input,args.design, args.uniqID, args.group, args.html))
 
     # Main
