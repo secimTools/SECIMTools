@@ -1,10 +1,10 @@
  #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/May/06, rev: 2016/July/12
+# DATE: 2017/03/09
 #
 # SCRIPT: baPlot.py
 #
-# VERSION: 1.1
+# VERSION: 1.3
 # 
 # AUTHOR: Miguel A Ibarra (miguelib@ufl.edu) 
 #            Edited by: Matt Thoburn (mthoburn@ufl.edu)
@@ -19,27 +19,27 @@
 from __future__ import division
 import logging
 import argparse
-from argparse import RawDescriptionHelpFormatter
 from itertools import combinations
+from argparse import RawDescriptionHelpFormatter
 
 # Add-on packages
-import pandas as pd
 import matplotlib
+import pandas as pd
 matplotlib.use('Agg')
+import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-import statsmodels.api as sm
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
 # Local Packages
-from interface import wideToDesign
-from flags import Flags
 import logger as sl
+import module_bar as bar
+import module_lines as lines
+import module_scatter as scatter
+from flags import Flags
+from interface import wideToDesign
 from manager_color import colorHandler
 from manager_figure import figureHandler
-import module_scatter as scatter
-import module_lines as lines
-import module_bar as bar
 
 
 def getOptions():
@@ -151,21 +151,72 @@ def summarizeFlags(dat, flags, combos):
     flagTotal = pd.DataFrame(index=flags.index, columns=dat.wide.columns)
     flagTotal.fillna(0, inplace=True)
 
+    # Create a data frame that is the same dimensions as wide. Where each cell
+    # will be the sum of flags.
+    flagSum_p = pd.DataFrame(index=flags.index, columns=dat.wide.columns)
+    flagSum_p.fillna(0, inplace=True)
+
+    # Create a data frame that is the same dimensions as wide. Where each cell
+    # is the total number of comparisons.
+    flagTotal_p = pd.DataFrame(index=flags.index, columns=dat.wide.columns)
+    flagTotal_p.fillna(0, inplace=True)
+
+    # Create a data frame that is the same dimensions as wide. Where each cell
+    # will be the sum of flags.
+    flagSum_c = pd.DataFrame(index=flags.index, columns=dat.wide.columns)
+    flagSum_c.fillna(0, inplace=True)
+
+    # Create a data frame that is the same dimensions as wide. Where each cell
+    # is the total number of comparisons.
+    flagTotal_c = pd.DataFrame(index=flags.index, columns=dat.wide.columns)
+    flagTotal_c.fillna(0, inplace=True)
+
+    # Create a data frame that is the same dimensions as wide. Where each cell
+    # will be the sum of flags.
+    flagSum_d = pd.DataFrame(index=flags.index, columns=dat.wide.columns)
+    flagSum_d.fillna(0, inplace=True)
+
+    # Create a data frame that is the same dimensions as wide. Where each cell
+    # is the total number of comparisons.
+    flagTotal_d = pd.DataFrame(index=flags.index, columns=dat.wide.columns)
+    flagTotal_d.fillna(0, inplace=True)
+
     for sampleID in dat.sampleIDs:
         # Get list of flags that contain the current sampleID
         flagList = ["flag_{0}_{1}".format(c[0], c[1]) for c in combos if sampleID in c]
+        flagList_p = ["flag_pearson_{0}_{1}".format(c[0], c[1]) for c in combos if sampleID in c]
+        flagList_c = ["flag_cooks_{0}_{1}".format(c[0], c[1]) for c in combos if sampleID in c]
+        flagList_d = ["flag_dffits_{0}_{1}".format(c[0], c[1]) for c in combos if sampleID in c]
 
         # Sum the flags in flags for the current sampleID
         flagSum.ix[:, sampleID] = flags[flagList].sum(axis=1).values
+        flagSum_p.ix[:, sampleID] = flags[flagList_p].sum(axis=1).values
+        flagSum_c.ix[:, sampleID] = flags[flagList_c].sum(axis=1).values
+        flagSum_d.ix[:, sampleID] = flags[flagList_d].sum(axis=1).values
 
         # Get the totals of possible flags in flags for the current sampleID
         flagTotal.ix[:, sampleID] = flags[flagList].count(axis=1).values
+        flagTotal_p.ix[:, sampleID] = flags[flagList_p].count(axis=1).values
+        flagTotal_c.ix[:, sampleID] = flags[flagList_c].count(axis=1).values
+        flagTotal_d.ix[:, sampleID] = flags[flagList_d].count(axis=1).values
 
     # Calculate the proportion of samples and features using the marginal sums.
     propSample = flagSum.sum(axis=0) / flagTotal.sum(axis=0)
     propFeature = flagSum.sum(axis=1) / flagTotal.sum(axis=1)
 
-    return propSample, propFeature
+    # Calculate the proportion of samples and features using the marginal sums.
+    propSample_p = flagSum_p.sum(axis=0) / flagTotal_p.sum(axis=0)
+    propFeature_p = flagSum_p.sum(axis=1) / flagTotal_p.sum(axis=1)
+    
+    # Calculate the proportion of samples and features using the marginal sums.
+    propSample_c = flagSum_c.sum(axis=0) / flagTotal_c.sum(axis=0)
+    propFeature_c = flagSum_c.sum(axis=1) / flagTotal_c.sum(axis=1)
+
+    # Calculate the proportion of samples and features using the marginal sums.
+    propSample_d = flagSum_d.sum(axis=0) / flagTotal_d.sum(axis=0)
+    propFeature_d = flagSum_d.sum(axis=1) / flagTotal_d.sum(axis=1)
+
+    return propSample, propFeature, propSample_p, propFeature_p, propSample_c, propFeature_c, propSample_d, propFeature_d
 
 def plotFlagDist(propSample, propFeature, pdf):
     """ 
@@ -369,7 +420,7 @@ def makeBA(x, y, ax, fh):
         xTitle='Mean\n{0} & {1}'.format(x.name, y.name),
         yTitle='Difference\n{0} - {1}'.format(x.name, y.name),grid=False)
 
-    return mask
+    return mask, mask1, mask2, mask3
 
 def makeScatter(x, y, ax, fh):
     """ Plot a scatter plot of x vs y.
@@ -442,7 +493,7 @@ def iterateCombo(dat, combo, pdf):
     makeScatter(dat.wide.loc[:, c1], dat.wide.loc[:, c2], fh.ax[0],fh)
 
     # BA plot of c1 vs c2
-    outlier = makeBA(dat.wide.loc[:, c1], dat.wide.loc[:, c2], fh.ax[1],fh)
+    outlier, pearson, cooks, dffits = makeBA(dat.wide.loc[:, c1], dat.wide.loc[:, c2], fh.ax[1],fh)
 
     # Build plot title
     title = buildTitle(dat, c1, c2)
@@ -462,12 +513,16 @@ def iterateCombo(dat, combo, pdf):
     # Create flags
     flag = Flags(index=dat.wide.index)
     flag.addColumn(column='flag_{0}_{1}'.format(c1, c2), mask=outlier)
+    flag.addColumn(column='flag_pearson_{0}_{1}'.format(c1, c2), mask=pearson)
+    flag.addColumn(column='flag_cooks_{0}_{1}'.format(c1, c2), mask=cooks)
+    flag.addColumn(column='flag_dffits_{0}_{1}'.format(c1, c2), mask=dffits)
 
     return flag.df_flags
 
 def main(args):
     # Import data
-    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group)
+    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group,
+                        logger=logger)
 
     # Get a list of samples to process, if processOnly is specified only 
     # analyze specified group.
@@ -498,7 +553,7 @@ def main(args):
     # Loop over combinations and generate plots and return a list of flags.
     logger.info('Generating flags and plots.')
     flags = map(lambda combo: iterateCombo(dat, combo, ppBA), combos)
-
+    
     # Close PDF with plots
     ppBA.close()
 
@@ -508,21 +563,36 @@ def main(args):
 
     # Summarize flags
     logger.info('Summarizing outlier flags.')
-    propSample, propFeature = summarizeFlags(dat, merged, combos)
+    propSample, propFeature, propSample_p, propFeature_p, propSample_c, propFeature_c, propSample_d, propFeature_d = summarizeFlags(dat, merged, combos)
     plotFlagDist(propSample, propFeature, args.distName)
 
     # Create sample level flags
     flag_sample = Flags(index=dat.sampleIDs)
     flag_sample.addColumn(column='flag_sample_BA_outlier', 
-            mask=(propSample >= args.sampleCutoff))
+                        mask=(propSample >= args.sampleCutoff))
+    flag_sample.addColumn(column='flag_sample_BA_pearson', 
+                        mask=(propSample_p >= args.sampleCutoff))
+    flag_sample.addColumn(column='flag_sample_BA_cooks', 
+                        mask=(propSample_c >= args.sampleCutoff))
+    flag_sample.addColumn(column='flag_sample_BA_dffits', 
+                        mask=(propSample_d >= args.sampleCutoff))
     flag_sample.df_flags.index.name = "sampleID"
     flag_sample.df_flags.to_csv(args.flagSample, sep='\t')
 
     # Create metabolite level flags
     flag_metabolite = Flags(dat.wide.index)
     flag_metabolite.addColumn(column='flag_feature_BA_outlier', 
-        mask=(propFeature >= args.featureCutoff))
+                        mask=(propFeature >= args.featureCutoff))
+    flag_metabolite.addColumn(column='flag_feature_BA_pearson', 
+                        mask=(propFeature_p >= args.featureCutoff))
+    flag_metabolite.addColumn(column='flag_feature_BA_cooks', 
+                        mask=(propFeature_c >= args.featureCutoff))
+    flag_metabolite.addColumn(column='flag_feature_BA_dffits', 
+                        mask=(propFeature_d >= args.featureCutoff))
     flag_metabolite.df_flags.to_csv(args.flagFeature, sep='\t')
+
+    # Finish Script
+    logger.info("Script Complete!")
 
 if __name__ == '__main__':
     # Command line options
