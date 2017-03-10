@@ -342,7 +342,7 @@ def iterateGroups(dat,strategy, rc, dist=False):
 def main(args):
     # Import data with interface
     logger.info("Importig data with interface")
-    dat = wideToDesign(args.input, args.design, uniqID=args.uniqID, group=args.group
+    dat = wideToDesign(args.input, args.design, uniqID=args.uniqID, group=args.group,
                         logger=logger)
 
     # Preprocessing
