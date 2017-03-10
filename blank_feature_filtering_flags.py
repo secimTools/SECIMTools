@@ -1,38 +1,38 @@
 #!/usr/bin/env python
-######################################################################################
-# DATE: 2016/August/10
+################################################################################
+# DATE: 2017/03/07
 # 
 # MODULE: anova_lm.py
 #
-# VERSION: 1.0
+# VERSION: 1.1
 # 
-# AUTHOR: Miguel Ibarra (miguelib@ufl.edu) ed. Matt Thoburn (mthoburn@ufl.edu) 
+# AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This tool Blank Feature Filtering on wide data.
 #
-#######################################################################################
+################################################################################
 
 #Standard Libraries
-import argparse
 import os
 import math
 import logging
+import argparse
 
 #AddOn Libraries
-import pandas as pd
-import numpy as np
 import matplotlib
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 # Local Packages
-from interface import wideToDesign
-from flags import Flags
 import logger as sl
+from flags import Flags
+from interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
-    parser = argparse.ArgumentParser(description="Takes a peak area/heigh \
-                                     dataset and calculates the LOD on it ")
+    parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
+                                     "dataset and calculates the LOD on it ")
 
     #Standar input for SECIMtools
     standar = parser.add_argument_group(title='Standard input', description= 
@@ -42,11 +42,25 @@ def getOptions():
     standar.add_argument("-d","--design",dest="design", action='store', 
                         required=True, help="Design file.")
     standar.add_argument("-id","--uniqID",dest="uniqID",action="store",
-                        required=True, help="Name of the column with unique \
-                        dentifiers.")
+                        required=True, help="Name of the column with unique" \
+                        "dentifiers.")
     standar.add_argument("-g","--group", dest="group", action='store', 
-                        required=True, help="Name of column in design file \
-                        with Group/treatment information.")
+                        required=True, help="Name of column in design file" \
+                        "with Group/treatment information.")
+
+    #Optional Input
+    tool = parser.add_argument_group(title='Optional input', 
+                                         description="Changes parameters for "\
+                                         "the prorgram")
+    tool.add_argument("-bv","--bff" ,dest="bff", action='store', 
+                         required=False, default=5000, type=int,
+                         help="Default BFF value [default 5000]")
+    tool.add_argument("-bn","--blank",dest="blank", action="store",
+                        required=False, default="blank",
+                        help="name of the column with the blanks")
+    tool.add_argument("-c","--criteria",dest="criteria",action="store",
+                        required=False, default=100,type=int,
+                        help="Value of the criteria to selct")
 
     #Output Paths
     output = parser.add_argument_group(title='Output paths', description=
@@ -56,116 +70,78 @@ def getOptions():
     output.add_argument("-b","--outbff",dest="outbff",action="store",
                         required=True,help="Output path for bff file[CSV]")
 
-    #Optional Input
-    optional = parser.add_argument_group(title='Optional input', 
-                                         description="Changes parameters for \
-                                         the prorgram")
-    optional.add_argument("-bv","--bff" ,dest="bff", action='store', 
-                         required=False, default=5000, 
-                         help="Default BFF value [default 5000]")
-    optional.add_argument("-bn","--blank",dest="blank", action="store",
-                        required=False, default="blank",
-                        help="name of the column with the blanks")
-    optional.add_argument("-c","--criteria",dest="criteria",action="store",
-                        required=False, default=100,type=int,
-                        help="Value of the criteria to selct")
-    optional.add_argument("-log", "--log", dest="log", action='store', 
-                         required=False, default=False, 
-                         help="Path and name of log file")
 
     args = parser.parse_args()
+
+    # Standardize paths
+    args.input    = os.path.abspath(args.input)
+    args.design   = os.path.abspath(args.design)
+    args.outflags = os.path.abspath(args.outflags)
+    args.outbff   = os.path.abspath(args.outbff)
+
+    # Returning arguments
     return (args)
 
-def calculateLOD(row,defaultLOD):
+def main(args):
+    #Importing data
+    logger.info("Importing data with the Interface")
+    dat = wideToDesign(args.input, args.design, args.uniqID, args.group, 
+                        logger=logger)
+    dat.wide = dat.wide.applymap(float)
+
+
+    # Calculate the means of each group but blanks
+    logger.info("Calcualting group means")
+    df_nobMeans = pd.DataFrame(index=dat.wide.index)
+    for name, group in dat.design.groupby(dat.group):
+        if name == args.blank:
+            df_blank = dat.wide[group.index].copy()
+        else:
+            df_nobMeans[name] = dat.wide[group.index].mean(axis=1)
+
+    # Calculating the LOD
     # Calculates the average of the blanks plus3 times the SD of the same.
-    lod = round(np.average(row)+(3*np.std(row,ddof=1)),3)
+    # If value calculated is 0 then use the default lod (default = 5000)
+    # NOTE: ["lod"]!=0 expression represents that eveything that is not 0 is fine
+    # and shoud remain as it is, and eveything that is 0  shoud be replaced
+    # http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.where.html
+    logger.info("Calculating limit of detection for each group default value [{0}].".format(args.bff))
+    df_blank.loc[:,"lod"] = np.average(df_blank,axis=1)+(3*np.std(df_blank,ddof=1,axis=1))
+    df_blank["lod"].where(df_blank["lod"]!=0, args.bff, inplace=True)
 
-    # If the limit of detection is bellow 0 then use a default LOD instead.
-    if lod > 0:
-        return lod
-    else:
-    # Default LOD 5000
-        lod=5000
-        return lod
+    # Apoply the limit of detection to the rest of the data, these values will be
+    # compared agains the criteria value for flagging.
+    logger.info("Comparing value of limit of detection to criteria [{0}].".format(args.criteria))
+    nob_bff = pd.DataFrame(index=dat.wide.index, columns=df_nobMeans.columns)
+    for group in nob_bff:
+        nob_bff.loc[:,group]=(df_nobMeans[group]-df_blank["lod"])/df_blank["lod"]
 
-def gettingBFF(row):
-    # Remove LOD values form the row
-    groups = row[row.index!="lod"]
+    # We create flags based on the criteria value (user customizable)
+    logger.info("Creating flags.")
+    df_offFlags = Flags(index=nob_bff.index)
+    for group in nob_bff:
+        df_offFlags.addColumn(column = 'flag_bff_'+group+'_off', 
+                              mask   = (nob_bff[group] < args.criteria))
 
-    # Calculate BFF value per group
-    bff = groups.apply(lambda group: ((group-row["lod"])/row["lod"]))
+    # Output BFF values and flags
+    nob_bff.to_csv(args.outbff, sep='\t')
+    df_offFlags.df_flags.to_csv(args.outflags, sep='\t')
+    logger.info("Script Complete!")
 
-    # Return BFF value
-    return bff
-
-def main():
+if __name__ == '__main__':
     #Import data
-    global args
     args = getOptions()
 
     #Setting logger
     logger = logging.getLogger()
     sl.setLogger(logger)
-    logger.info(u"""Importing data with following parameters:
-                Input: {0}
-                Design: {1}
-                uniqID: {2}
-                group: {3}
-                blank: {4}
-                """.format(args.input, args.design, args.uniqID, args.group,
+    logger.info("Importing data with following parameters:"\
+                "\n\tInput: {0}"\
+                "\n\tDesign: {1}"\
+                "\n\tuniqID: {2}"\
+                "\n\tgroup: {3}"\
+                "\n\tblank: {4}".format(args.input, args.design, args.uniqID, args.group,
                     args.blank))
 
-    #Importing data
-    dat = wideToDesign(args.input, args.design, args.uniqID, args.group)
-    dat.wide = dat.wide.applymap(float)
-
-    groups=dat.levels
-    #Calculating the means per group
-    nob_means = pd.DataFrame(index=dat.wide.index)#,columns=dat.levels)
-    for group in dat.levels:
-        if group==args.blank:
-            blanks_df=dat.wide[dat.design.index[dat.design[dat.group]==group]]
-        else:
-            currentgroup_df=dat.wide[dat.design.index[dat.design[dat.group]==group]]
-            nob_means[group]=currentgroup_df.mean(axis=1)
-
-    #Calculating the LOD
-    logger.info(u"""Calculating limit of detection for each group, if limit
-                of detection equals 0 default value [{0}] will be used.
-                """.format(args.bff))
-    nob_means.loc[:,"lod"]=blanks_df.apply(lambda row:calculateLOD(row,args.bff),
-                                            axis=1)
-
-    #Aplying BFF
-    nob_bff=pd.DataFrame(index=dat.wide.index,columns=nob_means.columns)
-    logger.info(u"""Comparing value of limit of detection to criteria [{0}]."""
-                .format(args.criteria))
-    nob_bff=nob_means.apply(gettingBFF,axis=1)
-
-    #Creating objet with flags
-    df_offFlags = Flags(index=nob_bff.index)
-
-    logger.info(u"""Creating flags.""")
-    for group in nob_bff:
-        #Get mask for values
-        mask = (nob_bff[group] > args.criteria)
-        
-        #Add Falg column
-        df_offFlags.addColumn(column='flag_bff_'+group+'_off', mask=mask==False)
-
-    #Calculate flag at least one off
-        #maskAny = df_offFlags.df_flags.any(axis=1)
-        #df_offFlags.addColumn('flag_bff_any_off', maskAny)
-
-    #Calculate flag all off
-        #maskAll = df_offFlags.df_flags.all(axis=1)
-        #df_offFlags.addColumn('flag_bff_all_off', maskAll)
-
-    #Outputting files
-    logger.info(u"""Output limit of detection values file.""")
-    nob_bff.to_csv(os.path.abspath(args.outbff), sep='\t')
-    logger.info(u"""Output flag file.""")
-    df_offFlags.df_flags.to_csv(os.path.abspath(args.outflags), sep='\t')
-
-if __name__ == '__main__':
-    main()
+    # Calling main script
+    main(args)
