@@ -4,7 +4,7 @@
 # 
 # Module: compound_identification.py
 #
-# VERSION: 0.1
+# VERSION: 0.2
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
 #
@@ -14,14 +14,14 @@
 #######################################################################################
 
 #Standard Libraries
-import argparse
 import os
 import logging
+import argparse
 import itertools
 
 #AddOn Libraries
-import pandas as pd
 import numpy as np
+import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
 #Local Libraries
@@ -67,6 +67,11 @@ def getOptions(myopts=False):
                         "compounds.")
 
     args = parser.parse_args()
+    # Stadardize paths
+    args.anno    = os.path.abspath(args.anno)
+    args.output  = os.path.abspath(args.output)
+    args.library = os.path.abspath(args.library)
+
     return(args);
  
 def identiyOnTarget (library,target,MZCut,RTCut):
@@ -127,23 +132,20 @@ def identiyOnTarget (library,target,MZCut,RTCut):
     return identified_df
 
 def main(args):
-    # Loading library file
+    # Loading library and target files
+    logger.info("Importing data")
     library = interface.annoFormat(data=args.library, uniqID=args.libid, 
                                     mz=args.libmz, rt=args.librt, anno=True)
-
-    # Read target file
-    target = interface.annoFormat(data=args.anno, uniqID=args.uniqID,
-                                mz=args.mzID, rt=args.rtID)
+    target  = interface.annoFormat(data=args.anno, uniqID=args.uniqID,
+                                    mz=args.mzID, rt=args.rtID)
                                 
     # Matching target file with library file
     logger.info("Identifying compounds")
-    identified_df = identiyOnTarget(library=library, target=target, MZCut=0.005,
-                     RTCut=0.15)
+    identified_df = identiyOnTarget(library=library, target=target, MZCut=0.005, RTCut=0.15)
 
     # Saving identified compounds to file
-    logger.info("Exporting results")
-    identified_df.to_csv(os.path.abspath(args.output), sep="\t", 
-                        index_label=args.uniqID)
+    identified_df.to_csv(args.output, sep="\t", index_label=args.uniqID)
+    logger.info("Script Complete!")
 
 if __name__=='__main__':
     #Get info
@@ -154,10 +156,9 @@ if __name__=='__main__':
     sl.setLogger(logger)
 
     # Showing parameters
-    logger.info(u"""Importing data with following parameters:
-            Input:  {0}
-            Library:{1}
-            """.format(args.anno, args.library))
+    logger.info("Importing data with following parameters:"
+            "\n\tInput:  {0}"
+            "\n\tLibrary:{1}".format(args.anno, args.library))
 
     # Runing script
     main(args)
