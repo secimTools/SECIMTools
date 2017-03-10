@@ -1,18 +1,18 @@
 #!/usr/bin/env python
-######################################################################################
-# Date: 2016/July/06
+################################################################################
+# Date: 2017/03/10
 # 
-# Module: peak_compare.py
+# Module: mzrt_match.py
 #
-# VERSION: 1.0
+# VERSION: 1.1
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This program compares the features among 2 annotation files based
-#				on their retention time and mz.It will output the results of this
-#				comparison at level of combinations and features.
+#               on their retention time and mz.It will output the results of this
+#               comparison at level of combinations and features.
 #
-#######################################################################################
+################################################################################
 
 #Standard Libraries
 import argparse
@@ -35,7 +35,7 @@ def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="""Matches rows (features) in 2
                                      files by their m/z and RT values""")
-    
+    # Input
     required = parser.add_argument_group(title='Required Input', 
                                     description='Required input to the program')
     required.add_argument('-a1',"--anno1",dest="anno1", action="store",
@@ -60,7 +60,7 @@ def getOptions():
     required.add_argument("-rt2","--rtID2",dest="rtID2",action="store",
                         required=True,default = "RT",help="""Name of the column
                          in file2 that contains RT""")
-
+    # Output
     output = parser.add_argument_group(title='Output files', 
                                     description='Output paths for the program')
     output.add_argument('-a', "--all",  dest="all", action='store',
@@ -76,25 +76,33 @@ def getOptions():
     output.add_argument('-fig',"--figure", dest="figure", action='store',
                         required=True,help="""Out path for Matched vs Unmatched 
                         Combinations Venn Diagram File""")
-    
-    optional = parser.add_argument_group(title="Optional Input", 
-                                    description="Optional Input to the program")
-    optional.add_argument('-mz',"--mzcut",dest="mzcut",action='store',
+    # Tool input
+    tool = parser.add_argument_group(title="Tool Input", 
+                        description="Tool Especific Input")
+    tool.add_argument('-mz',"--mzcut",dest="mzcut",action='store',
                         required=False, default="0.005",help="""Window value for 
                         MZ matching [default 0.005]""")
-    optional.add_argument('-rt',"--rtcut",dest="rtcut",action='store',
+    tool.add_argument('-rt',"--rtcut",dest="rtcut",action='store',
                         required=False, default="0.15",help="""Window value for 
                         RT matching [default 0.15]""")
-    optional.add_argument('-n1',"--name1",dest="name1",action='store',
+    tool.add_argument('-n1',"--name1",dest="name1",action='store',
                         required=False, default="F1",help="""Short name for File 1
                          [default F1]""")
-    optional.add_argument('-n2',"--name2",dest="name2",action='store',
+    tool.add_argument('-n2',"--name2",dest="name2",action='store',
                         required=False, default="F2",help="""Short name for File 2
                          [default F2]""")
-    optional.add_argument('-g',"--log",dest="LOG",action="store",
-                        required=False,help="Path and name of the log file")
-
     args = parser.parse_args()
+
+    # Standardize paths
+    args.all        = os.path.abspath(args.all)
+    args.anno1      = os.path.abspath(args.anno1)
+    args.anno2      = os.path.abspath(args.anno2)
+    args.figure     = os.path.abspath(args.figure)
+    args.summary    = os.path.abspath(args.summary)
+    args.matched    = os.path.abspath(args.matched)
+    args.unmatched1 = os.path.abspath(args.unmatched1)
+    args.unmatched2 = os.path.abspath(args.unmatched2)
+
     return(args);
  
 def matchFiles (anno1,anno2,MZCut,RTCut,reverse=False):
@@ -247,41 +255,39 @@ def getSummary (match,umatch1,umatch2):
                                 "SingleFeatures2","SingleFeatures"])
     return summary_S
 
-def plotFigures(args,summary):
+def plotFigures(args,pdf,data):
     """ 
-	Plot the Venn diagrams of the combinations and features
+    Plot the Venn diagrams of the combinations and features
 
     :Arguments:
         :type args: argparse object
         :param args: argparse object with all the input parameters, from here 
-        			we are just going to take the short names and the out paths.
+                    we are just going to take the short names and the out paths.
 
-        :type summary: dictionary
-        :param summary: dictionary with all the summary information.
-	"""
-    logger.info(u"Plotting Figures")
-
-    with PdfPages(os.path.abspath(args.figure)) as pdfOut:
+        :type data: dictionary
+        :param data: dictionary with all the data information.
+    """
+    
         #Venn match unmatch combinations
-        mvsumCombFig=mVenn.plotVenn2([summary["UmatchCombinations1"],
-            summary["UmatchCombinations2"],summary["MatchCombinations"]],
-            title="MZ-RT Matched vs Unmatched (Combinations)",name1=args.name1,
-            name2=args.name2,circles=True)
-        mvsumCombFig.addToPdf(dpi=600, pdfPages=pdfOut)
+    mvsumCombFig=mVenn.plotVenn2([data["UmatchCombinations1"],
+        data["UmatchCombinations2"],data["MatchCombinations"]],
+        title="MZ-RT Matched vs Unmatched (Combinations)",name1=args.name1,
+        name2=args.name2,circles=True)
+    mvsumCombFig.addToPdf(dpi=600, pdfPages=pdf)
 
-        #Venn match vs unmatch features
-        mvsumFeatFig=mVenn.plotVenn2([summary["UmatchCombinations1"],
-            summary["UmatchCombinations2"],summary["MatchFeatures"]],
-            title="MZ-RT Matched vs Unmatched (Features)",name1=args.name1,
-            name2=args.name2,circles=True)
-        mvsumFeatFig.addToPdf(dpi=600, pdfPages=pdfOut)
+    #Venn match vs unmatch features
+    mvsumFeatFig=mVenn.plotVenn2([data["UmatchCombinations1"],
+        data["UmatchCombinations2"],data["MatchFeatures"]],
+        title="MZ-RT Matched vs Unmatched (Features)",name1=args.name1,
+        name2=args.name2,circles=True)
+    mvsumFeatFig.addToPdf(dpi=600, pdfPages=pdf)
 
-        #Venn single vs multiple
-        svsuFeatFig=mVenn.plotVenn2([summary["SingleFeatures1"]
-            ,summary["SingleFeatures2"],summary["MultipleFeatures"]],
-            title="MZ-RT Single vs Multiple",name1=args.name1,
-            name2=args.name2,circles=True)
-        svsuFeatFig.addToPdf(dpi=600, pdfPages=pdfOut)
+    #Venn single vs multiple
+    svsuFeatFig=mVenn.plotVenn2([data["SingleFeatures1"]
+        ,data["SingleFeatures2"],data["MultipleFeatures"]],
+        title="MZ-RT Single vs Multiple",name1=args.name1,
+        name2=args.name2,circles=True)
+    svsuFeatFig.addToPdf(dpi=600, pdfPages=pdf)
 
 def writeOutput(paths,files):
     """
@@ -297,7 +303,6 @@ def writeOutput(paths,files):
 
     #For each dataframe saves it in its specific file.
     #File names must match!
-    logger.info(u"Writting output")
     for i in range(len(files)):
         files[i].to_csv(paths[i],index=False,sep="\t")
 
@@ -306,41 +311,37 @@ def main(args):
     #Read annotation file 1
     anno1 = interface.annoFormat(data=args.anno1, uniqID=args.uniqID1, 
                                 mz=args.mzID1, rt=args.rtID1)
-    
-    #Read annotation file 1
     anno2 = interface.annoFormat(data=args.anno2, uniqID=args.uniqID2, 
                                 mz=args.mzID2, rt=args.rtID2)
 
     #Matching files anno1 vs anno2
-    match12_df,umatch12_df = matchFiles(anno1=anno1,anno2=anno2,MZCut=float(args.mzcut),
-        RTCut=float(args.rtcut))
+    match12_df,umatch12_df = matchFiles(anno1=anno1,anno2=anno2,
+            MZCut=float(args.mzcut), RTCut=float(args.rtcut))
+    match21_df,umatch21_df = matchFiles(anno1=anno2,anno2=anno1,
+            MZCut=float(args.mzcut), RTCut=float(args.rtcut), reverse = True)
 
-    #Matching files anno1 vs anno2
-    match21_df,umatch21_df = matchFiles(anno1=anno2,anno2=anno1,MZCut=float(args.mzcut),
-        RTCut=float(args.rtcut), reverse = True)
-
-    #concatenate match results
-    match_df = pd.concat([match12_df,match21_df],axis=0)
+    #concatenate match result
+    match_df  = pd.concat([match12_df,match21_df],axis=0)
 
     #Remove duplicates from match
     match_df.drop_duplicates(inplace=True)
 
     #Create all results file
-    all_df = pd.concat([match_df,umatch12_df,umatch21_df],axis=0)
+    all_df    = pd.concat([match_df,umatch12_df,umatch21_df],axis=0)
 
     #get summary data
     summary_S = getSummary(match_df,umatch12_df,umatch21_df)
 
     #Plot venn Diagrams
-    plotFigures(args,summary_S)
+    logger.info(u"Plotting Figures")
+    with PdfPages(args.figure) as pdfOut:
+        plotFigures(args=args,pdf=pdfOut,data=summary_S)
 
     #Output data
     writeOutput(paths=[args.unmatched1,args.unmatched2,args.matched,args.all],
                 files=[umatch12_df,umatch21_df,match_df,all_df])
-
     summary_S.to_csv(args.summary,sep="\t")
-
-    logger.info(u"MZERMatching finalized successfully")
+    logger.info("Script Complete!")
 
 if __name__=='__main__':
     #Get info
@@ -351,10 +352,9 @@ if __name__=='__main__':
     sl.setLogger(logger)
 
     # Showing parameters
-    logger.info(u"""Importing data with the following parameters:
-        \tAnnotation 1: {0}
-        \tAnnotation 2: {1}
-        """.format(args.anno1,args.anno2))
+    logger.info("Importing data with the following parameters:"\
+        "\tAnnotation 1: {0}:"\
+        "\tAnnotation 2: {1}".format(args.anno1,args.anno2))
 
     # Runing script
     main(args)
