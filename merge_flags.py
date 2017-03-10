@@ -4,9 +4,10 @@
 # Eddited by:  Miguel ibarra | miguelib@ufl.edu
 
 # Built-in packages
+import os
 import re
-import argparse
 import logging
+import argparse
 
 # Add-on packages
 import pandas as pd
@@ -19,29 +20,58 @@ from flags import Flags
 def getOptions():
     """ Function to pull in arguments """
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", dest="flagFiles", action='store', required=True, nargs="+",
-                        help="Input any number of flag files that have the same indexes")
-    parser.add_argument("--filename", dest="filename", action='store', required=True, nargs="+",
-                        help="Filename for input data.")
-    parser.add_argument('-fid',"--flagUniqID",dest="flagUniqID",action="store",
-                    required=False, default="rowID",help="Name of the column "\
-                    "with unique identifiers in the flag files.")
-    parser.add_argument('--output', dest="mergedFile", action='store', required=True, help="Output file")
-
+    tool = parser.add_argument_group(title='Tool input')
+    tool.add_argument("--input", dest="flagFiles", action='store', 
+                        required=True, nargs="+", help="Input any number of "\
+                        "flag files that have the same indexes")
+    tool.add_argument("--filename", dest="filename", action='store', 
+                        required=True, nargs="+", help="Filename for input data.")
+    tool.add_argument('-fid',"--flagUniqID",dest="flagUniqID",action="store",
+                        required=False, default="rowID",help="Name of the column "\
+                        "with unique identifiers in the flag files.")
+    # Output
+    output = parser.add_argument_group(title='Required output')
+    output.add_argument('--output', dest="mergedFile", action='store', 
+                        required=True, help="Output file")
     args = parser.parse_args()
+
+    # Standardize paths
+    args.output = os.path.abspath(args.output)
+
     return args
 
+def cleanStr(x):
+    """ 
+    Clean strings so they behave.
 
-def mergeFlags(args):
-    """
     :Arguments:
-        :type args: argparse.ArgumentParser
-        :param args: Command line arguments
+        x (str): A string that needs cleaning
 
     :Returns:
-        :rtype: .tsv
-        :returns: Merged flags tsv file
+        x (str): The cleaned string.
+
     """
+    if isinstance(x, str):
+        val = x
+        x = re.sub(r'^-([0-9].*)', r'__\1', x)
+        x = x.replace(' ', '_')
+        x = x.replace('.', '_')
+        x = x.replace('-', '_')
+        x = x.replace('*', '_')
+        x = x.replace('/', '_')
+        x = x.replace('+', '_')
+        x = x.replace('(', '_')
+        x = x.replace(')', '_')
+        x = x.replace('[', '_')
+        x = x.replace(']', '_')
+        x = x.replace('{', '_')
+        x = x.replace('}', '_')
+        x = x.replace('"', '_')
+        x = x.replace('\'', '_')
+        x = re.sub(r'^([0-9].*)', r'_\1', x)
+    return x
+
+def main(args):
     # Need to take each arg and turn into data frame and add to new list
     flagDataFrameList = []
     logger.info("Importing data")
@@ -85,48 +115,17 @@ def mergeFlags(args):
     # merge, then the column becomes a float. Here I change the float output to
     # look like an int.
     mergedFlags.to_csv(args.mergedFile, float_format='%.0f', sep='\t')
-
-def cleanStr(x):
-    """ 
-    Clean strings so they behave.
-
-    :Arguments:
-        x (str): A string that needs cleaning
-
-    :Returns:
-        x (str): The cleaned string.
-
-    """
-    if isinstance(x, str):
-        val = x
-        x = re.sub(r'^-([0-9].*)', r'__\1', x)
-        x = x.replace(' ', '_')
-        x = x.replace('.', '_')
-        x = x.replace('-', '_')
-        x = x.replace('*', '_')
-        x = x.replace('/', '_')
-        x = x.replace('+', '_')
-        x = x.replace('(', '_')
-        x = x.replace(')', '_')
-        x = x.replace('[', '_')
-        x = x.replace(']', '_')
-        x = x.replace('{', '_')
-        x = x.replace('}', '_')
-        x = x.replace('"', '_')
-        x = x.replace('\'', '_')
-        x = re.sub(r'^([0-9].*)', r'_\1', x)
-    return x
-
-def main(args):
-    # Call mergeFlags function. Main is used for convention
-    mergeFlags(args=args)
+    logger.info("Script Complete!")
 
 
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
 
+    # Setting logger
     logger = logging.getLogger()
     sl.setLogger(logger)
+
+    # Running main script
     main(args)
 
