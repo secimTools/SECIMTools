@@ -1,9 +1,9 @@
 ################################################################################
-# DATE: 2016/November/18
+# DATE: 2017/03/10
 # 
-# MODULE: lasso.py
+# MODULE: lass_enet_var_select.py
 #
-# VERSION: 1.0
+# VERSION: 1.1
 # 
 # AUTHOR:  Miguel Ibarra (miguelib@ufl.edu), Matt Thoburn (mthoburn@ufl.edu).
 #
@@ -44,6 +44,7 @@ def getOptions(myOpts=None):
     """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
+    # Standard input
     standard = parser.add_argument_group(title='Standard input', 
                                 description='Standard input for SECIM tools.')
     standard.add_argument( "-i","--input", dest="input", action='store', 
@@ -56,9 +57,11 @@ def getOptions(myOpts=None):
     standard.add_argument("-g", "--group", dest="group", action='store', 
                         required=False, default=False, help="Name of the column"\
                         " with groups.")
-    standard.add_argument("-a", "--alpha", dest="alpha", action="store",
+    # Tool especific
+    tool = parser.add_argument_group(title='Tool Especific')
+    tool.add_argument("-a", "--alpha", dest="alpha", action="store",
                         required=True, help="Alpha Value.")
-
+    # Output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-c", "--coefficients", dest="coefficients", 
                         action="store", required=False, help="Path of en"\
@@ -68,36 +71,15 @@ def getOptions(myOpts=None):
     output.add_argument("-p", "--plots", dest="plots", action="store", 
                         required=False, help="Path of en coefficients file.")                            
     args = parser.parse_args()
+
+    # Standardize paths
+    args.input        = os.path.abspath(args.input)
+    args.plots        = os.path.abspath(args.plots)
+    args.flags        = os.path.abspath(args.flags)
+    args.design       = os.path.abspath(args.design)
+    args.coefficients = os.path.abspath(args.coefficients)
+
     return(args)
-
-def dropMissing(wide):
-    """
-    Drops missing data out of the wide file
-
-    :Arguments:
-        :type wide: pandas.core.frame.DataFrame
-        :param wide: DataFrame with the wide file data
-
-    :Returns:
-        :rtype wide: pandas.core.frame.DataFrame
-        :return wide: DataFrame with the wide file data without missing data
-    """
-    #Warning
-    logger.warn("Missing values were found")
-
-    #Count of original
-    nRows = len(wide.index)      
-
-    #Dropping 
-    wide.dropna(inplace=True)    
-
-    #Count of dropped
-    nRowsNoMiss = len(wide.index)  
-
-    #Warning
-    logger.warn("{} rows were dropped because of missing values.".
-                format(nRows - nRowsNoMiss))
-    return wide
 
 def main(args):
     #Get R ready
@@ -117,15 +99,11 @@ def main(args):
     lassoEnetScript = STAP(rFile, "lasso_enet")
     
     # Importing data trought interface
-    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group)
+    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group,
+                        logger=logger)
 
-    # Dropping missing values
-    # Treat everything as numeric
-    dat.wide = dat.wide.applymap(float)
-
-    #Dropping missing values
-    if np.isnan(dat.wide.values).any():
-        dat.wide = dropMissing(dat.wide)
+    # Cleaning from missing data
+    dat.dropMissing()
 
     # Transpossing data
     dat.trans = dat.transpose()
@@ -155,7 +133,8 @@ def main(args):
                             quote=False, row_names = False, col_names = True)
     robjects.r['write.table'](returns[1],file=args.flags,sep='\t',
                             quote=False, row_names = False, col_names = True)
-
+    # Finishing
+    logger.info("Script Complete!")
 
 if __name__ == '__main__':
     # Command line options
