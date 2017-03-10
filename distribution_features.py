@@ -55,16 +55,58 @@ def getOptions():
     output.add_argument("-f","--figure", dest="figure", action='store',
                         required=True, help="Output figure name [pdf].")
 
+    plot = parser.add_argument_group(title='Plot options')
+    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
+                        default="tableau", help="Name of the palette to use.")
+    plot.add_argument("-col","--color",dest="color",action="store",required=False, 
+                        default="Tableau_20", help="Name of a valid color scheme"\
+                        " on the selected palette")
     args = parser.parse_args()
+
+    # Standardize paths
+    args.figure = os.path.abspath(args.figure)
+
     return(args)
+
+def plotDensity (data, name, pdf):
+    """
+    This function takes pandas dataframe data and plots a
+    density plot and a boxplot.
+    """
+    # Stablishing figure layout (x,y,colspan,rowspan)
+    axisLayout = [(0,0,1,3),(3,0,1,1)]
+
+    # Creating a figure template
+    figure = figureHandler(proj='2d', numAx=2, numRow=4, numCol=1, 
+                            figsize=(8,13), arrangement=axisLayout)
+    # Adding figure Title
+    figure.formatAxis(figTitle="Distribution by Features {0}".format(name),
+                    xlim="ignore", ylim="ignore",axnum=0,showX=False)
+
+    #Creting list of len(wide.T) maximu 50 with the colors for each index
+    colors =  [palette.ugColors[name]] * len(data.index)
+
+    # Plotting boxPlot
+    box.boxDF(ax=figure.ax[0], colors=colors, dat=data.T,
+             vert=False,rot=0)
+
+    # Plotting density plot
+    dis.plotDensityDF(data=data.T.unstack(), 
+                    ax=figure.ax[1], colors=colors[0])
+
+    # Adding figure to pdf object
+    figure.addToPdf(pdf)
 
 def main(args):
     """
     Function to call all other functions
     """
     # Loading files with interface
-    dat = wideToDesign(args.input,args.design,args.uniqID,group=args.group)
-    logger.info(u"""Data loaded by interface""")
+    logger.info(u"Loading data with the Interface")
+    dat = wideToDesign(args.input,args.design,args.uniqID,group=args.group, logger=logger)
+
+    # Cleaning from missing data
+    #dat.dropMissing()
 
     # Subseting wide to get features for wide files with more that 50 features
     if len(dat.wide.index) > 50:
@@ -73,64 +115,28 @@ def main(args):
     else:
         wide = dat.wide.T
 
-    # Set palette of colors
-    palette = colorHandler(pal="tableau", col="Tableau_20")
-    logger.info(u"""Using tableau Tableau_20 palette""")
-
-    # Get colors for each feature
-    colors = palette.getColorByIndex(dataFrame=wide.T)
-
-    # Stablishing figure layout (x,y,colspan,rowspan)
-    axisLayout = [(0,0,1,3),(3,0,1,1)]
-
     # Saving figure
-    with PdfPages(os.path.abspath(args.figure)) as pdf:
+    with PdfPages(args.figure) as pdf:
         
         # Iterating over groups
         if args.group:
 
-            #iterating over groups
+            # Getting colors for groups
+            palette.getColors(design=dat.design, groups=[dat.group])
+
+            # Iterating over groups
             for name, group in dat.design.groupby(args.group):
+                logger.info(u"Plotting for group {0}".format(name))
 
-                # Creating a figure template
-                figure = figureHandler(proj='2d', numAx=2, numRow=4, numCol=1, 
-                                        figsize=(8,13), arrangement=axisLayout)
-                # Adding figure Title
-                figure.formatAxis(figTitle="Distribution by Features {0}".format(name),
-                                xlim="ignore", ylim="ignore",axnum=0,showX=False)
+                # Plotting Density and Box plot for the group
+                plotDensity(data=wide.T[group.index],name=name,pdf=pdf)
 
-                # Plotting boxPlot
-                logger.info(u"Plotting boxplot {0}".format(name))
-                box.boxDF(ax=figure.ax[0], colors=colors, dat=wide.T[group.index].T,
-                         vert=False,rot=0)
+        # Get colors for each feature for "All groups"
+        logger.info(u"Plotting for group {0}".format("samples"))
+        palette.getColors(design=dat.design, groups=[])
 
-                # Plotting density plot
-                logger.info(u"Plotting density plot {0}".format(name))
-                dis.plotDensityDF(data=wide.T[group.index].T.unstack(), 
-                                ax=figure.ax[1], colors=colors[0])
-
-                # Adding figure to pdf object
-                figure.addToPdf(pdf)
-
-        # Creating axisLayout for figure and figure object
-        # (x,y,colspan,rowspan)
-        figure = figureHandler(proj='2d', numAx=2, numRow=4, numCol=1, 
-                                figsize=(8,13), arrangement=axisLayout)
-
-        # Adding figure Title
-        figure.formatAxis(figTitle="Distribution by Features All",xlim="ignore",
-                            ylim="ignore",axnum=0,showX=False)
-
-        # Printing boxPlot
-        logger.info(u"Plotting Boxplot All")
-        box.boxDF(ax=figure.ax[0], colors=colors, dat=wide, vert=False,rot=0)
-
-        # Plot density plot
-        logger.info(u"Plotting Density Plot All")
-        dis.plotDensityDF(data=dat.wide.T.unstack(), ax=figure.ax[1], colors=colors[0])
-
-        # Adding figure to pdf object
-        figure.addToPdf(pdf)
+        # Plotting density and boxplots for all
+        plotDensity(data=wide, name="samples", pdf=pdf)
 
         #Ending script
         logger.info(u"Ending script")
@@ -149,6 +155,10 @@ if __name__ == '__main__':
             "\n\tDesign: {1}"\
             "\n\tUnique ID: {2}".format(args.input, args.design, args.uniqID))
 
+    # Set color palette
+    palette = colorHandler(pal=args.palette, col=args.color)
+    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+                args.palette))
 
     # Main
     main(args)
