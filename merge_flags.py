@@ -36,7 +36,7 @@ def getOptions():
     args = parser.parse_args()
 
     # Standardize paths
-    args.output = os.path.abspath(args.output)
+    args.mergedFile = os.path.abspath(args.mergedFile)
 
     return args
 
