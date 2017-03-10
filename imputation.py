@@ -1,5 +1,5 @@
 ######################################################################################
-# DATE: 2016/August/10
+# DATE: 2017/03/10
 # 
 # MODULE: imputation.py
 #
@@ -11,6 +11,7 @@
 #
 #######################################################################################
 # Import built-in packages
+import os
 import sys
 import logging
 import argparse
@@ -43,10 +44,9 @@ def getOptions(myOpts = None):
     """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
-
+    # Standard SECIM input
     standard = parser.add_argument_group(title='Standard input', 
-                                description='Standard input for SECIM tools.')
-
+                        description='Standard input for SECIM tools.')
     standard.add_argument( "-i","--input", dest="input", action='store', required=True, 
                         help="Input dataset in wide format.")
     standard.add_argument("-d" ,"--design",dest="design", action='store', required=True,
@@ -55,33 +55,33 @@ def getOptions(myOpts = None):
                         help="Name of the column with unique identifiers.")
     standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
                         default=False,help="Name of the column with groups.")
-
-
-    required = parser.add_argument_group(title='Required output')
-    required.add_argument("-o","--output",dest="output",action="store",required=False,
+    # Output
+    output = parser.add_argument_group(title='Required output')
+    output.add_argument("-o","--output",dest="output",action="store",required=False,
                         help="Path of output file.")
-    required.add_argument("-s","--strategy", dest="strategy", action="store", 
+    # Tool
+    tool = parser.add_argument_group(title='Tool input',
+                        description="Tool specific input.")
+    tool.add_argument("-s","--strategy", dest="strategy", action="store", 
                         required=True, choices=["knn","mean","median","bayesian"],
                         default=None, help="Imputation strategy: KNN, mean, "
                         "median, or most frequent")
-
-    optional = parser.add_argument_group(title='Optional input')
-    optional.add_argument("-noz","--no_zero",dest="noZero",action='store_true',
+    tool.add_argument("-noz","--no_zero",dest="noZero",action='store_true',
                         required=False,default=True,help="Treat 0 as missing?")
-    optional.add_argument("-noneg","--no_negative",dest="noNegative",action='store_true',
+    tool.add_argument("-noneg","--no_negative",dest="noNegative",action='store_true',
                         required=False,default=True,help="Treat negative as missing?")
-    optional.add_argument("-ex","--exclude",dest="exclude",action='store',required=False,
+    tool.add_argument("-ex","--exclude",dest="exclude",action='store',required=False,
                         default=False,help="Additional values to treat as missing" \
                         "data, seperated by commas")
-    optional.add_argument("-rc","--row_cutoff",dest="rowCutoff",action='store',
+    tool.add_argument("-rc","--row_cutoff",dest="rowCutoff",action='store',
                         required=False,default=.5,help="Percent cutoff for "\
                         "imputation of rows.If this is exceeded, imputation will"\
                         "be done by mean instead of knn. Default: .5")
-    optional.add_argument("-dist","--distribution", dest="dist", required=False,
+    tool.add_argument("-dist","--distribution", dest="dist", required=False,
                         default="poisson", choices =  ["Poisson","Normal"],
                         help="use mean or median to generate mu value for "\
                         "bayesian imputation")
-
+    # KNN especific
     knn = parser.add_argument_group(title='KNN input')
     knn.add_argument("-k","--knn",dest="knn",action='store', required=False,
                         default=5,help="Number of nearest neighbors to search Default: 5.")
@@ -90,6 +90,12 @@ def getOptions(myOpts = None):
                         "imputation of columns. If this is exceeded, imputation"\
                         "will be done by mean instead of knn. Default: .8")
     args = parser.parse_args()
+
+    # Standardize paths
+    args.input  = os.path.abspath(args.input)
+    args.design = os.path.abspath(args.design)
+    args.output = os.path.abspath(args.output)
+
     return(args)
 
 def preprocess(noz,non,ex,data):
@@ -250,22 +256,15 @@ def imputeRow(row, rc, strategy, dist=False):
 
     # If ratio is less than the rc then review for impute
     else:
-        # If there's any missing value impute
+        # If there's any missing value impute with either mean, median or bayesian.
         if row.isnull().any():
-            # Impute all the values in the row with the mean 
             if strategy == "mean":
                 row.fillna(np.nanmean(row),inplace=True)
-
-            # Impute all the values in the row with the mean 
             elif strategy == "median":
                 row.fillna(np.nanmedian(row),inplace=True)
-
-            # Impute all the values in the row with a bayesian imputation 
             elif strategy == "bayesian":
                 row = imputeBayesian(row=row, dist=dist)
-
             return row
-
         # if the row is complete the return the row as it is
         else:
             return row
@@ -343,30 +342,26 @@ def iterateGroups(dat,strategy, rc, dist=False):
 def main(args):
     # Import data with interface
     logger.info("Importig data with interface")
-    dat = wideToDesign(args.input, args.design, uniqID=args.uniqID, group=args.group)
+    dat = wideToDesign(args.input, args.design, uniqID=args.uniqID, group=args.group
+                        logger=logger)
 
     # Preprocessing
     logger.info("Preprocessing")
     dat.wide = preprocess(noz=args.noZero, non=args.noNegative, ex=args.exclude,
                             data=dat.wide)
 
+    # Choosing knn as imputation method
+    logger.info("Inpute")
     if args.strategy == "knn":
-        # Choosing knn as imputation method
         pdFull = imputeKNN(rc=float(args.rowCutoff), cc=float(args.colCutoff),
                             k=int(args.knn), dat=dat)
-
     else:
         # Iterate over groups and perform either a mean or median imputation.
         pdFull = iterateGroups(dat=dat, strategy=args.strategy, dist=args.dist, 
                                 rc=args.rowCutoff) 
         
-
-    logger.info("Creating output")
-
-    # Make sure all the dataframe is float
+    # Convert dataframe to float and round results to 4 digits
     pdFull.applymap(float)
-
-    # Round results to 4 diggits
     pdFull = pdFull.round(4)
 
     # Maake sure that the output has the same unique.ID
@@ -374,13 +369,23 @@ def main(args):
 
     # Saving inputed data
     pdFull.to_csv(args.output, sep="\t")
-    logger.info("Data Inputed!")
+    logger.info("Script Complete!")
 
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
+
     # Activate Logger
     logger = logging.getLogger()
     sl.setLogger(logger)
+
+    # Starting script
+    logger.info("Importing data with following parameters:"\
+                "\n\tInput: {0}"\
+                "\n\tDesign: {1}"\
+                "\n\tuniqID: {2}"\
+                "\n\tgroup: {3}".format(args.input, args.design, args.uniqID, 
+                                args.group))
+    # Running main script
     main(args)
 
