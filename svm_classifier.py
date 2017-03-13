@@ -16,74 +16,58 @@ from interface import wideToDesign
 
 def getOptions(myOpts=None):
     parser = argparse.ArgumentParser( formatter_class=RawDescriptionHelpFormatter)
-    parser.add_argument('-trw',"--train_wide", dest="train_wide", action='store',
+    # Standard Input
+    standard = parser.add_argument_group(description="Standard Input")
+    standard.add_argument('-trw',"--train_wide", dest="train_wide", action='store',
                         required=True, help="wide part of the train dataset.")
-    parser.add_argument('-trd',"--train_design", dest="train_design", 
+    standard.add_argument('-trd',"--train_design", dest="train_design", 
                         action='store', required=True, help="design part of "\
                         "the train dataset.")
-    parser.add_argument('-tew',"--test_wide", dest="test_wide", action='store',
+    standard.add_argument('-tew',"--test_wide", dest="test_wide", action='store',
                         required=True, help="wide part of the test dataset.")
-    parser.add_argument('-ted',"--test_design", dest="test_design", 
+    standard.add_argument('-ted',"--test_design", dest="test_design", 
                         action='store', required=True, help="design part of"\
                         " the test dataset.")
-    parser.add_argument('-g',"--group", dest="group",action='store',
-                        required=True, help="Name of column in design file"\
+    standard.add_argument('-g',"--group", dest="group",action='store',
+                        required=True, default=False, help="Name of column in design file"\
                         " with Group/treatment information.")
-    parser.add_argument('-id',"--ID", dest="uniqID", action='store',
+    standard.add_argument('-id',"--ID", dest="uniqID", action='store',
                         required=True, help="Name of the column with unique "\
                         "identifiers.")
-    parser.add_argument('-k',"--kernel", dest="kernel", action='store',
+    # Tool Input
+    tool = parser.add_argument_group(description="Tool Input")
+    tool.add_argument('-k',"--kernel", dest="kernel", action='store',
                         required=True, help="choice of kernel function: rbf, "\
                         "linear, poly, sigmoid.")
-    parser.add_argument('-d',"--degree", dest="degree", action='store',
+    tool.add_argument('-d',"--degree", dest="degree", action='store',
                         required=True, help="(integer) degree for the polynomial"\
                         " kernel, default 3.")
-    parser.add_argument('-c',"--C", dest="C", action='store', required=True, 
+    tool.add_argument('-c',"--C", dest="C", action='store', required=True, 
                         help="positive regularization parameter.")
-    parser.add_argument('-a',"--a", dest="a", action='store', required=True, 
+    tool.add_argument('-a',"--a", dest="a", action='store', required=True, 
                         help=" positive coefficient in kernel function.")
-    parser.add_argument('-b',"--b", dest="b", action='store', required=True, 
+    tool.add_argument('-b',"--b", dest="b", action='store', required=True, 
                         help=" independent term coefficient in kernel function.")
-    parser.add_argument('-o',"--outfile1", dest="outfile1", action='store', 
+    # Output 
+    output = parser.add_argument_group(description="Output Paths")
+    output.add_argument('-o',"--outfile1", dest="outfile1", action='store', 
                         required=True, help="Output traget set with "\
                         "predicted_class labels.")
-    parser.add_argument('-acc',"--accuracy_on_training", 
+    output.add_argument('-acc',"--accuracy_on_training", 
                         dest="accuracy_on_training", action='store',
                          required=True, help="Output accuracy value on the "\
                          "training set.")
-
     args = parser.parse_args()
 
+    # Standardize paths
+    args.outfile1             = os.path.abspath(args.outfile1)
+    args.test_wide            = os.path.abspath(args.test_wide)
+    args.train_wide           = os.path.abspath(args.train_wide)
+    args.test_design          = os.path.abspath(args.test_design)
+    args.train_design         = os.path.abspath(args.train_design)
+    args.accuracy_on_training = os.path.abspath(args.accuracy_on_training)
+
     return(args)
-
-def dropMissing(wide):
-    """
-    Drops missing data out of the wide file
-
-    :Arguments:
-        :type wide: pandas.core.frame.DataFrame
-        :param wide: DataFrame with the wide file data
-
-    :Returns:
-        :rtype wide: pandas.core.frame.DataFrame
-        :return wide: DataFrame with the wide file data without missing data
-    """
-    #Warning
-    logger.warn("Missing values were found")
-
-    #Count of original
-    nRows = len(wide.index)      
-
-    #Dropping 
-    wide.dropna(inplace=True)    
-
-    #Count of dropped
-    nRowsNoMiss = len(wide.index)  
-
-    #Warning
-    logger.warn("{} rows were dropped because of missing values.".
-                format(nRows - nRowsNoMiss))
-    return wide
 
 def correctness(x):
     if x[args.group]==x['predicted_class']:
@@ -103,25 +87,21 @@ def main(args):
     # Loading target dataset trought the interface
     if args.group in test_design.columns:
         target = wideToDesign(wide=args.test_wide,design = args.test_design, 
-                uniqID=args.uniqID, group=args.group)
+                            uniqID=args.uniqID, group=args.group, logger=logger)
     else:
-        target = wideToDesign(wide=args.test_wide,design=args.test_design, 
-                uniqID=args.uniqID)
-    
+        target = wideToDesign(wide=args.test_wide,design = args.test_design, 
+                            uniqID=args.uniqID, logger=logger)
+     
     # Load training dataset trought the interface
     train = wideToDesign(wide=args.train_wide, design= args.train_design, 
-                        uniqID=args.uniqID, group=args.group)
+                        uniqID=args.uniqID, group=args.group, logger=logger)
     
-    #Dropping missing values on train
-    train.wide = train.wide.applymap(float)
-    if np.isnan(train.wide.values).any():
-        train.wide = dropMissing(train.wide)
+    # Dropping missing values
+    train.dropMissing()
     train = train.transpose()
 
-    #Dropping missing values on target
-    target.wide = target.wide.applymap(float)
-    if np.isnan(target.wide.values).any():
-        target.wide = dropMissing(target.wide)
+    # Dropping missing values
+    target.dropMissing()
     target = target.transpose()
 
     # make sure test and train have the same features
@@ -159,6 +139,9 @@ def main(args):
 
     accuracy=str(getAccuracy(train)*100)+' percent'
     os.system("echo %s > %s"%(accuracy,args.accuracy_on_training))
+
+    # Finishing script
+    logger.info("Script Complete!")
 
 if __name__ == '__main__':
     # Command line options

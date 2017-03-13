@@ -61,7 +61,7 @@ def getOptions():
     parser = argparse.ArgumentParser(description=description, formatter_class=
                                     argparse.RawDescriptionHelpFormatter)
     # Output standar
-    standard = parser.add_argument_group(description="Required Input")
+    standard = parser.add_argument_group(description="Standard Input")
     standard.add_argument("-i","--input", dest="input", action='store',required=True,
                          help="Dataset in Wide format")
     standard.add_argument("-d","--design", dest="design", action='store', 
@@ -87,7 +87,7 @@ def getOptions():
                         required=True, help="TSV Output of sample-pairwise "
                         "standardized Euclidean distances.")
     # Tool options
-    tool = parser.add_argument_group(description="Optional Input")
+    tool = parser.add_argument_group(description="Tool Input")
     tool.add_argument("-p","--per", dest="p", action='store', required=False, 
                         default=0.95, type=float, help="The percentile cutoff "
                         "for standard distributions. The default is 0.95.")
