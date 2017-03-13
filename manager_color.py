@@ -447,8 +447,7 @@ class colorHandler:
 
     def getColors(self,design,groups):
         """ 
-        Calculate the Standardized Euclidean Distance and return an array of 
-        distances to the Mean and a matrix of pairwise distances.
+        Get colors based on a desing file
 
         :Arguments:
             :type design: pandas.DataFrame
@@ -502,9 +501,20 @@ class colorHandler:
         #Creating color for each combination
         self.design.loc[:,"colors"] = self.design[self.combName].apply(lambda x: self.ugColors[x])
 
+        # Treat columns "samples" as its own group 
+        if "samples" in self.design.columns:
+            self.design.drop("samples",axis=1,inplace=True)
+            self.design.loc[:,"samples"] = ["samples"] * len(self.design.index)
+
         #if only one group then use samples as ugroup
         if "samples" in self.design.columns:
             self.ugColors={"samples":list(set(colorsInPalette))[0]}
+
+        #Creates a list of colors from the given dictionary works for groups and not  groups
+        if "samples" in self.design.columns:
+            self.list_colors = [self.ugColors["samples"]] * len(self.design.index)
+        else:
+            self.list_colors = [self.ugColors[group] for group in self.design[self.combName].values]
 
         #Returning design
         return self.design,self.ugColors,self.combName
