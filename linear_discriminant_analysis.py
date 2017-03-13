@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/Oct/25
+# DATE: 2017/02/22
 #
 # SCRIPT: linear_discriminant_analysis.py
 #
@@ -59,6 +59,9 @@ def getOptions(myopts=None):
                         help="Name of the column with unique identifiers.")
     standard.add_argument("-g", "--group",dest="group", action='store', required=True, 
                         default=False,help="Name of the column with groups.")
+    standard.add_argument("-l","--levels",dest="levels",action="store", 
+                        required=False, default=False, help="Different groups to"\
+                        " sort by separeted by commas.")
 
     optional = parser.add_argument_group(title='Optional input', 
                             description='Optional/Specific input for the tool.')
@@ -78,39 +81,17 @@ def getOptions(myopts=None):
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
-
-
     args = parser.parse_args()
+
+    # Standardized output paths
+    args.figure = os.path.abspath(args.figure)
+    args.out    = os.path.abspath(args.out)
+
+    # Split levels if levels
+    if args.levels:
+        args.levels = args.levels.split(",")
+
     return(args)
-
-def dropMissing(wide):
-    """
-    Drops missing data out of the wide file
-
-    :Arguments:
-        :type wide: pandas.core.frame.DataFrame
-        :param wide: DataFrame with the wide file data
-
-    :Returns:
-        :rtype wide: pandas.core.frame.DataFrame
-        :return wide: DataFrame with the wide file data without missing data
-    """
-    #Warning
-    logger.warn("Missing values were found")
-
-    #Count of original
-    nRows = len(wide.index)      
-
-    #Dropping 
-    wide.dropna(inplace=True)    
-
-    #Count of dropped
-    nRowsNoMiss = len(wide.index)  
-
-    #Warning
-    logger.warn("{} rows were dropped because of missing values.".
-                format(nRows - nRowsNoMiss))
-    return wide
 
 def runLDA(dat,nComp):
     """
@@ -147,26 +128,26 @@ def runLDA(dat,nComp):
     # Return scores for LDA
     return scores_df
 
-def plotScores(scores, pdf, dat):
+def plotScores(data, palette, pdf):
     """
     Runs LDA over a wide formated dataset
 
     :Arguments:
-        :type scores: pandas.DataFrame
-        :param scores: Scores of the LDA.
+        :type data: pandas.DataFrame
+        :param data: Scores of the LDA.
+
+        :type palette: colorManager.object
+        :param palette: Object from color manager
 
         :type pdf: pdf object
         :param pdf: PDF object to save all the generated figures.
-
-        :type dat: interface.wideToDesign
-        :param dat: wideToDesign instance providing acces to all input data.
 
     :Returns:
         :rtype scores_df: pandas.DataFrame
         :return scores_df: Scores of the LDA.
     """
     # Create a scatter plot for each combination of the scores 
-    for x, y in list(combinations(scores.columns.tolist(),2)):
+    for x, y in list(combinations(data.columns.tolist(),2)):
 
         # Create a single-figure figure handler object
         fh = figureHandler(proj="2d", figsize=(14,8))
@@ -174,16 +155,12 @@ def plotScores(scores, pdf, dat):
         # Create a title for the figure
         title = "{0} vs {1}".format(x,y)
 
-        # Get colors
-        colorDes,ucGroups,combName=palette.getColors(design=dat.design,
-                                                    groups=[dat.group])
-
         # Plot the scatterplot based on data
-        scatter.scatter2D(x=list(scores[x]), y=list(scores[y]),
-                         colorList=colorDes.colors.tolist(), ax=fh.ax[0])
+        scatter.scatter2D(x=list(data[x]), y=list(data[y]),
+                         colorList=palette.design.colors.tolist(), ax=fh.ax[0])
 
         # Create legend
-        fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=dat.group)
+        fh.makeLegend(ax=fh.ax[0],ucGroups=palette.ugColors,group=palette.combName)
 
         # Shrink axis to fit legend
         fh.shrink()
@@ -199,27 +176,38 @@ def plotScores(scores, pdf, dat):
         fh.addToPdf(dpi=600,pdfPages=pdf)
 
 def main(args):
+    # Checking if levels
+    if args.levels and args.group:
+        levels = [args.group]+args.levels
+    elif args.group and not args.levels:
+        levels = [args.group]
+    else:
+        levels = []
+
     #Loading data trought Interface
-    dat = wideToDesign(args.input, args.design, args.uniqID,group=args.group)
+    dat = wideToDesign(args.input, args.design, args.uniqID,group=args.group, 
+            anno=args.levels, logger=logger)
 
     # Treat everything as numeric
     dat.wide = dat.wide.applymap(float)
     
-    #Dropping missing values
-    if np.isnan(dat.wide.values).any():
-        dat.wide = dropMissing(dat.wide)
+    # Cleaning from missing data
+    dat.dropMissing()
+
+    # Get colors for each sample based on the group
+    palette.getColors(design=dat.design, groups=levels)
 
     #Run LDA
     logger.info(u"Runing LDA on data")
     scores_df = runLDA(dat, nComp=args.nComponents)
  
-    # Save scores
-    scores_df.to_csv(os.path.abspath(args.out),sep="\t",index_label="sampleID")
-
     # Plotting scatter plot for scores
     logger.info(u"Plotting LDA scores")
-    with PdfPages(os.path.abspath(args.figure)) as pdfOut:
-        plotScores(scores=scores_df, pdf=pdfOut, dat=dat)
+    with PdfPages(args.figure) as pdfOut:
+        plotScores(data=scores_df, palette=palette, pdf=pdfOut)
+
+    # Save scores
+    scores_df.to_csv(args.out,sep="\t",index_label="sampleID")
 
     #Ending script
     logger.info(u"Finishing running of LDA")
