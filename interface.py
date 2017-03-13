@@ -351,6 +351,7 @@ class wideToDesign:
         """
         Drops rows with missing data
         """
+        self.wide = self.wide.applymap(float)
         # Asks if any missing value
         if np.isnan(self.wide.values).any():
             # Count original number of rows
@@ -370,6 +371,12 @@ class wideToDesign:
             else:
                 print "Missing values were found on wide data "\
                     "[{0}] rows were dropped.".format(n_rows - n_rows_keeped)
+
+    def sortByRunOrder(self):
+        # Sort data if runOrder
+        if self.runOrder:
+            self.design.sort_values(by=self.runOrder,inplace=True)
+            self.wide = self.wide[self.design.index.values]
 
 
 
