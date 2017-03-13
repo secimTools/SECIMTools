@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-#!/usr/bin/env python
 ################################################################################
-# DATE: 2016/Oct/25
+# DATE: 2017/02/24
 #
 # SCRIPT: random_forest.py
 #
-# VERSION: 1.0
+# VERSION: 1.1
 # 
 # AUTHOR: Miguel A. Ibarra (miguelib@ufl.edu)
 # 
@@ -52,6 +51,9 @@ def getOptions(myopts=None):
     standard.add_argument("-g", "--group", dest="group", action='store', 
                         required=True, help="Group/treatment identifier in "\
                         "design file.")
+    standard.add_argument("-l","--levels",dest="levels",action="store", 
+                        required=False, default=False, help="Different groups to"\
+                        " sort by separeted by commas.")
 
     optional = parser.add_argument_group(title='Tool specific input', 
                             description='Optional/Specific input for the tool.')
@@ -76,11 +78,20 @@ def getOptions(myopts=None):
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
                         default="Blues_9", help="Name of a valid color"
                         " scheme on the selected palette")
-
     args = parser.parse_args()
+
+    # Standardize paths
+    args.oname  = os.path.abspath(args.oname)
+    args.oname2 = os.path.abspath(args.oname2)
+    args.figure = os.path.abspath(args.figure)
+
+    # Split levels if levels
+    if args.levels:
+        args.levels = args.levels.split(",")
+
     return(args)
 
-def plotVarImportance(features, pdf, var):
+def plotVarImportance(data, pdf, var):
     """
     Runs LDA over a wide formated dataset
 
@@ -99,10 +110,10 @@ def plotVarImportance(features, pdf, var):
         :return scores_df: Scores of the LDA.
     """
     # Subset data upToTheNumberOf Features
-    features=features[:var]
+    data=data[:var]
 
     # Sort data
-    features=features.sort_values(by="ranked_importance", ascending=True, axis=0)                        
+    data=data.sort_values(by="ranked_importance", ascending=True, axis=0)                        
 
     # Creating a figure handler instance
     fh = figureHandler(proj='2d', figsize=(8,8))
@@ -111,19 +122,18 @@ def plotVarImportance(features, pdf, var):
     palette.chompColors(start=3,end=palette.number)
 
     # Get color list
-    colors = palette.getColorsCmapPalette(features["ranked_importance"])
+    colors = palette.getColorsCmapPalette(data["ranked_importance"])
 
     # Multiply by 100 to get percentages instead of proportions
-    features["ranked_importance"] = features["ranked_importance"]*100
+    data["ranked_importance"] = data["ranked_importance"]*100
 
     # Creating plot
-    quickHBar(ax=fh.ax[0], values=features["ranked_importance"],
-                xticks=features["feature"], colors=colors, lw=0)
+    quickHBar(ax=fh.ax[0], values=data["ranked_importance"],
+                xticks=data["feature"], colors=colors, lw=0)
 
     # Formatting axis
     fh.formatAxis(figTitle="Variable Importance Plot", xTitle="%", grid=False,
                 yTitle="Features")
-
 
     # Adding figure to pdf
     fh.addToPdf(dpi=600,pdfPages=pdf)
@@ -161,55 +171,65 @@ def runRFC(dat,nStim):
     rfc_model.fit(data, classes)
 
     # Identify features and creating a dataFrame for it
-    importance_df = pd.DataFrame([data.columns, rfc_model.feature_importances_], 
+    df_importance = pd.DataFrame([data.columns, rfc_model.feature_importances_], 
                     index=['feature', 'ranked_importance']).T
 
     # Sort the dataFrame by importance
-    importance_df = importance_df.sort_values(by="ranked_importance", axis=0, 
+    df_importance = df_importance.sort_values(by="ranked_importance", axis=0, 
                     ascending=False)
 
     # Get no filtered names for importnace (look at interface for more detail)
-    rev_df = importance_df.applymap(lambda x: dat.revertStr(x))
+    df_rev = df_importance.applymap(lambda x: dat.revertStr(x))
 
     # Select data based on features
-    data = data[importance_df["feature"].tolist()]
+    data = data[df_importance["feature"].tolist()]
 
     # Create a dataframe for the selected data
-    transf_df = pd.DataFrame(rfc_model.transform(data, threshold=0))
-    transf_df.columns = [dat.revertStr(x) for x in data.columns]
+    df_transf = pd.DataFrame(rfc_model.transform(data, threshold=0))
+    df_transf.columns = [dat.revertStr(x) for x in data.columns]
 
     # Convert Series to dataFrame
-    classes = pd.DataFrame(classes)
+    df_classes = pd.DataFrame(classes)
 
     # Reset index on classifications DataFrame
-    classes.reset_index(inplace=True)
+    df_classes.reset_index(inplace=True)
 
     # Join classifications to the transformed data
-    transf_df = classes.join(transf_df)
+    df_transf = df_classes.join(df_transf)
 
-    return(rev_df,transf_df,importance_df)
+    return(df_rev, df_transf, df_importance)
 
 def main(args):
+    ## This part is not required for now but if we want to implement
+    ## Aditional features this may be helpful.
+    # Checking if levels
+    #if args.levels and args.group:
+    #    levels = [args.group]+args.levels
+    #elif args.group and not args.levels:
+    #    levels = [args.group]
+    #else:
+    #    levels = []
+
     # Import data through interface
     dat = wideToDesign(args.input, args.design, args.uniqID, args.group, 
-                        clean_string=True)
+                        anno=args.levels, clean_string=True, logger=logger)
+    
+    # Cleaning from missing data
+    dat.dropMissing()
 
     #Run Random Forest Classifier on data.
     logger.info('Creating classifier')
-    rev_df,transf_df,importance_df = runRFC(dat, nStim=args.snum)
+    df_rev, df_transf, df_importance = runRFC(dat, nStim=args.snum)
 
     # Plot feature importances
     logger.info('Plotting Variable Importance Plot')
-    with PdfPages(os.path.abspath(args.figure)) as pdfOut:
-        plotVarImportance(features=importance_df, pdf=pdfOut, var=args.num)
+    with PdfPages(args.figure) as pdfOut:
+        plotVarImportance(data=df_importance, pdf=pdfOut, var=args.num)
     
-    # Exporting Transformed data
-    logger.info('Exporting transformed data')
-    transf_df.to_csv(args.oname, index=False, sep='\t', float_format="%.4f")
-
-    # Selectim columns for rev_df data frame
-    logger.info('Exporting features')
-    rev_df.to_csv(args.oname2, index=False, sep='\t')
+    # Exporting Transformed data and df_rev data
+    logger.info('Exporting data to TSV format')
+    df_transf.to_csv(args.oname, index=False, sep='\t', float_format="%.4f")
+    df_rev.to_csv(args.oname2, index=False, sep='\t')
 
 if __name__ == '__main__':
     # Command line options
