@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 ################################################################################
-# Date: 2016/July/07
+# Date: 2017/03/13
 # 
-# Module: standarizedEuclideanDistance.py
+# Module: standardize_euclidean_distance.py
 #
 # VERSION: 1.0
 # 
-# AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
+# AUTHOR: Miguel A. Ibarra-Arellano (miguelib@ufl.edu)
 #
 # DESCRIPTION: This program does a pairwise and to mean  standarized euclidean
 #               comparison for a given dataset.
@@ -60,7 +60,7 @@ def getOptions():
 
     parser = argparse.ArgumentParser(description=description, formatter_class=
                                     argparse.RawDescriptionHelpFormatter)
-
+    # Output standar
     standard = parser.add_argument_group(description="Required Input")
     standard.add_argument("-i","--input", dest="input", action='store',required=True,
                          help="Dataset in Wide format")
@@ -68,41 +68,49 @@ def getOptions():
                          required=True, help="Design file")
     standard.add_argument("-id","--ID", dest="uniqID", action='store', required=True, 
                          help="Name of the column with unique identifiers.")
-
+    standard.add_argument("-g","--group", dest="group",default=False, action='store',
+                        required=False, help="Treatment group")
+    standard.add_argument("-o","--order",dest="order",action="store",
+                        default=False,help="Run Order")
+    standard.add_argument("-l","--levels",dest="levels",action="store", 
+                        required=False, default=False, help="Different groups to"\
+                        " sort by separeted by comas.")
+    # Output options
     output = parser.add_argument_group(description="Output Files")
     output.add_argument("-f", "--figure", dest="figure", action='store', 
-                        required=True, help="""PDF Output of standardized 
-                        Euclidean distance plot""")
+                        required=True, help="PDF Output of standardized "\
+                        "Euclidean distance plot")
     output.add_argument("-m","--SEDtoMean", dest="toMean", action='store', 
-                        required=True, help="""TSV Output of standardized 
-                        Euclidean distances from samples to the mean.""")
+                        required=True, help="TSV Output of standardized "
+                        "Euclidean distances from samples to the mean.")
     output.add_argument("-pw","--SEDpairwise", dest="pairwise", action='store', 
-                        required=True, help="""TSV Output of sample-pairwise 
-                        standardized Euclidean distances.""")
-
-    optional = parser.add_argument_group(description="Optional Input")
-    optional.add_argument("-g","--group", dest="group",default=False, action='store', 
-                        required=False, help="Treatment group")
-    optional.add_argument("-o","--order",dest="order",action="store",
-                        default=False,help="Run Order")
-    optional.add_argument("-p","--per", dest="p", action='store', required=False, 
-                        default=0.95, type=float, help="""The percentile cutoff 
-                        for standard distributions. The default is 0.95. """)
-    optional.add_argument("-l","--levels",dest="levels",action="store", 
-                        required=False, default=False, help="""Different groups to
-                         sort by separeted by comas.""")
-    optional.add_argument("-lg","--log",dest="log",action="store",required=False, 
-                        default=False,help="Log file")
-
+                        required=True, help="TSV Output of sample-pairwise "
+                        "standardized Euclidean distances.")
+    # Tool options
+    tool = parser.add_argument_group(description="Optional Input")
+    tool.add_argument("-p","--per", dest="p", action='store', required=False, 
+                        default=0.95, type=float, help="The percentile cutoff "
+                        "for standard distributions. The default is 0.95.")
+    # Plot options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
-
-
     args = parser.parse_args()
+    
+    # Standardize paths
+    args.input    = os.path.abspath(args.input)
+    args.design   = os.path.abspath(args.design)
+    args.figure   = os.path.abspath(args.figure)
+    args.toMean   = os.path.abspath(args.toMean)
+    args.pairwise = os.path.abspath(args.pairwise)
+
+    # Split levels if levels
+    if args.levels:
+        args.levels = args.levels.split(",")
+
     return(args)
 
 def plotCutoffs(cut_S,ax,p):
@@ -123,35 +131,6 @@ def plotCutoffs(cut_S,ax,p):
             cl=cutPalette.ugColors[cut_S.name],
             lb="{0} {1}% Cutoff: {2}".format(cut_S.name,round(p*100,3),
             round(float(cut_S.values[0]),1)),ls="--",lw=2)
-
-def dropMissing(wide):
-    """
-    Drops missing data out of the wide file
-
-    :Arguments:
-        :type wide: pandas.core.frame.DataFrame
-        :param wide: DataFrame with the wide file data
-
-    :Returns:
-        :rtype wide: pandas.core.frame.DataFrame
-        :return wide: DataFrame with the wide file data without missing data
-    """
-    #Warning
-    logger.warn("Missing values were found")
-
-    #Count of original
-    nRows = len(wide.index)      
-
-    #Dropping 
-    wide.dropna(inplace=True)    
-
-    #Count of dropped
-    nRowsNoMiss = len(wide.index)  
-
-    #Warning
-    logger.warn("{} rows were dropped because of missing values.".
-                format(nRows - nRowsNoMiss))
-    return wide
 
 def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, levels):
     """
@@ -495,52 +474,30 @@ def main(args):
     global cutPalette
     cutPalette = ch.colorHandler(pal="tableau",col="TrafficLight_9")
 
-    #Checking if levels
-    subGroups = []
+    # Checking if levels
     if args.levels and args.group:
-        subGroups = args.levels.split(",")
-        levels = [args.group]+subGroups
+        levels = [args.group]+args.levels
     elif args.group and not args.levels:
         levels = [args.group]
-    elif not args.group and args.levels:
-        logger.error(u"Use --groups if you are using just one group")
-        exit()
     else:
         levels = []
-    logger.info(u"Groups used to color by :{}".format(",".join(levels)))
-
-    #Checkig if order
-    if args.order and args.levels:
-        anno = [args.order] + subGroups
-    elif args.order and not args.levels:
-        anno = [args.order,]
-    elif not args.order and args.levels:
-        anno = [args.levels,]
-    else:
-        anno=False
 
     #Parsing data with interface
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
-                        anno=anno)
+                        anno=args.levels,  logger=logger, runOrder=args.order)
     
-    # Treat everything as numeric
-    dat.wide = dat.wide.applymap(float)
-
-    #Dropping missing values
-    if np.isnan(dat.wide.values).any():
-        dat.wide = dropMissing(dat.wide)
-
-    #Removing groups with just one sample
+    #Dropping missing values and remove groups with just one sample
+    dat.dropMissing()
     if args.group:
         dat.removeSingle()
     
     #Select colors for data
-    dat.design, ugColors, combName = dataPalette.getColors(design=dat.design,
-                                                            groups=levels)
-    #Open pdfPages
+    dataPalette.getColors(design=dat.design, groups=levels)
+    dat.design=dataPalette.design
+
+    #Open pdfPages Calculate SED
     with PdfPages(os.path.abspath(args.figure)) as pdf:
-        # Calculate SED
-        SEDtoMean,SEDpairwise=calculateSED(dat, ugColors, combName, pdf, args.p)
+        SEDtoMean,SEDpairwise=calculateSED(dat, dataPalette.ugColors, dataPalette.combName, pdf, args.p)
 
 
     #Outputing files for tsv files
@@ -564,14 +521,13 @@ if __name__ == '__main__':
     sl.setLogger(logger)
 
     # Standar logging
-    logger.info(u"""Importing data with following parameters: 
-                \tWide: {0}
-                \tDesign: {1}
-                \tUnique ID: {2}
-                \tGroup: {3}
-                \tRun Order: {4}
-                """ .format(args.input, args.design, args.uniqID, args.group, 
-                    args.order))
+    logger.info("Importing data with following parameters: "\
+                "\n\tWide: {0}"\
+                "\n\tDesign: {1}"\
+                "\n\tUnique ID: {2}"\
+                "\n\tGroup: {3}"\
+                "\n\tRun Order: {4}".format(args.input, args.design,
+                 args.uniqID, args.group, args.order))
 
     # Stablishing color palette
     dataPalette = colorHandler(pal=args.palette, col=args.color)

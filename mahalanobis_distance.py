@@ -14,16 +14,16 @@
 ################################################################################
 
 # Built-in packages
-import argparse
-import logging
 import os
+import logging
+import argparse
 
 # Add-on packages
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as stats
 from numpy.linalg import svd
+import matplotlib.pyplot as plt
 from sklearn.neighbors import DistanceMetric
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -443,7 +443,7 @@ def main(args):
     # Since its a list of dataframes and we are only interested in the last one
     # we are using [-1] to access it and [0] to getit out of the list.
     # Outputting distances to mean and pairwise
-    toMean_disCuts[-1][0].to_csv(args.toMean, index_label="sampleID", sep='\t')
+    toMean_disCuts[-1][0].to_csv  (args.toMean,   index_label="sampleID", sep='\t')
     pairwise_disCuts[-1][0].to_csv(args.pairwise, index_label="sampleID", sep='\t')
 
     # Ending script
