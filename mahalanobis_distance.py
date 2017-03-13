@@ -2,9 +2,9 @@
 ################################################################################
 # Date: 2016/July/07
 # 
-# Module: standarizedEuclideanDistance.py
+# Module: mahalanobis_distance.py
 #
-# VERSION: 1.0
+# VERSION: 1.1
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
 #
@@ -39,7 +39,6 @@ from manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
-
     description = """"""
 
     parser = argparse.ArgumentParser(description=description, formatter_class=
@@ -56,29 +55,28 @@ def getOptions():
                         required=False, help="Treatment group")
     standard.add_argument("-o","--order",dest="order",action="store",
                         default=False,help="Run Order")
+    standard.add_argument("-l","--levels",dest="levels",action="store",
+                        default=False,help="Additional notes.")
 
     output = parser.add_argument_group(description="Output Files")
     output.add_argument("-f", "--figure", dest="figure", action='store', 
-                        required=False, help="PDF Output of standardized"\
+                        required=True, help="PDF Output of standardized"\
                         "Euclidean distance plot")
     output.add_argument("-m","--distanceToMean", dest="toMean", action='store', 
-                        required=False, help="""TSV Output of Mahalanobis 
-                         distances from samples to the mean.""")
+                        required=True, help="TSV Output of Mahalanobis "\
+                         "distances from samples to the mean.")
     output.add_argument("-pw","--distancePairwise", dest="pairwise", action='store', 
-                        required=False, help="TSV Output of sample-pairwise"\
+                        required=True, help="TSV Output of sample-pairwise"\
                         "mahalanobis distances.")
 
-    optional = parser.add_argument_group(description="Optional Input")
-    optional.add_argument("-p","--per", dest="p", action='store', required=False, 
-                        default=0.95, type=float, help="""The percentile cutoff 
-                        for standard distributions. The default is 0.95. """)
-    optional.add_argument("-pen", "--penalty", dest="penalty", action="store", 
+    tool = parser.add_argument_group(description="Optional Input")
+    tool.add_argument("-p","--per", dest="p", action='store', required=False, 
+                        default=0.95, type=float, help="The percentile cutoff" \
+                        "for standard distributions. The default is 0.95.")
+    tool.add_argument("-pen", "--penalty", dest="penalty", action="store", 
                         required=False, default=0.5, type=float, help="Value"\
                         " of lambda for the penalty.")
-    optional.add_argument("-l","--levels",dest="levels",action="store", 
-                        required=False, default=False, help="Different groups"\
-                        "to sort by separeted by comas.")
-    optional.add_argument("-lg","--log",dest="log",action="store",required=False, 
+    tool.add_argument("-lg","--log",dest="log",action="store",required=False, 
                         default=True,help="Log file")
 
     plot = parser.add_argument_group(title='Plot options')
@@ -101,7 +99,7 @@ def getOptions():
 
     return(args)
 
-def calculatePenalizedSigma(data,penalty=0.5):
+def calculatePenalizedSigma(data, penalty=0.5):
     # Getting n and p of data.
     n,p = data.shape
 
@@ -175,11 +173,13 @@ def calculateDistances(data, V_VI):
     distanceToMean = dist.pairwise(data.values.T, mean.T)
     distanceToMean = pd.DataFrame(distanceToMean, columns = ['distance_to_mean'], 
                                 index = data.columns)
+    distanceToMean.name = data.name
 
     # Calculate pairwise distances among samples
     distancePairwise = dist.pairwise(data.values.T)
     distancePairwise = pd.DataFrame(distancePairwise, columns=data.columns, 
                                 index=data.columns)
+    distancePairwise.name = data.name
     
     #Converts to NaN the diagonal
     for index, row in distancePairwise.iterrows():
@@ -187,7 +187,7 @@ def calculateDistances(data, V_VI):
 
     return (distanceToMean,distancePairwise)
 
-def getCutOffs(data,p):
+def calculateCutoffs(data,p):
     """ 
     Calculate the Standardized Euclidean Distance and return an array of 
     distances to the Mean and a matrix of pairwise distances.
@@ -245,125 +245,24 @@ def getCutOffs(data,p):
     # Returning colors
     return (cutoff1,cutoff2)
 
-def main(args):
-    """ 
-    Main Script 
+def plotCutoffs(cut_S,ax,p):
     """
-    #Checking if levels
-    if args.levels and args.group:
-        levels = [args.group]+args.levels
-    elif args.group and not args.levels:
-        levels = [args.group]
-    else:
-        levels = []
-    logger.info(u"Groups used to color by: {0}".format(",".join(levels)))
+    Plot the cutoff lines to each plot
 
-    #Parsing data with interface
-    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
-                        anno=args.levels, logger=logger, runOrder=args.order)
+    :Arguments:
+        :type cut_S: pandas.Series
+        :param cut_S: contains a cutoff value, name and color
 
-    #Removing groups with just one sample
-    dat.removeSingle()
+        :type ax: matplotlib.axes._subplots.AxesSubplot
+        :param ax: Gets an ax project.
 
-    # Cleaning from missing data
-    dat.dropMissing()
-
-    # Select colors for data (dat.design contains a copy of dat.design with an
-    # additional columns for colors).
-    dataPalette.getColors(design=dat.design, groups=levels)
-
-    # Getting list of indexex to subset wide file
-    if args.group:
-        disGroups = [(group.index,level) for level, group in dataPalette.design.groupby(dataPalette.combName)]
-    else:
-        disGroups = [(dat.design.index,"samples")]
-
-    # Iterating over subgroups
-    pairwise_disCuts = list()
-    toMean_disCuts   = list()
-    for indexes,name in disGroups:
-        # If less than 3 elements in the group skip to the next
-        if len(indexes) < 3: 
-            logger.error("Group {0} has less than 3 elements".format(level))
-            exit()
-
-        #Subsetting wide
-        currentFrame = pd.DataFrame(dat.wide[indexes].copy())
-
-        # Calculate Penalized Sigma
-        penalizedSigma = calculatePenalizedSigma(data=currentFrame, penalty=args.penalty)
-
-        # Calculate Distances (dis estands for distance)
-        disToMean, disPairwise = calculateDistances(data=currentFrame, V_VI=penalizedSigma)
-        disToMean.name = name
-        disPairwise.name = name
-
-        # Calculate cutoffs 
-        cutoff1, cutoff2 = getCutOffs(currentFrame, args.p)
-
-        # Appending results
-        pairwise_disCuts.append([disPairwise,cutoff2])
-        toMean_disCuts.append([disToMean,cutoff1])
-
-    if args.group:
-        # Splitting results to mean and pairwise
-        pairwise_dis = [distance for distance, cutoff in pairwise_disCuts]
-        toMean_dis   = [distance for distance, cutoff in toMean_disCuts]
-
-        # Getting distance for all pairwise
-        pairwise_dis_all = pd.DataFrame(columns=["group"])
-        for dis in pairwise_dis:
-            dis.loc[:,"group"] = [dis.name]*len(dis.columns)
-            pairwise_dis_all = pd.DataFrame.merge(pairwise_dis_all, dis, 
-                                    on=["group"], left_index=True, right_index=True,
-                                    how='outer', sort=False)
-        pairwise_dis_all.sort_values(by="group",inplace=True)
-        pairwise_dis_all.drop("group", axis=1, inplace=True)
-        pairwise_dis_all.name="samples"
-
-        # Getting distances for all to mean
-        toMean_dis_all = pd.DataFrame(columns=["group","distance_to_mean"])
-        for dis in toMean_dis:
-            dis.loc[:,"group"] = [dis.name]*len(dis.columns)
-            toMean_dis_all = pd.DataFrame.merge(toMean_dis_all, dis, 
-                                    on=['distance_to_mean', 'group'], left_index=True,
-                                    right_index=True, how='outer', sort=False)
-        toMean_dis_all.sort_values(by="group",inplace=True)
-        toMean_dis_all.drop("group", axis=1, inplace=True)
-        toMean_dis_all.name="samples"
-
-        # Geting cuttoffs for distances
-        cutoff1, cutoff2 = getCutOffs(dat.wide, args.p)
-
-        # Appending toMean_dis_all and pairwise_dis_all to toMean_dis_cuts and
-        # pairwise_dis_cuts respectively.
-        toMean_disCuts.append([toMean_dis_all,cutoff1])
-        pairwise_disCuts.append([pairwise_dis_all,cutoff2])
-
-    # Iterating over each pair of (distance,cutoff) for toMean and pairwise to
-    # plot  distances.
-    with PdfPages((args.figure)) as pdf:
-        # Iterating over toMean,pairwise distances in parallel
-        for toMean, pairwise in zip(toMean_disCuts,pairwise_disCuts):
-            # Making plots
-            plotDistances(df_distance=toMean[0], palette=dataPalette, p=args.p,
-                            plotType="Scatterplot",disType="Mahalanobis", 
-                            cutoff=toMean[1], pdf=pdf)
-            plotDistances(df_distance=pairwise[0], palette=dataPalette, p=args.p,
-                            plotType="Scatterplot", disType="Mahalanobis", 
-                            cutoff=pairwise[1], pdf=pdf)
-            plotDistances(df_distance=pairwise[0], palette=dataPalette, p=args.p,
-                            plotType="Box-plots", disType="Mahalanobis", 
-                            cutoff=pairwise[1], pdf=pdf)
-
-    # Outputting distances
-    toMean_disCuts[-1][0].to_csv(args.toMean, index_label="sampleID", sep='\t')
-
-    # Outputting distances
-    pairwise_disCuts[-1][0].to_csv(args.pairwise, index_label="sampleID", sep='\t')
-
-    # Ending script
-    logger.info("Script complete.")
+        :type p: float
+        :param p: percentile of cutoff
+    """
+    lines.drawCutoffHoriz(ax=ax,y=float(cut_S.values[0]),
+            cl=cutPalette.ugColors[cut_S.name],
+            lb="{0} {1}% Cutoff: {2}".format(cut_S.name,round(p*100,3),
+            round(float(cut_S.values[0]),1)),ls="--",lw=2)
 
 def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
     #Geting number of samples in dataframe (ns stands for number of samples)
@@ -397,7 +296,7 @@ def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
                     format(plotType, distType1, distType2, df_distance.name, dataType), 
                     yTitle="{0} {1} Distance".format(distType1, distType2),
                     xTitle="Index", ylim="ignore", xlim=(-0.5,-0.5+ns),  
-                    xticks=df_distance.index.values)
+                    xticks=df_distance.index)
 
     # If distance to mean 
     if dataType == "to the mean":
@@ -409,13 +308,13 @@ def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
     else :
         if plotType == "Scatterplot":
             # Plot scatterplot
-            for index in df_distance.index.values:
+            for index in df_distance.index:
                 scatter.scatter2D(ax=figure.ax[0], colorList=df_distance["colors"][index],
                                 x=range(len(df_distance.index)), y=df_distance[index])
 
         elif plotType == "Box-plots":
             # Plot Box plot
-            box.boxDF(ax=figure.ax[0], colors=df_distance["colors"].values, dat=df_distance)
+            box.boxDF(ax=figure.ax[0], colors=df_distance["colors"], dat=df_distance)
 
     # Shrink figure
     figure.shrink()
@@ -429,27 +328,126 @@ def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
     # Add figure to PDF and close the figure afterwards
     figure.addToPdf(pdf)
 
-    # Drop "color" column
+    # Drop "color" column to no mess the results
     df_distance.drop("colors", axis=1, inplace=True)
 
-def plotCutoffs(cut_S,ax,p):
+def main(args):
+    """ 
+    Main Script 
     """
-    Plot the cutoff lines to each plot
+    #Checking if levels
+    if args.levels and args.group:
+        levels = [args.group]+args.levels
+    elif args.group and not args.levels:
+        levels = [args.group]
+    else:
+        levels = []
+    logger.info(u"Groups used to color by: {0}".format(",".join(levels)))
 
-    :Arguments:
-        :type cut_S: pandas.Series
-        :param cut_S: contains a cutoff value, name and color
+    # Parsing data with interface
+    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
+                        anno=args.levels, logger=logger, runOrder=args.order)
 
-        :type ax: matplotlib.axes._subplots.AxesSubplot
-        :param ax: Gets an ax project.
+    # Removing groups with just one sample and then clean from missing data.
+    dat.removeSingle()
+    dat.dropMissing()
 
-        :type p: float
-        :param p: percentile of cutoff
-    """
-    lines.drawCutoffHoriz(ax=ax,y=float(cut_S.values[0]),
-            cl=cutPalette.ugColors[cut_S.name],
-            lb="{0} {1}% Cutoff: {2}".format(cut_S.name,round(p*100,3),
-            round(float(cut_S.values[0]),1)),ls="--",lw=2)
+    # Select colors for data (dat.design contains a copy of dat.design with an
+    # additional columns for colors).
+    dataPalette.getColors(design=dat.design, groups=levels)
+
+    # Getting list of indexex to subset wide file
+    if args.group:
+        disGroups = [(group.index,level) for level, group in dataPalette.design.groupby(dataPalette.combName)]
+    else:
+        disGroups = [(dat.design.index,"samples")]
+
+    # Iterating over subgroups
+    pairwise_disCuts = list()
+    toMean_disCuts   = list()
+    for indexes,name in disGroups:
+        # If less than 3 elements in the group skip to the next
+        if len(indexes) < 3: 
+            logger.error("Group {0} has less than 3 elements, it will not be"\
+                        " included in the analysis".format(level))
+            continue
+
+        #Subsetting wide
+        currentFrame = pd.DataFrame(dat.wide[indexes].copy())
+        currentFrame.name = name
+
+        # Calculate Penalized Sigma
+        penalizedSigma = calculatePenalizedSigma(data=currentFrame, penalty=args.penalty)
+
+        # Calculate Distances (dis estands for distance)
+        disToMean, disPairwise = calculateDistances(data=currentFrame, V_VI=penalizedSigma)
+
+        # Calculate cutoffs 
+        cutoff1, cutoff2 = calculateCutoffs(currentFrame, args.p)
+
+        # Appending results
+        pairwise_disCuts.append([disPairwise,cutoff2])
+        toMean_disCuts.append([disToMean,cutoff1])
+
+    if args.group:
+        # Splitting results to mean and pairwise
+        pairwise_dis = [distance for distance, cutoff in pairwise_disCuts]
+        toMean_dis   = [distance for distance, cutoff in toMean_disCuts]
+
+        # Merging to get distance for all pairwise
+        pairwise_dis_all = pd.DataFrame(columns=["group"])
+        for dis in pairwise_dis:
+            dis.loc[:,"group"] = [dis.name]*len(dis.columns)
+            pairwise_dis_all = pd.DataFrame.merge(pairwise_dis_all, dis, 
+                                    on=["group"], left_index=True, right_index=True,
+                                    how='outer', sort=False)
+        pairwise_dis_all.sort_values(by="group",inplace=True)
+        pairwise_dis_all.drop("group", axis=1, inplace=True)
+        pairwise_dis_all.name="samples"
+
+        # Merging to get distance for all to mean
+        toMean_dis_all = pd.DataFrame(columns=["group","distance_to_mean"])
+        for dis in toMean_dis:
+            dis.loc[:,"group"] = [dis.name]*len(dis.columns)
+            toMean_dis_all = pd.DataFrame.merge(toMean_dis_all, dis, 
+                                    on=['distance_to_mean', 'group'], left_index=True,
+                                    right_index=True, how='outer', sort=False)
+        toMean_dis_all.sort_values(by="group",inplace=True)
+        toMean_dis_all.drop("group", axis=1, inplace=True)
+        toMean_dis_all.name="samples"
+
+        # Geting cuttoffs for distances
+        cutoff1, cutoff2 = calculateCutoffs(dat.wide, args.p)
+
+        # Appending toMean_dis_all and pairwise_dis_all to toMean_dis_cuts and
+        # pairwise_dis_cuts respectively.
+        toMean_disCuts.append([toMean_dis_all,cutoff1])
+        pairwise_disCuts.append([pairwise_dis_all,cutoff2])
+
+    # Iterating over each pair of (distance,cutoff) for toMean and pairwise to
+    # plot  distances.
+    with PdfPages((args.figure)) as pdf:
+        # Iterating over toMean,pairwise distances in parallel
+        for toMean, pairwise in zip(toMean_disCuts,pairwise_disCuts):
+            # Making plots
+            plotDistances(df_distance=toMean[0], palette=dataPalette, p=args.p,
+                            plotType="Scatterplot",disType"=Mahalanobis", 
+                            cutoff=toMean[1], pdf=pdf)
+            plotDistances(df_distance=pairwise[0], palette=dataPalette, p=args.p,
+                            plotType="Scatterplot", disType="Mahalanobis", 
+                            cutoff=pairwise[1], pdf=pdf)
+            plotDistances(df_distance=pairwise[0], palette=dataPalette, p=args.p,
+                            plotType="Box-plots", disType="Mahalanobis", 
+                            cutoff=pairwise[1], pdf=pdf)
+
+    # Since its a list of dataframes and we are only interested in the last one
+    # we are using [-1] to access it and [0] to getit out of the list.
+    # Outputting distances to mean and pairwise
+    toMean_disCuts[-1][0].to_csv(args.toMean, index_label="sampleID", sep='\t')
+    pairwise_disCuts[-1][0].to_csv(args.pairwise, index_label="sampleID", sep='\t')
+
+    # Ending script
+    logger.info("Script complete.")
 
 if __name__ == '__main__':
     # Turn on Logging if option -g was given
