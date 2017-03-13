@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Built-in packages
+import os
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
@@ -34,26 +35,30 @@ def getOptions():
     parser.add_argument("--debug", dest="debug", action='store_true', 
                         required=False, help="Add debugging log output.")
     args = parser.parse_args()
+
+    # Standatdize paths
+    args.oname = os.path.abspath(args.oname)
+
     return(args)
 
 
 def main(args):
     # Imput data
-    dat = wideToDesign(args.input, args.design, args.uniqID)
+    dat = wideToDesign(args.input, args.design, args.uniqID, logger=logger)
 
     # Convert objects to numeric
     norm = dat.wide.applymap(float)
 
     # According to the tipe of log selected perform log transformation
     if args.log == 'log':
-        norm = norm.apply(lambda x: np.log(x))
         logger.info(u"Running log transform with log e")
+        norm = norm.apply(lambda x: np.log(x))
     elif args.log == 'log2':
-        norm = norm.apply(lambda x: np.log2(x))
         logger.info(u"Running log transform with log 2")
+        norm = norm.apply(lambda x: np.log2(x))
     elif args.log == 'log10':
-        norm = norm.apply(lambda x: np.log10(x))
         logger.info(u"Running log transform with log 10")
+        norm = norm.apply(lambda x: np.log10(x))
 
     # Round results to 4 digits
     norm = norm.apply(lambda x: x.round(4))
@@ -62,19 +67,16 @@ def main(args):
     norm.replace([np.inf, -np.inf], np.nan, inplace=True)
 
     # Save file to CSV
-
     norm.to_csv(args.oname, sep="\t")
-
+    logger.info("Finishing Script")
+    
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
 
     # Set up logger
     logger = logging.getLogger()
-    if args.debug:
-        sl.setLogger(logger, logLevel='debug')
-    else:
-        sl.setLogger(logger)
+    sl.setLogger(logger)
 
     # Import data
     logger.info(u"Importing data with the folowing parameters: "\
@@ -84,4 +86,5 @@ if __name__ == '__main__':
         "\n\tLog:   {3}".\
         format(args.input,args.design,args.uniqID,args.log))
 
+    # Runing log transformation
     main(args)
