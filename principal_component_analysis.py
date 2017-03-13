@@ -62,6 +62,9 @@ def getOptions(myopts=None):
     standard.add_argument("-g", "--group",dest="group", action='store', 
                         required=False,  default=False, help="Name of the"\
                         " column with groups.")
+    standard.add_argument("-l","--levels",dest="levels",action="store", 
+                        required=False, default=False, help="Different groups to"\
+                        " sort by separeted by commas.")
 
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-lo","--load_out",dest="load_out",action='store',
@@ -74,7 +77,7 @@ def getOptions(myopts=None):
                         required=True, help="Name of output file to store "\
                         "summaries of the components. TSV format.")
     output.add_argument("-f","--figure",dest="figure",action="store",
-                        required=False, help="Name of output file to store"\
+                        required=True, help="Name of output file to store"\
                         "scatter plots for 3 principal components.")
 
     plot = parser.add_argument_group(title='Plot options')
@@ -83,8 +86,18 @@ def getOptions(myopts=None):
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
-
     args = parser.parse_args()
+
+    # Standardized output paths
+    args.figure      = os.path.abspath(args.figure) 
+    args.load_out    = os.path.abspath(args.load_out)
+    args.score_out   = os.path.abspath(args.score_out)
+    args.summary_out = os.path.abspath(args.summary_out)
+
+    # Split levels if levels
+    if args.levels:
+        args.levels = args.levels.split(",")
+
     return(args)
 
 def runPCA(wide):
@@ -129,12 +142,21 @@ def runPCA(wide):
     var    = pca.explained_variance_ratio_
     cumVar = var.cumsum()
 
-    # Create summay frame
+    # Create summay file
     summary = np.array([sd,var,cumVar]).T
 
-    return scores,loadings,summary
+    # Create headers 
+    header = ["PC{0}".format(x+1) for x in range(summary.shape[0])]
 
-def plotScatterplot2D(data,pdf,dat,nloads=3):
+    # Convert loadings, scores and summaries to Pandas DataFrame rename index
+    df_scores   = pd.DataFrame(data=scores, index=wide.index, columns=header)
+    df_loadings = pd.DataFrame(data=loadings, index=header, columns=wide.columns)
+    df_summary  = pd.DataFrame(data=summary, index=header, columns=["standar_deviation",
+                "proportion_of_variance_explained","cumulative_proportion_of_variance_explained"])
+
+    return df_scores, df_loadings, df_summary
+
+def plotScatterplot2D(data, palette, pdf, nloads=3):
     """
     Plots Scatterplots 2D for a number of loadngs for PCA.
 
@@ -145,19 +167,9 @@ def plotScatterplot2D(data,pdf,dat,nloads=3):
         :type pdf: pdf object
         :param pdf: PDF object to save all the generated figures.
 
-        :type dat: interface.wideToDesign
-        :param dat: wideToDesign instance providing acces to all input data.
-
         :type nloads: int
         :param nloads: Number of principal components to create pairwise combs.
     """
-    # Get colors
-    if  dat.group:
-        colorDes,ucGroups,combName=palette.getColors(design=dat.design,
-                                                    groups=[dat.group])
-    else:
-        colorList = list(palette.mpl_colors[0]) #First color on the palette
-        ucGroups = dict()
 
     # Selecting amount of pairwise combinations to plot scaterplots for loads.
     for x, y in list(combinations(data.columns.tolist()[:nloads],2)):
@@ -168,16 +180,12 @@ def plotScatterplot2D(data,pdf,dat,nloads=3):
         # Create a title for the figure
         title = "{0} vs {1}".format(x,y)
 
-        # Get specific color list
-        if dat.group:
-            colorList = [ucGroups[dat.design[dat.group][idx]] for idx in data[x].index]
-
         # Plot the scatterplot based on data
         scatter.scatter2D(x=list(data[x]), y=list(data[y]),
-                         colorList=colorList, ax=fh.ax[0])
+                         colorList=palette.design.colors.tolist(), ax=fh.ax[0])
 
         # Create legend
-        fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=dat.group)
+        fh.makeLegend(ax=fh.ax[0], ucGroups=palette.ugColors, group=palette.combName)
 
         # Shrink axis to fit legend
         fh.shrink()
@@ -192,7 +200,7 @@ def plotScatterplot2D(data,pdf,dat,nloads=3):
         # Adding figure to pdf
         fh.addToPdf(dpi=600,pdfPages=pdf)
 
-def plotScatterplot3D(data,pdf,dat):
+def plotScatterplot3D(data, palette, pdf):
     """
     Plots Scatterplots 3D for a given number of loadngs for PCA.
 
@@ -202,31 +210,18 @@ def plotScatterplot3D(data,pdf,dat):
 
         :type pdf: pdf object
         :param pdf: PDF object to save all the generated figures.
-
-        :type dat: interface.wideToDesign
-        :param dat: wideToDesign instance providing acces to all input data.
     """
     
     # Open figure handler with 3D projection
     fh = figureHandler(proj="3d", figsize=(14,8))
 
-    # Getting colors by group
-    if dat.group:
-        colorDes,ucGroups,combName=palette.getColors(design=dat.design,
-                                                    groups=[dat.group])
-        colorList = colorDes.colors.tolist()
-    else:
-        colorList = list(palette.mpl_colors[0]) #First color on the palette
-        ucGroups = dict()
-    
     # Plot scatterplot3D 
-    ax = scatter.scatter3D(ax=fh.ax[0], colorList=colorList,
+    ax = scatter.scatter3D(ax=fh.ax[0], colorList=palette.design.colors.tolist(),
                         x=list(data["PC1"]), y=list(data["PC2"]),
                         z=list(data["PC3"]))
 
     # Make legends
-    if dat.group:
-        fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=dat.group)
+    fh.makeLegend(ax=fh.ax[0], ucGroups=palette.ugColors, group=palette.combName)
 
     # Add Titles to the PCA
     fh.format3D(xTitle="PC1",yTitle="PC2",zTitle="PC3")
@@ -235,58 +230,59 @@ def plotScatterplot3D(data,pdf,dat):
     fh.addToPdf(dpi=600, pdfPages=pdf)
 
 def main(args):
+    # Checking if levels
+    if args.levels and args.group:
+        levels = [args.group]+args.levels
+    elif args.group and not args.levels:
+        levels = [args.group]
+    else:
+        levels = []
+
     #Loading data trought Interface
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
-                        logger=logger)
+                        anno=args.levels, logger=logger)
 
     # Cleaning from missing data
     dat.dropMissing()
+
+    # Get colors for each sample based on the group
+    palette.getColors(design=dat.design, groups=levels)
 
     # Transpossing matrix
     dat.wide = dat.wide.T
 
     # RunPCA
-    scores, loadings, summary = runPCA(dat.wide)
-
-    # Create name of the components
-    header = ["PC{0}".format(x+1) for x in range(summary.shape[0])]
-
-    # Convert loadings and scores to Pandas DataFrame rename index in summary
-    scores   = pd.DataFrame(data=scores, index=dat.wide.index, columns=header)
-    loadings = pd.DataFrame(data=loadings, index=header, columns=dat.wide.columns)
-    summary  = pd.DataFrame(data=summary, index=header, columns=["standar_deviation",
-                "proportion_of_variance_explained","cumulative_proportion_of_variance_explained"])
-
-    # Save Scores, Loadings and Summary
-    scores.to_csv(args.score_out, sep="\t", index_label='sampleID')
-    loadings.to_csv(args.load_out, sep="\t", index_label=dat.uniqID)
-    summary.to_csv(args.summary_out, sep="\t", index_label="PCs")
+    df_scores, df_loadings, df_summary = runPCA(dat.wide)
 
     #Plotting scatter plot 3D
     logger.info(u"Plotting PCA scores")
-    with PdfPages(os.path.abspath(args.figure)) as pdfOut:
-        plotScatterplot2D(data=scores, pdf=pdfOut, dat=dat)
-        plotScatterplot3D(data=scores, pdf=pdfOut, dat=dat)
+    with PdfPages(args.figure) as pdfOut:
+        plotScatterplot2D(data=df_scores, palette=palette, pdf=pdfOut)
+        plotScatterplot3D(data=df_scores, palette=palette, pdf=pdfOut)
+
+    # Save Scores, Loadings and Summary
+    df_scores.to_csv(args.score_out, sep="\t", index_label='sampleID')
+    df_loadings.to_csv(args.load_out, sep="\t", index_label=dat.uniqID)
+    df_summary.to_csv(args.summary_out, sep="\t", index_label="PCs")
 
     #Ending script
     logger.info(u"Finishing running of PCA")
-
 
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
 
-    #Set logger
+    # Set logger
     logger = logging.getLogger()
     sl.setLogger(logger)
 
-    #Starting script
-    logger.info(u"""Importing data with following parameters:
-                Input: {0}
-                Design: {1}
-                uniqID: {2}
-                group: {3}
-                """.format(args.input, args.design, args.uniqID, args.group))
+    # Starting script
+    logger.info("Importing data with following parameters:"\
+                "\n\tInput: {0}"\
+                "\n\tDesign: {1}"\
+                "\n\tuniqID: {2}"\
+                "\n\tgroup: {3}".format(args.input, args.design, args.uniqID, 
+                                args.group))
 
     # Stablishing color palette
     palette = colorHandler(pal=args.palette, col=args.color)
