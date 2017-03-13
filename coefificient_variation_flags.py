@@ -12,32 +12,31 @@
 #
 ################################################################################
 # Built-in packages
-import logging
-
-import argparse
-from argparse import RawDescriptionHelpFormatter
-import tempfile
-import shutil
 import os
+import shutil
+import logging
+import argparse
+import tempfile
 from math import log, floor
+from argparse import RawDescriptionHelpFormatter
 
 # Add-on packages
 import matplotlib
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 # Local packages
-import logger as sl
-from interface import wideToDesign
 from flags import Flags
+from interface import wideToDesign
 from manager_color import colorHandler
 from manager_figure import figureHandler
+import logger as sl
+import module_hist as hist
 import module_lines as lines
 import module_distribution as dist
-import module_hist as hist
 
 def getOptions(myopts=None):
     """Function to pull in arguments"""
@@ -53,266 +52,214 @@ def getOptions(myopts=None):
     parser=argparse.ArgumentParser(description=description, 
                                 formatter_class=RawDescriptionHelpFormatter)
 
-    group1=parser.add_argument_group(title="Standard input", 
+    standard = parser.add_argument_group(title="Standard input", 
                                 description="Standard input for SECIM tools.")
-    group1.add_argument("-i","--input", dest="input", action="store", 
+    standard.add_argument("-i","--input", dest="input", action="store", 
                         required=True, help="Input dataset in wide format.")
-    group1.add_argument("-d","--design", dest="design", action="store", 
+    standard.add_argument("-d","--design", dest="design", action="store", 
                         required=True, help="Design file.")
-    group1.add_argument("-id","--ID", dest="uniqID", action="store", required=True,
+    standard.add_argument("-id","--ID", dest="uniqID", action="store", required=True,
                          help="Name of the column with unique identifiers.")
-    group1.add_argument("-f","--figure", dest="figure", action="store", 
+    standard.add_argument("-g","--group", dest="group", action='store', 
+                        required=False, default=False, help="Name of column in "\
+                        "design file with Group/treatment information.")
+    standard.add_argument("-l","--levels",dest="levels",action="store", 
+                        required=False, default=False, help="Different groups to"\
+                        "sort by separeted by commas.")
+
+    tool = parser.add_argument_group(title="Tool specific input", 
+                                description="Input specific for the tool.")
+    tool.add_argument("-c","--CVcutoff", dest="CVcutoff", action="store", 
+                        required=False, default=False, type=float,
+                        help="The default CV cutoff will flag 10 percent of "\
+                        "the rowIDs with larger CVs. If you want to set a CV "\
+                        "cutoff, put the number here. [optional]")
+
+    output = parser.add_argument_group(title="Output", 
+                            description="Paths for output files.")
+    output.add_argument("-f","--figure", dest="figure", action="store", 
                         required=True, default="figure", 
                         help="Name of the output PDF for CV plots.")
-    group1.add_argument("-o","--flag", dest="flag", action="store", 
+    output.add_argument("-o","--flag", dest="flag", action="store", 
                         required=True, default="RTflag", 
                         help="Name of the output TSV for CV flags.")
 
-    group2=parser.add_argument_group(title="Optional input", 
-                            description="Optional input for SECIM tools.")
-    group2.add_argument("-g","--group", dest="group", action="store", 
-                        required=False, default=False, 
-                        help="""Add option to separate sample IDs by treatment 
-                        name. [optional]""")
-    group2.add_argument("-c","--CVcutoff", dest="CVcutoff", action="store", 
-                        required=False, default=False, 
-                        help="""The default CV cutoff will flag 10 percent of 
-                        the rowIDs with larger CVs. If you want to set a CV 
-                        cutoff, put the number here. [optional]""")
-
+    plot = parser.add_argument_group(title='Plot options')
+    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
+                        default="tableau", help="Name of the palette to use.")
+    plot.add_argument("-col","--color",dest="color",action="store",required=False, 
+                        default="Tableau_20", help="Name of a valid color scheme"\
+                        " on the selected palette")
     args=parser.parse_args()
+
+    # Standardize paths
+    args.input  = os.path.abspath(args.input)
+    args.design = os.path.abspath(args.design)
+    args.figure = os.path.abspath(args.figure)
+    args.flag   = os.path.abspath(args.flag)
+
+    # if args.levels then split otherwise args.level = emptylist
+    if args.levels:
+        args.levels = args.levels.split(",")
 
     return(args)
 
-def setflagByGroup(args, wide, dat):
+def calculateCV(data, design, cutoff, levels):
     """
     Runs Count Values by group
 
     :Arguments:
-        :type args: string
-        :param args: command line args
+        :type data: pandas.DataFrame
+        :param data: wide dataset
 
-        :type wide: pandas DataFrame
-        :param wide: wide dataset
+        :type design: pandas.DataFrame
+        :param design: design dataset
 
-        :type dat: pandas DataFrame
-        :param dat: wide and design datasets
+        :type cutoff: float
+        :param cutoff: Value of cutoff if non provided it will be canculated.
+
+        :type levels: str
+        :param levels: Name of the groups to groupby
     """
-    #Open PDF pages
-    with PdfPages(args.figure) as pdfOut:
 
-        #Open CV dataframe
-        CV=pd.DataFrame(index=wide.index)
+    #Open CV dataframe
+    CV = pd.DataFrame(index=data.index)
 
-        # Split design file by treatment group
-        for title, group in dat.design.groupby(args.group):
+    # Split design file by treatment group
+    for title, group in design.groupby(levels):
+        # Create empty dataset with metabolites names as index and calculate their
+        # standar deviation and mean
+        DATstat=pd.DataFrame(index=data[group.index].index)
+        DATstat.loc[:,"std"]  = np.std(data[group.index], axis=1)
+        DATstat.loc[:,"mean"] = np.mean(data[group.index],axis=1)
 
-            # Filter the wide file into a new dataframe
-            currentFrame=wide[group.index]
+        # Calculate the Coefficient of Variation for that group (if groups)
+        # or al data (if not groups provided).
+        CV.loc[:,"cv_"+title] = abs(DATstat["std"] / DATstat["mean"])
 
-            # Change dat.sampleIDs to match the design file
-            dat.sampleIDs=group.index
+    # Get max CV 
+    CV.loc[:,'cv'] = CV.apply(np.max, axis=1)
 
-            # Get CV and CVcutoff
-            CV['cv_'+title], CVcutoff=setflag(args, currentFrame, dat, groupName=title)
+    # Calculate a CVcutoff if user provides one use that instead.
+    if not cutoff:
+        CVcutoff = np.nanpercentile(CV['cv'].values, q=90)
+        CVcutoff = round(CVcutoff, -int(floor(log(abs(CVcutoff), 10))) + 2)
+    else:
+        CVcutoff = cutoff
 
-        # Get max
-        CV['cv']=CV.apply(np.max, axis=1)
+    return (CV, CVcutoff)
 
-        if not args.CVcutoff:
-            CVcutoff=np.nanpercentile(CV['cv'].values, q=90)
-            CVcutoff=round(CVcutoff, -int(floor(log(abs(CVcutoff), 10))) + 2)
-        else:
-            CVcutoff=float(args.CVcutoff)
+def plotCVplots(data, cutoff, palette, pdf):
+    #Iterate over groups
+    for name,group in palette.design.groupby(palette.combName):
+        # Open figure handler
+        fh=figureHandler(proj='2d',figsize=(14,8))
 
-        # Select palette
-        ch=colorHandler('tableau','Tableau_10')
-        logger.info(u"Using tableau Tableau_10 palette")
+        # Get xmin and xmax
+        xmin = -np.nanpercentile(data['cv_'+name].values,99)*0.2
+        xmax = np.nanpercentile(data['cv_'+name].values,99)*1.5
 
-        # Get colors
-        des,ucolor,combname=ch.getColors(dat.design,[args.group])
-        logger.info("Plotting Data")
+        # Plot histogram
+        hist.serHist(ax=fh.ax[0],dat=data['cv_'+name],color='grey',normed=1,
+                    range=(xmin,xmax),bins=15)
 
-        # Split design file by treatment group
-        for title, group in dat.design.groupby(args.group):
-
-            # Open figure handler
-            fh=figureHandler(proj='2d',figsize=(14,8))
-
-            # Get xmin
-            xmin=-np.nanpercentile(CV['cv_'+title].values,99)*0.2
-
-            # Get xmax
-            xmax=np.nanpercentile(CV['cv_'+title].values,99)*1.5
-
-            # Plot histogram
-            hist.serHist(ax=fh.ax[0],dat=CV['cv_'+title],color='grey',normed=1,
-                        range=(xmin,xmax),bins=15)
-
-            # Plot density plot
-            dist.plotDensityDF(data=CV['cv_'+title],ax=fh.ax[0],lb="CV density",
-                        colors=ucolor[title])
-
-            # Plot cutoff
-            lines.drawCutoffVert(ax=fh.ax[0],x=CVcutoff,
-                                lb="Cutoff at: {0}".format(CVcutoff))
-
-            # Plot legend
-            fh.makeLegendLabel(ax=fh.ax[0])
-
-            # Give format to the axis
-            fh.formatAxis(yTitle='Density',xlim=(xmin,xmax), ylim="ignore",
-                figTitle = "Density Plot of Coefficients of Variation in {0} {1}".format(args.group,title))
-
-            # Shrink figure to fit legend
-            fh.shrink()
-
-            # Add plot to PDF
-            fh.addToPdf(pdfPages=pdfOut)
-
-        # Open new figureHandler instance
-        fh=figureHandler(proj='2d')
-
-        #Get xmin
-        xmin=-np.nanpercentile(CV['cv'].values,99)*0.2
-
-        #Get xmax
-        xmax=np.nanpercentile(CV['cv'].values,99)*1.5
-
-        # Create flag file instance
-        flag=Flags(index=CV['cv'].index)
-
-        # Split design file by treatment group
-        for title, group in dat.design.groupby(args.group):
-            
-            # Plot density plot
-            dist.plotDensityDF(data=CV["cv_"+title],ax=fh.ax[0],colors=ucolor[title],
-                                lb="CV density in group {0}".format(title))
-
-            # Create new flag row for each group
-            flag.addColumn(column="flag_feature_big_CV_{0}".format(title),
-                         mask=((CV['cv_'+title].get_values() > CVcutoff) |
-                          CV['cv_'+title].isnull()))
+        # Plot density plot
+        dist.plotDensityDF(data=data['cv_'+name],ax=fh.ax[0],lb="CV density",
+                           colors=palette.ugColors[name])
 
         # Plot cutoff
-        lines.drawCutoffVert(ax=fh.ax[0],x=CVcutoff,lb="Cutoff at: {0}".format(CVcutoff))
+        lines.drawCutoffVert(ax=fh.ax[0],x=cutoff, lb="Cutoff at: {0}".format(cutoff))
 
         # Plot legend
         fh.makeLegendLabel(ax=fh.ax[0])
 
         # Give format to the axis
-        fh.formatAxis(yTitle="Density", xlim=(xmin,xmax),
-            figTitle="Density Plot of Coefficients of Variation by {0}".format(args.group))
+        fh.formatAxis(yTitle='Density',xlim=(xmin,xmax), ylim="ignore",
+            figTitle = "Density Plot of Coefficients of Variation in {0}".format(name))
 
-        # Shrink figure
-        fh.shrink()
-        
-        # Add figure to PDF
-        fh.addToPdf(pdfPages=pdfOut)
-
-    # Write flag file
-    flag.df_flags.to_csv(args.flag, sep='\t')
-
-def setflag(args, wide, dat, groupName=''):
-    """
-    Runs Count Values by group
-
-    :Arguments:
-        :type args: string
-        :param args: command line args
-
-        :type wide: pandas DataFrame
-        :param wide: wide dataset
-
-        :type dat: pandas DataFrame
-        :param dat: wide and design datasets
-
-        :type groupName: string
-        :param groupName: name of optional group
-    """
-    # Round all values to 3 significant digits
-    DATround=wide.applymap(lambda x: x)
-
-    # Create empty dataset with metabolites names as index
-    DATstat=pd.DataFrame(index=DATround.index)
-
-    #Calculate STD
-    DATstat["std"] =DATround.apply(np.std, axis=1)
-
-    #Calculate for mean
-    DATstat["mean"]=DATround.apply(np.mean, axis=1)
-
-    DATstat["cv"]  =abs(DATstat["std"] / DATstat["mean"])
-
-    if not args.CVcutoff:
-        CVcutoff=np.nanpercentile(DATstat['cv'].values, q=90)
-
-        CVcutoff=round(CVcutoff, -int(floor(log(abs(CVcutoff), 10))) + 2)
-    else:
-        CVcutoff=float(args.CVcutoff)
-
-    # Plot CVs
-    logger.info("Plotting Data")
-    if groupName == "":
-        # Initiate figure instance
-        fh=figureHandler(proj="2d", figsize=(14,8))
-
-        # Calculate xmin
-        xmin=-np.nanpercentile(DATstat['cv'].values,99)*0.2
-
-        # Calculate xmax
-        xmax=np.nanpercentile(DATstat['cv'].values,99)*1.5
-
-        # Plot histogram
-        hist.quickHist(ax=fh.ax[0],dat=DATstat['cv'],color="grey")
-
-        # Plot density
-        dist.plotDensityDF(data=DATstat['cv'],ax=fh.ax[0],colors='g',lb="CV density")
-
-        # Ploot cutoff
-        lines.drawCutoffVert(ax=fh.ax[0],x=CVcutoff,lb="Cutoff at: {0}".format(CVcutoff))
-
-        # Plot legend
-        fh.makeLegendLabel(ax=fh.ax[0])
-
-        # Give format to axis
-        fh.formatAxis(figTitle="Density Plot of Coefficients of Variation",
-                    yTitle="Density",xlim=(xmin,xmax),ylim="ignore")
-
-        # Shirnk plot
+        # Shrink figure to fit legend
         fh.shrink()
 
-        # Export figure
-        fh.export(args.figure)
+        # Add plot to PDF
+        fh.addToPdf(pdfPages=pdf)
 
-        # Create flag instance
-        flag=Flags(index=DATstat.index)
+def plotDistributions(data, cutoff, palette,pdf):
+    # Open new figureHandler instance
+    fh=figureHandler(proj='2d', figsize=(14,8))
 
-        # Create new flag column with flags
-        flag.addColumn(column='flag_feature_big_CV',
-                    mask=((DATstat['cv'].get_values() > CVcutoff) | 
-                    DATstat['cv'].isnull()))
+    #Get xmin and xmax
+    xmin = -np.nanpercentile(data['cv'].values,99)*0.2
+    xmax = np.nanpercentile(data['cv'].values,99)*1.5
 
-        # Write output
-        flag.df_flags.to_csv(args.flag, sep='\t')
-    else:
-        return DATstat['cv'], CVcutoff
+
+    # Split design file by treatment group and plot density plot
+    for name, group in palette.design.groupby(palette.combName):
+        dist.plotDensityDF(data=data["cv_"+name],ax=fh.ax[0],colors=palette.ugColors[name],
+                            lb="{0}".format(name))
+
+
+    # Plot cutoff
+    lines.drawCutoffVert(ax=fh.ax[0],x=cutoff,lb="Cutoff at: {0}".format(cutoff))
+
+    # Plot legend
+    fh.makeLegendLabel(ax=fh.ax[0])
+
+    # Give format to the axis
+    fh.formatAxis(yTitle="Density", xlim=(xmin,xmax),
+        figTitle="Density Plot of Coefficients of Variation by {0}".format(palette.combName))
+
+    # Shrink figure
+    fh.shrink()
+    
+    # Add figure to PDF
+    fh.addToPdf(pdfPages=pdf)
 
 def main(args):
     """ Function to input all the arguments"""
-    # Import data
-    dat=wideToDesign(args.input, args.design, args.uniqID, group=args.group)
-
-    # Use group separation or not depending on user input
-    if not args.group:
-        logger.info("running CV without groups")
-        setflag(args, dat.wide, dat)
+    # Checking if levels
+    if args.levels and args.group:
+        levels = [args.group]+args.levels
+    elif args.group and not args.levels:
+        levels = [args.group]
     else:
-        logger.info("running CV with groups")
-        dat.removeSingle()
-        setflagByGroup(args, dat.wide, dat)
+        levels = []
+    logger.info(u"Groups used to color by: {0}".format(",".join(levels)))
+
+    # Import data
+    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group,
+                    anno=args.levels, logger=logger)
+
+    # Remove groups with just one element
+    dat.removeSingle()
+
+    # Treat everything as float and round it to 3 digits
+    dat.wide = dat.wide.applymap(lambda x: round(x,3))
+
+    # Get colors
+    palette.getColors(dat.design,levels)
    
-    logger.info("DONE")
+    # Use group separation or not depending on user input
+    CV,CVcutoff = calculateCV(data=dat.wide, design=palette.design,
+                              cutoff=args.CVcutoff, levels=palette.combName)
+
+    # Plot CVplots for each group and a distribution plot for all groups together
+    logger.info("Plotting Data")
+    with PdfPages(args.figure) as pdf:
+        plotCVplots      (data=CV, cutoff=CVcutoff, palette=palette, pdf=pdf)
+        plotDistributions(data=CV, cutoff=CVcutoff, palette=palette, pdf=pdf)
+
+    # Create flag file instance and output flags by group
+    logger.info("Creatting Flags")
+    flag = Flags(index=CV['cv'].index)
+    for name, group in palette.design.groupby(palette.combName):
+        flag.addColumn(column="flag_feature_big_CV_{0}".format(name),
+                       mask=((CV['cv_'+name].get_values() > CVcutoff) | CV['cv_'+name].isnull()))
+
+    # Write flag file
+    flag.df_flags.to_csv(args.flag, sep='\t')
+   
+   # Finishing script
+    logger.info("Script Complete!")
 
 if __name__ == '__main__':
     # Command line options
@@ -322,6 +269,17 @@ if __name__ == '__main__':
     logger=logging.getLogger()
     sl.setLogger(logger)
 
+    # Standar logging
+    logger.info(u"Importing data with following parameters: "\
+                "\n\tWide: {0}"\
+                "\n\tDesign: {1}"\
+                "\n\tUnique ID: {2}"\
+                "\n\tGroup: {3}".format(args.input, args.design, args.uniqID, 
+                    args.group))
+
+    # Stablishing color palette for adata and cutoffs
+    palette = colorHandler(pal=args.palette, col=args.color)
+    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+                args.palette))
     # Main
     main(args)
-
