@@ -2,40 +2,39 @@
 ################################################################################
 # DATE: 2016/October/10
 # 
-# MODULE: subsetData.py
+# MODULE: subset_design.py
 #
-# VERSION: 1.1
+# VERSION: 1.2
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu) 
 #
-# DESCRIPTION: Subsets wide data based on groups or any other field on the
+# DESCRIPTION: Subsets design file data based on groups or any other field on the
 #               design file. 
 #
 ################################################################################
 
-#Standard Libraries
+# Standard Libraries
 import os
 import re
 import logging
 import argparse
 from itertools import chain
 
-#AddOn Libraries
+# AddOn Libraries
 import numpy as np
 import pandas as pd
 
-# Local Packages
-import logger as sl
-from interface import wideToDesign
+# Local Libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
                                      "dataset and calculates the LOD on it ")
-
-    #Standar input for SECIMtools
-    standar = parser.add_argument_group(title='Standard input', description= 
-                                        'Standard input for SECIM tools.')
+    # Standar Input
+    standar = parser.add_argument_group(title="Standard input", 
+                        description= "Standard input for SECIM tools.")
     standar.add_argument("-i","--input",dest="input", action='store', 
                         required=True, help="Input dataset in wide format.")
     standar.add_argument("-d","--design",dest="design", action='store', 
@@ -46,19 +45,28 @@ def getOptions():
     standar.add_argument("-g","--group", dest="group", action='store', 
                         required=False, help="Name of column in design file" \
                         "with Group/treatment information.")
-    standar.add_argument("-dp","--drops", dest="drops", action='store', 
+    # Tool Especific
+    tool = parser.add_argument_group(title="Tool especific input", 
+                        description= "Input that is especific for this tool.")
+    tool.add_argument("-dp","--drops", dest="drops", action='store', 
                         required=True, help="Name of the groups in your"\
                         "group/treatment column that you want to keep.")
 
-    #Output Paths
-    output = parser.add_argument_group(title='Output paths', description=
-                                       "Paths for the output files")
-    #output.add_argument("-od","--outdesign",dest="outdesign",action="store",
-    #                    required=True,help="Output path for flags file[CSV]")
-    output.add_argument("-ow","--outwide",dest="outwide",action="store",
+    # Output Paths
+    output = parser.add_argument_group(title='Output paths', 
+                        description="Paths for the output files")
+    output.add_argument("-o","--out",dest="out",action="store",
                         required=True,help="Output path for bff file[CSV]")
-
     args = parser.parse_args()
+
+    # Standardize paths
+    args.out    = os.path.abspath(args.out)
+    args.input  = os.path.abspath(args.input)
+    args.design = os.path.abspath(args.design)
+
+    # Split groups/samples to drop
+    args.drops = args.drops.split(",")
+
     return (args)
 
 def cleanStr(x):
@@ -101,48 +109,44 @@ def cleanStr(x):
 
 def main(args):
     # Importing data trough
-    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group)
+    logger.info("Importing data through wideToDesign data manager")
+    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
+                        logger=logger)
 
-    # Treating data as numeric
-    dat.wide = dat.wide.applymap(float)
-
-    # Spliting keepers
-    drops = args.drops.split(",")
+    # Cleaning from missing data
+    dat.dropMissing()
 
     # Making sure all the groups to drop actually exist on the design column
     if args.group:
-        for todrop in drops:
+        for todrop in args.drops:
             if todrop in dat.levels:
                 pass
             else:
-                logger.error("Your group '{0}' is not located in the column '{1}'".
-                    format(todrop,dat.group))
-                # This may not be the best way to end the script
-                exit()
+                logger.error("The group '{0}' is not located in the column '{1}' "\
+                            "of your design file".format(todrop,dat.group))
+                raise ValueError
 
     # If the subsetting is going to be made by group the select de sampleIDs 
     # from the design file
     logger.info(u"Getting sampleNames to drop")
     if args.group:
-        iToDrop=list()
+        iToDrop = list()
         for name,group in dat.design.groupby(dat.group):
-            if name in drops:
+            if name in args.drops:
                 iToDrop+=(group.index.tolist())
     else:
-        iToDrop=drops
+        iToDrop = args.drops
 
     # Remove weird characters
     iToDrop = [cleanStr(x) for x in iToDrop]
-    
+
     # Dropping elements
-    #for name,group in dat.design.groupby(dat.group) :
-    #    if name in drops:
-    #        print group.index.tolist()
-    selectedWide = dat.wide.drop(iToDrop, axis=1, inplace=False)
+    selectedDesign = dat.design.drop(iToDrop,axis=0, inplace=False)
 
     # Output wide results
-    logger.info(u"""Output wide file.""")
-    selectedWide.to_csv(os.path.abspath(args.outwide), sep='\t')
+    logger.info("Output wide file")
+    selectedDesign.to_csv(args.out, sep='\t')
+    logger.info("Script Complete!")
 
 
 if __name__ == '__main__':
@@ -152,14 +156,13 @@ if __name__ == '__main__':
     #Setting logger
     logger = logging.getLogger()
     sl.setLogger(logger)
-    logger.info(u"""Importing data with following parameters:
-                Input: {0}
-                Design: {1}
-                uniqID: {2}
-                group: {3}
-                ToDrop: {4}
-                """.format(args.input, args.design, args.uniqID, args.group,
-                    args.drops))
+    logger.info("Importing data with following parameters:"
+                "\n\tInput: {0}"
+                "\n\tDesign: {1}"
+                "\n\tuniqID: {2}"
+                "\n\tgroup: {3}"
+                "\n\tToDrop: {4}".format(args.input, args.design, args.uniqID,
+                 args.group, args.drops))
 
     # Main script
     main(args)

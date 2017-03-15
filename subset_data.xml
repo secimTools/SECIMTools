@@ -14,7 +14,7 @@
             --group $group
         #end if
         --drops $toDrop
-        --outwide $outwide
+        --out $out
     </command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
@@ -24,7 +24,7 @@
         <param name="toDrop" type="text" size="30" optional="false" label="Group(s)/Sample(s) to drop" help="Name of the Group(s)/Sample(s), comma separeted, that will be removed from your wide datset."/>
     </inputs>
     <outputs>
-        <data format="tabular" name="outwide" label="${tool.name} on ${on_string}: Value"/>
+        <data format="tabular" name="out" label="${tool.name} on ${on_string}: Value"/>
     </outputs>
     <macros>
             <import>macros.xml</import>
