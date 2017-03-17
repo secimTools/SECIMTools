@@ -15,10 +15,6 @@
         --Z $z
         --figure $figure
         
-        #if $pca
-            --pca
-        #end if
-
         #if $design
             --design $design
         #end if
@@ -47,11 +43,9 @@
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset 
         that has unique Feature IDs."/>
-
         <param name="x" type="text" size="30" value="" label="X Group Title" help="Name of the column for X values."/>
         <param name="y" type="text" size="30" value="" label="Y Group Title" help="Name of the column for Y values."/>
         <param name="z" type="text" size="30" value="" label="Z Group Title" help="Name of the column for Z values."/>
-        <param name="pca" type="boolean" label="Use PCA Data?" help="Using a PCA output or standard dataset."/>
         <param name="rotation" type="text" size="30" value="" label="Camera rotation for viewing [Optional]" help="Ideal viewing rotation may be a process of trial and error."/>
         <param name="elevation" type="text" size="30" value="" label="Camera elevation for viewing [Optional]" help="Ideal viewing elevation may be a process of trial and error."/>
         <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
