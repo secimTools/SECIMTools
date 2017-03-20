@@ -1,0 +1,1758 @@
+rowID	row_ID	row_m_z	row_retention_time	ID	Identification_method	Molecular_formula	Name	VAR36
+met_1	681	133.0139	0.88	92824n	Negative_Garrett_Std_Library.csv	C4H6O5	MALATE	
+met_2	680	149.0088	0.80	444305n	Negative_Garrett_Std_Library.csv	C4H6O6	TARTARIC ACID	
+met_3	682	191.0193	1.74					
+met_4	696	306.0759	1.44	124886n	Negative_Garrett_Std_Library.csv	C10H17N3O6S	GLUTATHIONE	
+met_5	687	115.0030	0.91					
+met_6	799	175.0243	1.26					
+met_7	1839	192.0227	1.73					
+met_8	706	117.0191	2.13	1110n	Negative_Garrett_Std_Library.csv	C4H6O4	SUCCINATE	
+met_9	684	146.0456	0.75	33032n	Negative_Garrett_Std_Library.csv	C5H9NO4	L-GLUTAMIC ACID	
+met_10	702	111.0084	1.70					
+met_11	686	132.0300	0.71	83887n	Negative_Garrett_Std_Library.csv	C4H7NO4	ASPARTATE	
+met_12	691	245.0426	0.73					
+met_13	688	165.0401	0.74					
+met_14	103	387.1138	0.79					
+met_15	719	173.0087	2.45					
+met_16	689	323.1342	7.06					
+met_17	697	275.0209	0.88	91493n	Negative_Garrett_Std_Library.csv	C6H13O10P	6-PHOSPHOGLUCONIC ACID	
+met_18	99	141.0493	9.94		Negative_Garrett_Std_Library.csv	C7H2D4O3	Salicylic Acid-D4	
+met_19	685	241.0825	0.80					
+met_20	693	96.9691	0.72					
+met_21	725	147.0296	2.16	1081n	Negative_Garrett_Std_Library.csv	C5H8O5	CITRAMALATE	
+met_22	466	421.2257	13.30					
+met_23	1982	175.0463	0.78					
+met_24	118	341.1079	0.79	ISO-2	Negative_Garrett_Std_Library.csv	C12H22O11	C12H22O11-DISACCHARIDE	
+met_25	690	145.0616	0.72	5961n	Negative_Garrett_Std_Library.csv	C5H10N2O3	L-GLUTAMINE	
+met_26	692	259.0929	0.80					
+met_27	744	129.0191	2.47					
+met_28	731	405.0276	1.86					
+met_29	739	147.0296	1.02					
+met_30	1	194.0817	13.30	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_31	708	475.1290	0.92					
+met_32	738	145.0140	1.30	51n	Negative_Garrett_Std_Library.csv	C5H6O5	ALPHA-KETOGLUTARIC ACI	
+met_33	196	135.0297	0.79					
+met_34	701	171.0063	0.73	ISO-10	Negative_Garrett_Std_Library.csv	C3H9O6P	GLYCEROL 2-PHOSPHATE/S	
+met_35	778	687.2290	15.44					
+met_36	695	565.0460	0.80					
+met_37	716	276.9875	0.75					
+met_38	714	439.0742	0.85					
+met_39	741	289.0171	1.08					
+met_40	699	317.0538	0.73					
+met_41	1974	173.0087	1.68		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_42	704	138.0559	6.48					
+met_43	694	128.9594	0.70					
+met_44	703	184.9850	0.74	439278n	Negative_Garrett_Std_Library.csv	C3H7O7P	L-2-PHOSPHOGLYCERIC AC	
+met_45	712	404.1035	0.79					
+met_46	700	531.2795	12.24					
+met_47	721	179.0557	0.77	ISO-3	Negative_Garrett_Std_Library.csv	C6H12O6	C6H12O6-HEXOSE/KETOSE/	
+met_48	805	302.9961	1.85					
+met_49	1841	193.0232	1.77					
+met_50	709	299.0765	6.51					
+met_51	1273	132.0412	0.77					
+met_52	698	104.0349	0.71	5951n	Negative_Garrett_Std_Library.csv	C3H7NO3	L-SERINE	
+met_53	5	221.1543	13.97	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_54	748	274.0245	0.89					
+met_55	1203	426.0214	1.14	C00008	Negative_Garrett_Std_Library.csv	C10H15N5O10	ADP	
+met_56	722	259.0218	0.71	C00103	Negative_Garrett_Std_Library.csv	C6H13O9P	Glucose 1-Phosphate	
+met_57	757	505.9874	0.82					
+met_58	707	194.9467	0.74					
+met_59	756	149.0452	0.82	ISO-1	Negative_Garrett_Std_Library.csv	C5H10O5	ALDOPENTOSE	
+met_60	746	87.0081	0.83					
+met_61	711	307.0107	0.83					
+met_62	767	161.0088	2.09					
+met_63	1932	306.0759	3.99					
+met_64	1469	304.0606	1.57					
+met_65	32	311.1681	13.40					
+met_66	820	173.0450	0.92	8742n	Negative_Garrett_Std_Library.csv	C7H10O5	SHIKIMATE	
+met_67	811	161.0452	2.96	1662n	Negative_Garrett_Std_Library.csv	C6H10O5	3-HYDROXY-3-METHYLGLUT	
+met_68	126	791.4950	14.73					
+met_69	710	145.0504	7.08					
+met_70	44	269.1306	12.78					
+met_71	718	345.0819	6.51					
+met_72	884	328.0576	1.50		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_73	36	325.1839	13.97					
+met_74	81	159.0660	7.86					
+met_75	724	431.1034	0.91					
+met_76	735	491.1240	0.80					
+met_77	734	477.1714	6.71					
+met_78	755	159.0772	0.81					
+met_79	85	795.5238	16.21					
+met_80	783	274.0931	6.30					
+met_81	995	346.0548	1.68	6083n	Negative_Garrett_Std_Library.csv	C10H14N5O7P	ADENOSINE 5'-MONOPHOSP	
+met_82	825	89.0238	0.85	C02154	Negative_Garrett_Std_Library.csv	C3H6O3	Glyceraldehyde	
+met_83	788	244.9911	1.09					
+met_84	864	338.0660	1.61					
+met_85	747	313.1336	6.34					
+met_86	779	267.0715	0.80	C00294	Negative_Garrett_Std_Library.csv	C10H12N4O5	Inosine	
+met_87	827	101.0239	1.30					
+met_88	713	118.0508	0.74	IS0-7	Negative_Garrett_Std_Library.csv	C4H9NO3	THREONINE/HOMOSERINE	
+met_89	764	71.0131	0.89					
+met_90	873	308.0715	1.41					
+met_91	787	482.9603	0.77					
+met_92	912	673.2502	16.52					
+met_93	736	215.0325	0.73	C00293/	Negative_Garrett_Std_Library.csv	C6H12O6	GLUCOSE/FRUCTOSE [M+Cl	
+met_94	1107	308.0716	1.54					
+met_95	729	175.0612	7.39					
+met_96	6	311.2009	14.84	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_97	782	655.2606	7.62					
+met_98	841	128.0351	1.59					
+met_99	101	305.0879	9.94					
+met_100	1091	388.1169	0.80					
+met_101	745	166.9746	0.76					
+met_102	810	321.0822	6.13					
+met_103	33	105.0189	0.83	439194n	Negative_Garrett_Std_Library.csv	C3H6O4	GLYCERIC ACID	
+met_104	802	711.2197	1.22					
+met_105	8	293.1754	12.76	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_106	806	755.2082	1.21					
+met_107	728	426.0214	0.80	C00008	Negative_Garrett_Std_Library.csv	C10H15N5O10	ADP	
+met_108	749	402.9937	0.80	C00015	Negative_Garrett_Std_Library.csv	C9H14N2O12P	UDP	
+met_109	132	793.5110	16.76					
+met_110	1279	175.0243	2.44					
+met_111	795	609.1872	0.80					
+met_112	726	157.0363	0.79	204n	Negative_Garrett_Std_Library.csv	C4H6N4O3	ALLANTOIN	
+met_113	1626	533.2950	12.73					
+met_114	1202	277.0353	0.76					
+met_115	759	225.0611	0.72					
+met_116	12	224.0924	13.18	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_117	1089	176.9356	0.77					
+met_118	705	400.1239	8.31					
+met_119	730	291.0150	0.84					
+met_120	87	845.5427	15.99					
+met_121	10	187.0973	9.23	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_122	11	181.0867	10.55	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_123	47	297.1523	12.85					
+met_124	842	133.0504	1.43					
+met_125	733	131.0460	0.72	6267n	Negative_Garrett_Std_Library.csv	C4H8N2O3	ASPARAGINE	
+met_126	964	418.0530	1.58					
+met_127	752	137.0243	6.49					
+met_128	723	300.0721	1.28					
+met_129	100	141.0493	9.41					
+met_130	21	265.1474	12.67	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_131	19	75.0080	0.93	757n	Negative_Garrett_Std_Library.csv	C2H4O3	GLYCOLATE	
+met_132	798	112.9370	0.72					
+met_133	1467	115.0033	2.06	C00122	Negative_Garrett_Std_Library.csv	C4H4O4	Fumaric Acid	
+met_134	867	637.1815	0.97					
+met_135	803	133.0540	0.89					
+met_136	780	132.9738	0.87					
+met_137	836	393.5322	2.12					
+met_138	985	213.0012	1.83		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_139	959	708.1055	3.52					
+met_140	720	223.0454	0.74					
+met_141	727	601.2088	0.81					
+met_142	1283	815.4980	15.60					
+met_143	899	125.0178	1.17					
+met_144	1149	292.1035	3.21					
+met_145	13	293.1754	12.11	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_146	971	160.0612	1.54					
+met_147	758	128.0351	0.77					
+met_148	1115	309.0457	0.91					
+met_149	851	142.9978	0.84					
+met_150	1100	265.0194	1.22					
+met_151	765	693.3315	11.60					
+met_152	771	78.9583	0.73					
+met_153	23	179.0710	11.11	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_154	944	188.0561	2.21	185n	Negative_Garrett_Std_Library.csv	C7H11NO5	N-ACETYL-DL-GLUTAMIC A	
+met_155	768	149.0568	0.80					
+met_156	794	163.0244	0.78					
+met_157	838	72.9923	0.83	760n	Negative_Garrett_Std_Library.csv	C2H2O3	GLYOXYLIC ACID	
+met_158	760	595.6616	6.49					
+met_159	78	165.0190	8.06					
+met_160	750	148.9606	0.83					
+met_161	715	354.1187	8.30					
+met_162	876	611.1428	3.99					
+met_163	784	182.0457	6.50					
+met_164	743	606.0725	0.81					
+met_165	2040	132.9968	1.02	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_166	926	177.0401	0.85					
+met_167	766	306.0146	0.82					
+met_168	828	175.0611	6.58					
+met_169	980	281.0142	0.98					
+met_170	1864	129.0194	0.82					
+met_171	870	235.0453	0.96					
+met_172	791	175.0612	6.77					
+met_173	781	103.0031	0.81					
+met_174	1209	566.0503	0.81					
+met_175	854	249.0546	1.30					
+met_176	976	85.0288	2.46					
+met_177	52	533.1807	16.21	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_178	1362	89.0237	0.98	C02154	Negative_Garrett_Std_Library.csv	C3H6O3	Glyceraldehyde	
+met_179	808	290.0199	0.84					
+met_180	74	171.0660	8.71	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_181	809	202.0350	0.85					
+met_182	1383	205.0350	3.17					
+met_183	770	489.2135	13.30		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_184	786	437.2210	11.36					
+met_185	1930	306.0759	6.52					
+met_186	1237	382.0988	3.21					
+met_187	953	377.0849	0.86	ISO-4	Negative_Garrett_Std_Library.csv	C12H22O11	DISACCHARIDE (6C/6C)	
+met_188	897	154.9959	1.04					
+met_189	868	133.1736	0.93					
+met_190	862	239.0767	0.81					
+met_191	775	572.1483	5.81					
+met_192	777	218.1029	6.60					
+met_193	751	357.2137	8.38					
+met_194	817	481.9762	0.77					
+met_195	1281	406.0312	1.85					
+met_196	922	191.0891	1.69					
+met_197	790	535.0363	0.81					
+met_198	829	359.1392	6.34					
+met_199	832	293.0507	1.10		Complex search		Complex of 147.0296 an	
+met_200	824	323.0281	1.28	6030n	Negative_Garrett_Std_Library.csv	C9H13N2O9P	URIDINE-5-MONOPHOSPHAT	
+met_201	887	665.2124	1.21	439531n	Negative_Garrett_Std_Library.csv	C24H42O21	STACHYOSE	
+met_202	1473	440.0777	0.85					
+met_203	807	207.0145	0.79					
+met_204	1039	755.2181	15.44		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_205	801	391.1217	7.06		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_206	107	121.0440	2.19		Negative_Garrett_Std_Library.csv	C4H2D4O4	Succinic-2,2,3,3-D4 Ac	
+met_207	763	329.0871	7.08					
+met_208	104	209.0365	9.94		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_209	792	567.1663	6.71					
+met_210	793	389.0718	6.51					
+met_211	933	190.9496	1.72					
+met_212	37	277.1439	12.91					
+met_213	859	442.6497	6.44					
+met_214	816	403.1281	6.35					
+met_215	27	132.9967	0.87	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_216	935	158.9931	1.95					
+met_217	1789	815.2291	0.81					
+met_218	846	333.0586	0.70					
+met_219	42	173.0816	8.56	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_220	974	119.0349	1.38					
+met_221	1157	134.0470	1.49	190n	Negative_Garrett_Std_Library.csv	C5H5N5	ADENINE	
+met_222	754	149.1982	0.81					
+met_223	814	309.1187	6.19					
+met_224	740	194.9367	0.76					
+met_225	797	277.1551	8.51					
+met_226	1023	202.0353	0.96					
+met_227	830	193.0349	0.77	ISO-11	Negative_Garrett_Std_Library.csv	C6H10O7	D-GLUCURONIC ACID/D-GL	
+met_228	1307	217.0155	1.89					
+met_229	874	391.0318	1.92					
+met_230	996	151.0258	2.52	1188n	Negative_Garrett_Std_Library.csv	C5H4N4O2	XANTHINE	
+met_231	857	129.0556	7.24	70n	Negative_Garrett_Std_Library.csv	C6H10O3	4-METHYL-2-OXO-PENTANO	
+met_232	800	337.1498	7.65					
+met_233	812	110.9844	0.72					
+met_234	1548	149.0279	0.79					
+met_235	1414	415.1455	2.16					
+met_236	822	130.9981	0.82					
+met_237	1116	799.2341	1.10					
+met_238	860	312.0943	5.63					
+met_239	1093	268.9823	0.78					
+met_240	761	243.1709	8.04					
+met_241	1550	653.1773	0.81					
+met_242	1102	261.0722	1.37					
+met_243	1502	305.0687	1.60					
+met_244	997	318.0759	1.17					
+met_245	1897	192.0231	0.90					
+met_246	1416	288.1197	1.48					
+met_247	796	304.1512	6.83					
+met_248	2038	343.0191	0.73					
+met_249	737	148.9891	0.80					
+met_250	774	148.8188	0.80					
+met_251	815	289.0322	0.74					
+met_252	1470	131.0348	6.03	11756n	Negative_Garrett_Std_Library.csv	C5H8O4	ETHYLMALONIC ACID	
+met_253	900	132.8538	0.92					
+met_254	56	309.1702	12.17					
+met_255	1153	613.1604	1.61		Complex search		Complex of 306.0759 an	
+met_256	834	367.0643	6.51		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_257	840	493.1245	6.34					
+met_258	753	150.0558	8.30					
+met_259	1973	185.0217	0.78					
+met_260	1858	112.0129	1.66					
+met_261	46	329.2329	11.05	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_262	1516	243.0615	2.82	6029n	Negative_Garrett_Std_Library.csv	C9H12N2O6	URIDINE	
+met_263	907	308.9915	1.08					
+met_264	858	299.0877	1.23					
+met_265	139	213.0148	11.17	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_266	109	161.0451	0.78					
+met_267	1208	683.2228	0.80					
+met_268	821	217.0300	0.73					
+met_269	39	293.1789	13.74	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_270	987	187.1084	5.71					
+met_271	1119	228.0806	1.19					
+met_272	769	492.1832	6.52					
+met_273	921	129.0556	6.72		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_274	40	315.2532	12.96	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_275	96	179.0710	11.54					
+met_276	983	145.0868	9.12					
+met_277	1585	409.1344	7.80					
+met_278	1110	131.0348	4.63	743n	Negative_Garrett_Std_Library.csv	C5H8O4	GLUTARATE	
+met_279	835	514.2154	7.00					
+met_280	1006	411.0779	6.13					
+met_281	878	254.0600	6.35					
+met_282	1236	362.0504	1.99	6804n	Negative_Garrett_Std_Library.csv	C10H14N5O8P	GUANOSINE 5'-MONOPHOSP	
+met_283	950	593.1563	0.95					
+met_284	1095	919.4501	15.45					
+met_285	850	442.0164	1.28					
+met_286	116	797.5410	15.37					
+met_287	1120	343.0663	6.34					
+met_288	785	686.1409	6.76					
+met_289	1274	810.4736	8.20					
+met_290	1345	287.1244	7.03					
+met_291	991	788.0739	2.12					
+met_292	1167	337.0770	1.60					
+met_293	978	337.0439	4.41					
+met_294	31	249.1490	14.94	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_295	1098	209.0298	0.75	33037n	Negative_Garrett_Std_Library.csv	C6H10O8	D-SACCHARIC ACID	
+met_296	1830	756.2192	15.44					
+met_297	925	250.0328	6.48					
+met_298	2087	245.0595	2.51					
+met_299	833	423.2210	13.30					
+met_300	1112	389.1668	0.81					
+met_301	961	439.0034	1.09					
+met_302	1882	206.1011	7.64	ISTD-03	Negative_Garrett_Std_Library.csv	C11H9D3N2O2	Tryptophan-2,3,3-D3	
+met_303	1045	378.0965	4.43					
+met_304	929	563.1457	0.93					
+met_305	1618	404.0423	1.29					
+met_306	1099	356.9990	0.73					
+met_307	863	385.0979	0.88					
+met_308	1401	317.0312	1.11					
+met_309	1114	415.1085	0.86					
+met_310	1000	562.3133	12.59					
+met_311	1108	627.2079	14.42					
+met_312	1704	305.0119	0.85					
+met_313	1586	365.1445	7.80					
+met_314	892	337.0769	0.84					
+met_315	789	414.2350	8.10					
+met_316	1508	103.0397	2.23	11671n	Negative_Garrett_Std_Library.csv	C4H8O3	ALPHA-HYDROXYISOBUTYRI	
+met_317	524	859.4830	14.74		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_318	1168	161.0069	0.90					
+met_319	993	364.0879	6.31					
+met_320	1305	427.0095	1.90		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_321	1058	364.0813	2.20					
+met_322	849	334.1766	8.92					
+met_323	969	325.1133	6.68					
+met_324	1278	323.0279	0.81					
+met_325	1609	159.0296	3.12					
+met_326	1097	599.2666	12.24		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_327	967	122.0246	1.31	938n	Negative_Garrett_Std_Library.csv	C6H5NO2	NICOTINATE	
+met_328	893	335.0532	6.51					
+met_329	1931	413.1293	7.06					
+met_330	1885	259.0064	2.18					
+met_331	120	190.9911	8.26	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_332	913	173.0454	6.70					
+met_333	1204	191.0556	2.86					
+met_334	1175	205.0712	4.83					
+met_335	930	368.0979	6.52					
+met_336	853	282.0840	6.25	6802n	Negative_Garrett_Std_Library.csv	C10H13N5O5	Guanosine	
+met_337	1587	269.0537	0.75					
+met_338	1004	371.5373	2.13					
+met_339	1260	259.1295	5.08					
+met_340	917	194.9265	0.77					
+met_341	1244	271.1230	1.61					
+met_342	1129	517.1395	0.89					
+met_343	1886	259.0064	2.04					
+met_344	2106	73.0287	2.11					
+met_345	2082	130.0507	2.24	88064n	Negative_Garrett_Std_Library.csv	C5H9NO3	N-ACETYL-L-ALANINE	
+met_346	861	157.0503	7.97					
+met_347	962	203.0669	1.25					
+met_348	51	356.1864	15.86					
+met_349	931	189.0039	0.85					
+met_350	1352	495.3182	7.43					
+met_351	1033	521.9825	1.28					
+met_352	973	267.0715	0.93	C00294	Negative_Garrett_Std_Library.csv	C10H12N4O5	Inosine	
+met_353	58	329.2329	11.66	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_354	1313	131.0459	1.45	111n	Negative_Garrett_Std_Library.csv	C4H8N2O3	3-UREIDOPROPIONATE	
+met_355	1636	163.0398	8.27	637542n	Negative_Garrett_Std_Library.csv	C9H8O3	4-COUMARATE	
+met_356	894	363.1655	8.51					
+met_357	823	314.2084	8.46					
+met_358	1215	205.0347	0.82					
+met_359	916	360.0706	5.95					
+met_360	1309	88.0399	1.43					
+met_361	1590	721.3651	12.35					
+met_362	804	254.0667	1.28		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_363	886	300.1924	7.85					
+met_364	986	293.2115	13.11					
+met_365	108	226.0266	9.92					
+met_366	1008	231.0980	1.34					
+met_367	179	277.0236	9.94					
+met_368	866	303.2325	15.95	444899n	Negative_Garrett_Std_Library.csv	C20H32O2	Arachidonic Acid (20:4	
+met_369	1554	624.1349	0.80					
+met_370	1103	305.1752	11.78					
+met_371	885	295.1028	6.22					
+met_372	48	277.1439	13.53	20393n	Negative_Garrett_Std_Library.csv	C16H22O4	Mono-(2-Ethylhexyl) Ph	
+met_373	1976	610.1902	0.80					
+met_374	924	427.0248	1.13					
+met_375	1133	447.1353	0.85					
+met_376	1113	147.0661	6.51					
+met_377	855	167.0324	7.08		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_378	1321	133.0504	2.18					
+met_379	1551	517.1619	0.79					
+met_380	1277	273.1454	7.59					
+met_381	882	113.0605	7.75					
+met_382	68	239.1284	12.60	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_383	2043	229.1553	7.38					
+met_384	772	524.6261	6.09					
+met_385	1492	635.1417	1.61		Complex search		Complex of 306.0759 an	
+met_386	60	233.1541	14.18	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_387	1150	483.2725	13.28					
+met_388	38	242.1757	10.57	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_389	1027	337.0771	1.30					
+met_390	1139	538.0815	1.69					
+met_391	877	151.0607	0.77	ISO-9	Negative_Garrett_Std_Library.csv	C5H12O5	C5-SUGAR ALCOHOL	
+met_392	1802	791.4951	14.88					
+met_393	1939	613.1603	1.30		Complex search		Complex of 306.0759 an	
+met_394	813	407.1926	7.19					
+met_395	1141	564.3297	13.08					
+met_396	847	126.9048	0.79					
+met_397	1612	635.1417	1.43		Complex search		Complex of 306.0759 an	
+met_398	1716	284.1249	6.03					
+met_399	1390	138.0194	10.29					
+met_400	843	186.9649	0.73					
+met_401	1122	229.0110	0.74	C00199	Negative_Garrett_Std_Library.csv	C5H11O8P	Ribulose 5-Phosphate	
+met_402	911	187.0610	7.27					
+met_403	63	250.1442	15.21	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_404	1306	164.0714	6.17					
+met_405	62	309.1735	13.07	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_406	845	300.0485	0.74					
+met_407	1643	272.0884	1.38					
+met_408	905	728.1526	7.15					
+met_409	1106	449.2397	8.95					
+met_410	936	521.9820	0.83					
+met_411	1205	549.1664	0.82					
+met_412	958	202.0718	6.28					
+met_413	865	181.0480	7.86		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_414	1998	203.0825	7.63	6305n	Negative_Garrett_Std_Library.csv	C11H12N2O2	Tryptophan	
+met_415	940	437.2210	11.67					
+met_416	839	189.0767	7.01					
+met_417	890	277.0858	6.93					
+met_418	141	191.1075	12.62	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_419	66	201.1130	9.86					
+met_420	1945	611.1428	1.61		Complex search		Complex of 306.0759 an	
+met_421	2012	742.0661	2.11					
+met_422	1166	121.0294	8.06	126n	Negative_Garrett_Std_Library.csv	C7H6O2	4-HYDROXYBENZALDEHYDE	
+met_423	1615	236.0595	1.49					
+met_424	965	559.3120	13.08					
+met_425	819	169.0074	6.45					
+met_426	1101	289.1803	12.33					
+met_427	1933	469.3383	9.74					
+met_428	1128	741.2372	16.50		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_429	1031	295.1026	2.84					
+met_430	999	381.1211	6.34		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_431	998	886.3076	6.44					
+met_432	1940	237.0611	0.78					
+met_433	1513	216.0508	1.33					
+met_434	1003	389.1668	1.10					
+met_435	1036	154.9982	1.67		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_436	380	194.0803	14.03					
+met_437	954	219.0110	1.74					
+met_438	1135	841.2445	1.19					
+met_439	1094	229.0499	9.88					
+met_440	888	251.0592	6.95					
+met_441	1510	115.0149	0.76					
+met_442	1144	113.0241	0.74					
+met_443	1733	345.0824	7.50					
+met_444	1757	117.0554	3.98					
+met_445	72	293.1753	13.13					
+met_446	2015	223.0277	2.62					
+met_447	1010	377.1809	9.00					
+met_448	856	321.1548	7.97					
+met_449	818	303.0715	6.66					
+met_450	901	157.0503	7.77					
+met_451	61	361.1624	12.76		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_452	1720	292.1034	1.41					
+met_453	910	203.0561	7.09					
+met_454	844	187.0610	6.85					
+met_455	896	184.0612	7.11					
+met_456	872	295.0853	6.92					
+met_457	891	418.1646	8.50					
+met_458	1287	119.0348	0.77					
+met_459	956	430.2302	6.79					
+met_460	951	137.0243	7.86					
+met_461	919	171.0660	8.39					
+met_462	937	318.1663	6.50					
+met_463	1007	137.0242	9.98					
+met_464	1501	228.9961	2.22					
+met_465	904	786.1631	7.42					
+met_466	1793	219.0505	1.13					
+met_467	1705	148.0766	8.03					
+met_468	1145	588.3289	13.07					
+met_469	1105	521.2520	12.25					
+met_470	1210	191.1075	12.46	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_471	949	557.2010	13.29		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_472	1219	147.0660	2.88					
+met_473	948	613.0201	1.85					
+met_474	1721	146.0167	1.16					
+met_475	915	348.1924	8.95					
+met_476	71	181.0868	10.27	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_477	1054	304.1510	4.67					
+met_478	1285	555.2834	12.91					
+met_479	117	247.0582	11.10		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_480	1111	114.0194	0.72					
+met_481	947	784.1490	7.42					
+met_482	852	246.9757	0.83					
+met_483	1354	154.0144	7.47					
+met_484	1625	157.0251	1.41	439216n	Negative_Garrett_Std_Library.csv	C5H6N2O4	(S)-DIHYDROOROTATE	
+met_485	914	315.1669	6.75					
+met_486	871	557.3290	8.05					
+met_487	1755	342.0806	6.29		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_488	1263	183.0294	6.08					
+met_489	848	350.1277	7.95					
+met_490	1929	488.1612	0.78					
+met_491	1959	817.5098	16.27		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_492	955	253.1263	14.59					
+met_493	1038	180.0787	11.52					
+met_494	1366	507.3177	7.47					
+met_495	879	375.1877	6.52					
+met_496	1735	274.0931	6.87					
+met_497	1962	221.0296	1.32					
+met_498	192	412.9659	12.28					
+met_499	1213	183.0295	8.21					
+met_500	1410	166.0143	1.37					
+met_501	1928	439.0859	0.79					
+met_502	1258	142.0507	3.20					
+met_503	1629	244.1297	6.51					
+met_504	1061	258.1452	3.27					
+met_505	941	224.0562	9.07					
+met_506	1707	761.3191	11.60		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_507	977	520.0846	1.64					
+met_508	1986	261.1340	8.89					
+met_509	1487	362.1019	1.10					
+met_510	1066	174.0403	1.49	65065n	Negative_Garrett_Std_Library.csv	C6H9NO5	N-ACETYL-L-ASPARTIC AC	
+met_511	1163	187.0610	7.06					
+met_512	2046	314.2084	7.73					
+met_513	1164	205.0715	6.48					
+met_514	1805	983.5951	15.63					
+met_515	1117	121.0294	8.55					
+met_516	1628	767.4931	16.25					
+met_517	2084	231.0619	1.28					
+met_518	1358	279.1082	6.80					
+met_519	923	579.0258	0.81					
+met_520	1369	481.2560	13.03					
+met_521	1127	427.0247	0.81					
+met_522	1834	341.0902	6.04					
+met_523	2013	460.2040	1.42					
+met_524	938	139.0399	8.19					
+met_525	142	215.1283	10.45					
+met_526	1365	172.0611	0.86					
+met_527	1824	341.0905	6.52					
+met_528	203	368.9762	12.28					
+met_529	1155	217.0824	1.28					
+met_530	975	468.2818	7.89					
+met_531	1346	289.1150	0.78					
+met_532	918	258.1453	6.76		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_533	1850	143.0347	0.74					
+met_534	1832	232.0457	0.87					
+met_535	1558	676.2533	16.51					
+met_536	50	209.0789	9.23		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_537	1246	442.0162	0.81					
+met_538	1619	245.0776	1.40					
+met_539	1665	127.0147	1.38					
+met_540	143	353.1994	13.22	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_541	1005	304.9909	0.93					
+met_542	1639	332.0441	6.37					
+met_543	1304	432.1799	9.21					
+met_544	1132	491.1612	0.83					
+met_545	1300	294.0227	6.47					
+met_546	1289	545.1587	6.72		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_547	73	361.1625	12.11		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_548	1521	375.0172	1.96					
+met_549	1506	972.2971	1.22					
+met_550	1118	196.0246	7.63					
+met_551	1126	849.3365	6.85					
+met_552	1472	271.0697	7.59					
+met_553	942	201.1241	6.65					
+met_554	1231	331.0664	6.16					
+met_555	1811	196.0247	10.28	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_556	1676	367.0611	2.97		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_557	1927	561.2875	7.38					
+met_558	945	479.2145	8.30					
+met_559	1598	345.0798	2.96					
+met_560	1303	291.0518	0.87					
+met_561	1222	99.0082	0.83					
+met_562	1873	861.4964	16.78		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_563	2002	236.0595	1.39					
+met_564	1014	239.0591	2.00					
+met_565	69	356.1864	15.44					
+met_566	1991	274.1039	1.19					
+met_567	1143	131.0712	8.06					
+met_568	1476	528.1830	7.51					
+met_569	1051	333.0567	2.84					
+met_570	1790	795.1928	0.80					
+met_571	1293	673.2135	14.42					
+met_572	1233	219.0142	0.90					
+met_573	889	133.0463	0.83					
+met_574	1335	368.9763	12.17					
+met_575	1029	189.0768	7.22					
+met_576	211	253.1440	11.65					
+met_577	1034	173.0453	6.54					
+met_578	1605	377.1459	8.00					
+met_579	1552	469.0198	0.81					
+met_580	979	356.2549	8.95					
+met_581	1013	188.0561	1.29					
+met_582	1823	509.0899	0.80					
+met_583	1960	653.1382	1.63		Complex search		Complex of 306.0759 an	
+met_584	2047	319.1658	9.92					
+met_585	1136	237.0434	6.56					
+met_586	903	378.0972	0.89					
+met_587	1562	286.1402	6.57					
+met_588	200	311.1861	12.68	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_589	1570	763.1841	1.22					
+met_590	80	329.2329	10.54					
+met_591	1242	194.0388	6.35					
+met_592	2056	288.1559	6.69					
+met_593	1024	261.1341	7.29					
+met_594	932	191.2942	1.78					
+met_595	1821	763.2603	0.81					
+met_596	1044	261.1341	7.00					
+met_597	1022	258.1453	6.61					
+met_598	1299	347.0222	1.03					
+met_599	1240	779.2052	1.21		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_600	204	387.1554	15.47					
+met_601	1344	263.1398	8.01					
+met_602	1218	389.0828	1.24					
+met_603	2006	228.0511	6.35					
+met_604	1241	639.2667	8.73					
+met_605	1147	390.2391	9.52					
+met_606	1710	120.9964	6.65					
+met_607	920	181.0714	0.81	ISO-6	Negative_Garrett_Std_Library.csv	C6H14O6	HEXOSE ALCOHOL	
+met_608	1142	953.5460	16.49					
+met_609	1497	497.1111	0.93					
+met_610	1151	161.0817	6.53					
+met_611	1181	237.0434	6.41					
+met_612	968	402.1984	6.99					
+met_613	1064	139.0398	6.06					
+met_614	1655	121.0293	9.55					
+met_615	2014	201.0876	3.13					
+met_616	1718	349.1089	6.32					
+met_617	1808	137.0241	6.06					
+met_618	1398	531.1198	0.90					
+met_619	247	379.1550	13.40		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_620	1235	429.1238	0.87					
+met_621	1160	203.0669	0.84					
+met_622	2003	289.0928	6.52					
+met_623	1062	139.0399	8.84					
+met_624	2027	365.0519	0.75					
+met_625	2130	360.1417	6.33					
+met_626	218	326.1877	15.14					
+met_627	1266	277.0253	0.91					
+met_628	1330	239.0766	0.92					
+met_629	898	148.9699	0.85					
+met_630	1302	116.0714	0.90	6287n	Negative_Garrett_Std_Library.csv	C5H11NO2	L-VALINE	
+met_631	934	444.2458	7.89					
+met_632	981	216.0875	7.14					
+met_633	2103	217.1188	1.35					
+met_634	1125	242.0795	0.78					
+met_635	1651	288.1197	1.07					
+met_636	1631	287.0016	1.26		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_637	1130	197.0216	0.77					
+met_638	1318	85.0288	1.69					
+met_639	1295	337.0401	6.52					
+met_640	1523	364.0813	1.79					
+met_641	992	338.0481	6.51					
+met_642	2098	152.9949	0.72					
+met_643	289	394.9750	11.47					
+met_644	970	252.9631	0.94					
+met_645	927	335.1707	8.51					
+met_646	1183	506.9905	0.94					
+met_647	1975	566.1555	0.79					
+met_648	1495	453.2154	9.83					
+met_649	1177	492.1829	6.22					
+met_650	1377	308.9779	0.71					
+met_651	1957	194.0266	1.72					
+met_652	943	279.0904	7.90					
+met_653	93	544.9653	13.30					
+met_654	1650	394.0914	0.83					
+met_655	76	181.0867	11.10					
+met_656	1291	331.1620	6.73					
+met_657	1396	501.3907	14.01					
+met_658	990	272.1611	6.76					
+met_659	946	177.0035	1.07					
+met_660	2042	316.1661	9.01					
+met_661	1180	389.0699	6.13		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_662	1620	445.2356	13.62					
+met_663	1588	309.1011	9.84					
+met_664	91	494.9683	12.68					
+met_665	256	393.1711	13.97		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_666	1259	302.9962	1.08					
+met_667	1214	197.0928	0.81					
+met_668	1009	359.1928	6.89					
+met_669	1468	621.2563	8.73					
+met_670	1807	199.0243	6.29					
+met_671	1714	315.1297	6.34					
+met_672	1381	402.0094	0.80	6132n	Negative_Garrett_Std_Library.csv	C9H15N3O11P	CYTIDINE 5'-DIPHOSPHAT	
+met_673	1310	371.2297	8.10					
+met_674	206	337.2049	14.11					
+met_675	1032	137.0242	7.40	135n	Negative_Garrett_Std_Library.csv	C7H6O3	4-HYDROXYBENZOATE	
+met_676	2104	217.1189	6.34					
+met_677	440	117.0191	11.93					
+met_678	1172	131.0712	7.84					
+met_679	1368	549.0515	0.81					
+met_680	2101	635.2504	14.07					
+met_681	1211	503.1605	0.83	439242n	Negative_Garrett_Std_Library.csv	C18H32O16	D-(+)-RAFFINOSE	
+met_682	1624	259.1295	7.00					
+met_683	2049	316.1507	6.50					
+met_684	1745	208.0611	6.84					
+met_685	1451	279.1081	6.62					
+met_686	1292	452.1909	7.53					
+met_687	220	339.1991	14.51					
+met_688	960	295.2272	13.52					
+met_689	1140	601.1282	0.85					
+met_690	195	309.1702	12.50					
+met_691	1363	665.1432	0.82					
+met_692	1519	373.1727	6.87					
+met_693	1253	639.2667	8.60					
+met_694	207	397.2257	13.30	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_695	229	259.0356	13.63					
+met_696	238	333.1345	12.67		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_697	928	491.2497	8.53					
+met_698	1719	407.1556	8.52					
+met_699	875	344.1819	7.64					
+met_700	215	321.2096	14.81					
+met_701	1364	230.1030	7.64					
+met_702	1169	131.0712	7.65					
+met_703	1498	207.0063	7.95					
+met_704	1400	231.0870	7.47					
+met_705	1955	430.1938	6.15					
+met_706	92	444.9719	12.08					
+met_707	1360	390.1333	7.25					
+met_708	1869	654.1800	0.82					
+met_709	1776	117.0554	4.79					
+met_710	963	293.1503	7.65					
+met_711	1457	202.0717	3.20					
+met_712	1857	346.0548	0.81					
+met_713	1568	133.0269	0.89					
+met_714	1225	364.1872	8.87					
+met_715	1954	768.1375	0.81					
+met_716	1388	247.0262	0.85					
+met_717	1799	139.0399	7.96					
+met_718	2058	316.1507	6.81					
+met_719	1026	357.2136	8.05					
+met_720	1016	414.2351	7.72					
+met_721	1905	606.6530	6.48					
+met_722	2000	677.2499	7.29					
+met_723	1565	763.1827	0.83					
+met_724	341	337.1179	12.81		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_725	1405	586.1911	0.81					
+met_726	1238	435.2245	8.89					
+met_727	1843	184.0244	0.87					
+met_728	1946	301.2168	15.34					
+met_729	1894	278.1061	8.05					
+met_730	1958	839.2272	0.93					
+met_731	1158	506.9906	0.82					
+met_732	2091	173.0563	1.23					
+met_733	1404	505.2087	11.32		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_734	1892	358.1137	7.55					
+met_735	1296	567.3499	9.10					
+met_736	1173	169.0075	1.17					
+met_737	1482	265.0746	7.45					
+met_738	1589	351.0560	1.23		Complex search		Complex of 175.0243 an	
+met_739	246	207.1022	11.64					
+met_740	1298	242.0667	7.09					
+met_741	2105	96.0450	6.48					
+met_742	2094	385.1724	6.86					
+met_743	895	132.9812	0.90					
+met_744	1370	291.1962	12.75					
+met_745	110	127.0020	9.39					
+met_746	1037	314.2084	7.59					
+met_747	1021	261.1341	6.58					
+met_748	972	159.0296	0.72					
+met_749	1308	438.5834	6.21					
+met_750	1221	259.1294	7.31					
+met_751	2141	635.2509	15.95					
+met_752	1224	391.1984	8.80					
+met_753	1138	243.1233	9.55					
+met_754	1569	125.0178	0.92					
+met_755	1020	300.1924	7.21					
+met_756	1988	223.0641	6.27					
+met_757	2131	330.2028	8.40					
+met_758	1312	181.0140	7.42					
+met_759	1019	300.1924	8.34					
+met_760	208	243.1595	11.52					
+met_761	1876	709.2043	1.22		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_762	1879	274.1039	0.82					
+met_763	1030	359.1928	6.57					
+met_764	1301	477.2351	8.50					
+met_765	1507	72.0083	0.73					
+met_766	1276	312.1085	7.55					
+met_767	2078	401.2400	7.91					
+met_768	2079	358.1980	7.79					
+met_769	1749	386.0710	6.28					
+met_770	1658	261.1341	6.72					
+met_771	1479	382.5495	6.54					
+met_772	1949	163.0607	0.86		Negative_Garrett_Std_Library.csv	C6H12O5	2-deoxy-D-galactose (f	
+met_773	335	457.1835	15.96					
+met_774	1059	217.0348	1.10		Complex search		Complex of 115.0030 an	
+met_775	322	239.0592	15.66					
+met_776	1514	292.0784	1.23					
+met_777	1186	173.0815	9.01					
+met_778	1480	403.5547	6.92					
+met_779	2086	233.0299	1.99		Complex search		Complex of 117.0191 an	
+met_780	1179	188.0560	0.96					
+met_781	1324	217.0156	0.91					
+met_782	345	177.0917	12.10					
+met_783	1378	162.0406	0.75					
+met_784	1709	695.1964	14.42		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_785	1573	187.1084	1.35	92907n	Negative_Garrett_Std_Library.csv	C8H16N2O3	NALPHA-ACETYL-L-LYSINE	
+met_786	225	227.1286	11.28					
+met_787	387	225.1492	10.62		Adduct search		[M-NH3+H]+ -17.0265 m/	
+met_788	1392	433.1187	0.85					
+met_789	425	267.0868	10.65					
+met_790	1987	677.2442	7.69		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_791	1411	402.2121	8.96					
+met_792	1846	407.1923	6.74					
+met_793	209	266.1030	13.18					
+met_794	1025	172.0612	1.10					
+met_795	1131	261.0014	0.74					
+met_796	902	249.0071	0.84					
+met_797	212	229.1441	11.01					
+met_798	1049	113.0605	7.92		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_799	1673	243.0616	1.52					
+met_800	1848	209.0661	0.72					
+met_801	1422	189.0767	7.34					
+met_802	1766	487.1296	0.94					
+met_803	292	594.9624	13.94					
+met_804	1053	315.1669	6.85					
+met_805	2077	444.2091	6.30					
+met_806	1512	299.0984	0.82					
+met_807	1748	282.9617	0.73					
+met_808	414	343.2118	9.48					
+met_809	2055	330.1669	6.75					
+met_810	1297	302.1717	7.09					
+met_811	1937	587.1578	0.79					
+met_812	1792	189.0402	2.53					
+met_813	1227	221.0291	0.80					
+met_814	1818	201.1130	9.73					
+met_815	1888	287.0015	1.12					
+met_816	1653	120.9966	8.01					
+met_817	363	644.9590	14.60					
+met_818	1608	225.0877	6.74					
+met_819	2050	245.0775	2.31					
+met_820	2083	316.1870	7.81					
+met_821	1695	114.9361	7.07					
+met_822	984	190.7438	1.80					
+met_823	1630	247.1182	8.34					
+met_824	1938	343.1127	0.80					
+met_825	2063	429.2354	8.05					
+met_826	1134	273.0223	2.99					
+met_827	1028	357.2137	7.74					
+met_828	1174	131.0712	7.32					
+met_829	1511	459.2350	8.74					
+met_830	1018	163.0245	1.44					
+met_831	1379	341.1782	11.07					
+met_832	122	247.0582	11.53		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_833	1597	451.2001	11.35					
+met_834	2072	190.0538	7.23	1826n	Negative_Garrett_Std_Library.csv	C10H9NO3	5-HYDROXYINDOLEACETATE	
+met_835	1376	179.1074	10.35					
+met_836	1884	260.0887	0.78					
+met_837	1978	302.1716	7.34					
+met_838	1223	379.0815	0.85					
+met_839	1429	291.1963	12.85					
+met_840	1137	417.1242	0.89					
+met_841	221	381.2309	14.25					
+met_842	1320	302.1715	6.70					
+met_843	217	313.2378	13.69					
+met_844	1040	187.1084	6.71					
+met_845	1571	130.9983	1.77					
+met_846	1777	221.0662	1.32		Complex search		Complex of 101.0239 an	
+met_847	1738	293.1240	7.60					
+met_848	1952	371.2297	8.43					
+met_849	1288	357.0599	0.86					
+met_850	1936	594.6048	0.80					
+met_851	1426	305.1752	11.52					
+met_852	279	257.1309	13.97					
+met_853	321	330.9793	11.46					
+met_854	232	239.0670	14.30	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_855	1606	585.3264	13.56					
+met_856	1795	168.9902	0.76	668n	Negative_Garrett_Std_Library.csv	C3H7O6P	DIHYDROXYACETONE PHOSP	
+met_857	1481	186.9728	0.79					
+met_858	366	229.0087	13.60	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_859	1380	445.2959	14.77					
+met_860	1956	472.2407	7.43					
+met_861	236	263.1646	12.93					
+met_862	1633	127.0763	8.38					
+met_863	2074	386.2037	6.88					
+met_864	1046	314.2084	8.35					
+met_865	1159	233.0774	0.79					
+met_866	314	207.1386	12.19					
+met_867	2066	477.2826	8.06					
+met_868	266	247.0931	12.18					
+met_869	1322	357.2137	7.63					
+met_870	2071	342.2393	8.64					
+met_871	1343	279.1347	7.06					
+met_872	1148	169.0140	7.27					
+met_873	1048	231.0979	1.05					
+met_874	2067	476.2507	8.75					
+met_875	2064	372.2139	8.42					
+met_876	244	228.1599	10.04					
+met_877	1162	141.0127	0.80					
+met_878	210	295.1543	12.98					
+met_879	22	429.3033	16.79					
+met_880	1761	293.1241	7.04					
+met_881	2052	247.0931	2.12					
+met_882	1809	328.0578	6.53		Adduct search		[M-NH3+H]+ -17.0265 m/	
+met_883	2061	360.1949	8.37					
+met_884	1739	421.1715	9.02					
+met_885	1509	435.2051	11.66					
+met_886	338	358.1648	14.30					
+met_887	1430	438.2243	11.68					
+met_888	1758	199.0973	9.53					
+met_889	1294	126.9975	0.80					
+met_890	1395	164.0350	9.17					
+met_891	1820	461.1505	0.79					
+met_892	1483	125.0607	7.80					
+met_893	2069	346.1616	6.69					
+met_894	1055	203.0561	6.97					
+met_895	1041	189.0766	8.37					
+met_896	1642	138.0559	7.72					
+met_897	1316	320.9541	1.06					
+met_898	1017	187.0972	8.66	2266n	Negative_Garrett_Std_Library.csv	C9H16O4	AZELAIC ACID	
+met_899	446	694.9563	15.26					
+met_900	2020	362.0501	0.95					
+met_901	1806	431.2199	12.94					
+met_902	213	236.1050	12.11					
+met_903	1050	279.0903	9.16					
+met_904	2004	643.1147	6.52					
+met_905	79	179.0710	10.58					
+met_906	1708	443.1069	3.00					
+met_907	2076	401.2400	8.39					
+met_908	2073	358.1979	8.49					
+met_909	293	365.1392	12.84		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_910	1315	165.0170	6.95					
+met_911	957	390.0670	1.28					
+met_912	281	313.1638	13.40					
+met_913	1355	763.4623	16.88					
+met_914	1518	459.3105	15.09					
+met_915	545	307.1941	14.27					
+met_916	1261	344.1819	7.86					
+met_917	1604	210.0405	8.20					
+met_918	1572	479.2048	10.21					
+met_919	1607	331.0276	0.96					
+met_920	1781	329.0866	6.21					
+met_921	1948	444.2097	7.13					
+met_922	1002	974.3063	12.30					
+met_923	255	361.2226	9.03					
+met_924	2070	329.1824	7.32					
+met_925	226	267.1432	12.67					
+met_926	1652	236.0227	0.82					
+met_927	1170	161.0817	7.07					
+met_928	1715	199.0973	9.67					
+met_929	2089	330.2028	7.82					
+met_930	1712	351.0886	1.25					
+met_931	1474	335.1343	7.76					
+met_932	353	243.1961	13.90					
+met_933	222	441.2518	13.34					
+met_934	1385	327.1632	10.64					
+met_935	1950	390.0355	1.90					
+met_936	312	251.0921	11.64					
+met_937	1899	286.1768	7.84					
+met_938	2065	330.2027	7.26					
+met_939	216	300.1235	13.43					
+met_940	1427	223.0972	10.47					
+met_941	1750	484.1929	7.51					
+met_942	1035	174.0405	6.75					
+met_943	2081	286.1768	6.97					
+met_944	1499	473.2500	9.07					
+met_945	1526	217.0824	0.83		Adduct search		[M+ACN+H] 42.0338 m/z	
+met_946	1325	371.2294	9.11					
+met_947	1375	243.1233	9.26					
+met_948	1667	309.1074	6.98		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_949	1212	273.1854	14.34					
+met_950	307	389.1714	13.30		Complex search		Complex of 194.0817 an	
+met_951	233	380.9757	12.07					
+met_952	1255	503.1605	1.25	439242n	Negative_Garrett_Std_Library.csv	C18H32O16	D-(+)-RAFFINOSE	
+met_953	2085	504.2302	7.15					
+met_954	1722	131.0712	6.76					
+met_955	230	288.9404	14.51	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_956	223	286.9433	14.51	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_957	1769	388.1181	7.47					
+met_958	1602	365.0383	0.85					
+met_959	1953	474.2558	6.35					
+met_960	1847	505.2571	12.52					
+met_961	1794	229.0477	0.79					
+met_962	1763	513.1059	0.86					
+met_963	532	233.0773	11.68					
+met_964	1657	289.1804	12.45					
+met_965	1493	309.2067	12.16					
+met_966	2144	635.2496	12.48					
+met_967	1647	237.0800	7.02					
+met_968	393	459.1631	14.63					
+met_969	1372	219.1021	10.84					
+met_970	1632	171.0522	1.19					
+met_971	1762	421.0749	0.74					
+met_972	2142	316.1869	6.69					
+met_973	1152	307.1912	12.03					
+met_974	1489	152.0351	7.60					
+met_975	2048	389.2035	7.45					
+met_976	1908	179.0327	7.74		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_977	1685	127.0763	8.61		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_978	280	563.3160	12.63		Complex search		Complex of 269.1306 an	
+met_979	1063	196.0611	8.38					
+met_980	355	239.0592	14.81					
+met_981	454	215.1647	12.66					
+met_982	1751	319.2269	13.71					
+met_983	1311	328.2237	8.19					
+met_984	2123	329.1825	7.00					
+met_985	1420	144.0448	9.73					
+met_986	1613	295.1212	7.30					
+met_987	1391	327.2168	10.27					
+met_988	2135	329.1823	6.13					
+met_989	2054	529.2986	7.64					
+met_990	1251	213.0168	0.75					
+met_991	2121	217.1187	2.47					
+met_992	1935	372.1883	6.89					
+met_993	301	327.1792	13.97					
+met_994	315	430.9723	12.68					
+met_995	1494	243.0182	7.85					
+met_996	1773	158.0455	1.24					
+met_997	1979	441.0702	0.86					
+met_998	1359	265.1803	12.18					
+met_999	2060	229.1189	6.92					
+met_1000	1856	196.9492	0.71		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1001	1394	215.0921	8.40					
+met_1002	1424	122.0246	6.40					
+met_1003	2096	415.2198	8.20					
+met_1004	1969	371.2297	7.34					
+met_1005	224	315.1808	11.45					
+met_1006	227	431.2279	10.90					
+met_1007	1403	213.1128	9.70					
+met_1008	2099	372.1391	6.84		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1009	1428	187.0973	8.13					
+met_1010	1961	549.1662	1.08					
+met_1011	1621	289.1652	7.57					
+met_1012	1634	630.1119	1.27		Complex search		Complex of 306.0759 an	
+met_1013	239	345.1314	13.53		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1014	1575	99.0447	6.90					
+met_1015	2100	362.2080	8.63					
+met_1016	677	846.5451	16.49					
+met_1017	245	279.1629	13.20					
+met_1018	1042	334.1767	8.36					
+met_1019	1611	209.1179	10.38					
+met_1020	1681	335.1346	7.39					
+met_1021	994	114.0303	0.78					
+met_1022	370	313.0780	16.68					
+met_1023	1724	187.1083	2.32					
+met_1024	349	307.1159	12.60		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1025	1706	185.0275	8.07					
+met_1026	1488	309.2067	12.55					
+met_1027	82	361.1657	13.74		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1028	2113	272.1612	7.32					
+met_1029	2026	228.0511	6.72					
+met_1030	336	309.1708	10.92					
+met_1031	2112	346.1615	7.16					
+met_1032	2010	365.0482	6.30		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1033	1640	230.0124	6.72					
+met_1034	263	387.2855	11.54					
+met_1035	489	165.0404	16.68					
+met_1036	2025	249.0546	7.60					
+met_1037	1736	547.0728	0.83					
+met_1038	1907	299.1243	7.51					
+met_1039	1662	201.1240	4.86					
+met_1040	1951	373.1608	8.20					
+met_1041	1357	253.1443	9.20					
+met_1042	1731	249.0546	2.92					
+met_1043	1060	385.0982	6.22					
+met_1044	1600	325.2014	10.20					
+met_1045	1361	594.2474	10.22					
+met_1046	271	383.2409	12.96		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1047	1520	351.1116	8.70					
+met_1048	286	397.2201	11.66		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1049	2057	445.2299	7.98					
+met_1050	1901	216.9184	0.74					
+met_1051	276	425.2569	14.32					
+met_1052	487	429.1497	12.75		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1053	1407	513.1219	0.79					
+met_1054	1797	570.1969	0.79					
+met_1055	330	326.2333	15.64					
+met_1056	1371	207.0324	7.17					
+met_1057	1599	385.0704	7.83					
+met_1058	298	345.1315	12.91		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1059	1534	447.1333	11.39					
+met_1060	1373	355.1575	11.00					
+met_1061	1072	315.1670	6.99					
+met_1062	1517	416.2285	9.32					
+met_1063	2126	529.2986	6.58					
+met_1064	1742	679.1920	0.98					
+met_1065	202	443.3158	13.97		Complex search		Complex of 221.1543 an	
+met_1066	989	242.0664	1.20					
+met_1067	2133	364.1875	8.11					
+met_1068	1402	214.9964	0.74					
+met_1069	1765	619.1036	0.84					
+met_1070	262	485.2784	13.36					
+met_1071	2030	677.2559	16.50					
+met_1072	242	311.1859	11.77					
+met_1073	1964	305.0697	8.26					
+met_1074	1262	139.0399	6.91					
+met_1075	1737	667.2608	8.26					
+met_1076	257	271.2275	15.07					
+met_1077	883	406.1977	8.71					
+met_1078	1727	199.0972	11.29					
+met_1079	1080	168.0299	1.40					
+met_1080	1791	275.0879	0.88					
+met_1081	1815	199.0240	6.14					
+met_1082	97	277.1439	14.59					
+met_1083	1610	373.0380	1.25					
+met_1084	1963	474.2561	7.51					
+met_1085	1327	430.2434	9.72					
+met_1086	481	313.0781	15.67					
+met_1087	259	287.2222	12.28					
+met_1088	1408	323.1856	9.82					
+met_1089	1796	376.0656	6.25					
+met_1090	252	317.1365	14.94		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1091	1503	273.1702	9.27					
+met_1092	2059	545.1827	0.90					
+met_1093	1485	321.1189	7.63					
+met_1094	2116	330.1667	7.49					
+met_1095	285	295.2272	14.59					
+met_1096	1601	153.0191	7.31	3469n	Negative_Garrett_Std_Library.csv	C7H6O4	2,5-DIHYDROXYBENZOATE	
+met_1097	1001	342.0424	0.87					
+met_1098	2039	305.0804	7.04					
+met_1099	419	429.1498	12.11		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1100	2127	429.2354	8.24					
+met_1101	240	309.1449	15.58					
+met_1102	408	262.0692	13.31		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1103	269	397.2203	11.01		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1104	1146	257.0451	11.37					
+met_1105	1644	359.0417	1.25					
+met_1106	2115	330.1668	7.22					
+met_1107	2129	288.1559	6.43					
+met_1108	1445	182.0457	7.73					
+met_1109	367	271.2275	15.59					
+met_1110	251	299.2584	14.45	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1111	396	480.9690	13.30					
+met_1112	1726	169.0115	2.20		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1113	98	361.1625	13.13		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1114	2159	386.1973	2.77					
+met_1115	277	195.1386	12.60					
+met_1116	1057	249.0071	1.25					
+met_1117	1228	357.1678	12.37		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1118	306	267.1596	13.97					
+met_1119	267	377.1574	12.17		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1120	1043	141.0127	1.28					
+met_1121	2108	167.0205	1.87	1175n	Negative_Garrett_Std_Library.csv	C5H4N4O3	URATE	
+met_1122	2140	318.1662	7.37					
+met_1123	1646	907.3076	9.31					
+met_1124	1661	259.1186	7.00					
+met_1125	1413	223.0959	9.88		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1126	2107	387.0790	6.44					
+met_1127	1860	306.1789	11.77					
+met_1128	283	449.2751	10.53	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1129	1387	341.1421	10.67					
+met_1130	592	239.0592	16.67					
+met_1131	253	327.1961	14.15					
+met_1132	1082	224.0541	6.24		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1133	1538	183.0270	2.97		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1134	409	327.2169	11.17					
+met_1135	1270	203.0558	5.91					
+met_1136	2053	300.1560	7.04					
+met_1137	1767	547.0731	1.77					
+met_1138	400	165.0404	13.89	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1139	1747	421.1716	7.89					
+met_1140	1803	311.0613	0.80					
+met_1141	1835	168.9891	8.13					
+met_1142	624	449.2751	10.20					
+met_1143	1654	136.0402	8.33	5147n	Negative_Garrett_Std_Library.csv	C7H7NO2	SALICYLAMIDE	
+met_1144	1437	215.0921	8.21					
+met_1145	265	369.2426	15.40					
+met_1146	1515	301.2015	9.83					
+met_1147	326	233.1137	13.62					
+met_1148	1920	179.0346	8.85					
+met_1149	1637	447.2513	14.42					
+met_1150	254	341.1736	14.43					
+met_1151	1753	771.2403	0.81					
+met_1152	1855	507.2720	12.98					
+met_1153	264	343.2118	12.33					
+met_1154	1904	557.3071	9.99					
+met_1155	287	237.1492	12.19					
+met_1156	1461	213.1128	10.22					
+met_1157	2136	302.1351	6.39					
+met_1158	339	238.0718	13.11					
+met_1159	1883	185.0276	7.02					
+met_1160	2017	273.1090	6.59					
+met_1161	2028	273.1090	6.38					
+met_1162	1156	251.0404	2.94					
+met_1163	1528	479.2115	7.53					
+met_1164	2117	401.2399	7.38					
+met_1165	539	214.1446	9.47					
+met_1166	296	313.2378	13.27					
+met_1167	1784	331.0277	1.96		Complex search		Complex of 117.0191 an	
+met_1168	1189	314.1357	6.77		Adduct search		[M-NH3+H]+ -17.0265 m/	
+met_1169	284	310.1631	10.57		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1170	378	279.1593	12.07					
+met_1171	1500	305.1238	7.86					
+met_1172	270	257.1755	12.01					
+met_1173	1230	603.2131	0.81					
+met_1174	1268	193.0236	0.94					
+met_1175	412	187.1336	11.80					
+met_1176	503	227.1286	10.81					
+met_1177	84	159.0102	0.96					
+met_1178	1729	201.1240	6.05					
+met_1179	1798	129.0556	9.17					
+met_1180	1191	491.2500	9.08					
+met_1181	1754	375.1672	7.91					
+met_1182	1527	291.1964	13.64					
+met_1183	248	249.1490	12.90					
+met_1184	1546	373.1727	7.35					
+met_1185	1530	299.0984	1.22					
+met_1186	1828	429.0876	0.89					
+met_1187	1664	213.1128	10.36					
+met_1188	1881	251.0367	6.50					
+met_1189	249	265.1261	14.23					
+met_1190	305	209.1542	11.65					
+met_1191	1677	244.1296	2.04					
+met_1192	274	317.1386	12.35					
+met_1193	418	247.1292	13.98					
+met_1194	2139	300.1560	7.53					
+met_1195	1075	123.0323	6.51					
+met_1196	2120	329.1825	6.86					
+met_1197	1243	289.1805	12.01					
+met_1198	1425	291.1963	13.50					
+met_1199	1875	215.0668	0.74					
+met_1200	1622	257.0274	2.26					
+met_1201	346	299.1481	12.85					
+met_1202	1389	155.0104	0.80					
+met_1203	1583	373.1724	6.72					
+met_1204	1459	145.0869	8.68					
+met_1205	1070	213.0012	1.22		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1206	1522	309.2068	13.49					
+met_1207	1446	505.2088	11.67		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1208	1574	763.1840	14.42		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1209	1406	361.1993	13.10		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1210	2122	415.2196	7.63					
+met_1211	431	209.1542	12.33					
+met_1212	1382	569.0709	9.52					
+met_1213	2132	445.2297	7.63					
+met_1214	1741	319.1029	7.34					
+met_1215	403	321.1314	11.65		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1216	1194	190.9481	11.31					
+met_1217	1529	157.0503	6.46					
+met_1218	1916	244.1297	1.40					
+met_1219	1759	189.9403	0.73					
+met_1220	1267	429.1238	2.94					
+met_1221	1087	242.0665	3.37					
+met_1222	2158	540.0526	3.52					
+met_1223	1895	227.1035	7.19					
+met_1224	1332	184.0611	6.38		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_1225	1077	315.1669	6.24					
+met_1226	1913	196.0221	1.58		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1227	407	222.0767	13.76					
+met_1228	1756	375.1654	8.83					
+met_1229	1623	359.1821	8.11					
+met_1230	316	249.0763	11.87					
+met_1231	1694	132.0381	6.01					
+met_1232	1069	444.2459	7.37					
+met_1233	1245	316.1145	0.81					
+met_1234	1071	493.1863	6.21					
+met_1235	1896	453.1959	7.53					
+met_1236	1917	325.2013	10.96					
+met_1237	297	417.2124	10.57					
+met_1238	357	449.2751	11.09	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1239	1903	245.0787	10.38					
+met_1240	1578	237.0432	1.34		Adduct search		[M-NH3+H]+ -17.0265 m/	
+met_1241	1827	540.3294	13.64	20393n	Negative_Garrett_Std_Library.csv		Mono-(2-Ethylhexyl) Ph	
+met_1242	2005	187.0244	7.01					
+met_1243	1384	547.2743	10.72					
+met_1244	1078	359.1928	6.22					
+met_1245	1594	355.0872	0.73					
+met_1246	1185	293.2116	14.05					
+met_1247	1455	201.1130	9.30					
+met_1248	491	220.1464	15.41					
+met_1249	328	377.1606	13.07		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1250	1331	181.0140	6.06					
+met_1251	1460	215.0921	8.09					
+met_1252	1201	472.1542	7.97					
+met_1253	1559	229.0324	2.95		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1254	376	237.1107	10.45		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1255	438	251.1288	12.09					
+met_1256	234	351.2204	14.62					
+met_1257	1199	307.1913	11.76					
+met_1258	303	295.1743	13.74					
+met_1259	1697	207.0295	7.63					
+met_1260	2137	435.2243	8.49		Complex search		Complex of 247.1182 an	
+met_1261	1536	201.1130	8.62					
+met_1262	1056	167.0350	7.98					
+met_1263	443	259.1278	13.97					
+met_1264	250	353.2477	16.39					
+met_1265	295	271.1909	12.47					
+met_1266	272	249.1127	12.93					
+met_1267	1989	471.2507	14.16					
+met_1268	1752	265.0743	8.40					
+met_1269	1728	360.1403	2.94					
+met_1270	2125	330.1664	7.73					
+met_1271	1564	99.0446	2.94					
+met_1272	2146	318.1663	7.24					
+met_1273	386	290.1393	12.58					
+met_1274	1248	191.1075	10.29					
+met_1275	1814	431.2138	6.96					
+met_1276	308	255.1234	12.81					
+met_1277	1971	391.1981	8.22					
+met_1278	1617	275.2013	14.88					
+met_1279	309	285.1160	11.94					
+met_1280	1854	153.0191	6.81	72n	Negative_Garrett_Std_Library.csv	C7H6O4	3,4-DIHYDROXYBENZOATE	
+met_1281	1744	347.1346	7.98					
+met_1282	467	301.0711	10.52					
+met_1283	1819	584.1816	0.83					
+met_1284	1672	292.1994	12.73					
+met_1285	302	285.2067	12.96					
+met_1286	1675	309.1010	7.39					
+met_1287	1432	213.0037	11.33					
+met_1288	1052	207.0138	1.75					
+met_1289	288	307.1546	11.90					
+met_1290	1448	547.2742	10.58					
+met_1291	543	447.1426	13.38		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1292	479	279.2323	16.22	5280450	Negative_Garrett_Std_Library.csv	C18H32O2	Linoleic Acid (18:2)	
+met_1293	2022	228.0503	1.36					
+met_1294	391	346.9740	12.28					
+met_1295	1195	242.0779	1.62	6175n	Negative_Garrett_Std_Library.csv	C9H13N3O5	CYTIDINE	
+met_1296	332	297.2427	14.03					
+met_1297	278	325.2166	14.95					
+met_1298	1079	318.1664	3.38					
+met_1299	1496	289.1804	13.23					
+met_1300	1734	529.0766	9.58					
+met_1301	1788	127.0032	6.91					
+met_1302	2149	389.2035	6.88					
+met_1303	1914	291.1963	13.01					
+met_1304	1663	150.0557	9.12					
+met_1305	2118	429.2352	7.51					
+met_1306	1967	117.0329	2.10					
+met_1307	1545	435.2051	11.91					
+met_1308	294	317.1751	13.43					
+met_1309	1397	155.0095	1.23	967n	Negative_Garrett_Std_Library.csv	C5H4N2O4	OROTIC ACID	
+met_1310	1775	251.0591	7.21					
+met_1311	282	277.1802	13.23	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1312	261	235.1335	15.00					
+met_1313	1462	168.0299	10.51	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1314	329	297.2427	15.07					
+met_1315	474	333.2195	14.74					
+met_1316	1690	309.1116	5.92					
+met_1317	344	311.2224	14.17					
+met_1318	1836	404.0505	6.29					
+met_1319	528	461.1583	13.97		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1320	1417	551.2701	9.04					
+met_1321	275	389.2326	15.32					
+met_1322	86	481.1027	14.91					
+met_1323	1942	395.1116	0.86					
+met_1324	1580	402.1986	6.21					
+met_1325	1337	293.2116	14.26					
+met_1326	2037	275.0879	2.42					
+met_1327	1198	243.1233	7.72					
+met_1328	1454	213.1128	9.34					
+met_1329	1249	356.1350	7.78					
+met_1330	334	136.9911	14.97					
+met_1331	1272	201.1130	8.06					
+met_1332	1711	211.1335	10.39					
+met_1333	453	201.1492	12.01					
+met_1334	1579	79.0181	6.48		Adduct search		[M-NH3+H]+ -17.0265 m/	
+met_1335	342	313.1652	11.82					
+met_1336	439	485.1776	13.77					
+met_1337	1970	430.1940	6.92					
+met_1338	1187	305.1752	12.15					
+met_1339	1862	156.0300	0.97					
+met_1340	1182	233.0773	1.26					
+met_1341	1076	216.0873	1.28					
+met_1342	505	343.2118	9.92					
+met_1343	1537	273.1702	9.69					
+met_1344	517	275.1496	9.43					
+met_1345	2151	386.2037	6.21					
+met_1346	1592	359.1833	12.70		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1347	299	347.2432	10.08					
+met_1348	337	290.9375	14.51	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1349	2090	328.1506	6.99					
+met_1350	317	371.2433	13.19					
+met_1351	1348	414.0825	9.10					
+met_1352	333	229.1441	11.35					
+met_1353	478	530.9661	13.94					
+met_1354	385	415.3169	12.59					
+met_1355	1229	319.1906	12.82					
+met_1356	324	269.2117	15.12					
+met_1357	655	413.9688	12.27					
+met_1358	1232	455.1007	0.89					
+met_1359	1966	444.2095	6.92					
+met_1360	2032	203.0194	2.44					
+met_1361	398	469.2829	14.35					
+met_1362	290	277.1802	12.42					
+met_1363	1477	273.0402	10.49					
+met_1364	1801	226.9656	16.51					
+met_1365	374	323.1893	13.59					
+met_1366	331	529.3045	13.37					
+met_1367	1909	329.1606	7.72					
+met_1368	1680	153.0191	8.31					
+met_1369	1419	321.1699	10.43					
+met_1370	1439	239.1284	11.26					
+met_1371	515	193.0865	12.66					
+met_1372	580	207.1386	11.86					
+met_1373	498	239.0670	13.60					
+met_1374	2016	201.0032	1.77		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_1375	2124	302.1350	6.96					
+met_1376	609	251.0921	11.30					
+met_1377	350	435.2958	12.34	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1378	1399	505.1187	6.62					
+met_1379	420	220.1457	12.11					
+met_1380	1595	256.0459	6.73					
+met_1381	2111	173.0562	0.87					
+met_1382	2148	415.2195	7.42					
+met_1383	501	241.1440	11.86					
+met_1384	304	299.2585	16.37					
+met_1385	1699	435.2050	12.19					
+met_1386	1922	169.0504	7.64					
+met_1387	1730	113.0605	7.32		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_1388	310	235.1699	14.29					
+met_1389	1764	529.0766	10.09					
+met_1390	1783	429.1372	8.52		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1391	571	380.9760	9.49					
+met_1392	381	421.1873	13.22		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1393	1994	305.0686	3.98					
+met_1394	590	307.1905	13.04					
+met_1395	121	104.0220	0.72					
+met_1396	395	289.1652	9.95					
+met_1397	553	415.2332	11.50					
+met_1398	356	273.2065	12.12					
+met_1399	504	342.2278	14.39					
+met_1400	463	275.1606	14.85					
+met_1401	1336	477.2352	8.86					
+met_1402	319	297.2427	14.94					
+met_1403	1596	455.1399	6.64					
+met_1404	1771	335.1344	8.24					
+met_1405	1641	339.1626	11.31					
+met_1406	343	247.1334	13.62					
+met_1407	372	379.1881	14.84		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1408	2109	302.1351	6.01					
+met_1409	1691	180.0300	8.16					
+met_1410	1683	125.0607	8.29		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_1411	2155	360.1953	8.18					
+met_1412	2062	187.0723	1.76					
+met_1413	397	291.1599	14.05					
+met_1414	1334	145.0869	8.31					
+met_1415	401	120.9962	14.15					
+met_1416	365	251.1264	11.00		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1417	1393	297.0374	9.88		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1418	1196	251.0403	1.47					
+met_1419	388	377.1574	12.50		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1420	607	193.0866	11.78					
+met_1421	1900	383.2295	7.87		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_1422	1635	272.9912	0.88					
+met_1423	1670	163.0398	8.98					
+met_1424	658	369.9792	12.27					
+met_1425	1591	82.9535	0.79					
+met_1426	2119	229.1189	7.83					
+met_1427	300	193.1593	12.75					
+met_1428	1490	373.1627	11.75		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1429	373	355.1755	12.30					
+met_1430	1328	169.0504	6.80		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_1431	1778	443.1532	9.02		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1432	451	201.1492	12.48					
+met_1433	1532	323.1855	11.59					
+met_1434	1544	169.0504	7.48					
+met_1435	2035	260.0230	4.14					
+met_1436	291	356.1496	16.01					
+met_1437	1540	379.0810	1.52					
+met_1438	364	331.1392	9.90					
+met_1439	348	377.1999	14.97					
+met_1440	455	395.2461	14.75					
+met_1441	362	247.1698	14.10					
+met_1442	379	361.2048	14.15					
+met_1443	2044	273.1454	7.95					
+met_1444	1816	564.3199	12.60					
+met_1445	1687	169.0504	8.34					
+met_1446	1723	117.0052	2.05					
+met_1447	457	367.2150	13.74					
+met_1448	1817	431.2141	7.53					
+met_1449	527	474.9621	9.96					
+met_1450	1972	435.2236	7.80		Complex search		Complex of 113.0605 an	
+met_1451	352	307.1546	12.23					
+met_1452	1702	430.2302	7.18					
+met_1453	428	323.1494	11.80					
+met_1454	449	225.1492	11.36					
+met_1455	469	430.9723	9.96					
+met_1456	402	287.1494	10.49					
+met_1457	1906	241.1190	7.86					
+met_1458	430	347.1342	8.78					
+met_1459	410	403.2334	10.56					
+met_1460	459	229.1804	12.90					
+met_1461	2011	175.0367	0.80					
+met_1462	1703	479.2145	7.91		Complex search		Complex of 365.1445 an	
+met_1463	371	270.2069	11.58					
+met_1464	563	311.2222	13.69					
+met_1465	1995	113.0605	6.83		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_1466	228	443.2434	14.66					
+met_1467	547	269.2117	14.64					
+met_1468	59	105.0012	16.80					
+met_1469	574	307.1549	12.37					
+met_1470	1732	315.1669	2.18					
+met_1471	413	356.1497	14.98					
+met_1472	470	345.1849	14.83	Bkgrnd	NegBackgroundIonLibrary.csv		Background Ion	
+met_1473	1968	444.2456	6.20					
+met_1474	416	205.1593	14.67					
+met_1475	1374	289.1059	11.55					
+met_1476	1980	520.0843	1.31					
+met_1477	358	385.2011	15.29					
+met_1478	423	299.2222	13.43					
+met_1479	484	333.1677	12.66		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1480	1269	514.2080	8.40					
+met_1481	556	372.1808	14.51					
+met_1482	473	401.1711	16.18					
+met_1483	1674	164.0714	10.49					
+met_1484	368	297.2427	16.37					
+met_1485	2156	261.0876	8.01					
+met_1486	2008	219.0659	10.20					
+met_1487	1447	223.0972	8.93					
+met_1488	432	375.1654	9.62					
+met_1489	2162	385.1624	9.54					
+met_1490	389	243.1960	12.21					
+met_1491	1086	359.1927	7.33					
+met_1492	1785	555.2913	10.31					
+met_1493	486	405.1919	14.11		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1494	492	205.1589	12.90					
+met_1495	1851	471.1996	8.92					
+met_1496	1844	443.2281	10.16					
+met_1497	541	321.1733	12.94					
+met_1498	415	221.0673	13.97					
+met_1499	476	363.1421	12.98		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1500	523	253.1552	12.20					
+met_1501	1993	795.5044	14.63					
+met_1502	1478	325.0324	11.37		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1503	475	205.0866	11.74		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_1504	421	337.1630	11.45		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1505	1911	329.1607	7.54					
+met_1506	1919	383.2296	7.65					
+met_1507	405	221.2411	13.97					
+met_1508	311	367.2269	16.09					
+met_1509	508	403.1970	10.21					
+met_1510	495	365.2360	15.13					
+met_1511	2075	261.0906	7.28					
+met_1512	537	287.2222	11.88					
+met_1513	485	298.1402	14.41					
+met_1514	427	383.2581	15.83					
+met_1515	1491	463.3062	13.00					
+met_1516	445	301.1650	11.12					
+met_1517	483	381.2254	13.69		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1518	566	362.2262	8.90					
+met_1519	554	239.0670	13.26					
+met_1520	452	329.1520	12.11					
+met_1521	575	465.2075	11.66		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1522	2163	242.0666	6.76					
+met_1523	1918	228.0868	7.63		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1524	591	429.1530	13.74		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1525	496	473.2819	15.08					
+met_1526	568	480.9693	10.42					
+met_1527	392	382.2140	15.72					
+met_1528	1458	168.0300	7.51					
+met_1529	465	453.2099	10.90		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1530	1787	261.0976	7.25					
+met_1531	1679	305.1752	12.80					
+met_1532	1443	569.0708	10.14					
+met_1533	360	263.1646	13.77					
+met_1534	1593	245.0061	0.73					
+met_1535	558	261.1451	14.34					
+met_1536	589	429.1498	13.13		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1537	383	345.1314	14.59		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1538	530	342.2278	14.71					
+met_1539	490	573.3302	13.38					
+met_1540	1692	394.0914	1.50		Complex search		Complex of 236.0595 an	
+met_1541	422	217.1189	14.36					
+met_1542	468	329.1961	11.92					
+met_1543	471	344.2437	14.33					
+met_1544	447	355.1953	13.22					
+met_1545	513	275.1681	13.20		Adduct search		[M-H2O+H]+ -18.0106 m/	
+met_1546	542	395.2431	12.12					
+met_1547	546	349.2046	13.96					
+met_1548	552	283.1368	12.30					
+met_1549	1434	287.1642	12.75					
+met_1550	567	203.1074	12.56					
+met_1551	1996	300.0464	6.17					
+met_1552	488	299.0665	10.52					
+met_1553	511	179.1074	12.96					
+met_1554	534	465.2076	11.03		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1555	1890	301.0719	9.17		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1556	497	325.1648	11.35					
+met_1557	1440	409.2226	11.67					
+met_1558	1353	135.0307	2.11	790n	Negative_Garrett_Std_Library.csv	C5H4N4O	HYPOXANTHINE	
+met_1559	623	530.9661	10.89					
+met_1560	442	253.1804	11.81					
+met_1561	2161	472.2404	6.91		Complex search		Complex of 372.1883 an	
+met_1562	433	273.1491	13.68					
+met_1563	450	342.1704	15.48					
+met_1564	482	371.3161	14.32					
+met_1565	494	175.0720	12.79					
+met_1566	1668	307.1909	12.79					
+met_1567	548	389.1973	14.81		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1568	1915	375.1782	12.00		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1569	519	401.1710	15.37					
+met_1570	638	196.8961	0.70					
+met_1571	533	403.2694	11.09					
+met_1572	510	270.1091	13.80					
+met_1573	493	415.2479	13.63					
+met_1574	525	511.0065	15.32					
+met_1575	1700	265.0730	4.00					
+met_1576	1539	301.2013	10.61					
+met_1577	318	371.1492	13.97					
+met_1578	2041	231.0981	2.74					
+met_1579	1543	321.1547	7.09					
+met_1580	1339	323.1603	7.96					
+met_1581	577	307.1543	12.82					
+met_1582	1386	321.1698	11.17					
+met_1583	514	509.0099	15.32					
+met_1584	572	341.1783	12.02					
+met_1585	521	365.1938	12.33		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1586	1463	291.1968	14.91					
+met_1587	641	331.2484	11.90					
+met_1588	629	377.1578	10.92		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1589	551	285.2430	13.84					
+met_1590	2024	175.0357	1.03					
+met_1591	77	429.3018	15.22					
+met_1592	569	388.1588	15.89					
+met_1593	2102	291.1012	7.34					
+met_1594	2095	443.1769	7.25					
+met_1595	500	203.1034	13.85					
+met_1596	1338	371.5373	5.94					
+met_1597	1842	481.1793	8.56					
+met_1598	1083	359.1931	1.35					
+met_1599	573	325.1648	11.96		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1600	1740	285.0402	9.57					
+met_1601	557	331.2483	11.77					
+met_1602	1669	365.0358	1.14					
+met_1603	2036	351.1538	7.35					
+met_1604	462	295.1293	14.98					
+met_1605	636	331.2483	11.65					
+met_1606	1542	373.1679	10.42					
+met_1607	1367	287.1643	12.22					
+met_1608	1431	257.0450	10.82					
+met_1609	1845	473.2152	8.78					
+met_1610	1412	409.2225	11.86					
+met_1611	550	291.1597	11.89					
+met_1612	596	235.1335	13.06					
+met_1613	561	389.1810	9.97					
+met_1614	1981	309.1185	4.67					
+met_1615	1576	132.0381	4.65					
+met_1616	549	261.1491	11.83		Adduct search		[M-HCOOH+H]+ -46.0055	
+met_1617	538	473.0333	14.74					
+met_1618	535	180.8992	0.71					
+met_1619	639	267.1596	12.25					
+met_1620	1837	169.0116	1.80					
+met_1621	1524	273.0400	10.08					
+met_1622	1813	290.0198	1.29					
+met_1623	1688	230.0121	2.31					
+met_1624	555	415.2480	13.77					
+met_1625	579	273.2067	11.89					
+met_1626	1504	361.1041	8.52					
+met_1627	664	398.2219	10.52					
+met_1628	1698	73.0287	1.08					
+met_1629	399	365.2330	14.89					
+met_1630	2051	259.0930	3.36					
+met_1631	1696	265.0748	7.03					
+met_1632	2034	362.1023	2.81					
+met_1633	2153	74.0236	1.61					
+met_1634	587	328.1998	15.14					
+met_1635	526	367.2634	16.62					
+met_1636	1786	377.1389	11.03		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1637	564	285.2430	15.61					
+met_1638	1217	621.0548	0.90		Adduct search		[M+ACN+H] 42.0338 m/z	
+met_1639	1826	198.0767	1.25					
+met_1640	1547	300.1891	9.43					
+met_1641	583	217.1189	15.38					
+met_1642	628	331.1393	8.91					
+met_1643	2080	575.1934	0.81					
+met_1644	531	229.1229	14.08					
+met_1645	602	369.2413	16.11					
+met_1646	540	387.2168	15.17					
+met_1647	1924	216.0307	1.41					
+met_1648	1701	247.1182	7.30					
+met_1649	133	205.0145	0.73					
+met_1650	435	513.3208	15.70					
+met_1651	106	133.0808	0.92	ISTD-01	Negative_Garrett_Std_Library.csv	C4H6D3N3O2	Creatine-D3	
+met_1652	1216	314.0275	0.73					
+met_1653	1782	379.0812	2.14					
+met_1654	1444	168.0299	6.52					
+met_1655	560	251.1649	12.98					
+met_1656	584	235.1699	11.82					
+met_1657	667	301.1650	9.50					
+met_1658	1812	199.0222	4.64		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1659	610	272.2307	14.18					
+met_1660	1912	350.1233	9.51					
+met_1661	598	372.1808	14.97					
+met_1662	426	359.2222	15.42					
+met_1663	1206	234.0615	0.77					
+met_1664	1531	325.0325	10.82					
+met_1665	595	341.1750	13.87					
+met_1666	604	355.1909	14.49					
+met_1667	1074	126.9979	1.82					
+met_1668	1902	352.1397	9.16		Complex search		Complex of 187.0973 an	
+met_1669	520	280.1913	14.57					
+met_1670	89	591.2598	16.13					
+met_1671	1861	481.1805	8.90					
+met_1672	1923	352.1393	9.55					
+met_1673	1849	538.0371	0.76					
+met_1674	676	340.8360	0.77					
+met_1675	134	204.0164	0.79					
+met_1676	576	295.2272	15.30					
+met_1677	640	251.1648	14.65					
+met_1678	646	287.1494	10.75					
+met_1679	2007	203.0194	6.96					
+met_1680	647	270.2070	13.55					
+met_1681	613	273.1493	14.36					
+met_1682	633	365.2303	13.96		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1683	618	247.1334	11.24					
+met_1684	2031	132.0382	1.73					
+met_1685	649	235.1698	13.91					
+met_1686	461	253.2168	16.06					
+met_1687	2029	201.0034	6.31					
+met_1688	1926	116.0715	6.34					
+met_1689	444	405.2670	16.56					
+met_1690	630	203.1035	14.92					
+met_1691	2150	136.0343	2.08					
+met_1692	637	314.2413	12.42					
+met_1693	394	370.1652	16.61					
+met_1694	512	497.3264	15.70					
+met_1695	95	409.3104	16.00					
+met_1696	621	358.1650	15.75					
+met_1697	1356	295.1285	7.13					
+met_1698	1659	153.0169	4.67		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1699	625	207.9183	0.72					
+met_1700	1226	246.0613	6.45					
+met_1701	581	235.1336	11.96					
+met_1702	582	369.2430	14.56					
+met_1703	1852	487.2174	10.15					
+met_1704	2033	427.0191	6.32					
+met_1705	665	321.1700	11.98					
+met_1706	642	323.1476	11.13		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1707	1541	389.1576	10.42		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1708	1341	339.1538	7.47					
+met_1709	608	291.1597	13.42					
+met_1710	599	372.1802	16.61					
+met_1711	651	337.1648	11.88					
+met_1712	668	301.1651	10.01					
+met_1713	620	317.1751	13.80					
+met_1714	516	605.2405	16.56					
+met_1715	1746	497.2027	10.07					
+met_1716	617	387.2168	14.59					
+met_1717	634	163.9284	0.74					
+met_1718	650	251.1648	11.99					
+met_1719	1438	219.1021	11.26					
+met_1720	662	295.1369	12.12					
+met_1721	648	415.2475	14.94					
+met_1722	518	357.2066	16.60					
+met_1723	643	365.2300	16.37		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1724	320	464.2199	13.30					
+met_1725	653	365.2313	15.00		Adduct search		[M+CHOONa] 67.9874 m/z	
+met_1726	1627	323.0977	2.92		Complex search		Complex of 161.0452 an	
+met_1727	615	357.2066	15.14					
+met_1728	2009	161.2581	2.93					
+met_1729	1689	272.9925	2.25					
+met_1730	678	301.0711	11.12					
+met_1731	1456	166.0141	6.50					
+met_1732	1684	455.1403	6.26					
+met_1733	2068	540.0521	1.45					
+met_1734	464	339.1597	15.55					
+met_1735	1342	335.1609	8.27					
+met_1736	1999	323.0011	9.88					
+met_1737	2088	187.0719	3.03					
+met_1738	1351	279.1347	7.76					
+met_1739	660	365.2301	15.96					
+met_1740	657	358.1660	13.49					
+met_1741	675	321.1703	12.64					
+met_1742	456	321.0792	13.97					
+met_1743	659	401.1750	13.69					
+met_1744	679	311.1767	10.93					
+met_1745	671	367.2069	11.68					
+met_1746	1340	241.0860	12.55					
+met_1747	670	415.2315	16.32					
+met_1748	1997	321.0043	9.96					
+met_1749	672	307.8557	0.87					
+met_1750	654	444.2386	16.23					
+met_1751	1898	391.2849	12.42					
+met_1752	404	585.2938	12.72		Adduct search		[M+Na-H] 21.9825 m/z a	
+met_1753	506	506.2563	13.27		Complex search		Complex of 194.0817 an	
+met_1754	669	415.2470	15.24					
+met_1755	375	424.1808	16.03					
+met_1756	536	494.2293	13.21					
+met_1757	673	264.1680	14.98					
