@@ -14,15 +14,16 @@
 # The output is a set of graphs and spreadsheets of flags
 #
 ################################################################################
-
-# Built-in packages
+# Import future libraries
 from __future__ import division
+
+# Import built-in libraries
 import logging
 import argparse
 from itertools import combinations
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 import pandas as pd
 matplotlib.use('Agg')
@@ -31,16 +32,17 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
-# Local Packages
-import logger as sl
-import module_bar as bar
-import module_lines as lines
-import module_scatter as scatter
-from flags import Flags
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
 
+# Import local plotting libraries
+from visualManager import module_bar as bar
+from visualManager import module_lines as lines
+from visualManager import module_scatter as scatter
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
@@ -66,57 +68,63 @@ def getOptions():
     """
     parser = argparse.ArgumentParser(description=description, 
             formatter_class=RawDescriptionHelpFormatter)
-
-    group1 = parser.add_argument_group(title='Standard input', 
+    # Standard Input
+    Standard = parser.add_argument_group(title='Standard input', 
             description='Standard input for SECIM tools.')
-    group1.add_argument('-i',"--input", dest="fname", action='store', 
+    Standard.add_argument('-i',"--input", dest="input", action='store', 
             required=True, help="Input dataset in wide format.")
-    group1.add_argument('-d',"--design", dest="dname", action='store', 
+    Standard.add_argument('-d',"--design", dest="design", action='store', 
             required=True, help="Design file.")
-    group1.add_argument('-id',"--ID", dest="uniqID", action='store', 
+    Standard.add_argument('-id',"--ID", dest="uniqID", action='store', 
             required=True, help="Name of the column with unique identifiers.")
-    group1.add_argument('-g',"--group", dest="group", action='store', 
+    Standard.add_argument('-g',"--group", dest="group", action='store', 
             required=False, help="Group/treatment identifier in design file"\
             " [Optional].")
-
-    group2 = parser.add_argument_group(title='Required input', 
+    # Tool output
+    output = parser.add_argument_group(title='Required input', 
             description='Additional required input for this tool.')
-    group2.add_argument('-f',"--figure", dest="baName", action='store', 
+    output.add_argument('-f',"--figure", dest="baName", action='store', 
             required=True, help="Name of the output PDF for Bland-Altman plots.")
-    group2.add_argument('-fd',"--flag_dist", dest="distName", action='store', 
+    output.add_argument('-fd',"--flag_dist", dest="distName", action='store', 
             required=True, help="Name of the output TSV for distribution flags.")
-    group2.add_argument('-fs',"--flag_sample", dest="flagSample", action='store', 
+    output.add_argument('-fs',"--flag_sample", dest="flagSample", action='store', 
             required=True, help="Name of the output TSV for sample flags.")
-    group2.add_argument('-ff',"--flag_feature", dest="flagFeature", action='store', 
+    output.add_argument('-ff',"--flag_feature", dest="flagFeature", action='store', 
             required=True, help="Name of the output TSV for feature flags.")
-
-    group3 = parser.add_argument_group(title='Optional Settings')
-    group3.add_argument('-po',"--process_only", dest="processOnly",
+    # Tool Input
+    tool = parser.add_argument_group(title='Optional Settings')
+    tool.add_argument('-po',"--process_only", dest="processOnly",
             action='store', nargs='+', default=False, required=False, 
             help="Only process the given groups (list groups separated by"\
             " spaces) [Optional].")
-    group3.add_argument('-rc',"--resid_cutoff", dest="residCutoff",
+    tool.add_argument('-rc',"--resid_cutoff", dest="residCutoff",
             action='store', default=3, type=int, required=False, 
             help="Cutoff value for flagging outliers [default=3].")
 
-    group3.add_argument('-sfc',"--sample_flag_cutoff", dest="sampleCutoff", 
+    tool.add_argument('-sfc',"--sample_flag_cutoff", dest="sampleCutoff", 
             action='store', default=.20, type=float, required=False, 
             help="Proportion cutoff value when flagging samples [default=0.20].")
-    group3.add_argument('-ffc',"--feature_flag_cutoff", dest="featureCutoff", 
+    tool.add_argument('-ffc',"--feature_flag_cutoff", dest="featureCutoff", 
             action='store', default=.05, type=float, required=False, 
             help="Proportion cutoff value when flagging features [default=0.05].")
 
     group4 = parser.add_argument_group(title='Development Settings')
     group4.add_argument("--debug", dest="debug", action='store_true', 
             required=False, help="Add debugging log output.")
-
     args = parser.parse_args()
-
+    # Check if sample cutoff is within 0-1
     if (args.sampleCutoff > 1) | (args.sampleCutoff < 0):
         parser.error('sample_flag_cutoff must be a number between 0 and 1')
-
     if (args.featureCutoff > 1) | (args.featureCutoff < 0):
         parser.error('feature_flag_cutoff must be a number between 0 and 1')
+
+    # Standardize paths
+    args.input       = os.path.abspath(args.input)
+    args.design      = os.path.abspath(args.design)
+    args.baName      = os.path.abspath(args.baName)
+    args.distName    = os.path.abspath(args.distName)
+    args.flagSample  = os.path.abspath(args.flagSample)
+    args.flagFeature = os.path.abspath(args.flagFeature)
 
     return args
 
@@ -388,8 +396,8 @@ def makeBA(x, y, ax, fh):
 
     """
     # Make BA plot
-    x=x.apply(float)
-    y=y.apply(float)
+    x = x.apply(float)
+    y = y.apply(float)
 
     diff = x - y
     mean = (x + y) / 2
@@ -403,11 +411,11 @@ def makeBA(x, y, ax, fh):
     mask1 = abs(resid['resid_pearson']) > cutoff
     mask2 = infl['cooks_pval'] <= 0.5
     mask3 = infl['dffits']
-    mask = mask1 | mask2 | mask3
+    mask  = mask1 | mask2 | mask3
     
     # Create BA plot
-    scatter.scatter2D(ax=ax,x=mean[~mask], y=diff[~mask],colorList='b')
-    scatter.scatter2D(ax=ax,x=mean[mask], y=diff[mask], colorList='r')
+    scatter.scatter2D(ax=ax, x=mean[~mask], y=diff[~mask],colorList='b')
+    scatter.scatter2D(ax=ax, x=mean[mask],  y=diff[mask], colorList='r')
 
     # Plot regression lines
     ax.plot(mean, lower, 'r:')
@@ -521,7 +529,7 @@ def iterateCombo(dat, combo, pdf):
 
 def main(args):
     # Import data
-    dat = wideToDesign(args.fname, args.dname, args.uniqID, args.group,
+    dat = wideToDesign(args.input, args.design, args.uniqID, args.group,
                         logger=logger)
 
     # Get a list of samples to process, if processOnly is specified only 
