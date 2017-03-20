@@ -12,29 +12,29 @@
 #
 ################################################################################
 
-#Standard Libraries
+# Import built-in libraries
 import os
 import math
 import logging
 import argparse
 
-#AddOn Libraries
+# Import add-on libraries
 import matplotlib
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
-# Local Packages
-import logger as sl
-from flags import Flags
-from interface import wideToDesign
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
+
 
 def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
                                      "dataset and calculates the LOD on it ")
 
-    #Standar input for SECIMtools
+    # Standard Input
     standar = parser.add_argument_group(title='Standard input', description= 
                                         'Standard input for SECIM tools.')
     standar.add_argument("-i","--input",dest="input", action='store', 
@@ -48,7 +48,7 @@ def getOptions():
                         required=True, help="Name of column in design file" \
                         "with Group/treatment information.")
 
-    #Optional Input
+    # Tool Input
     tool = parser.add_argument_group(title='Optional input', 
                                          description="Changes parameters for "\
                                          "the prorgram")
@@ -62,7 +62,7 @@ def getOptions():
                         required=False, default=100,type=int,
                         help="Value of the criteria to selct")
 
-    #Output Paths
+    # Tool Output
     output = parser.add_argument_group(title='Output paths', description=
                                        "Paths for the output files")
     output.add_argument("-f","--outflags",dest="outflags",action="store",
