@@ -18,6 +18,7 @@
 from __future__ import division
 
 # Import built-in libraries
+import os
 import logging
 import argparse
 from itertools import combinations
