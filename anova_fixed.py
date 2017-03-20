@@ -11,7 +11,7 @@
 # DESCRIPTION: This tool runs a multiway ANOVA on wide data
 #
 #######################################################################################
-# Built-in packages
+# Import built-in packages
 import re
 import os
 import copy
@@ -21,7 +21,7 @@ import itertools
 from collections import defaultdict
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on packages
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
@@ -32,12 +32,11 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local Packages
-import logger as sl
-from interface import wideToDesign
-from generalModules.drop_missing import dropMissing
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
-# Importing anova packages
+# Import local plotting libraries
 from anovaModules.qqPlot import qqPlot
 from anovaModules.volcano import volcano
 from anovaModules.runANOVA import runANOVA
@@ -49,7 +48,7 @@ def getOptions():
     description = """ One-Way ANOVA """
     parser = argparse.ArgumentParser(description=description,
                              formatter_class=RawDescriptionHelpFormatter)
-
+    # Standard input
     standard = parser.add_argument_group(description="Required Input")
     standard.add_argument('-i',"--input", dest="input", action='store', 
             required=True, help="Input dataset in wide format.")
@@ -59,13 +58,13 @@ def getOptions():
             required=True, help="Name of the column with unique identifiers.")
     standard.add_argument('-f',"--factors", dest="factors", action='store', 
             required=True, help="Factors to run ANOVA")
-
+    # Tool input
     tool = parser.add_argument_group(description="Tool Input")
     tool.add_argument('-t',"--factorTypes", dest="ftypes", action='store', 
             required=True, help="Type of factors to run ANOVA")
     tool.add_argument('-in',"--interactions", dest="interactions", action="store_true", 
             required=False, help="Ask for interactions to run ANOVA")
-
+    # Tool output
     output = parser.add_argument_group(description="Output")
     output.add_argument('-o',"--out", dest="oname", action="store", 
             required=True, help="Output file name.")
