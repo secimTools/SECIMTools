@@ -6,13 +6,13 @@ import pandas as pd
 import statsmodels.api as sm
 from matplotlib.backends.backend_pdf import PdfPages
 
-#graphing packages
-import module_box as box
-import module_hist as hist
-import module_lines as lines
-import module_scatter as scatter
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Plotting packages
+from visualManager import module_box as box
+from visualManager import module_hist as hist
+from visualManager import module_lines as lines
+from visualManager import module_scatter as scatter
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def qqPlot(tresid, tfit, oname):
     """ 
