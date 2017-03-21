@@ -2,9 +2,9 @@
 ################################################################################
 # DATE: 2017/03/09
 #
-# SCRIPT: summarizeFlags.py
+# SCRIPT: summarize_flags.py
 # 
-# AUTHOR: Miguel Ibarra Arellano (miguelib@ufl.edu)
+# AUTHOR: Miguel A. Ibarra-Arellano (miguelib@ufl.edu)
 # 
 # DESCRIPTION: This script takes a f;ag format file (wide), a flag file and a 
 # unique ID for that file.  And its going to create a summary of the flags 
@@ -21,20 +21,19 @@
 #               them. (Per Row)
 #
 ################################################################################
-
-#Standard Libraries
+# Import built-in libraries
 import os
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
-#Add-on Libraries
+# Import add-on libraries
 import pandas as pd
 
-#Local Libraries
-import logger as sl
-from flags import Flags
-from interface import wideToDesign
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
@@ -50,7 +49,7 @@ def getOptions():
     required.add_argument('-id',"--ID",dest="uniqID",action="store",
                         required=True,help="Name of the column with unique "\
                         "identifiers.")
-    # Outptu
+    # Tool output
     output = parser.add_argument_group(title="Output", description="Output of "\
                                         "the script.")
     output.add_argument('-os',"--outSummary",dest="outSummary",action="store",
