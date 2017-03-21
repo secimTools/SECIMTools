@@ -20,7 +20,7 @@ from anovaModules.getModelResultsByGroup import getModelResultsByGroup
 
 def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
     """
-    Core for processing all the data.
+    Core for processing all the ANOVA data.
 
     :Arguments:
         :type dat: wideToDesign object.

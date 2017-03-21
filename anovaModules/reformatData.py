@@ -2,6 +2,9 @@
 import pandas as pd
 
 def reformatData(df, feat, hasCombinations=True):
+    """
+    Reformats data from stacked data to pandas dataframes.
+    """
     # Initializing variables
     new_data  = list()
     new_index = list()
