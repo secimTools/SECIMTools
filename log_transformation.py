@@ -1,19 +1,31 @@
 #!/usr/bin/env python
-
-# Built-in packages
+################################################################################
+# DATE: 2017/03/21
+#
+# SCRIPT: log_transformation.py
+#
+# VERSION: 2.2
+# 
+# AUTHOR: Coded by: Miguel A Ibarra (miguelib@ufl.edu) 
+#         Edited by: Matt Thoburn (mthoburn@ufl.edu)
+#         Last review  by: Miguel A Ibarra (miguelib@ufl.edu) 
+# 
+# DESCRIPTION: This script log transforms the data.
+#
+################################################################################
+# Impot built-in libraries
 import os
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Impot add-on libraries
 import numpy as np
 import pandas as pd
 
-# Local Packages
-from interface import wideToDesign
-import logger as sl
-
+# Impot local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 def getOptions():
     """ Function to pull in arguments """
@@ -37,7 +49,9 @@ def getOptions():
     args = parser.parse_args()
 
     # Standatdize paths
-    args.oname = os.path.abspath(args.oname)
+    args.oname  = os.path.abspath(args.oname)
+    args.input  = os.path.abspath(args.input)
+    args.design = os.path.abspath(args.design)
 
     return(args)
 
