@@ -13,29 +13,30 @@
 #               comparison at level of combinations and features.
 #
 ################################################################################
-
-#Standard Libraries
+# Import built-in libraries
 import argparse
 import os
 import logging
 import itertools
 
-#AddOn Libraries
+# Import add-on libraries
 import pandas as pd
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
-#Local Libraries
-import interface
-import logger as sl
-import module_venn as mVenn
+# Import local data libraries
+from dataManager import interface
+from dataManager import logger as sl
+
+# Import local plotting libraries
+from visualManager import module_venn as mVenn
 
 #Getting all the arguments
 def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="""Matches rows (features) in 2
                                      files by their m/z and RT values""")
-    # Input
+    # Required Input
     required = parser.add_argument_group(title='Required Input', 
                                     description='Required input to the program')
     required.add_argument('-a1',"--anno1",dest="anno1", action="store",
@@ -60,7 +61,7 @@ def getOptions():
     required.add_argument("-rt2","--rtID2",dest="rtID2",action="store",
                         required=True,default = "RT",help="""Name of the column
                          in file2 that contains RT""")
-    # Output
+    # Tool Output
     output = parser.add_argument_group(title='Output files', 
                                     description='Output paths for the program')
     output.add_argument('-a', "--all",  dest="all", action='store',
@@ -76,7 +77,7 @@ def getOptions():
     output.add_argument('-fig',"--figure", dest="figure", action='store',
                         required=True,help="""Out path for Matched vs Unmatched 
                         Combinations Venn Diagram File""")
-    # Tool input
+    # Tool Input
     tool = parser.add_argument_group(title="Tool Input", 
                         description="Tool Especific Input")
     tool.add_argument('-mz',"--mzcut",dest="mzcut",action='store',
