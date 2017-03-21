@@ -14,11 +14,10 @@
 #   component analysis (PCA) on it.
 #
 ################################################################################
-
-#Future imports
+# Import future libraries
 from __future__ import division
 
-# Built-in packages
+# Import built-in libraries
 import os
 import math
 import logging
@@ -26,7 +25,7 @@ import argparse
 from itertools import combinations
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 import numpy as np
 import pandas as pd
@@ -35,12 +34,14 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local Packages
-import logger as sl
-import module_scatter as scatter
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
+
+# Import local plotting libraries
+from visualManager import module_scatter as scatter
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions(myopts=None):
     """ Function to pull in arguments """
@@ -50,6 +51,7 @@ def getOptions(myopts=None):
     """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
+    # Standard Input
     standard = parser.add_argument_group(title='Standard input', 
                                 description='Standard input for SECIM tools.')
     standard.add_argument( "-i","--input", dest="input", action='store', 
@@ -65,7 +67,7 @@ def getOptions(myopts=None):
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                         " sort by separeted by commas.")
-
+    # Tool output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-lo","--load_out",dest="load_out",action='store',
                         required=True, help="Name of output file to store "\
@@ -79,7 +81,7 @@ def getOptions(myopts=None):
     output.add_argument("-f","--figure",dest="figure",action="store",
                         required=True, help="Name of output file to store"\
                         "scatter plots for 3 principal components.")
-
+    # Plot options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
