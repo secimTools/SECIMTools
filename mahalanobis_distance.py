@@ -12,13 +12,12 @@
 #               comparison for a given dataset.
 #
 ################################################################################
-
-# Built-in packages
+# Import built-in libraries
 import os
 import logging
 import argparse
 
-# Add-on packages
+# Import add-on libraries
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
@@ -27,15 +26,17 @@ import matplotlib.pyplot as plt
 from sklearn.neighbors import DistanceMetric
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local packages
+# Import local data libraries
+from interface import wideToDesign
+from manager_color import colorHandler
+from manager_figure import figureHandler
+
+# Import local plotting libraries
 import logger as sl
 import module_box as box
 import manager_color as ch
 import module_lines as lines
 import  module_scatter as  scatter
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
@@ -43,7 +44,7 @@ def getOptions():
 
     parser = argparse.ArgumentParser(description=description, formatter_class=
                                     argparse.RawDescriptionHelpFormatter)
-
+    # Standard Input
     standard = parser.add_argument_group(description="Required Input")
     standard.add_argument("-i","--input", dest="input", action='store',
                         required=True, help="Dataset in Wide format")
@@ -57,7 +58,7 @@ def getOptions():
                         default=False,help="Run Order")
     standard.add_argument("-l","--levels",dest="levels",action="store",
                         default=False,help="Additional notes.")
-
+    # Tool Output
     output = parser.add_argument_group(description="Output Files")
     output.add_argument("-f", "--figure", dest="figure", action='store', 
                         required=True, help="PDF Output of standardized"\
@@ -68,7 +69,7 @@ def getOptions():
     output.add_argument("-pw","--distancePairwise", dest="pairwise", action='store', 
                         required=True, help="TSV Output of sample-pairwise"\
                         "mahalanobis distances.")
-
+    # Tool Input
     tool = parser.add_argument_group(description="Optional Input")
     tool.add_argument("-p","--per", dest="p", action='store', required=False, 
                         default=0.95, type=float, help="The percentile cutoff" \
@@ -78,14 +79,13 @@ def getOptions():
                         " of lambda for the penalty.")
     tool.add_argument("-lg","--log",dest="log",action="store",required=False, 
                         default=True,help="Log file")
-
+    # Tool options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
-
     args = parser.parse_args()
 
     # Standardize paths

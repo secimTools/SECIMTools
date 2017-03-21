@@ -12,13 +12,12 @@
 #               comparison for a given dataset.
 #
 ################################################################################
-
-# Built-in packages
+# Import built-in libraries
 import os
 import logging
 import argparse
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
@@ -29,15 +28,17 @@ import matplotlib.pyplot as plt
 from sklearn.neighbors import DistanceMetric
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local packages
+# Import local data libraries
+from interface import wideToDesign
+from manager_color import colorHandler
+from manager_figure import figureHandler
+
+# Import local plotting libraries
 import logger as sl
 import module_box as box
 import manager_color as ch
 import module_lines as lines
 import  module_scatter as  scatter
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
@@ -60,7 +61,7 @@ def getOptions():
 
     parser = argparse.ArgumentParser(description=description, formatter_class=
                                     argparse.RawDescriptionHelpFormatter)
-    # Output standar
+    # Standard Input
     standard = parser.add_argument_group(description="Standard Input")
     standard.add_argument("-i","--input", dest="input", action='store',required=True,
                          help="Dataset in Wide format")
@@ -75,7 +76,7 @@ def getOptions():
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                         " sort by separeted by comas.")
-    # Output options
+    # Tool Output
     output = parser.add_argument_group(description="Output Files")
     output.add_argument("-f", "--figure", dest="figure", action='store', 
                         required=True, help="PDF Output of standardized "\
@@ -86,7 +87,7 @@ def getOptions():
     output.add_argument("-pw","--SEDpairwise", dest="pairwise", action='store', 
                         required=True, help="TSV Output of sample-pairwise "
                         "standardized Euclidean distances.")
-    # Tool options
+    # Tool Input
     tool = parser.add_argument_group(description="Tool Input")
     tool.add_argument("-p","--per", dest="p", action='store', required=False, 
                         default=0.95, type=float, help="The percentile cutoff "
