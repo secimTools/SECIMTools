@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/May/06, rev: 2016/June/03
+# DATE: 2017/03/21
 #
-# SCRIPT: pca.py
+# SCRIPT: partial_least_sqiares.py
 #
-# VERSION: 1.1
+# VERSION: 1.2
 # 
 # AUTHOR: Miguel A Ibarra (miguelib@ufl.edu) Edited by: Matt Thoburn (mthoburn@ufl.edu)
 # 
-# DESCRIPTION: This script takes a a wide format file and makes a principal 
-#   component analysis (PCA) on it.
+# DESCRIPTION: This script takes a a wide format file and makes a partial
+#               least squares analysis.
 #
 ################################################################################
-
-#Future imports
+# Import future libraries
 from __future__ import division
 
-# Built-in packages
+# Import built-in libraries
 import os
 import math
 import logging
@@ -24,7 +23,7 @@ import argparse
 import itertools
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 import numpy as np
 import pandas as pd
@@ -33,12 +32,14 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.cross_decomposition import PLSRegression
 
-# Local Packages
-import logger as sl
-import module_scatter as scatter
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
+
+# Import local plotting libraries
+from visualManager import module_scatter as scatter
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions(myopts=None):
     """ Function to pull in arguments """
@@ -48,8 +49,9 @@ def getOptions(myopts=None):
     """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
+    # Standard Input
     standard = parser.add_argument_group(title='Standard input', 
-                                description='Standard input for SECIM tools.')
+                        description='Standard input for SECIM tools.')
     standard.add_argument( "-i","--input", dest="input", action='store', 
                         required=True, help="Input dataset in wide format.")
     standard.add_argument("-d" ,"--design",dest="design", action='store', 
@@ -63,7 +65,7 @@ def getOptions(myopts=None):
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                         " sort by separeted by commas.")
-
+    # Tool Input
     tool = parser.add_argument_group(title='Tool specific input', 
                                 description='Input specific for this tool.')
     tool.add_argument("-t", "--toCompare",dest="toCompare", action='store', 
@@ -72,7 +74,7 @@ def getOptions(myopts=None):
     tool.add_argument("-n", "--nComp",dest="nComp", action='store', 
                         required=False,  default=3, type = int, help="Number"\
                         " of components.")
-
+    # Tool output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-os","--outScores",dest="outScores",action='store',required=True, 
                         help="Name of output file to store loadings. TSV format.")
@@ -80,20 +82,22 @@ def getOptions(myopts=None):
                         help="Name of output file to store weights. TSV format.")
     output.add_argument("-f","--figure",dest="figure",action="store",required=False,
                         help="Name of output file to store scatter plots for scores")
-
+    # Plot Options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
-
+    # Development Options
     development = parser.add_argument_group(title='Development Settings')
     development.add_argument("--debug",dest="debug",action='store_true',
                         required=False,help="Add debugging log output.")
     args = parser.parse_args()
 
     # Standardize Paths
+    args.input      = os.path.abspath(args.input)
+    args.design     = os.path.abspath(args.design)
     args.figure     = os.path.abspath(args.figure)
     args.outScores  = os.path.abspath(args.outScores)
     args.outWeights = os.path.abspath(args.outWeights)

@@ -2,7 +2,7 @@
 ################################################################################
 # DATE: 2017/03/08
 # 
-# MODULE: adjustPval.py
+# MODULE: multiple_testing_adjustment.py
 #
 # VERSION: 1.1
 # 
@@ -11,28 +11,26 @@
 # DESCRIPTION: Adjust pvalues. 
 #
 ################################################################################
-
-#Standard Libraries
+# Import built-in libraries
 import os
 import logging
 import argparse
 
-#AddOn Libraries
+# Import add-on libraries
 import numpy as np
 import pandas as pd
 import statsmodels.sandbox.stats.multicomp as stm
 
-# Local Packages
-import logger as sl
-from flags import Flags
-from interface import wideToDesign
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
                                     " dataset and calculates the LOD on it ")
-
-    #Standar input for SECIMtools
+    # Standar Input
     standar = parser.add_argument_group(title='Standard input', 
                         description='Standard input for SECIM tools.')
     standar.add_argument("-i","--input",dest="input", action='store', 
@@ -40,16 +38,14 @@ def getOptions():
     standar.add_argument("-id","--uniqID",dest="uniqID",action="store",
                         required=True, help="Name of the column with unique" \
                         "dentifiers.")
-
-    # tool input
+    # Tool Input
     tool = parser.add_argument_group(title='Tool input', 
                         description='Specific input for the tool.')
     tool.add_argument("-pv","--pval",dest="pval",action="store",
                         required=True, help="Name of the column with p-value.")
     tool.add_argument("-a","--alpha",dest="alpha",action="store",type=float,
                         required=False,default=0.05, help="Alpha value.")
-
-    #Output Paths
+    # Tool Output
     output = parser.add_argument_group(title='Output paths', 
                         description="Paths for the output files")
     output.add_argument("-on","--outadjusted",dest="outadjusted",action="store",
