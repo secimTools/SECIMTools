@@ -11,7 +11,7 @@
 # The output is a pdf of distributions, and a spreadsheet of flags
 #
 ################################################################################
-# Built-in packages
+# Import built in libraries
 import os
 import shutil
 import logging
@@ -20,7 +20,7 @@ import tempfile
 from math import log, floor
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
@@ -28,15 +28,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local packages
-from flags import Flags
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
-import logger as sl
-import module_hist as hist
-import module_lines as lines
-import module_distribution as dist
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
+
+# Import local plotting libraries
+from visualManager import module_bar as bar
+from visualManager import module_box as box
+from visualManager import module_hist as hist
+from visualManager import module_lines as lines
+from visualManager import module_scatter as scatter
+from visualManager import module_distribution as dist
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions(myopts=None):
     """Function to pull in arguments"""
@@ -51,7 +56,7 @@ def getOptions(myopts=None):
     
     parser=argparse.ArgumentParser(description=description, 
                                 formatter_class=RawDescriptionHelpFormatter)
-
+    # Standard Input
     standard = parser.add_argument_group(title="Standard input", 
                                 description="Standard input for SECIM tools.")
     standard.add_argument("-i","--input", dest="input", action="store", 
@@ -66,7 +71,7 @@ def getOptions(myopts=None):
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                         "sort by separeted by commas.")
-
+    # Tool Input
     tool = parser.add_argument_group(title="Tool specific input", 
                                 description="Input specific for the tool.")
     tool.add_argument("-c","--CVcutoff", dest="CVcutoff", action="store", 
@@ -74,7 +79,7 @@ def getOptions(myopts=None):
                         help="The default CV cutoff will flag 10 percent of "\
                         "the rowIDs with larger CVs. If you want to set a CV "\
                         "cutoff, put the number here. [optional]")
-
+    # Tool output
     output = parser.add_argument_group(title="Output", 
                             description="Paths for output files.")
     output.add_argument("-f","--figure", dest="figure", action="store", 
@@ -83,7 +88,7 @@ def getOptions(myopts=None):
     output.add_argument("-o","--flag", dest="flag", action="store", 
                         required=True, default="RTflag", 
                         help="Name of the output TSV for CV flags.")
-
+    # Plot options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
