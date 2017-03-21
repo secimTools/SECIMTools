@@ -1,21 +1,31 @@
 #!/usr/bin/env python
-
-# Built-in packages
+################################################################################
+# DATE: 2017/03/09
+#
+# SCRIPT: threshold_based_flags.py
+#
+# VERSION: 2.2
+# 
+# AUTHOR: Coded by: Miguel A Ibarra (miguelib@ufl.edu) 
+# 
+# DESCRIPTION: This script flags features based on a given threshold.
+#
+################################################################################
+# Import built-in libraries
 import os
 import logging
 import argparse
 
-# Local packages
-import logger as sl
-from flags import Flags
-from interface import wideToDesign
-
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull in arguments"""
     description = """Flags bhased on treshold"""
     parser = argparse.ArgumentParser(description=description)
-    # Standard input
+    # Standard Input
     standard = parser.add_argument_group(title='Standard input', 
             description='Standard input for SECIM tools.')
     standard.add_argument("-i", "--input", dest="input", action='store', 
@@ -28,14 +38,14 @@ def getOptions():
     standard.add_argument("-g", "--group", dest="group", action='store', 
                         required=True, default=None, help="Add the option to "\
                         "separate sample IDs by treatement name. ")
-    # Tool especific input
+    # Tool Input
     tool = parser.add_argument_group(title='Tool input', 
             description='Tool specific input.')
     tool.add_argument("-c", "--cutoff", dest="cutoff", action='store', 
                         required=False, default=30000, type=int, 
                         help="Cutoff to use for which values to flag. This "\
                         "defaults to 30,000")
-    # Output
+    # Tool Output
     output = parser.add_argument_group(title='Tool output', 
             description='Tool output paths.')
     output.add_argument("-o", "--output", dest="output", action='store', 
