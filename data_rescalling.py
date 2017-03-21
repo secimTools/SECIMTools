@@ -1,36 +1,34 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/October/4
+# DATE: 2017/03/21
 # 
-# MODULE: subsetData.py
+# MODULE: data_rescalling.py
 #
-# VERSION: 1.1
+# VERSION: 1.2
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu) 
 #
 # DESCRIPTION: Normalizes data based on sum, median or mean.
 #
 ################################################################################
-
-#Standard Libraries
+# Import built-in libraries
 import os
 import logging
 import argparse
 
-#AddOn Libraries
+# Import add-on libraries
 import numpy as np
 import pandas as pd
 
-# Local Packages
-import logger as sl
-from interface import wideToDesign
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
                                      "dataset and calculates the LOD on it ")
-
-    #Standar input for SECIMtools
+    # Standar Input
     standar = parser.add_argument_group(title='Standard input', 
                 description='Standard input for SECIM tools.')
     standar.add_argument("-i","--input",dest="input", action='store', 
@@ -40,21 +38,20 @@ def getOptions():
     standar.add_argument("-id","--uniqID",dest="uniqID",action="store",
                         required=True, help="Name of the column with unique" \
                         "dentifiers.")
-
+    # Tool Input
     tool = parser.add_argument_group(title='Tool specific input', 
                 description='Input specific for this tool.')
     tool.add_argument("-m","--method", dest="method", action='store', 
                         required=True, choices=["mean","sum","median"], 
                         help="Name of the groups in your group/treatment column"\
                         " that you want to keep.")
-
-    #Output Paths
+    # Tool output
     output = parser.add_argument_group(title='Output paths', 
                 description="Paths for the output files")
     output.add_argument("-o","--out",dest="out",action="store",
                         required=True,help="Output path for flags file[TSV]")
     args = parser.parse_args()
-
+    
     # Stadardize paths
     args.out    = os.path.abspath(args.out)
     args.input  = os.path.abspath(args.input)

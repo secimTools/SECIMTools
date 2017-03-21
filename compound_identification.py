@@ -24,8 +24,8 @@ import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data ibraries
+from dataManager import interface
 from dataManager import logger as sl
-from dataManager.interface import wideToDesign
 
 #Getting all the arguments
 def getOptions(myopts=False):
