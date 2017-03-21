@@ -22,8 +22,7 @@
 #
 # NOTES: Still needs to be added functionality to select index in flag file.
 ################################################################################
-
-#Standard Libraries
+# Import built-in libraries
 import os
 import re
 import copy
@@ -31,19 +30,19 @@ import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
-#Add-on Libraries
+# Import add-on libraries
 import pandas as pd
 
-#Local Libraries
-import logger as sl
-from interface import wideToDesign
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 
 """Function to pull arguments"""
 def getOptions():
     parser = argparse.ArgumentParser(description="Drops rows or columns given" \
                                     "an specific cut value and condition.")
-    # Standard input
+    # Standard Input
     standard = parser.add_argument_group(title='Required Input', 
                         description="Standard inputs for SECIM tools.")
     standard.add_argument('-i',"--input",dest="input", action="store",
@@ -53,7 +52,7 @@ def getOptions():
     standard.add_argument('-id',"--ID",dest="uniqID",action="store",
                         required=True,help="Name of the column with unique "\
                         "identifiers.")
-    # Tool specific input
+    # Tool Input
     tool = parser.add_argument_group(title="Tool Input", 
                         description="Tool especific input.")
     tool.add_argument('-f',"--flags",dest="flags", action="store",
@@ -72,14 +71,13 @@ def getOptions():
     tool.add_argument('-con',"--condition",dest="condition",action='store',
                         required=False, default="0",help="Condition for the cut" \
                         "where 0=Equal to, 1=Greater than and 2=less than.")
-    # Tool output
+    # Tool Output
     output = parser.add_argument_group(title='Output', 
                         description="Output of the script.")
     output.add_argument('-ow',"--outWide",dest="outWide",action="store",required=True,
                         help="Output file without the Drops.")
     output.add_argument('-of',"--outFlags",dest="outFlags",action="store",
                         required=True,help="Output file for Drops.")
-
     args = parser.parse_args()
 
     # Standardize paths
