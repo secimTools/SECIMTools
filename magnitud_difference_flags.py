@@ -1,27 +1,25 @@
+#!/usr/bin/env python
 ################################################################################
 # DATE: 2016/May/06, rev: 2016/July/11
 #
 # SCRIPT: countDigits.py
 #
-# VERSION: 1.1
+# VERSION: 2.0
 # 
 # AUTHOR: Miguel A Ibarra (miguelib@ufl.edu)
 # 
-# DESCRIPTION: This script takes a a wide format file and counts digits in decimal numbers
-# 
-# The output is an html file containing graphs and data
+# DESCRIPTION: This script takes a a wide format file and counts digits in 
+# decimal numbers.The output is an html file containing graphs and data
 #
 ################################################################################
-#!/usr/bin/env python
-
-# Built-in packages
+# Import built-in libraries
 import os
 import logging
 import zipfile
 import argparse
 from StringIO import StringIO as IO
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 import numpy as np
 matplotlib.use('Agg')
@@ -30,21 +28,22 @@ import matplotlib.pyplot as plt
 import xml.etree.ElementTree as ET
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local Packages
-import logger as sl
-import module_hist as hist
-from flags import Flags
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
 
+# Import local plotting libraries
+from visualManager import module_hist as hist
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions(myopts=None):
     """ Function to pull in arguments """
     description = """ Count the digits in data to determine possible outliers
                       or discrepancies"""
     parser = argparse.ArgumentParser(description=description)
-
+    # Standard input
     standard = parser.add_argument_group(description="Standar input")
     standard.add_argument('-i',"--input", dest="input", action='store', 
                         required=True, help="Input dataset in wide format.")
@@ -55,26 +54,28 @@ def getOptions(myopts=None):
     standard.add_argument('-g',"--group", dest="group", action='store', 
                          required=False, default=False, help="Add the option to "\
                         "separate sample IDs by treatement name. ")
-
+    # Tool input
+    tool = parser.add_argument_group(description="Optional input")
+    tool.add_argument('-nz',"--noZero", dest="zero", action='store_true', 
+                        required=False, help="Flag to ignore zeros.")
+    tool.add_argument('-bug',"--debug", dest="debug", action='store_true', 
+                        required=False, help="Add debugging log output.")
+    tool.add_argument('-ht',"--html", dest="html", action='store', 
+                        required=False, default=None,  help="Path for html"\
+                        " output file (this option is just for galaxy")
+    tool.add_argument('-htp',"--htmlPath", dest="htmlPath", action='store', 
+                        required=False, default=None,  help="Path for html "\
+                        "output file (this option is just for galaxy")
+    # Tool output
     output = parser.add_argument_group(description="Output options")
     output.add_argument("-f","--figure",dest="figure",action="store",
                         required=True,help="Output path for plot file")
     output.add_argument("-fl","--flags",dest="flags",action="store",
                         required=True,help="Output path for flag file")
     output.add_argument("-c","--counts",dest="counts",action="store",
-                        required=True,help="Output path for counts file")
-
-    optional = parser.add_argument_group(description="Optional input")
-    optional.add_argument('-nz',"--noZero", dest="zero", action='store_true', 
-                        required=False, help="Flag to ignore zeros.")
-    optional.add_argument('-bug',"--debug", dest="debug", action='store_true', 
-                        required=False, help="Add debugging log output.")
-    optional.add_argument('-ht',"--html", dest="html", action='store', 
-                        required=False, default=None,  help="Path for html"\
-                        " output file (this option is just for galaxy")
-    optional.add_argument('-htp',"--htmlPath", dest="htmlPath", action='store', 
-                        required=False, default=None,  help="Path for html "\
-                        "output file (this option is just for galaxy")
+                        required=True,help="Output name for counts files"\
+                        "The extension is not requiered its going to be added"\
+                        "automatically for each file.")
     if myopts:
         args = parser.parse_args(myopts)
     else:
@@ -122,13 +123,9 @@ def countDigits(wide):
     # Count the number of digits before decimal and get basic distribution info
     count = wide.applymap(lambda x: splitDigits(x))
 
-    # Calculate min number of digits on the row
+    # Calculate min, max number of digits on the row and the difference
     count["min"] = count.apply(np.min, axis=1)
-
-    # Calculate max numver of digits on the row
     count["max"] = count.apply(np.max, axis=1)
-
-    # Calculate difference between max and min number of digits
     count["diff"] = count["max"] - count["min"]
 
     # Return counts

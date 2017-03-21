@@ -1,25 +1,35 @@
 #!/usr/bin/env python
-
-# Author: Jonathan Poisson | poissonj@ufl.edu
-# Eddited by:  Miguel ibarra | miguelib@ufl.edu
-
-# Built-in packages
+################################################################################
+# DATE: 2016/May/06, rev: 2016/July/11
+#
+# SCRIPT: countDigits.py
+#
+# VERSION: 2.0
+# 
+# AUTHOR: Jonathan Poisson(poissonj@ufl.edu) Miguel A Ibarra (miguelib@ufl.edu)
+# 
+# DESCRIPTION: This merges files containing flas
+#
+################################################################################
+# Import built-in libraries
 import os
 import re
 import logging
 import argparse
 
-# Add-on packages
+# Import add-on libraries
 import pandas as pd
 
-# Local Packages
-import logger as sl
-from flags import Flags
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
 
 
 def getOptions():
     """ Function to pull in arguments """
     parser = argparse.ArgumentParser()
+    # Tool Input
     tool = parser.add_argument_group(title='Tool input')
     tool.add_argument("--input", dest="flagFiles", action='store', 
                         required=True, nargs="+", help="Input any number of "\
@@ -29,7 +39,7 @@ def getOptions():
     tool.add_argument('-fid',"--flagUniqID",dest="flagUniqID",action="store",
                         required=False, default="rowID",help="Name of the column "\
                         "with unique identifiers in the flag files.")
-    # Output
+    # Tool Output
     output = parser.add_argument_group(title='Required output')
     output.add_argument('--output', dest="mergedFile", action='store', 
                         required=True, help="Output file")
