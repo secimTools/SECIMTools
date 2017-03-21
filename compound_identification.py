@@ -12,28 +12,27 @@
 #               and m/z.
 #
 #######################################################################################
-
-#Standard Libraries
+# Import built-in libraries
 import os
 import logging
 import argparse
 import itertools
 
-#AddOn Libraries
+# Import add-on libraries
 import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
-#Local Libraries
-import interface
-import logger as sl
+# Import local data ibraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 #Getting all the arguments
 def getOptions(myopts=False):
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="""
     identifies compounds based on a library file""")
-    
+    # Requiered Input
     required = parser.add_argument_group(title='Required Input', 
                                     description='Required input to the program')
     required.add_argument('-a', "--anno", dest="anno", action="store",
@@ -59,7 +58,7 @@ def getOptions(myopts=False):
     required.add_argument("-lrti", "--librtID", dest="librt", action="store",
                         required=True, default="", help="Name of the column"\
                         " in the library file that contains RT")
-
+    # Tool output
     output = parser.add_argument_group(title='Output files', 
                                     description='Output paths for the program')
     output.add_argument('-o', "--output",  dest="output", action='store',
