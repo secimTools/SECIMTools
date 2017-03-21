@@ -10,33 +10,29 @@
 # DESCRIPTION: This attempts to impute missing data by an algorithm of the user's choice
 #
 #######################################################################################
-# Import built-in packages
+# Import built-in libraries
 import os
 import sys
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
-#R
+# Import add-on libraries
+import numpy as np
+import pandas as pd
+import pymc
+from pymc import MCMC
+from pymc.distributions import Impute
+from pymc import Poisson, Normal, DiscreteUniform
 import rpy2
 import rpy2.robjects.numpy2ri
 import rpy2.robjects as robjects
 from rpy2.robjects.packages import importr
 from rpy2.robjects.vectors import StrVector
 
-#Add Ons
-import numpy as np
-import pandas as pd
-
-#Bayesian PYMC
-import pymc
-from pymc import MCMC
-from pymc.distributions import Impute
-from pymc import Poisson, Normal, DiscreteUniform
-
-#Local packages
-import logger as sl
-from interface import wideToDesign
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 def getOptions(myOpts = None):
     description="""  
@@ -44,7 +40,7 @@ def getOptions(myOpts = None):
     """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
-    # Standard SECIM input
+    # Standard Input
     standard = parser.add_argument_group(title='Standard input', 
                         description='Standard input for SECIM tools.')
     standard.add_argument( "-i","--input", dest="input", action='store', required=True, 
@@ -55,11 +51,11 @@ def getOptions(myOpts = None):
                         help="Name of the column with unique identifiers.")
     standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
                         default=False,help="Name of the column with groups.")
-    # Output
+    # Tool Output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-o","--output",dest="output",action="store",required=False,
                         help="Path of output file.")
-    # Tool
+    # Tool Input
     tool = parser.add_argument_group(title='Tool input',
                         description="Tool specific input.")
     tool.add_argument("-s","--strategy", dest="strategy", action="store", 
@@ -81,7 +77,7 @@ def getOptions(myOpts = None):
                         default="poisson", choices =  ["Poisson","Normal"],
                         help="use mean or median to generate mu value for "\
                         "bayesian imputation")
-    # KNN especific
+    # KNN Input
     knn = parser.add_argument_group(title='KNN input')
     knn.add_argument("-k","--knn",dest="knn",action='store', required=False,
                         default=5,help="Number of nearest neighbors to search Default: 5.")

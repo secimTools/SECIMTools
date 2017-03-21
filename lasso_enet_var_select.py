@@ -1,7 +1,7 @@
 ################################################################################
 # DATE: 2017/03/10
 # 
-# MODULE: lass_enet_var_select.py
+# MODULE: lasso_enet_var_select.py
 #
 # VERSION: 1.1
 # 
@@ -10,7 +10,7 @@
 # DESCRIPTION: This runs an Elastic Net or Lasso Test on wide data
 #
 ################################################################################
-#Built in packages
+# Import built-in libraries
 import os
 import sys
 import logging
@@ -18,7 +18,7 @@ import argparse
 import itertools as it
 from argparse import RawDescriptionHelpFormatter
 
-#R
+# Import add-on libraries
 import rpy2
 import rpy2.robjects.numpy2ri
 import rpy2.robjects as robjects
@@ -26,17 +26,13 @@ from rpy2.robjects import pandas2ri
 from rpy2.robjects.packages import importr
 from rpy2.robjects.vectors import StrVector
 from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
-
-#Local packages
-import logger as sl
-from interface import wideToDesign
-
-# External Packages
 import pandas
 import numpy as np
 from numpy import genfromtxt
 
-
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 def getOptions(myOpts=None):
     description="""  
@@ -44,7 +40,7 @@ def getOptions(myOpts=None):
     """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
-    # Standard input
+    # Standard Input
     standard = parser.add_argument_group(title='Standard input', 
                                 description='Standard input for SECIM tools.')
     standard.add_argument( "-i","--input", dest="input", action='store', 
@@ -57,11 +53,11 @@ def getOptions(myOpts=None):
     standard.add_argument("-g", "--group", dest="group", action='store', 
                         required=False, default=False, help="Name of the column"\
                         " with groups.")
-    # Tool especific
+    # Tool Input
     tool = parser.add_argument_group(title='Tool Especific')
     tool.add_argument("-a", "--alpha", dest="alpha", action="store",
                         required=True, help="Alpha Value.")
-    # Output
+    # Tool Output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-c", "--coefficients", dest="coefficients", 
                         action="store", required=False, help="Path of en"\
