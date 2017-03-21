@@ -27,16 +27,17 @@ from sklearn.neighbors import DistanceMetric
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data libraries
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 # Import local plotting libraries
-import logger as sl
-import module_box as box
-import manager_color as ch
-import module_lines as lines
-import  module_scatter as  scatter
+from visualManager import module_box as box
+from visualManager import module_lines as lines
+from visualManager import module_scatter as scatter
+from visualManager import module_distribution as density
+from visualManager import manager_color as ch
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
@@ -58,7 +59,7 @@ def getOptions():
                         default=False,help="Run Order")
     standard.add_argument("-l","--levels",dest="levels",action="store",
                         default=False,help="Additional notes.")
-    # Tool Output
+    # Tool output
     output = parser.add_argument_group(description="Output Files")
     output.add_argument("-f", "--figure", dest="figure", action='store', 
                         required=True, help="PDF Output of standardized"\
@@ -79,7 +80,7 @@ def getOptions():
                         " of lambda for the penalty.")
     tool.add_argument("-lg","--log",dest="log",action="store",required=False, 
                         default=True,help="Log file")
-    # Tool options
+    # Plot options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
@@ -431,7 +432,7 @@ def main(args):
         for toMean, pairwise in zip(toMean_disCuts,pairwise_disCuts):
             # Making plots
             plotDistances(df_distance=toMean[0], palette=dataPalette, p=args.p,
-                            plotType="Scatterplot",disType"=Mahalanobis", 
+                            plotType="Scatterplot", disType="Mahalanobis",
                             cutoff=toMean[1], pdf=pdf)
             plotDistances(df_distance=pairwise[0], palette=dataPalette, p=args.p,
                             plotType="Scatterplot", disType="Mahalanobis", 

@@ -29,16 +29,16 @@ from sklearn.neighbors import DistanceMetric
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data libraries
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 # Import local plotting libraries
-import logger as sl
-import module_box as box
-import manager_color as ch
-import module_lines as lines
-import  module_scatter as  scatter
+from visualManager import module_box as box
+from visualManager import manager_color as ch
+from visualManager import module_lines as lines
+from visualManager import module_scatter as scatter
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
@@ -92,7 +92,7 @@ def getOptions():
     tool.add_argument("-p","--per", dest="p", action='store', required=False, 
                         default=0.95, type=float, help="The percentile cutoff "
                         "for standard distributions. The default is 0.95.")
-    # Plot options
+    # Plot Options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
