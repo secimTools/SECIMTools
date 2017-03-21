@@ -12,25 +12,26 @@
 #               forest analysis.
 #
 ################################################################################
-
-# Built-in packages
+# Import built-in libraries
 import os
 import logging
 import argparse
 import warnings
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local Packages
-import logger as sl
-from module_bar import quickHBar
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
+
+# Import local plotting libraries
+from visualManager.module_bar import quickHBar
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 
 def getOptions(myopts=None):
@@ -38,9 +39,9 @@ def getOptions(myopts=None):
     description = """ Random Forest """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
-
+    # Standard Input
     standard = parser.add_argument_group(title='Standard input', 
-                                description='Standard input for SECIM tools.')
+                        description='Standard input for SECIM tools.')
     standard.add_argument("-i", "--input", dest="input", action='store', 
                         required=True, help="Input dataset in wide format.")
     standard.add_argument("-d", "--design", dest="design", action='store', 
@@ -54,15 +55,15 @@ def getOptions(myopts=None):
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                         " sort by separeted by commas.")
-
-    optional = parser.add_argument_group(title='Tool specific input', 
+    # Tool Input
+    tool = parser.add_argument_group(title='Tool specific input', 
                             description='Optional/Specific input for the tool.')
-    optional.add_argument("-s","--snum", dest="snum", action='store', type=int, 
+    tool.add_argument("-s","--snum", dest="snum", action='store', type=int, 
                         required=False,default=1000,help="Number of estimators.")
-    optional.add_argument("-n","--num", dest="num", action='store', type=int, 
+    tool.add_argument("-n","--num", dest="num", action='store', type=int, 
                         required=False,default=20,help="Number of varibles to"\
                         "plot ont Variable Importance Plot")
-
+    # Tool Output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-o","--out", dest="oname", action='store', 
                         required=True, help="Output file name.")
@@ -71,7 +72,7 @@ def getOptions(myopts=None):
     output.add_argument("-f","--figure",dest="figure",action="store",
                         required=False,help="Name of output file to store "\
                         "feature importance plots for the model")
-
+    # Plot Options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="sequential", help="Name of the palette to use.")
@@ -81,7 +82,9 @@ def getOptions(myopts=None):
     args = parser.parse_args()
 
     # Standardize paths
+    args.input  = os.path.abspath(args.input)
     args.oname  = os.path.abspath(args.oname)
+    args.design = os.path.abspath(args.design)
     args.oname2 = os.path.abspath(args.oname2)
     args.figure = os.path.abspath(args.figure)
 

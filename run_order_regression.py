@@ -13,15 +13,14 @@
 #              regression on it.
 #
 ################################################################################
-
-# Built-in packages
+# Import built-in libraries
 from __future__ import division
 import os
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 import numpy as np
 import pandas as pd
@@ -31,24 +30,25 @@ import statsmodels.formula.api as smf
 from matplotlib.backends.backend_pdf import PdfPages
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
-# Local Packages
-import logger as sl
-from flags import Flags
-from interface import wideToDesign
+# Import local libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
 
-# Local plotting modules
-import module_lines as lines
-import module_scatter as scatter
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Import local plotting libraries
+from visualManager import module_lines as lines
+from visualManager import module_scatter as scatter
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
     description = """ """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
+    # Standard Input
     standard = parser.add_argument_group(title="Standard input", 
-                                    description="Standard input for SECIM tools.")
+                        description="Standard input for SECIM tools.")
     standard.add_argument("-i","--input", dest="input", action="store", 
                         required=True, help="Input dataset in wide format.")
     standard.add_argument("-d","--design", dest="design", action="store",
@@ -63,7 +63,7 @@ def getOptions():
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                         " sort by separeted by commas.")
-
+    # Tool Output
     output = parser.add_argument_group(title="Required Output")
     output.add_argument("-f","--fig", dest="figure", action="store", 
                         required=True, help="Name of PDF to save scatter plots.")
@@ -71,11 +71,11 @@ def getOptions():
                         required=True, help="Name of table for scatter plots")
     output.add_argument("-fl","--flags", dest="flags", action="store", 
                         required=True, help="Name of table flags")
-
+    # Dev Options
     dev = parser.add_argument_group(title="Development Settings")
     dev.add_argument("-dg","--debug", dest="debug", action="store_true", 
                         required=False, help="Add debugging log output.")
-
+    # Plot Options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',
                     required=False, default="tableau", help="Name of the "\
@@ -86,9 +86,11 @@ def getOptions():
     args = parser.parse_args()
 
     # Standardize paths
+    args.input  = os.path.abspath(args.input)
     args.table  = os.path.abspath(args.table)
     args.flags  = os.path.abspath(args.flags)
     args.figure = os.path.abspath(args.figure)
+    args.design = os.path.abspath(args.design)
 
     # Split levels if levels
     if args.levels:

@@ -14,8 +14,7 @@
 #    of retention times to detect whether the compound is consistent
 #
 ################################################################################
-
-# Built-in packages
+# Import built-in libraries
 import os
 import shutil
 import logging
@@ -25,7 +24,7 @@ import warnings
 from math import log, floor
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
@@ -33,17 +32,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local packages
-import logger as sl
-from flags import Flags
-from interface import wideToDesign
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.flags import Flags
+from dataManager.interface import wideToDesign
 
-# Plotting packages
-import module_hist as hist
-import module_lines as lines
-import module_distribution as dist
-from manager_figure import figureHandler
-from manager_color import colorHandler
+# Import local plotting libraries
+from visualManager import module_hist as hist
+from visualManager import module_lines as lines
+from visualManager import module_distribution as dist
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 
 def getOptions(myopts=None):
@@ -76,16 +75,16 @@ def getOptions(myopts=None):
 
     parser=argparse.ArgumentParser(description=description, 
                                 formatter_class=RawDescriptionHelpFormatter)
-
+    # Standard Input
     standard=parser.add_argument_group(title='Standard input', 
-                                description='Standard input for SECIM tools.')
+                        description='Standard input for SECIM tools.')
     standard.add_argument('-i',"--input", dest="input", action='store', 
                         required=True, help="Input dataset in wide format.")
     standard.add_argument('-d',"--design", dest="design", action='store', 
                         required=True, help="Design file.")
     standard.add_argument('-id',"--ID",dest="uniqID",action='store',required=True,
                         help="Name of the column with unique identifiers.")
-
+    # Tool Input
     tool=parser.add_argument_group(title='Tool Input',
                                 description='Input specific for the tool.')
     tool.add_argument('-m',"--minutes",dest="minutes",action='store', 
@@ -101,7 +100,7 @@ def getOptions(myopts=None):
                         help="""The default CV cutoff will flag 10 percent of 
                         the rowIDs with larger CVs. If you want to set a CV 
                         cutoff, put the number here. [optional]""")
-
+    # Tool Output
     output=parser.add_argument_group(title='Output',
                                 description='Output parameters.')
     output.add_argument('-f',"--figure",dest="figure",action='store', 
@@ -110,7 +109,7 @@ def getOptions(myopts=None):
     output.add_argument('-fl',"--flag",dest="flag",action='store',
                         required=True,default='flag', 
                         help="Name of the output PDF for RT flags.")
-
+    # Plot Options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="qualitative", help="Name of the palette to use.")
@@ -124,8 +123,10 @@ def getOptions(myopts=None):
         args=parser.parse_args()
 
     # Standardize paths
-    args.figure = os.path.abspath(args.figure)
     args.flag   = os.path.abspath(args.flag)
+    args.input  = os.path.abspath(args.input)
+    args.design = os.path.abspath(args.design)
+    args.figure = os.path.abspath(args.figure)
 
     return(args)
 
