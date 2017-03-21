@@ -13,28 +13,28 @@
 #              datset
 #
 ################################################################################
-
-# Built-in packages
+# Import built-in libraries
 import os
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local Packages
-import logger as sl
-import module_box as box
-import module_distribution as density
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
+
+# Import local plotting libraries
+from visualManager import module_box as box
+from visualManager import module_distribution as density
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
@@ -43,6 +43,7 @@ def getOptions():
                                     formatter_class=RawDescriptionHelpFormatter)
     standard = parser.add_argument_group(title="Standar input", 
         description="Standar input for SECIM tools.")
+    # Standard Input
     standard.add_argument("-i","--input", dest="input", action='store', 
                         required=True, help="Input dataset in wide format.")
     standard.add_argument("-d","--design", dest="design", action='store', 
@@ -58,13 +59,12 @@ def getOptions():
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                          "sort by separeted by commas.")
-
+    # Tool Output
     output = parser.add_argument_group(title="Output paths", description="""Paths 
                                         and outputs""")
     output.add_argument("-f","--figure",dest="figure",action="store",required=True,
                         help="Path for the distribution figure")
-
-
+    # Plot options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
@@ -74,6 +74,8 @@ def getOptions():
     args = parser.parse_args()
 
     # Standardize paths
+    args.input  = os.path.abspath(args.input)
+    args.design = os.path.abspath(args.design)
     args.figure = os.path.abspath(args.figure)
 
     # if args.levels then split otherwise args.level = emptylist
