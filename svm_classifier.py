@@ -1,18 +1,31 @@
-# Built-in packages
+#!/usr/bin/env python
+################################################################################
+# DATE: 2017/03/09
+#
+# SCRIPT: svm_classifier.py
+#
+# VERSION: 2.0
+# 
+# AUTHOR: Coded by: Miguel A Ibarra (miguelib@ufl.edu) 
+# 
+# DESCRIPTION: This script flags features based on a given threshold.
+#
+################################################################################
+# Import built-in libraries
 import os, sys
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import numpy as np
 from pandas import DataFrame as DF
 from pandas import read_csv, read_table
 from sklearn import svm
 
-# Local packages
-import logger as sl
-from interface import wideToDesign
+# Import local libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 def getOptions(myOpts=None):
     parser = argparse.ArgumentParser( formatter_class=RawDescriptionHelpFormatter)
@@ -48,7 +61,7 @@ def getOptions(myOpts=None):
                         help=" positive coefficient in kernel function.")
     tool.add_argument('-b',"--b", dest="b", action='store', required=True, 
                         help=" independent term coefficient in kernel function.")
-    # Output 
+    # Tool Output 
     output = parser.add_argument_group(description="Output Paths")
     output.add_argument('-o',"--outfile1", dest="outfile1", action='store', 
                         required=True, help="Output traget set with "\
