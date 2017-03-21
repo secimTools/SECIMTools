@@ -20,31 +20,37 @@
 # The output is a heatmap that describes the wide dataset.
 ################################################################################
 
-#Standar Libraries
+# Import built-in libraries
 import os
 import argparse
 import logging
 
-#AddOn Libraries
-#import matplotlib
-#matplotlib.use('Agg')
+# Import add-on libraries
+import matplotlib
+matplotlib.use('Agg')
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local Packages
-import logger as sl
-import module_heatmap as hm
-from interface import wideToDesign
-from manager_color import colorHandler
-from  manager_figure import figureHandler
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
+
+# Import local plotting libraries
+from visualManager import module_box as box
+from visualManager import module_hist as hist
+from visualManager import module_heatmap as hm
+from visualManager import module_lines as lines
+from visualManager import module_scatter as scatter
+from visualManager import module_distribution as density
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
 
 #Import data
 def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="""
     Takes a wide and design file and plots a heatmap of the data """)
-
-    #Standar input for SECIMtools
+    # Standar Input
     standar = parser.add_argument_group(title="Standard input", 
                         description="Standard input for SECIM tools.")
     standar.add_argument("-i","--input",dest="input", action='store', 
@@ -54,8 +60,7 @@ def getOptions():
     standar.add_argument("-id","--uniqID",dest="uniqID",action="store",
                         required=True, help="Name of the column with unique "\
                         "dentifiers.")
-
-    #Optional Input
+    # Tool Input
     tool = parser.add_argument_group(title='Tool input', 
                         description="Input specific for this tool")
     tool.add_argument("-den", "--dendogram", dest="dendogram", action='store_true', 
@@ -64,14 +69,12 @@ def getOptions():
     tool.add_argument("-l", "--labels", dest="labels", action='store', default="None",
                          required=False, choices=["x","y","x,y","None"], help="Indicate wich"\
                          "labels if any that you want to remove from the plot.")
-
-    #Output Paths
+    # Tool Output
     output = parser.add_argument_group(title='Output paths', 
                         description="Paths for the output files")
     output.add_argument("-f","--fig",dest="fig",action="store",
                         required=True,help="Output path for heatmap file[PDF]")
-
-    # Plotting options
+    # Plot Options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="diverging", help="Name of the palette to use.")
@@ -91,9 +94,6 @@ def main(args):
     """Runs eveything"""
     # Importing data
     dat = wideToDesign(args.input, args.design, args.uniqID, logger=logger)
-
-    # dat.wide.convert_objects(convert_numeric=True)
-    dat.wide = dat.wide.applymap(float)
 
     # Cleaning from missing data
     dat.dropMissing()

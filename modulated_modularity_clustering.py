@@ -11,36 +11,35 @@
 # DESCRIPTION: This tool runs modulated modularity clustering (mmc)
 #
 ################################################################################
-# Built-in packages
+# Import built-in libraries
 import os
 import csv
 import logging
 import argparse
 from contextlib import contextmanager
 
-# Add on modules
+# Import add-on libraries
 import scipy
 import numpy as np
 import pandas as pd
 from numpy.testing import assert_allclose
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Local Packages
-import logger as sl
-from interface import wideToDesign
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
-# Graphing packages
-import module_heatmap as hm
-from manager_color import colorHandler
-from manager_figure import figureHandler
-from module_mmc import expansion, get_clustering
+# Import local plotting libraries
+from visualManager import module_heatmap as hm
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
+from visualManager.module_mmc import expansion, get_clustering
 
 
 def getOptions(myOpts = None):
     # Get command line arguments.
     parser = argparse.ArgumentParser()
-
-    # Standard requierments for SECIM tools
+    # Standard Input
     standard = parser.add_argument_group(title='Standard input', 
                                 description='Standard input for SECIM tools.')
     standard.add_argument( "-i","--input", dest="input", action='store', 
@@ -50,7 +49,7 @@ def getOptions(myOpts = None):
     standard.add_argument("-id", "--ID",dest="uniqID", action='store', 
                         required=True, help="Nam of the column with unique"\
                         " identifiers.")
-    # Tool specific requierements
+    # Tool Input
     tool = parser.add_argument_group(title='Tool input', 
                                 description='Specific input for the tools.')
     tool.add_argument("-c",'--correlation', dest="correlation", default="pearson",
@@ -66,14 +65,14 @@ def getOptions(myOpts = None):
     tool.add_argument("-sn",'--sigmaNum',dest="sigmaNum", type=float, 
                         default=451, help="Number of values of sigma to search"\
                         " (Default: 451).")
-    # Tool output
+    # Tool Output
     output = parser.add_argument_group(title='Output paths', 
                         description='Output paths for the tools.')
     output.add_argument('-f', "--figure", dest="figure", required=True,
                         help="MMC Heatmaps")
     output.add_argument('-o',"--out", dest="out", required=True, 
                         help="Output TSV name")
-    # Plotting options
+    # Plot Options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="diverging", help="Name of the palette to use.")
