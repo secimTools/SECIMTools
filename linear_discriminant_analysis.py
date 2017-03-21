@@ -12,11 +12,10 @@
 # discriminant analysis.
 #
 ################################################################################
-
-#Future imports
+# Import future libraries
 from __future__ import division
 
-# Built-in packages
+# Import built-in libraries
 import os
 import math
 import logging
@@ -25,7 +24,7 @@ import warnings
 from itertools import combinations
 from argparse import RawDescriptionHelpFormatter
 
-# Add-on packages
+# Import add-on libraries
 import matplotlib
 import numpy as np
 import pandas as pd
@@ -34,19 +33,21 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
-# Local Packages
-import logger as sl
-import module_scatter as scatter
-from interface import wideToDesign
-from manager_color import colorHandler
-from manager_figure import figureHandler
+# Import local plottin libraries
+from visualManager import module_scatter as scatter
+from visualManager.manager_color import colorHandler
+from visualManager.manager_figure import figureHandler
+
+# Import local data libraries
+from dataManager import logger as sl
+from dataManager.interface import wideToDesign
 
 def getOptions(myopts=None):
     """ Function to pull in arguments """
     description="""  
     This script runs a Linear Discriminant Analysis (LDA)
     """
-    
+    # Standard Input
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
     standard = parser.add_argument_group(title='Standard input', 
@@ -62,19 +63,19 @@ def getOptions(myopts=None):
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                         " sort by separeted by commas.")
-
-    optional = parser.add_argument_group(title='Optional input', 
+    # Tool Input
+    tool = parser.add_argument_group(title='Tool input', 
                             description='Optional/Specific input for the tool.')
-    optional.add_argument("-nc", "--nComponents",dest="nComponents", action='store',
+    tool.add_argument("-nc", "--nComponents",dest="nComponents", action='store',
                         type= int, required=False, default=None,  
                         help="Number of component s[Default == 2].")
-
+    # Tool output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-o","--out",dest="out",action='store',required=True, 
                         help="Name of output file to store scores. TSV format.")
     output.add_argument("-f","--figure",dest="figure",action="store",required=True,
                         help="Name of output file to store scatter plots for scores")
-
+    # Plot Options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
                         default="tableau", help="Name of the palette to use.")
@@ -84,8 +85,10 @@ def getOptions(myopts=None):
     args = parser.parse_args()
 
     # Standardized output paths
-    args.figure = os.path.abspath(args.figure)
     args.out    = os.path.abspath(args.out)
+    args.input  = os.path.abspath(args.input)
+    args.design = os.path.abspath(args.design)
+    args.figure = os.path.abspath(args.figure)
 
     # Split levels if levels
     if args.levels:
