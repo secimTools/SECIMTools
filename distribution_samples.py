@@ -139,7 +139,7 @@ def main(args):
                     anno=args.levels, runOrder=args.order, logger=logger)
 
     # Cleaning from missing data
-    #dat.dropMissing()
+    dat.dropMissing()
     
     # Sort data by runOrder if provided
     if args.order:

@@ -213,6 +213,9 @@ def main(args):
     dat = wideToDesign(wide=args.input, design=args.design, 
                     uniqID=args.uniqID, logger=logger)
 
+    # Cleaning from missing data
+    dat.dropMissing()
+    
     # Read flag file
     df_flags = pd.read_table(args.flags)
 

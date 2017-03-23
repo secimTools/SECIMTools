@@ -88,9 +88,6 @@ def main(args):
     # Import data
     dat = wideToDesign(args.input,args.design,args.uniqID,logger=logger)
 
-    # Treat everything as numeric
-    dat.wide = dat.wide.applymap(float)
-
     # Cleaning from missing data
     dat.dropMissing()
 

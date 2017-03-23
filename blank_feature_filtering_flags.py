@@ -11,15 +11,12 @@
 # DESCRIPTION: This tool Blank Feature Filtering on wide data.
 #
 ################################################################################
-
 # Import built-in libraries
 import os
-import math
 import logging
 import argparse
 
 # Import add-on libraries
-import matplotlib
 import numpy as np
 import pandas as pd
 
@@ -28,12 +25,10 @@ from dataManager import logger as sl
 from dataManager.flags import Flags
 from dataManager.interface import wideToDesign
 
-
 def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
                                      "dataset and calculates the LOD on it ")
-
     # Standard Input
     standar = parser.add_argument_group(title='Standard input', description= 
                                         'Standard input for SECIM tools.')
@@ -47,7 +42,6 @@ def getOptions():
     standar.add_argument("-g","--group", dest="group", action='store', 
                         required=True, help="Name of column in design file" \
                         "with Group/treatment information.")
-
     # Tool Input
     tool = parser.add_argument_group(title='Optional input', 
                                          description="Changes parameters for "\
@@ -61,7 +55,6 @@ def getOptions():
     tool.add_argument("-c","--criteria",dest="criteria",action="store",
                         required=False, default=100,type=int,
                         help="Value of the criteria to selct")
-
     # Tool Output
     output = parser.add_argument_group(title='Output paths', description=
                                        "Paths for the output files")
@@ -69,8 +62,6 @@ def getOptions():
                         required=True,help="Output path for flags file[CSV]")
     output.add_argument("-b","--outbff",dest="outbff",action="store",
                         required=True,help="Output path for bff file[CSV]")
-
-
     args = parser.parse_args()
 
     # Standardize paths
@@ -87,8 +78,9 @@ def main(args):
     logger.info("Importing data with the Interface")
     dat = wideToDesign(args.input, args.design, args.uniqID, args.group, 
                         logger=logger)
-    dat.wide = dat.wide.applymap(float)
-
+    
+    # Cleaning from missing data
+    dat.dropMissing()
 
     # Calculate the means of each group but blanks
     logger.info("Calcualting group means")

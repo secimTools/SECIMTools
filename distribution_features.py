@@ -110,7 +110,7 @@ def main(args):
     dat = wideToDesign(args.input,args.design,args.uniqID,group=args.group, logger=logger)
 
     # Cleaning from missing data
-    #dat.dropMissing()
+    dat.dropMissing()
 
     # Subseting wide to get features for wide files with more that 50 features
     if len(dat.wide.index) > 50:

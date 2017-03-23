@@ -36,12 +36,7 @@ from dataManager import logger as sl
 from dataManager.interface import wideToDesign
 
 # Import local plotting libraries
-from visualManager import module_box as box
-from visualManager import module_hist as hist
 from visualManager import module_heatmap as hm
-from visualManager import module_lines as lines
-from visualManager import module_scatter as scatter
-from visualManager import module_distribution as density
 from visualManager.manager_color import colorHandler
 from visualManager.manager_figure import figureHandler
 

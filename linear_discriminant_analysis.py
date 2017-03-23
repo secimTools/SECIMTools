@@ -17,7 +17,6 @@ from __future__ import division
 
 # Import built-in libraries
 import os
-import math
 import logging
 import argparse
 import warnings

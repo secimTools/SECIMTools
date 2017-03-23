@@ -13,10 +13,8 @@
 ################################################################################
 # Import built in libraries
 import os
-import shutil
 import logging
 import argparse
-import tempfile
 from math import log, floor
 from argparse import RawDescriptionHelpFormatter
 
@@ -236,6 +234,9 @@ def main(args):
 
     # Remove groups with just one element
     dat.removeSingle()
+
+    # Cleaning from missing data
+    dat.dropMissing()
 
     # Treat everything as float and round it to 3 digits
     dat.wide = dat.wide.applymap(lambda x: round(x,3))

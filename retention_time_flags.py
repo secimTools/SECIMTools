@@ -16,10 +16,8 @@
 ################################################################################
 # Import built-in libraries
 import os
-import shutil
 import logging
 import argparse
-import tempfile
 import warnings
 from math import log, floor
 from argparse import RawDescriptionHelpFormatter
@@ -202,6 +200,9 @@ def main(args):
     # Run Stats
     logger.info("Calculatting stats")
     RTstat = runStats(args, dat.wide, dat)
+
+    # Cleaning from missing data
+    dat.dropMissing()
 
     # Set RT Flags
     logger.info("Creatting Flags")

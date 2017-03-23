@@ -64,8 +64,8 @@ def main(args):
     logger.info("Loading data trough the interface")
     dat = wideToDesign(args.input, args.design, args.uniqID, logger=logger)
 
-    # Treating data as numeric
-    dat.wide = dat.wide.applymap(float)
+    # Cleaning from missing data
+    dat.dropMissing()
 
     # Transpose data to normalize
     toNormalize_df =  dat.wide.T

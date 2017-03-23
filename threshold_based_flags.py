@@ -66,7 +66,9 @@ def main(args):
     logger.info("Importing data with the interface")
     dat = wideToDesign(args.input, args.design, args.uniqID)
 
-
+    # Cleaning from missing data
+    dat.dropMissing()
+    
     # Iterate through each group to add flags for if a group has over half of
     # its data above the cutoff
     logger.info("Running threshold based flags")
