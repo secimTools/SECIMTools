@@ -10,7 +10,7 @@ import pandas as pd
 
 class wideToDesign:
     """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, wide, design, uniqID, group=False, runOrder=False, anno=False, clean_string=True, keepSample=True, logger=None):
+    def __init__(self, wide, design, uniqID, group=False, runOrder=False, anno=False, clean_string=True, infer_sampleID=True, keepSample=True, logger=None):
         """ Import and set-up data.
 
         Import data both wide formated data and a design file. Set-up basic
@@ -42,6 +42,8 @@ class wideToDesign:
 
             clean_string (bool): If True remove special characters from strings
                 in dataset.
+
+            infer_sampleID (bool): If True infer "sampleID" from different capitalizations.
 
             anno (list): A list of additional annotations that can be used to group
                 items.
@@ -94,13 +96,28 @@ class wideToDesign:
             self.wide.set_index(self.uniqID, inplace=True)
                 
         except:
-            print "Please make sure that your data file has a column called '{0}'.".format(uniqID)
+            if self.logger:
+                self.logger.error("Please make sure that your data file has a column called '{0}'.".format(uniqID))
+            else:
+                print ("Please make sure that your data file has a column called '{0}'.".format(uniqID))
             raise ValueError
 
         # Import design file
         try:
             self.design = pd.read_table(design)
 
+            # This part of the script allows the user to use any capitalization of "sampleID"
+            # ie. "sample Id" would be converted to "sampleID".
+            # If you want to accept only the exact capitalization turn infer_sampleID to Fake
+            if infer_sampleID:
+                renamed = {column:re.sub(r"[s|S][a|A][m|M][p|P][l|L][e\E][\s?|_?][I|i][d|D]","sampleID",column) for column in self.design.columns}
+                self.design.rename(columns=renamed,inplace=True)
+                if self.logger:
+                    self.logger.info("Infering 'sampleID' from data. This will accept different capitalizations of the word")
+                else:
+                    print ("Infering 'sampleID' from data. This will accept different capitalizations of the word")
+
+            # re.sub(r"[s|S][a|A][m|M][p|P][l|L][e\E]\s?[I|i][d|D]","sampleID",column)
             # Make sure index is a string and not numeric
             self.design['sampleID'] = self.design['sampleID'].astype(str)
             self.design.set_index('sampleID', inplace=True)
@@ -172,11 +189,16 @@ class wideToDesign:
             else:
                 keep = [self.group, ]
 
-            #if self.anno:
-            #    keep = [self.group, ] + self.anno
-            #else:
-            #    keep = [self.group, ]
+            # Check if groups, runOrder and levels columns exist in the design file
+            for elem in keep:
+                if not(elem in self.design.columns):
+                    if self.logger:
+                        self.logger.error("Please make sure that '{0}' is written correctly or exists on your design file".format(elem))
+                    else:
+                        print ("Please make sure that '{0}' is written correctly or exists on your design file".format(elem))
+                    raise ValueError
 
+            # Check if columns exist on design file.
             self.design = self.design[keep]   # Only keep group columns in the design file
             self.design[self.group] = self.design[self.group].astype(str)   # Make sure groups are strings
 
