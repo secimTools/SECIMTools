@@ -117,7 +117,6 @@ class wideToDesign:
                 else:
                     print ("Infering 'sampleID' from data. This will accept different capitalizations of the word")
 
-            # re.sub(r"[s|S][a|A][m|M][p|P][l|L][e\E]\s?[I|i][d|D]","sampleID",column)
             # Make sure index is a string and not numeric
             self.design['sampleID'] = self.design['sampleID'].astype(str)
             self.design.set_index('sampleID', inplace=True)
@@ -137,7 +136,7 @@ class wideToDesign:
                     if self.logger:
                         self.logger.warn("Sample {0} missing on wide dataset".format(sample))
                     else:
-                        print "WARNING - Sample {0} missing on wide dataset".format(sample)
+                        print ("WARNING - Sample {0} missing on wide dataset".format(sample))
 
 
             for sample in self.wide.columns.tolist():
@@ -152,7 +151,7 @@ class wideToDesign:
                             self.logger.error("Sample {0} missing on design file".format(sample))
                             raise
                         else:
-                            print "ERROR - Sample {0} missing on design file".format(sample)
+                            print ("ERROR - Sample {0} missing on design file".format(sample))
                             raise
 
             # Drop design rows that are not in the wide data set
@@ -162,7 +161,7 @@ class wideToDesign:
             self.wide.replace(r'\D',np.nan,regex=True,inplace=True)
 
         except:
-            print "Error:", sys.exc_info()[0]
+            print ("Error:", sys.exc_info()[0])
             raise
 
         # Save annotations
@@ -365,9 +364,9 @@ class wideToDesign:
                             "this group is going to be removed from "\
                             "further calculations.".format(level))
                     else:                        
-                        print "Your group '{0}' has only one element, this "\
+                        print ("Your group '{0}' has only one element, this "\
                         "group is going to be remove to perform further "\
-                        "calculations.".format(level)
+                        "calculations.".format(level))
 
     def dropMissing(self):
         """
@@ -390,8 +389,8 @@ class wideToDesign:
                     "[{0}] rows were dropped.".
                     format(n_rows - n_rows_keeped))
             else:
-                print "Missing values were found on wide data "\
-                    "[{0}] rows were dropped.".format(n_rows - n_rows_keeped)
+                print ("Missing values were found on wide data "\
+                    "[{0}] rows were dropped.".format(n_rows - n_rows_keeped))
 
 
 
@@ -488,7 +487,7 @@ class annoFormat:
                 self.anno.remove(self.mz)
                 self.anno.remove(self.rt)                
         except:
-            print "Please make sure that your data file have columns called '{0}','{1}' and '{2}'.".format(uniqID,mz,rt)
+            print ("Please make sure that your data file have columns called '{0}','{1}' and '{2}'.".format(uniqID,mz,rt))
             raise ValueError
 
 
