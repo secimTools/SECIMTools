@@ -110,7 +110,7 @@ def cleanStr(x):
 def main(args):
     # Importing data trough
     logger.info("Importing data through wideToDesign data manager")
-    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
+    dat = wideToDesign(args.input, args.design, args.uniqID, 
                         logger=logger)
 
     # Cleaning from missing data
@@ -119,11 +119,11 @@ def main(args):
     # Making sure all the groups to drop actually exist on the design column
     if args.group:
         for todrop in args.drops:
-            if todrop in dat.levels:
+            if todrop in list(set(dat.design[args.group].values)):
                 pass
             else:
                 logger.error("The group '{0}' is not located in the column '{1}' "\
-                            "of your design file".format(todrop,dat.group))
+                            "of your design file".format(todrop,args.group))
                 raise ValueError
 
     # If the subsetting is going to be made by group the select de sampleIDs 
@@ -131,7 +131,7 @@ def main(args):
     logger.info(u"Getting sampleNames to drop")
     if args.group:
         iToDrop = list()
-        for name,group in dat.design.groupby(dat.group):
+        for name,group in dat.design.groupby(args.group):
             if name in args.drops:
                 iToDrop+=(group.index.tolist())
     else:
