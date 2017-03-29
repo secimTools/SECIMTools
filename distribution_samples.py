@@ -115,7 +115,7 @@ def plotBoxplotDistribution(pdf,wide,palette):
     box.boxDF(ax=figure.ax[0],colors=palette.design["colors"],dat=wide)
 
     # Shrinking figure
-    plt.tight_layout()
+    figure.shrink()
 
     #Adding to PDF
     figure.addToPdf(pdf, dpi=600)

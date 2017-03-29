@@ -95,7 +95,7 @@ def plotDensity (data, name, pdf):
              vert=False,rot=0)
 
     # Plotting density plot
-    dis.plotDensityDF(data=data.T.unstack(), 
+    density.plotDensityDF(data=data.T.unstack(), 
                     ax=figure.ax[1], colors=colors[0])
 
     # Adding figure to pdf object
