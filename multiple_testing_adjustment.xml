@@ -1,0 +1,68 @@
+<tool id="multiTestAdjustment" name="Multiple Testing Adjustment (MTA)" version="1.0,0">
+    <description>Adjust p-values for multiple testing.</description>
+    <requirements>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">sklearn</requirement>
+        <requirement type="python-module">logging</requirement>
+        <requirement type="python-module">logger</requirement>
+        <requirement type="python-module">interface</requirement>
+    </requirements>
+    <command interpreter="python">
+        multiple_testing_adjustment.py
+        --input $input
+        --uniqID $uniqID
+        --pval "$pval"
+        --alpha $alpha
+        --outadjusted $outadjusted
+        --flags $flags
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="pval" type="text" size="30" value="" label="p-value column" help="Name of the column in your Wide Dataset that has your pvalue."/>
+        <param name="alpha" type="text" size="30" value="0.05" label="α" help="Value of α to be used on the corrections by default α=0.05."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="outadjusted" label="${tool.name} on ${on_string}: Adjusted pval."/>
+        <data format="tabular" name="flags" label="${tool.name} on ${on_string}: Flags."/>
+    </outputs>
+    <macros>
+            <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The tool is designed to adjust the column of -values for multiple comparison using three different methods.  Bonferroni method is used together with two false discovery rate (FDR) methods: Benjamini-Hochberg method (BH) and Benjamini-Yekutieli method (BY).  The adjustment can be performed for the column outputs from Analysis of Variance (ANOVA) Fixed Effects Model Tool.  The user also has an option to upload wide dataset with the column of -values.  User can control total type I error α.
+More details about the PH and BY methods are available in the papers:
+Benjamini, Y., and Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. Journal of the royal statistical society. Series B (Methodological), 289-300. 
+Benjamini, Y., and Yekutieli, D. (2001). The control of the false discovery rate in multiple testing under dependency. Annals of statistics, 1165-1188.
+
+-------------------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+@UNIQID@
+
+**Name for p-value column**
+
+    - Name of the column in your Wide Dataset that has your pvalue.
+
+**α**
+
+    - Value of α to be used on the corrections by default α=0.05.
+    
+-------------------------------------------------------------------------------------------
+
+**Output**
+
+The tool produces two TSV files, the first one contains five columns: a column with unique feature IDs, a column of the original p-values and the last three columns contain adjusted p-values.  Every column of p-values corresponds to different adjustment method, which is reflected in the column name. The second file is a TSV file containing flags where all the non-significant values are flagged as 1.
+
+</help>
+</tool>

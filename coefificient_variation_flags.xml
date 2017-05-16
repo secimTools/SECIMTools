@@ -1,0 +1,76 @@
+<tool id="CVflag2" name="Coefficient of Variation (CV) Flags" version="2.0.0">
+  <description>Calculate Coefficient of Variation.</description>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">palettable</requirement>
+  </requirements>
+  <command interpreter="python">
+      coefificient_variation_flags.py
+      --input $input
+      --design $design
+      --ID $uniqID
+      --figure $CVplot
+      --flag $CVflag
+
+      #if $group:
+          --group $group
+      #end if
+      #if $CVcutoff:
+	    --CVcutoff $CVcutoff
+      #end if
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+    <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications." />
+    <param name="CVcutoff"  type="float" optional="true" size="4" label="CV cutoff [Optional]" help="The default CV cutoff will flag the top 10% of features with the largest CV. If you want to set a CV cutoff, put the number here."/>
+  </inputs>
+  <outputs>
+    <data format="pdf" name="CVplot"  label="${tool.name} on ${on_string}: Plot" />
+    <data format="tabular" name="CVflag"  label="${tool.name} on ${on_string}: Flag" />
+  </outputs>
+  <macros>
+      <import>macros.xml</import>
+  </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+This tool calculates the coefficient of variation and produces the corresponding flags for the most variable features.  The proportion of the most variable features that are flagged can be customized by the user.  Coefficient of variation (CV) statistic can be used to identify and flag features with larger than expected variability.  It is recommended to use the log transformed data for better performance but the tool will work on any scale (log and non-log).
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+**CV cutoff [Optional]**
+
+    - The default CV cutoff will flag the top 10% of features with the largest CV. If you want to set a CV cutoff, put the number here.
+
+@GROUP_OPTIONAL@
+
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+    This tool outputs two different files: a TSV file containing the CV Flags for each feature with one (1) corresponding to large variation, and a PDF file containing histograms and density plot of the coefficients of variation for each group and a single plot with densities for each group without the histograms.
+
+</help>
+
+</tool>

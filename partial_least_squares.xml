@@ -1,0 +1,91 @@
+<tool id="pls" name="Partial Least Squares Discriminant Analysis (PLS-DA)" version="1.0.0">
+    <description>The tool performs partial least square discriminant analysis (PLS-DA) for two treatment groups selected by the user.</description>
+    <requirements>
+        <requirement type="python-module">sklearn</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">palettable</requirement>
+    </requirements>
+    <command interpreter="python">
+        partial_least_squares.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --group $group
+        --toCompare "$toCompare"
+        --nComp $nComp
+        --outScores $outScores
+        --outWeights $outWeights
+        --figure $figures
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="toCompare" type="text" size="30" label="Name of the groups to compare" help="Comma separated names of the 2 groups in your Group/Treatment column that you want to compare."/>
+        <param name="nComp" type="text" size="30" value="2" label="Number of components" help="Enter number of components to use to perform the analysis default:2."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="outScores" label="${tool.name} on ${on_string}: scores"/>
+        <data format="tabular" name="outWeights" label="${tool.name} on ${on_string}: weights"/>
+        <data format="pdf" name="figures" label="${tool.name} on ${on_string}: scatter plots"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The tool performs partial least square discriminant analysis (PLS-DA) for two treatment groups selected by the user.  The goal is to see whether groups are actually different and to identify features that are different between the treatment groups. 
+
+--------------------------------------------------------------------------------
+
+**Note**
+
+- This tool currently treats all variables as continuous numeric
+  variables. Running the tool on categorical variables might result in
+  incorrect results. 
+- Rows containing non-numeric (or missing) data in any
+  of the chosen columns will be skipped from the analysis.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
+
+
+@METADATA@
+
+@UNIQID@
+
+@GROUP@
+
+**Name of the groups to compare**
+
+    - Comma separated names of the 2 groups in your Group/Treatment column that you want to compare.
+
+**Number of components**
+
+    -Enter number of components to use to perform the analysis default:2.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+Three different files are outputted: a PDF file containing the 2D plots for all pairwise comparisons of components between the two treatment groups, a TSV file containing scores of the model and a TSV file containing weights of the model.
+
+**NOTE:** Regardless how many components are selected for the algorithm, pairwise 2D plots are produced for the pairs of components.  The increase in the number of components will increase the number of produced plots.
+
+</help>
+</tool>

@@ -1,0 +1,86 @@
+<tool id="anovaMultiple2" name="Analysis of Variance (ANOVA) Fixed Effects Model" version="1.0.0">
+    <description>Performs Multiple-Way ANOVA with Covariates and Fixed Effects.</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">scipy</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">statsmodels</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+    </requirements>
+    <command interpreter="python">
+            anova_fixed.py
+            --input $input
+            --design $design
+            --ID $uniqID
+            --factors "$factor"
+            --factorTypes $factorTypes
+            --out $results_table
+            --flags $flags_table
+            --fig $qq_plots
+            --fig2 $volcano_plots
+            #if $interactions
+                --interactions
+            #end if
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="factor" type="text" size="30" value="" label="Group(s)/Treatment(s)" help="List with the name of the columns (comma separated) in your Design File that you want to use for ANOVA.(ie. treatment1,treatment2,weight)."/>
+        <param name="factorTypes" type="text" size="30" value="" label=" Type of Group(s)/Treatment(s)" help="List with the type of the columns used. 'C' for Categorical and  'N' for numerical, they should match in order the groups used. (ie. C,C,N)."/>
+        <param name="interactions" type="boolean" label="Calculate ANOVA with interactions" help="If turned 'Yes' ANOVA the program will output interactions."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="results_table" label="${tool.name} on ${on_string}: Results Table"/>
+        <data format="tabular" name="flags_table" label="${tool.name} on ${on_string}: Flags Table"/>
+        <data format="pdf" name="qq_plots" label="${tool.name} on ${on_string}: QQ Plots"/>
+        <data format="pdf" name="volcano_plots" label="${tool.name} on ${on_string}: Volcano Plots"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The tool fits analysis of variance (ANOVA) fixed effects model with multiple grouping variables, their interactions and numerical characteristics.  The analysis is performed row wise independently for each feature. The user can choose whether to include interactions between grouping variables in the model or to use pure additive model.  Numerical characteristics of the samples can be included for both scenarios.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+    
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+**Group(s)/Treatment(s)**
+
+        - List with the name of the columns (comma separated) in your Design File that you want to use for ANOVA.(ie. treatment1,treatment2,weight).
+
+**Type of Group(s)/Treatment(s)**
+
+        - List with the type of the columns used. 'C' for Categorical and 'N' for numerical, they should match in order the groups used. (ie. C,C,N).
+
+**Calculate ANOVA with interactions**
+
+        - If turned 'Yes' ANOVA the program will output interactions.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+The user will get four different outputs from the fixed effects ANOVA tool: a TSV file with the results table, a TSV file with the flags for significant p-values,  a PDF file with Q-Q plots, and a PDF file with volcano plots.  The results table contains the fixed effects ANOVA results for each variable, corresponding contrasts and analysis of the means.  The flags in the TSV file are equal to 1 if the difference between the groups is not statistically significant using α = 0.05 level.  The results are saved in rows separately for each feature.  The Q-Q plots output contains quantile–quantile plots from the fixed effects ANOVA model fits.  The plots are used for visual inspection of the possible normality assumption violations.  The volcano plots are used for visual inspection of the differences between the treatment groups.
+
+</help>
+</tool>
+

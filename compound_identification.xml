@@ -1,0 +1,90 @@
+<tool id="compadducID" name="Compounds/Adducts identification" version="2.0.0">
+    <description>Identifies compounds/adducts based on m/z and retention time.</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">matplotlib_venn</requirement>
+        <requirement type="python-module">palettable</requirement>
+    </requirements>
+    <command interpreter="python">
+        compound_identification.py
+        --anno $anno
+        --uniqID $uniqID
+        --mzID $mzID
+        --rtID $rtID
+        --library $library
+        --libuniqID $libuniqID
+        --libmzID $libmzID
+        --librtID $librtID
+        --output $output
+    </command>
+    <inputs>
+        <param name="anno" type="data" format="tabular" label="Annotation File" help="Input dataset 1 in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" optional="false" label="Annotation Unique Feature ID column" help="Name of the column on you annotation file containing unique ID"/>
+        <param name="mzID" type="text" size="30" value="" optional="false" label="Annotation Mass/Charge column." help="Name of the column on you annotation file containing m/z."/>
+        <param name="rtID" type="text" size="30" value="" optional="false" label="Annotation Retention Time" help="Name of the column on you annotation file containing Retention Time."/>
+        <param name="library" type="data" format="tabular" label="Library File" help="Library dataset. If not tab separated see TIP below."/>
+        <param name="libuniqID" type="text" size="30" value="" optional="false" label="Library compound name colum" help="Name of the column on you library file containing the compounds/adducts names to use for the identification."/>
+        <param name="libmzID" type="text" size="30" value="" optional="false" label="Library Mass/Charge column" help="Name of the column on you library file containing m/z."/>
+        <param name="librtID" type="text" size="30" value="" optional="false" label="Library Retention Time column" help="Name of the column on you library file containing Retention Time."/>
+
+    </inputs>
+    <outputs>
+        <data format="tabular" name="output" label="identified_compounds_adducts_on_${anno.name}"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+This tools identifies compounds or adducts in a given annotation file based on a library.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required, a library file and an annotation target file.
+
+@MZRTFILE@
+
+**Annotation Unique Feature ID column**
+
+    - Name of the column on you annotation file containing unique ID.
+
+
+**Annotation Mass/Charge column**
+
+    - Name of the column on you annotation file containing m/z.
+
+**Annotation Retention Time**
+
+    - Name of the column on you annotation file containing Retention Time.
+
+**Library File**
+
+**Library compound name colum**
+
+    - Name of the column on you library file containing the compounds/adducts names to use.
+
+**Library Mass/Charge column**
+
+    - Name of the column on you library file containing m/z.
+
+**Library Retention Time column**
+
+    - Name of the column on you library file containing Retention Time.
+
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+This tool outputs a copy of the original annotation input file with an additional column for the identified compopunds/adducts from the library file.
+
+</help>
+</tool>
+

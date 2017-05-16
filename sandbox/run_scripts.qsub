@@ -1,0 +1,116 @@
+#!/bin/bash
+#SBATCH --job-name secimtools_test
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=miguelib@ufl.edu
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=40gb
+#SBATCH --time=01:00:00
+#SBATCH --output=/ufrc/secim/miguelib/GalaxyTools/test_sandbox/SBATCH.out
+
+### Run all secimtools on HPC to avoid consuming resources locally
+
+PROJECT=/ufrc/secim/miguelib/GalaxyTools
+SCRIPTS=$PROJECT
+DATA=$PROJECT/test-data/real_data_short.tsv
+DESIGN=$PROJECT/test-data/real_design.tsv
+OUTPUT=$PROJECT/test_sandbox/
+ID=rowID
+GROUP=group
+SUBSET="8C,8T"
+
+module load python
+
+# "Chardonnay  Carneros  CA 2003 (CH01),Chardonnay  Carneros  CA 2003 (CH02)"
+# echo "ANOVA Fixed models.................................."
+python $SCRIPTS/anova_fixed.py -i $DATA -d $DESIGN -id $ID -f $GROUP -t C -o $OUTPUT/del_anova_table.tsv -f1 $OUTPUT/del_anova_qqplot.pdf -f2 $OUTPUT/del_anova_volcano.pdf &
+
+# echo "Bland-Altman plots.................................."
+python $SCRIPTS/bland_altmant_plot.py -i $DATA -d $DESIGN -id $ID -g $GROUP -f $OUTPUT/del_ba_baplots.pdf -fd $OUTPUT/del_ba_distributions.pdf -fs $OUTPUT/del_ba_flag_sample.tsv -ff $OUTPUT/del_ba_flag_features.tsv &
+
+# echo "Blank Feature Filtering............................."
+python $SCRIPTS/blank_feature_filtering.py -i $DATA -d $DESIGN -id $ID -g $GROUP -bn "blank" -f $OUTPUT/del_bff_flags.tsv -b $OUTPUT/del_bff_bff.tsv &
+# echo "Coeficient of Variation flags......................."# 
+python $SCRIPTS/coefificient_variation_flags.py -i $DATA -d $DESIGN -id $ID -f $OUTPUT/del_cv_figure.pdf -o $OUTPUT/del_cv_flag.tsv
+
+# echo "Data rescalling.................................mean"
+python $SCRIPTS/data_rescalling.py -i $DATA -d $DESIGN -id $ID -m "mean" -o $OUTPUT/del_datarescalling_mean.tsv &
+# echo "Data rescalling..................................sum"# 
+python $SCRIPTS/data_rescalling.py -i $DATA -d $DESIGN -id $ID -m "sum" -o $OUTPUT/del_datarescalling_sum.tsv &
+# echo "Data rescalling...............................median"# 
+python $SCRIPTS/data_rescalling.py -i $DATA -d $DESIGN -id $ID -m "median" -o $OUTPUT/del_datarescalling_median.tsv &
+
+# echo "Log transformation.................................."
+python $SCRIPTS/log_transformation.py -i $DATA -d $DESIGN -id $ID -l "log" -o $OUTPUT/del_log_10.tsv
+
+# echo "Distribution by features......................groups"
+python $SCRIPTS/distribution_features.py -i $OUTPUT/del_log_10.tsv -d $DESIGN -id $ID -g $GROUP -f $OUTPUT/del_distribution_features_groups.pdf 
+# echo "Distribution by features..................no..groups"# 
+python $SCRIPTS/distribution_features.py -i $OUTPUT/del_log_10.tsv -d $DESIGN -id $ID -f $OUTPUT/del_distribution_features_noGroups.pdf 
+
+# echo "Distribution by features......................groups"
+python $SCRIPTS/distribution_samples.py -i $OUTPUT/del_log_10.tsv -d $DESIGN -id $ID -g $GROUP -f $OUTPUT/del_distribution_samples_groups.pdf 
+# echo "Distribution by features..................no..groups"# 
+python $SCRIPTS/distribution_samples.py -i $OUTPUT/del_log_10.tsv -d $DESIGN -id $ID -f $OUTPUT/del_distribution_samples_noGroups.pdf 
+
+# echo "Hierarchical Clustering Hearmap....................."
+python $SCRIPTS/hierarchical_clustering_heatmap.py -i $OUTPUT/del_log_10.tsv -d $DESIGN -id $ID -f $OUTPUT/del_hm_single.pdf 
+# echo "Hierarchical Clustering Hearmap............dendogram"# 
+python $SCRIPTS/hierarchical_clustering_heatmap.py -i $OUTPUT/del_log_10.tsv -d $DESIGN -id $ID -f $OUTPUT/del_hm_denogram.pdf -den 
+
+# echo "Imputation.......................................knn"
+python $SCRIPTS/imputation.py -i $DATA -d $DESIGN -id $ID -g $GROUP -o $OUTPUT/del_imputed_knn.tsv -s knn &
+# echo "Imputation..................................bayesian"# 
+python $SCRIPTS/imputation.py -i $DATA -d $DESIGN -id $ID -g $GROUP -o $OUTPUT/del_imputed_bayesian.tsv -s bayesian -dist Normal &
+# echo "Imputation..................................bayesian"# 
+python $SCRIPTS/imputation.py -i $DATA -d $DESIGN -id $ID -g $GROUP -o $OUTPUT/del_imputed_bayesian.tsv -s bayesian -dist Poisson &
+# echo "Imputation......................................mean"# 
+python $SCRIPTS/imputation.py -i $DATA -d $DESIGN -id $ID -g $GROUP -o $OUTPUT/del_imputed_mean.tsv -s mean &
+# echo "Imputation....................................median"# 
+python $SCRIPTS/imputation.py -i $DATA -d $DESIGN -id $ID -g $GROUP -o $OUTPUT/del_imputed_median.tsv -s median &
+
+# echo "LASSO/Elastic Net..................................."
+python $SCRIPTS/lasso_enet_var_select.py -i $DATA -d $DESIGN -id $ID -g $GROUP -a 0.5 -c $OUTPUT/del_lasso_coefficients.tsv -f $OUTPUT/del_lasso_flags.tsv -p $OUTPUT/del_lasso_plots.tsv &
+
+# echo "Linear discriminant analysis........................"
+python $SCRIPTS/linear_discriminant_analysis.py -i $DATA -d $DESIGN -id $ID -g $GROUP -o $OUTPUT/del_lda_scores.tsv -f $OUTPUT/del_lda_scatterplot.pdf &
+
+# echo "Magnitud of difference flags........................"
+python $SCRIPTS/magnitud_difference_flags.py -i $DATA -d $DESIGN -id $ID -g $GROUP -fl $OUTPUT/del_magnitud_flags.tsv -f $OUTPUT/del_magnitud_scatterplot.pdf -c $OUTPUT/del_magnitud_counts.tsv &
+
+# echo "Modulated Modularity Clustering....................."
+python $SCRIPTS/modulated_modularity_clustering.py -i $DATA -d $DESIGN -id $ID -o $OUTPUT/del_mmc_vals.tsv -f $OUTPUT/del_mmc_plots.pdf &
+
+# echo "Partial Least Square................................"
+python $SCRIPTS/partial_least_squares.py -i $DATA -d $DESIGN -id $ID -g $GROUP -t $SUBSET -os $OUTPUT/del_pls_scores.tsv -ow $OUTPUT/del_pls_weights.tsv -f $OUTPUT/del_pls_figure.pdf &
+
+# echo "Principal Component Analysis........................"
+python $SCRIPTS/principal_component_analysis.py -i $DATA -d $DESIGN -id $ID -g $GROUP -lo $OUTPUT/del_pca_loadings.tsv -so $OUTPUT/del_pca_scores.tsv -f $OUTPUT/del_pca_components.pdf &
+
+# echo "Random Forest......................................."
+python $SCRIPTS/random_forest.py -i $DATA -d $DESIGN -id $ID -g $GROUP -o $OUTPUT/del_randforst_tab.tsv -o2 $OUTPUT/del_randforst_tab.ts -f $OUTPUT/del_randforst_significance.pdf &
+
+# echo "Standardize Euclidean Distance......................"
+python $SCRIPTS/standardized_eucildean_distance.py -i $DATA -d $DESIGN -id $ID -g $GROUP  -m $OUTPUT/del_sed_mean.tsv -pw $OUTPUT/del_sed_pairwise.ts -f $OUTPUT/del_sed_plot.pdf &
+
+# echo "Support Vector Machines............................."
+python $SCRIPTS/svm_classifier.py  -trw $DATA -trd $DESIGN -tew $DATA -ted $DESIGN -g $GROUP -id $ID -k linear -d 3 -c 1 -a 0.0 -b 0.0 -o $OUTPUT/del_svm_table.tsv -acc $OUTPUT/del_svm_accuracy.tsv &
+
+# echo "Threshold based flags..............................."
+python $SCRIPTS/threshold_based_flags.py -i $DATA -d $DESIGN -id $ID -g $GROUP -o $OUTPUT/del_thrshold_flags.tsv 
+
+# echo "Subset Data....................................group"
+python $SCRIPTS/subset_data.py -i $DATA -d $DESIGN -id $ID -g $GROUP -dp $SUBSET -ow $OUTPUT/del_subset_data.tsv &
+
+# echo "Subset Data...................................sample"
+python $SCRIPTS/subset_data.py -i $DATA -d $DESIGN -id $ID -dp "421724" -ow $OUTPUT/del_subset_data.tsv &
+
+# echo "Sumarize Flags....................................."
+python $SCRIPTS/summarize_flags.py  -f $OUTPUT/del_cv_flag.tsv -id $ID -os $OUTPUT/del_summary_flags.tsv
+
+# echo "Drop Flags........................................" 
+python $SCRIPTS/drop_flags.py  -i $DATA -d $DESIGN -f $OUTPUT/del_summary_flags -id $ID -fid $ID -fd flag_any_off -fft row -val 3 -con 1 -ow $OUTPUT/del_drop_data.tsv -of $OUTPUT/del_drop_flags.tsv
+
+# echo "Run Order........................................."
+pyhton $SCRIPTS/run_order -i$ $DATA -d $DESIGN -id $ID -g $GROUP -o runOrder -f $OUTPUT/del_ror_fig.tsv -t $OUTPUT/del_ror_table.tsv

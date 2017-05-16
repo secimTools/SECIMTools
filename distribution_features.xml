@@ -1,0 +1,74 @@
+<tool id="distributionFeatures2" name="Distribution of Features across Samples." version="1.0.0">
+    <description>Generate distributions for Features.</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">mpld3</requirement>
+        <requirement type="python-module">interface</requirement>
+        <requirement type="python-module">logger</requirement>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">palettable</requirement>
+    </requirements>
+    <command interpreter="python">
+        distribution_features.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --figure $figure
+        #if $group
+        --group $group
+      #end if
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
+    </inputs>
+    <outputs>
+        <data format="pdf" name="figure" label="${tool.name} on ${on_string}: Feature Distribution"/>
+    </outputs>
+    <macros>
+            <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The tool summarizes the distribution of 50 randomly selected features (rows) across all samples. Boxplots with outliers and mean value are provided for each selected feature across all samples. 
+If grouping variable is provided the distribution boxplots are provided for samples in each group and for all samples ignoring the grouping variable.  If the grouping variable is not provided than, boxplots are provided for all samples in the dataset.  
+As an additional summary, all the features are summarized in a single density plot.  If the grouping variable is provided than one density plot is provided for all features and all samples in each group.  Also single plot is provided for all samples and features ignoring the grouping variable.  If no grouping variable is provided than only one density plot is provided for all features and all samples in the dataset.
+
+**NOTE:** This script works best with log transformed data.
+
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
+
+
+@METADATA@
+
+@UNIQID@
+
+@GROUP_OPTIONAL@
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+The tool outputs a single PDF file with boxplot(s) and density plot(s).  If the grouping variable is not provided the distribution boxplots and density plot are provided on a single plot for across all samples in the dataset.  If the grouping variable is provided the distribution boxplots and density plots are provided for the following combinations of samples: across all samples in each treatment group and as well as across all dataset samples ignoring the grouping variable.  When the grouping variable is provided all the plots are combined into a single PDF file for the output.
+
+</help>
+</tool>
+

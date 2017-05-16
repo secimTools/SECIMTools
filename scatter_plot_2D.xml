@@ -1,0 +1,104 @@
+<tool id="scatter2" name="Scatter Plot 2D" version="2.0.0">
+    <description>A standalone tool for Scatter Plots.</description>
+    <requirements>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+    </requirements>
+    <command interpreter="python">
+        scatter_plot_2D.py
+        --input $input
+        --ID $uniqID
+        
+        --X $x
+        --Y $y
+        --figure $figure
+
+        #if $design
+            --design $design
+        #end if
+
+        #if $group
+            --group $group
+        #end if
+
+        #if $paletteGroup
+            --palette_group $paletteGroup
+        #end if
+
+        #if $palette
+            --palette $palette
+        #end if
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="x" type="text" size="30" value="" label="X Group Title" help="Name of the column for X values."/>
+        <param name="y" type="text" size="30" value="" label="Y Group Title" help="Name of the column for X values."/>
+        <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="paletteGroup" type="text" size="30" label="Palette Group [Optional]" help="See Palettable's website."/>
+        <param name="palette" type="text" size="30" label="Palette [Optional]" help="See Palettable's website."/>
+    </inputs>
+    <outputs>
+        <data format="pdf" name="figure" label="${tool.name} on ${on_string}: scatter plots"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+
+**Tool Description**
+
+The tool provides a 2D scatter plot of your data.  User has option to plot the outputs produced by other tools such as the principal component analysis (PCA) tool, the random forest (RF) tool as well as datasets uploaded by user. 
+**NOTE:** The user also has an option to choose the color palette if he/she does not have the default one using the web site:  http://www.palettable.io/
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
+
+@UNIQID@
+
+**X Group Title**
+
+    - Name of the column for X values.
+
+**Y Group Title**
+
+    - Name of the column for Y values.
+
+**Use PCA Data?**
+
+    - Using a PCA output or standard dataset.
+
+@METADATA@
+
+@GROUP_OPTIONAL@
+
+**Palette Group [Optional]**
+
+    - See Palettable's website.
+
+**Palette [Optional]**
+
+    - See Palettable's website.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+The too produces a PDF file with the 2D scatter plot.  The coloring of the features by group and corresponding legend will be included in the plot if the user provide the design file and grouping variable.
+
+
+</help>
+</tool>

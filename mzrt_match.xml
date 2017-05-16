@@ -1,0 +1,129 @@
+<tool id="mzrtmatch" name="Mass to Charge Ratio/Retention Time (m/z/RT) Matching" version="2.0.0">
+    <description>Matches features in 2 files based on  their mz and RT.</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">matplotlib</requirement>
+        <requirement type="python-module">matplotlib_venn</requirement>
+        <requirement type="python-module">palettable</requirement>
+    </requirements>
+    <command interpreter="python">
+        mzrt_match.py
+        --anno1 $anno1
+        --anno2 $anno2
+        --uniqID1 $uniqID1
+        --uniqID2 $uniqID2
+        --mzID1 $mzID1
+        --mzID2 $mzID2
+        --rtID1 $rtID1
+        --rtID2 $rtID2
+        --all $all
+        --matched $match
+        --unmatched1 $unmatched1
+        --unmatched2 $unmatched2
+        --summary $summary
+        --figure $figure
+        --mzcut $mz
+        --rtcut $rt
+        --name1 $name1
+        --name2 $name2
+    </command>
+    <inputs>
+        <param name="anno1" type="data" format="tabular" label="File 1" help="Input dataset 1 in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="anno2" type="data" format="tabular" label="File 2" help="Input dataset 2 in wide format and tab separated. If not tab separated see TIP below."/>
+        <param name="uniqID1" type="text" size="30" value="" optional="false" label="Unique Feature ID for File 1" help="Name of the column on you annotation file 1 containing unique ID."/>
+        <param name="uniqID2" type="text" size="30" value="" optional="false" label="Unique Feature ID for File 2" help="Name of the column on you annotation file 2 containing unique ID."/>
+        <param name="mzID1" type="text" size="30" value="" optional="false" label="Mass/Charge for File 1" help="Name of the column on you annotation file 1 containing mz."/>
+        <param name="mzID2" type="text" size="30" value="" optional="false" label="Mass/Charge for File 2" help="Name of the column on you annotation file 2 containing mz."/>
+        <param name="rtID1" type="text" size="30" value="" optional="false" label="Retention Time for File 1" help="Name of the column on you annotation file 2 containing rt."/>
+        <param name="rtID2" type="text" size="30" value="" optional="false" label="Retention Time for File 2" help="Name of the column on you annotation file 1 containing rt."/>
+        <param name="mz" type="text" size="30" value="0.005" optional="true" label="Mass/Charge cut value" help="Window value for MZ (By default 0.005)."/>
+        <param name="rt" type="text" size="30" value="0.15" optional="true" label="Retention Time cut value" help="Window value for RT (By default 0.15)."/>
+        <param name="name1" type="text" size="30" value="F1" optional="true" label="File 1 name" help="Short name for File 1 (By default F1)."/>
+        <param name="name2" type="text" size="30" value="F2" optional="true" label="File 2 name" help="Short name for File 2 (By default F2)."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="all" label="${tool.name} on ${on_string}: All"/>
+        <data format="tabular" name="match" label="${tool.name} on ${on_string}: Matches"/>
+        <data format="tabular" name="unmatched1" label="${tool.name} on ${on_string}: Unmatched 1"/>
+        <data format="tabular" name="unmatched2" label="${tool.name} on ${on_string}: Unmatched 2"/>
+        <data format="tabular" name="summary" label="${tool.name} on ${on_string}: Summary"/>
+        <data format="pdf" name="figure" label="${tool.name} on ${on_string}: Venn"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+**NOTE:** The tool is primarily intended for matching of the outputs of the metabolomic data analaysis software that were processed with different parameter settings.
+
+Each metabolite (feature) is characterized by mass to charge ratio and retention time (m/z and RT).  After raw metabolomics data is processed in a third party software (such as mzMine) the metabolites are given some internal identifer (number) that is different for every tool run/parameter’s settings.  Sometime there is a need to comare the results for differnet parameter settings.  This is impossible to accompilsh using the internal identifer, since it is different for every parameter’s settings.  However, it is possible to link the internal identifiers using mast ro charge ratio and retention time for each feature, since they are the same, with, possibly, some minor difference wihtin a small interval window.  The tool matches two files that correspond to different parametrization settings.  Each file should contain at least three columns: mast to charge ratio (m/z), retention time (RT) and internal identifier (feature ID.) that are expected to be matched.  The match is performed based on m/z/RT and the error windows for each parameter can be customized by the user with some defaults.
+
+**NOTE:** Since many to many merge is performed with possible error window for m/z and RT single identifier in one dataset can (will) be matched with many identifiers from the other dataset. 
+
+**NOTE:** More broadly, the tool can be used for other types of data, where there is a need to match some unique identifer for each dataset based on the two values in each dataset that are supposed to be very similar wihtin some detection window.  Detection window error set to zero (0) should provide the exact match.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@MZRTFILE@
+
+**Unique Feature ID for File 1**
+
+    - Name of the column on you annotation file 1 containing unique ID.
+
+**Unique Feature ID for File 2**
+
+    - Name of the column on you annotation file 2 containing unique ID.
+
+**Mass/Charge for File 1**
+
+    - Name of the column on you annotation file 1 containing mz.
+
+**Mass/Charge for File 2**
+
+    - Name of the column on you annotation file 2 containing mz.
+
+**Retention Time for File 1**
+
+    - Name of the column on you annotation file 1 containing rt.
+
+**Retention Time for File 2**
+
+    - Name of the column on you annotation file 2 containing rt.
+
+**Mass/Charge cut value**
+
+    - Window value for MZ (By default 0.005).
+
+**Retention Time cut value**
+
+    - Window value for RT (By default 0.15).
+
+**File Name 1**
+
+    - A short name to idenfiy your dataset 1.
+
+**File Name 2**
+
+    - A short name to idenfiy your dataset 2.
+
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+This tool will always output six different files. A TSV of all peak combinations (matched and unmatched), a TSV of matched peak combinations, a TSV of unmatched peaks in file 1, a TSV of Unmatched peaks in file 2, a TSV summary file, and a PDF file of Venn diagrams that visualize matching.
+
+**NOTE:** Each of the matches is presented as a separate row in the TSV file.  All nonmatching identifier will also be outputted as a row with the corresponding matching value misisng (blank).
+
+
+</help>
+</tool>
+

@@ -1,0 +1,69 @@
+<tool id="thrbasflg" name="Threshold Based Flags" version="2.0.0">
+    <description>Flags metabolite features as on or off.</description>
+    <requirements>
+        <requirement type="python-module">numpy</requirement>
+        <requirement type="python-module">pandas</requirement>
+    </requirements>
+    <command interpreter="python">
+        threshold_based_flags.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --output $output
+        --group $group
+
+    #if $cutoff:
+        --cutoff $cutoff
+    #end if
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" label="Group/Treatment" help="Insert the group name from the Design file to separate the flag file." />
+        <param name="cutoff" type="integer" optional="true" size="4" value="30000" label="Cutoff" help="Cutoff to use for which values to flag. This defaults to 30,000."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="output" label="${tool.name} on ${on_string}" />
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The tool generates a flag for each feature for each group. The feature is flagged for the given group if for the half (or more) samples within that group the feature value is below a certain threshold or missing.  The default threshold value is 30,000.
+
+--------------------------------------------------------------------------------
+
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+@GROUP@
+
+**Cutoff**
+
+    - Cutoff to use for which values to flag. This defaults to 30,000.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+This tool outputs a TSV file with flags for each feature for each group.  In addition to the flag column for each group, two more flag columns are produced and included into the TSV file.  The first of those columns contains the flag (1) when at least one of the groups have the flag (1).  The second of those columns contains the flag (1) when all one of the groups have the flag (1).
+
+</help>
+</tool>

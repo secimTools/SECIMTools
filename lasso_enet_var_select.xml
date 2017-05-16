@@ -1,0 +1,88 @@
+<tool id="lasso2" name="LASSO/Elastic Net Variable Selection," version="1.0.0">
+    <description>Feature Selection using LASSO/Elastic Net.</description>
+    <requirements>
+        <requirement type="python-module">rpy2</requirement>
+        <requirement type="python-module">pandas</requirement>
+        <requirement type="python-module">numpy</requirement>
+
+    </requirements>
+    <stdio>
+        <exit_code range="1:" level="warning" description="RuntimeWarning"/>
+    </stdio>
+    <command interpreter="python">
+        lasso_enet_var_select.py
+        --input $input
+        --design $design
+        --ID $uniqID
+        --group $group
+        --alpha $alpha
+        --coefficients $coefficients
+        --flags $flags
+        --plots $plots
+    </command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="group" type="text" size="30" label="Group/Treatment." help="Name of the column in your Design File that contains group classifications."/>
+        <param name="alpha" type="text" value=".5" size="30" label="α" help="Default .5"/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="coefficients" label="${tool.name} on ${on_string}: Coefficients"/>
+        <data format="tabular" name="flags" label="${tool.name} on ${on_string}: Flags"/>
+        <data format="pdf" name="plots" label="${tool.name} on ${on_string}: Plots"/>
+    </outputs>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The tool performs selection of features that are different for each pairwise comparison between the groups in the grouping variable specified by the user.  The selection is performed based on the logistic regression with Elastic Net shrinkage (with LASSO being a special case.)
+The selection method is defined by shrinkage parameter α (defined within [0;1] range) with the default value α = 0.5, that can be changed by the user.  Variable selection can be performed for any value of α specified by the user in the range (0;1] with the value 1 corresponding the least number of variables and the most strict selection criterion (LASSO), while the value 0 corresponds only to the estimate shrinkage without variable selection (ridge).
+The best subset of variables for a given α is selected by a cross validation procedure.  More details about the Elastic Net and LASSO methods can be found in the paper and in the link:
+Zou, H., and Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67(2), 301-320.
+
+--------------------------------------------------------------------------------
+
+**Note**
+
+- This tool currently treats all variables as continuous numeric
+  variables. Running the tool on categorical variables might result in
+  incorrect results. 
+- Rows containing non-numeric (or missing) data in any
+  of the chosen columns will be skipped from the analysis.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+@GROUP@
+
+**α**
+
+    - Default .5
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+Three files are outputted.  The first TSV file contains the values of the coefficients (including zeroes) for each feature that were produced by the tool for each pair of comparisons (in columns.)  Those coefficients are produced for the transformed data (part of the LASSO/EN method) and should be interpreted with caution.  The second TSV file contains the corresponding flags for each feature with one (1) corresponding to selected features.  The feature is selected when the corresponding coefficient is not zero.  The third PDF file contains the pairs of graphs for each pairwise comparison between the groups.  For each pairwise comparison the first graph displays the behavior of the coefficients based on the value of the penalty and the shrinkage parameter.  The second graph provides the details of cross-validation procedure that is used for detection of the optimal penalty and for feature selection.  For the cross-validation procedure the results for the error are displayed together with the confidence bands and with the corresponding number of selected features.  Two vertical lines highlight the number of features selected by the LASSO/EN.  The first line corresponds to the smallest cross-validation error and the second line corresponds to the most regularized model with the error within one standard deviation from the smallest error.  The TSV files contain flags and coefficients that correspond to the smallest cross-validation error.
+ 
+
+</help>
+</tool>

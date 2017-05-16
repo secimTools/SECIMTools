@@ -1,0 +1,79 @@
+<tool id="hch" name="Hierarchical Clustering Heatmap (Beta)" version="1.0,0">
+	<description>Calculates means per group and plots a heatmap.</description>
+	<requirements>
+		<requirement type="python-module">numpy</requirement>
+	    <requirement type="python-module">pandas</requirement>
+	    <requirement type="python-module">matplotlib</requirement>
+	    <requirement type="python-module">logging</requirement>
+	    <requirement type="python-module">logger</requirement>
+	    <requirement type="python-module">interface</requirement>
+	    <requirement type="python-module">palettable</requirement>
+	</requirements>
+	<command interpreter="python">
+		hierarchical_clustering_heatmap.py
+		--input $input
+		--design $design
+		--uniqID $uniqID
+		#if $dendogram
+		--dendogram
+		#end if
+		--labels $labels
+		--fig $fig
+	</command>
+	<inputs>
+		<param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
+	    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+	    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+	    <param name="dendogram" type="boolean" value="False" label="Add dendogram on heatmap" help="It will print a dendogram over the heatmap."/>
+		<param name="labels" type="select" label="Remove labels from plots" multiple="true" display="checkboxes">
+			<option value="x">X-axis labels</option>
+			<option value="y">Y-axis labels</option>
+		</param>
+	</inputs>
+	<outputs>
+    	<data format="pdf" name="fig" label="${tool.name} on ${on_string}"/>
+	</outputs>
+	<macros>
+			<import>macros.xml</import>
+	</macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+This tool plots a heatmap of your data.
+
+**NOTE:** This script works best with log transformed data.
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+- Two input datasets are required.
+
+		@WIDE@
+
+    **NOTE:** The sample IDs must match the sample IDs in the Design File
+    (below). Extra columns will automatically be ignored.
+
+
+    @METADATA@
+
+    **In addition to your datasets, you need to provide:**
+
+    **Unique Feature ID**
+
+    - The column name in your wide dataset that contains the unique IDs for
+      your features. In our example dataset you would input *Compound*.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+	- A PDF containing a heatmap for your data.
+
+
+</help>
+</tool>
+

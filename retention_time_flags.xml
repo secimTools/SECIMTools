@@ -1,0 +1,88 @@
+<tool id="RTflag2" name="Retention Time (RT) Flags" version="2.0.0">
+  <description>Calculate RT flags.</description>
+  <requirements>
+    <requirement type="python-module">numpy</requirement>
+    <requirement type="python-module">pandas</requirement>
+    <requirement type="python-module">matplotlib</requirement>
+    <requirement type="python-module">scipy</requirement>
+    <requirement type="python-module">palettable</requirement>
+  </requirements>
+  <stdio>
+    <exit_code range="1:" level="warning" description="RuntimeWarning"/>
+  </stdio>
+  <command interpreter="python">
+      retention_time_flags.py
+      --input $input
+      --design $design
+      --ID $uniqID
+      --figure $RTplot
+      --flag $RTflag
+      --minutes $minutes
+
+      #if $CVcutoff:
+	    --CVcutoff $CVcutoff
+      #end if
+      #if $pctl
+        --pctl
+      #end if
+  </command>
+  <inputs>
+    <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+    <param name="minutes" type="float" size="30" value=".2" label="Percentile Cutoff" help="Percenctile cutoff in minutes. The default value used is 0.2 minutes." />
+    <param name="CVcutoff" optional="true" type="float" value=".1" size="4" label="CVcutoff" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
+    <param name="pctl" type="boolean" size="30" label="90th percentile [Optional]" help="Check this box to use a 90th percentile. The default is a 95th percentile (NO). [Optional]" />
+  </inputs>
+  <outputs>
+    <data format="pdf" name="RTplot"  label="${tool.name} on ${on_string}: plot" />
+    <data format="tabular" name="RTflag"  label="${tool.name} on ${on_string}: flag" />
+  </outputs>
+  <macros>
+      <import>macros.xml</import>
+  </macros>
+<help>
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+**NOTE:** The tool is primarily intended for metabolomics data analysis and retention time flagging.  The goal of the tool is to identify potential problems with the instrument/data processing and pre-processing.
+
+The tool identifies the abnormalities of the feature’s retention time. The following feature characteristics are investigated with each characteristic having a separate flag column in the output file. 
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File (below).
+Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+**Percentile Cutoff**
+
+    - Percenctile cutoff in minutes. The default value used is 0.2 minutes.
+
+**CVcutoff**
+
+    - The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here.
+
+**90th percentile [Optional]**
+
+    - Check this box to use a 90th percentile. The default is a 95th percentile (NO).
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+The tool outputs two files: a TSV file with flags for each feature, where each flagging method results are saved in a separate column and a PDF file containing a density plot of the coefficients of variation (CV) for the retention time.
+
+</help>
+</tool>
