@@ -7,7 +7,7 @@ palettable==2.1.1
 pandas==0.18.1
 patsy==0.4.0
 pymc==2.3.6
-rpy2==2.3.9
+rpy2==2.3.10
 scikit-learn==0.18
 scipy==0.15.1
 seaborn==0.7.0
