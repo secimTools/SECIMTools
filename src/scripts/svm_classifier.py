@@ -32,8 +32,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
 # Import local libraries
-from dataManager import logger as sl
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.interface import wideToDesign
 
 def getOptions(myOpts=None):
     parser = argparse.ArgumentParser( formatter_class=RawDescriptionHelpFormatter )

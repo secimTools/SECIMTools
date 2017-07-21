@@ -24,8 +24,8 @@ import numpy as np
 import pandas as pd
 
 # Impot local data libraries
-from dataManager import logger as sl
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.interface import wideToDesign
 
 def getOptions():
     """ Function to pull in arguments """

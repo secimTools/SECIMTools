@@ -32,8 +32,8 @@ from argparse import RawDescriptionHelpFormatter
 import pandas as pd
 
 # Import local data libraries
-from dataManager import logger as sl
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.interface import wideToDesign
 
 
 """Function to pull arguments"""

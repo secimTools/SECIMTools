@@ -35,13 +35,13 @@ from sklearn.decomposition import PCA
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data libraries
-from dataManager import logger as sl
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.interface import wideToDesign
 
 # Import local plotting libraries
-from visualManager import module_scatter as scatter
-from visualManager.manager_color import colorHandler
-from visualManager.manager_figure import figureHandler
+from secimtools.visualManager import module_scatter as scatter
+from secimtools.visualManager.manager_color import colorHandler
+from secimtools.visualManager.manager_figure import figureHandler
 
 def getOptions(myopts=None):
     """ Function to pull in arguments """

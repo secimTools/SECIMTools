@@ -40,18 +40,18 @@ from scipy.stats.mstats import kruskalwallis
 
 
 # Import local plottin libraries
-from visualManager import module_box as box
-from visualManager import module_hist as hist
-from visualManager import module_lines as lines
-from visualManager import module_scatter as scatter
-from visualManager.manager_color import colorHandler
-from visualManager.manager_figure import figureHandler
+from secimtools.visualManager import module_box as box
+from secimtools.visualManager import module_hist as hist
+from secimtools.visualManager import module_lines as lines
+from secimtools.visualManager import module_scatter as scatter
+from secimtools.visualManager.manager_color import colorHandler
+from secimtools.visualManager.manager_figure import figureHandler
 
 
 
 # Import local data libraries
-from dataManager import logger as sl
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.interface import wideToDesign
 
 def getOptions(myopts=None):
     """ Function to pull in arguments. """

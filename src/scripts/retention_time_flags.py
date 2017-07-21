@@ -32,16 +32,16 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data libraries
-from dataManager import logger as sl
-from dataManager.flags import Flags
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.flags import Flags
+from secimtools.dataManager.interface import wideToDesign
 
 # Import local plotting libraries
-from visualManager import module_hist as hist
-from visualManager import module_lines as lines
-from visualManager import module_distribution as dist
-from visualManager.manager_color import colorHandler
-from visualManager.manager_figure import figureHandler
+from secimtools.visualManager import module_hist as hist
+from secimtools.visualManager import module_lines as lines
+from secimtools.visualManager import module_distribution as dist
+from secimtools.visualManager.manager_color import colorHandler
+from secimtools.visualManager.manager_figure import figureHandler
 
 
 def getOptions(myopts=None):

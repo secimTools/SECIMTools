@@ -24,8 +24,8 @@ import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data ibraries
-from dataManager import interface
-from dataManager import logger as sl
+from secimtools.dataManager import interface
+from secimtools.dataManager import logger as sl
 
 #Getting all the arguments
 def getOptions(myopts=False):

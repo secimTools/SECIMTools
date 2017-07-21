@@ -32,13 +32,13 @@ import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data libraries
-from dataManager import logger as sl
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.interface import wideToDesign
 
 # Import local plotting libraries
-from visualManager import module_heatmap as hm
-from visualManager.manager_color import colorHandler
-from visualManager.manager_figure import figureHandler
+from secimtools.visualManager import module_heatmap as hm
+from secimtools.visualManager.manager_color import colorHandler
+from secimtools.visualManager.manager_figure import figureHandler
 
 #Import data
 def getOptions():

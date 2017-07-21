@@ -27,7 +27,7 @@ import pandas as pd
 import numpy as np
 
 # Import local data libraries
-from dataManager import logger as sl
+from secimtools.dataManager import logger as sl
 
 
 """Function to pull arguments"""

@@ -25,11 +25,11 @@ import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data libraries
-from dataManager import interface
-from dataManager import logger as sl
+from secimtools.dataManager import interface
+from secimtools.dataManager import logger as sl
 
 # Import local plotting libraries
-from visualManager import module_venn as mVenn
+from secimtools.visualManager import module_venn as mVenn
 
 #Getting all the arguments
 def getOptions():

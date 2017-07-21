@@ -33,15 +33,15 @@ import matplotlib.gridspec as gridspec
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data libraries
-from dataManager import logger as sl
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.interface import wideToDesign
 
 # Import local plotting libraries
-from anovaModules.qqPlot import qqPlot
-from anovaModules.volcano import volcano
-from anovaModules.runANOVA import runANOVA
-from anovaModules.preProcessing import preProcessing
-from anovaModules.generateDinamicCmbs import generateDinamicCmbs
+from secimtools.anovaModules.qqPlot import qqPlot
+from secimtools.anovaModules.volcano import volcano
+from secimtools.anovaModules.runANOVA import runANOVA
+from secimtools.anovaModules.preProcessing import preProcessing
+from secimtools.anovaModules.generateDinamicCmbs import generateDinamicCmbs
  
 def getOptions():
     """ Function to pull in arguments """
