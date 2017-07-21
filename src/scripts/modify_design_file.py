@@ -2,13 +2,13 @@
 ################################################################################
 # DATE: 2016/October/10
 # 
-# MODULE: subset_design.py
+# MODULE: subset_data.py
 #
 # VERSION: 1.2
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu) 
 #
-# DESCRIPTION: Subsets design file data based on groups or any other field on the
+# DESCRIPTION: Subsets design file data based on the groups in the 
 #               design file. 
 #
 ################################################################################
@@ -30,8 +30,8 @@ from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
-    parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
-                                     "dataset and calculates the LOD on it ")
+    parser = argparse.ArgumentParser(description="Removes samples from the design file" \
+                                    "belonging to the user-specified group(s).")
     # Standar Input
     standar = parser.add_argument_group(title="Standard input", 
                         description= "Standard input for SECIM tools.")
@@ -46,17 +46,17 @@ def getOptions():
                         required=False, help="Name of column in design file" \
                         "with Group/treatment information.")
     # Tool Especific
-    tool = parser.add_argument_group(title="Tool especific input", 
+    tool = parser.add_argument_group(title="Tool specific input", 
                         description= "Input that is especific for this tool.")
     tool.add_argument("-dp","--drops", dest="drops", action='store', 
                         required=True, help="Name of the groups in your"\
-                        "group/treatment column that you want to keep.")
+                        "group/treatment column that you want to remove from the design file.")
 
     # Output Paths
     output = parser.add_argument_group(title='Output paths', 
                         description="Paths for the output files")
     output.add_argument("-o","--out",dest="out",action="store",
-                        required=True,help="Output path for bff file[CSV]")
+                        required=True,help="Output path for the new design file")
     args = parser.parse_args()
 
     # Standardize paths
@@ -144,7 +144,7 @@ def main(args):
     selectedDesign = dat.design.drop(iToDrop,axis=0, inplace=False)
 
     # Output wide results
-    logger.info("Output wide file")
+    logger.info("Outputing design file")
     selectedDesign.to_csv(args.out, sep='\t')
     logger.info("Script Complete!")
 

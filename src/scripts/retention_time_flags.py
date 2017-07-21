@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2017/02/24
+# DATE: 2017/06/23
 #
 # SCRIPT: retention_time_flags.py
 #
-# VERSION: 2.2
+# VERSION: 2.3
 # 
-# AUTHOR: Miguel A. Ibarra (miguelib@ufl.edu)
+# AUTHOR: Miguel A. Ibarra (miguelib@ufl.edu), 
+# Edited by Alexander Kirpich (akirpich@ufl.edu)
 # 
 # DESCRIPTION: Retention time (RT) is related to the location of the compound.
 #    Thus, across samples, the retention times for one compound do not vary much 
@@ -87,7 +88,7 @@ def getOptions(myopts=None):
                                 description='Input specific for the tool.')
     tool.add_argument('-m',"--minutes",dest="minutes",action='store', 
                         required=False,default=0.2,type=float, 
-                        help="Percentile cutoff. The default is .2 minutes")
+                        help="Value cutoff. The default is .2 minutes assuming data are in minutes.")
     tool.add_argument("--pctl", dest="p90p10", action='store_true', 
                         required=False, default=False, 
                         help="""The difference is calculated by 95th percentile 
@@ -149,7 +150,7 @@ def runStats(args, wide, dat):
     RTstat['p90']   =RTround.apply(np.nanpercentile, q=90, axis=1)
     RTstat['p10']   =RTround.apply(np.nanpercentile, q=10, axis=1)
     RTstat['p05']   =RTround.apply(np.nanpercentile, q= 5, axis=1)
-    RTstat['std']   =RTround.apply(np.std, axis=1)
+    RTstat['std']   =RTround.apply(np.std, axis=1, ddof=1)
     RTstat['mean']  =RTround.apply(np.mean, axis=1)
     RTstat['median']=RTround.apply(np.median, axis=1)
     RTstat['cv']    =RTstat['std'] / RTstat['mean']
@@ -226,12 +227,15 @@ def main(args):
 
     if not args.CVcutoff:
         CVcutoff = np.nanpercentile(RTstat['cv'].values, q=90)
-        CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
     else:
-        CVcutoff = args.CVcutoff
+        CVcutoff = np.nanpercentile(RTstat['cv'].values, q=(1-args.CVcutoff)*100 )
+
+    CVcutoff = round(CVcutoff, -int(floor(log(CVcutoff, 10))) + 2)
+
 
     flag.addColumn(column='flag_RT_big_CV', 
                     mask=(RTstat['cv'] > CVcutoff))
+
 
     # Plot data
     logger.info("Plotting data")

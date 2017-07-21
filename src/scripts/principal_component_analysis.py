@@ -153,7 +153,7 @@ def runPCA(wide):
     # Convert loadings, scores and summaries to Pandas DataFrame rename index
     df_scores   = pd.DataFrame(data=scores, index=wide.index, columns=header)
     df_loadings = pd.DataFrame(data=loadings, index=header, columns=wide.columns)
-    df_summary  = pd.DataFrame(data=summary, index=header, columns=["standar_deviation",
+    df_summary  = pd.DataFrame(data=summary, index=header, columns=["standard_deviation",
                 "proportion_of_variance_explained","cumulative_proportion_of_variance_explained"])
 
     return df_scores, df_loadings, df_summary

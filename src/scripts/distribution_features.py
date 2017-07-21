@@ -1,7 +1,7 @@
 ######################################################################################
 # Date: 2016/July/06
 # 
-# Module: distribution_feature.py
+# Module: distribution_features.py
 #
 # VERSION: 1.0
 # 
@@ -37,7 +37,7 @@ def getOptions():
     """
     Function to pull in arguments
     """
-    description = """ Distribution Analysis: Plot sample distrubtions. """
+    description = """ Distribution Summaries: The tool plots the distribution of the random subset of features. """
     parser = argparse.ArgumentParser(description=description, formatter_class=
                                     RawDescriptionHelpFormatter)
     # Standard Input

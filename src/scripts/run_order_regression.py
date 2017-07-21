@@ -2,7 +2,7 @@
 ################################################################################
 # DATE: 2017/02/28
 #
-# SCRIPT: runOrderRegression.py
+# SCRIPT: run_order_regression.py
 #
 # VERSION: 1.3
 # 
@@ -247,7 +247,7 @@ def main(args):
     ror_flags.addColumn(column="flag_feature_runOrder_pval_05",
                         mask=(ror_df["pval"]<=0.05))
     ror_flags.addColumn(column="flag_feature_runOrder_pval_01",
-                        mask=(ror_df["pval"]<=0.1))
+                        mask=(ror_df["pval"]<=0.01))
 
     # Plot Results
     # Open a multiple page PDF for plots

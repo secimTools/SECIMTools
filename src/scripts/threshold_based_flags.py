@@ -23,7 +23,7 @@ from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull in arguments"""
-    description = """Flags bhased on treshold"""
+    description = """The tool generates flags for features with values above the pre-specified threshold."""
     parser = argparse.ArgumentParser(description=description)
     # Standard Input
     standard = parser.add_argument_group(title='Standard input', 

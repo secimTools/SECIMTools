@@ -32,7 +32,7 @@ from visualManager.manager_color import colorHandler
 from visualManager.manager_figure import figureHandler
 
 def getOptions(myOpts=None):
-    description="Standa alone function to plot Scatter Plots 3D"
+    description="Standa alone Scatter Plots 3D tool"
     parser = argparse.ArgumentParser(description=description, 
                         formatter_class=RawDescriptionHelpFormatter)
     standard = parser.add_argument_group(title='Standard input', 

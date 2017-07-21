@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2017/02/22
+# DATE: 2017/06/29
 #
 # SCRIPT: linear_discriminant_analysis.py
 #
-# VERSION: 1.0
+# VERSION: 2.0
 # 
-# AUTHOR: Miguel A. Ibarra (miguelib@ufl.edu)
+# AUTHORS: Miguel A. Ibarra <miguelib@ufl.edu> and Alexander Kirpich <akirpich@ufl.edu>
 # 
 # DESCRIPTION: This script takes a a wide format file and performs a linear
-# discriminant analysis.
+# discriminant analysis with/without single or double cross-validation.
 #
 ################################################################################
 # Import future libraries
@@ -31,6 +31,12 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+# Importing cross-validation functions
+from sklearn import datasets
+from sklearn.model_selection import GridSearchCV, cross_val_score
+from sklearn.preprocessing import StandardScaler
+
+
 
 # Import local plottin libraries
 from visualManager import module_scatter as scatter
@@ -65,13 +71,20 @@ def getOptions(myopts=None):
     # Tool Input
     tool = parser.add_argument_group(title='Tool input', 
                             description='Optional/Specific input for the tool.')
+    tool.add_argument('-cv', "--cross_validation", dest="cross_validation", action='store',
+                        required=True, help="Choice of cross-validation procedure for the -nc determinantion: none, "\
+                        "single, double.")
     tool.add_argument("-nc", "--nComponents",dest="nComponents", action='store',
                         type= int, required=False, default=None,  
-                        help="Number of component s[Default == 2].")
+                        help="Number of components [Default == 2]. Used only if -cv=none.")
     # Tool output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-o","--out",dest="out",action='store',required=True, 
                         help="Name of output file to store scores. TSV format.")
+    output.add_argument("-oc","--outClassification",dest="outClassification",action='store',required=True,
+                        help="Name of output file to store classification. TSV format.")
+    output.add_argument("-oca","--outClassificationAccuracy",dest="outClassificationAccuracy",action='store',required=True,
+                        help="Name of output file to store classification accuracy. TSV format.")
     output.add_argument("-f","--figure",dest="figure",action="store",required=True,
                         help="Name of output file to store scatter plots for scores")
     # Plot Options
@@ -84,10 +97,13 @@ def getOptions(myopts=None):
     args = parser.parse_args()
 
     # Standardized output paths
-    args.out    = os.path.abspath(args.out)
-    args.input  = os.path.abspath(args.input)
-    args.design = os.path.abspath(args.design)
-    args.figure = os.path.abspath(args.figure)
+    args.out                       = os.path.abspath(args.out)
+    args.input                     = os.path.abspath(args.input)
+    args.design                    = os.path.abspath(args.design)
+    args.figure                    = os.path.abspath(args.figure)
+    args.outClassification         = os.path.abspath(args.outClassification)
+    args.outClassificationAccuracy = os.path.abspath(args.outClassificationAccuracy)
+
 
     # Split levels if levels
     if args.levels:
@@ -95,7 +111,7 @@ def getOptions(myopts=None):
 
     return(args)
 
-def runLDA(dat,nComp):
+def runLDA(dat,nComp,cv_status):
     """
     Runs LDA over a wide formated dataset
 
@@ -105,30 +121,170 @@ def runLDA(dat,nComp):
 
         :type nComp: int
         :param nComp: Number of components to use, if None the program will
-                        calculate n_groups -1 .
+                        calculate n_groups -1. If cv_status is single or double this parameter is ingored.
+
+        :type cv_status: string
+        :param cv_status: Cross-validation status for nComp. Can be none, single and double. 
+			  If "none" no cross-validation is performed and nComp specified by the user is used instead.
+
     :Returns:
         :rtype scores_df: pandas.DataFrame
         :return scores_df: Scores of the LDA.
     """
+
+
+    # The code below depends on cross validation status. The status can be either "single", "double" or "none".
+
+
+    # Case 1: User provides cv_status = "none". No cross-validation will be performed.	
+    # The number of components shoul be specified by the user in the nComp variable. The default in xml shoul be 2.
+    if cv_status == "none":
+      
+       # Telling the user that we are using the number of components pre-specified by the user.
+       logger.info(u"Using the number of components pe-specified by the user.")
+
+       # If by mistake the number the componentes nComp was not provided we hardcode it to 2.
+       if nComp is None:
+          logger.info(u"The number of componets was not provided! Default number 2 is used.")
+	  nComp = 2
+
+       # Putting the user defined (or corrected if nothing imputted) number of compoents nComp directly into index_min.
+       index_min = nComp	
+
+
+
+    # Case 2: User provides cv_status = "single". Only single cross-validation will be performed.	
+    if cv_status == "single":
+
+       # Telling the user that we are using the number of components determined via a single cross-validation.
+       logger.info(u"Using the number of components determined via a single cross-validation.")
+
+       # Pulling the number of unique groups that we will feed to cross-validation.
+       group_values_series = dat.transpose()[dat.group].T.squeeze()
+	
+       # Checking if the sample sizes is smaller than 100 and exiting if that is the case.
+       if (len(group_values_series) < 100):
+	  logger.info(u"The required number of samples for a single cross-validation procedure is at least 100. The dataset has {0}.".format(len(group_values_series)))
+	  logger.info(u"Exiting the tool.")
+          exit()	
+
+       group_values_series_unique = group_values_series.unique()
+       number_of_unique_groups = group_values_series_unique.shape[0]
+       # Ensuring that we will produce at least single plot. 
+       n_max = max( number_of_unique_groups - 1, 2 )
+   
+
+       # Creating a list of values to perform single cross-validation over.	
+       # P.S. We do not consider scenario of a single component so that we can produce at least single 2D plot in the end.
+       n_list = range(2, n_max + 1)
+
+
+       # Creating dictionary we gonna feed to the single cross-validation procedure.
+       n_list_dictionary = dict( n_components = n_list )
+
+
+       # Creating a gridsearch object with parameter "n_list_dictionary"
+       internal_cv = GridSearchCV( estimator = LinearDiscriminantAnalysis(), param_grid = n_list_dictionary )
+
+           
+       # Performing internal_cv.
+       internal_cv.fit( dat.wide.T, dat.transpose()[dat.group] )
+       # Assigning index_min from the best internal_cv i.e. internal_cv.best_params_['n_components'] 
+       index_min = internal_cv.best_params_['n_components']
+
+
+
+    # Case 3: User provides cv_status = "double". Double cross-validation will be performed.
+    if cv_status == "double":
+
+       # Telling the user that we are using the number of components determined via a double cross-validation.
+       logger.info(u"Using the number of components determined via a double cross-validation.")
+
+       # Pulling the number of unique groups that we will feed to cross-validation.
+       group_values_series = dat.transpose()[dat.group].T.squeeze()
+
+       # Checking if the sample sizes is smaller than 100 and exiting if that is the case.
+       if (len(group_values_series) < 100):
+	  logger.info(u"The required number of samples for a double cross-validation procedure is at least 100. The dataset has {0}.".format(len(group_values_series)))
+	  logger.info(u"Exiting the tool.")
+          exit()	
+
+       group_values_series_unique = group_values_series.unique()
+       number_of_unique_groups = group_values_series_unique.shape[0]
+       # Ensuring that we will produce at least single plot. 
+       n_max = max( (number_of_unique_groups - 1), 2 )
+
+       
+       # Here we are looping over possible lists we have to cross-validate over.	
+       # We do not consider scenario of a single components so that we can produce at least one 2D plot in the end.
+
+       # Creating index of the minimum variable that will give us the best prediction. 
+       # This will be updated during interlan and external CV steps if necessary.
+       index_min = 2
+
+       for n_current in range(2, n_max+1):
+
+	   # Creating the set of candidates that we will use for both cross-validation loops: internal and external
+	   # n_list = range(2, n_current + 1)
+	   n_list = range(2, n_current+1)				
+      
+           # Creating dictionary we gonna feed to the internal cross-validation procedure.
+           n_list_dictionary = dict( n_components = n_list )
+	
+	   # Creating a gridsearch object with parameter "n_list_dictionary"
+           internal_cv = GridSearchCV( estimator = LinearDiscriminantAnalysis(), param_grid = n_list_dictionary)
+           
+           # Performing internal_cv for debugging purposes.
+           internal_cv.fit(dat.wide.T, dat.transpose()[dat.group])
+
+           # Performing external_cv using internal_cv
+           external_cv = cross_val_score(internal_cv, dat.wide.T, dat.transpose()[dat.group])
+           
+
+           # Checking whether adding this extra component to our anlaysis will help.
+	   # For the first 2 components we assume they are the best and update it later if necessary.
+           if n_current == 2:
+              best_predction_proportion = external_cv.mean()
+           
+           else:
+              # Checking whether adding this extra component helped to what we already had. 
+              if external_cv.mean() > best_predction_proportion:
+              	 best_predction_proportion = external_cv.mean()
+                 index_min = n_current
+
+
+
+     
     #Initialize LDA class and stablished number of coponents
-    lda = LinearDiscriminantAnalysis(n_components=nComp)
+    lda = LinearDiscriminantAnalysis( n_components=index_min )
 
-    #Get scores of LDA (Fit LDA)
-    scores = lda.fit_transform(dat.wide.T,dat.transpose()[dat.group])
 
-    # If no number the componentes specified asign the max number of componentes
-    # calculated by the meythod.
-    if nComp is None:
-        nComp = scores.shape[1]
+    # Computing scores for the fit first and savin them into a data frame.
+
+    # Get scores of LDA (Fit LDA)
+    scores = lda.fit_transform( dat.wide.T,dat.transpose()[dat.group] )
 
     # Create column names for scores file
-    LVNames = ["Component_{0}".format(i+1) for i in range(nComp)]
+    LVNames = ["Component_{0}".format(i+1) for i in range(index_min)]
 
-    # Create padas dataframe for scores
+    # Create pandas dataframe for scores
     scores_df = pd.DataFrame(scores,columns=LVNames,index=dat.wide.columns.values)
 
+    # Dealing with predicted and classification data frame.
+
+    # Geting predicted values of LDA (Fit LDA)
+    fitted_values = lda.predict( dat.wide.T )
+    # Pulling the groups from the orogonal data frmae and save it to original_values.
+    original_values = dat.transpose()[dat.group].T.squeeze()
+
+    # Combining results into the data_frame so that it can be exported.
+    classification_df = pd.DataFrame( {'Group_Observed': original_values ,
+			               'Group_Predicted': fitted_values } )
+
     # Return scores for LDA
-    return scores_df
+    return scores_df, classification_df
+
+
 
 def plotScores(data, palette, pdf):
     """
@@ -201,15 +357,23 @@ def main(args):
 
     #Run LDA
     logger.info(u"Runing LDA on data")
-    scores_df = runLDA(dat, nComp=args.nComponents)
+    df_scores, df_classification  = runLDA(dat, nComp=args.nComponents, cv_status=args.cross_validation)
  
     # Plotting scatter plot for scores
     logger.info(u"Plotting LDA scores")
     with PdfPages(args.figure) as pdfOut:
-        plotScores(data=scores_df, palette=palette, pdf=pdfOut)
+        plotScores(data=df_scores, palette=palette, pdf=pdfOut)
 
     # Save scores
-    scores_df.to_csv(args.out,sep="\t",index_label="sampleID")
+    df_scores.to_csv(args.out, sep="\t", index_label="sampleID")
+    # Save classification
+    df_classification.to_csv(args.outClassification, sep="\t", index_label="sampleID")
+
+    # Computing mismatches between original data and final data.
+    classification_mismatch_percent = 100 * sum( df_classification['Group_Observed'] == df_classification['Group_Predicted'] )/df_classification.shape[0]
+    classification_mismatch_percent_string = str( classification_mismatch_percent ) + ' Percent'
+    os.system("echo %s > %s"%( classification_mismatch_percent_string, args.outClassificationAccuracy ) )
+
 
     #Ending script
     logger.info(u"Finishing running of LDA")

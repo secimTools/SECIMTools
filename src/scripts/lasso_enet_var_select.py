@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ################################################################################
 # DATE: 2017/03/10
 # 
@@ -37,7 +36,7 @@ from dataManager.interface import wideToDesign
 
 def getOptions(myOpts=None):
     description="""  
-    This attempts to impute missing values with K Nearest Neighbors Algorithm
+    The tool performs feature selection using LASSO/Elastic Net feature selection method.
     """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
@@ -124,7 +123,8 @@ def main(args):
     comboLength = len(comboMatrix)
 
     #Run R
-    returns = lassoEnetScript.lassoEN(dat.trans, dat.design, comboMatrix, 
+    correct_list_of_names = np.array(dat.trans.columns.values.tolist())
+    returns = lassoEnetScript.lassoEN(dat.trans, dat.design, args.uniqID, correct_list_of_names, comboMatrix, 
                                     comboLength,args.alpha,args.plots)
     robjects.r['write.table'](returns[0],file=args.coefficients,sep='\t',
                             quote=False, row_names = False, col_names = True)

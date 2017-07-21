@@ -31,7 +31,7 @@ from dataManager import logger as sl
 def getOptions(myopts=False):
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="""
-    identifies compounds based on a library file""")
+    Identifies compounds based on a library file""")
     # Requiered Input
     required = parser.add_argument_group(title='Required Input', 
                                     description='Required input to the program')

@@ -38,7 +38,7 @@ from visualManager.manager_figure import figureHandler
 
 def getOptions():
     """ Function to pull in arguments """
-    description = """ Distribution Analysis: Plot sample distrubtions. """
+    description = """ Distribution Summaries: The tool plots the distribution of samples. """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)
     standard = parser.add_argument_group(title="Standar input", 
@@ -143,22 +143,28 @@ def main(args):
     
     # Sort data by runOrder if provided
     if args.order:
-        logger.info(u"Sorting by runOrder")
-        dat.sortByRunOrder()
+       logger.info(u"Sorting by runOrder")
+       design_final = dat.design.sort_values(by=args.order, axis=0)
+       wide_final = dat.wide.reindex(columns= design_final.index )
+		
+    else:
+       design_final = dat.design
+       wide_final = dat.wide
+
 
     # Get colors for each sample based on the group
-    palette.getColors(design=dat.design,groups=levels)
+    palette.getColors(design=design_final,groups=levels)
 
     # Open PDF pages to output figures
     with PdfPages(args.figure) as pdf:
 
         # Plot density plot
         logger.info(u"Plotting density for sample distribution")
-        plotDensityDistribution(pdf=pdf, wide=dat.wide, palette=palette)
+        plotDensityDistribution(pdf=pdf, wide=wide_final, palette=palette)
 
         # Plot boxplots
         logger.info(u"Plotting boxplot for sample distribution")
-        plotBoxplotDistribution(pdf=pdf, wide=dat.wide, palette=palette)
+        plotBoxplotDistribution(pdf=pdf, wide=wide_final, palette=palette)
         
     logger.info(u"Script complete!")
 

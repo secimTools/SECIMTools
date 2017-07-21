@@ -2,13 +2,13 @@
 ######################################################################################
 # DATE: 2016/August/10
 # 
-# MODULE: anova_lm.py
+# MODULE: anova_fixed.py
 #
 # VERSION: 1.0
 # 
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu) ed. Matt Thoburn (mthoburn@ufl.edu) 
 #
-# DESCRIPTION: This tool runs a multiway ANOVA on wide data
+# DESCRIPTION: This tool runs a fixed effects multiway ANOVA on wide data.
 #
 #######################################################################################
 # Import built-in packages
@@ -42,10 +42,10 @@ from anovaModules.volcano import volcano
 from anovaModules.runANOVA import runANOVA
 from anovaModules.preProcessing import preProcessing
 from anovaModules.generateDinamicCmbs import generateDinamicCmbs
-
+ 
 def getOptions():
     """ Function to pull in arguments """
-    description = """ One-Way ANOVA """
+    description = """ ANOVA Fixed Effects"""
     parser = argparse.ArgumentParser(description=description,
                              formatter_class=RawDescriptionHelpFormatter)
     # Standard input

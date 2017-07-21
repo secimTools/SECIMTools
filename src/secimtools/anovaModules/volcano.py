@@ -13,7 +13,7 @@ from visualManager import module_scatter as scatter
 from visualManager.manager_color import colorHandler
 from visualManager.manager_figure import figureHandler
 
-def volcano(combo, results, oname, cutoff=4):
+def volcano(combo, results, oname, cutoff=2):
     """ 
     Plot volcano plots.
 

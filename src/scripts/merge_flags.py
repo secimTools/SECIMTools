@@ -2,13 +2,13 @@
 ################################################################################
 # DATE: 2016/May/06, rev: 2016/July/11
 #
-# SCRIPT: countDigits.py
+# SCRIPT: merge_flags.py
 #
 # VERSION: 2.0
 # 
 # AUTHOR: Jonathan Poisson(poissonj@ufl.edu) Miguel A Ibarra (miguelib@ufl.edu)
 # 
-# DESCRIPTION: This merges files containing flas
+# DESCRIPTION: The script merges files containing flas.
 #
 ################################################################################
 # Import built-in libraries
@@ -31,17 +31,17 @@ def getOptions():
     parser = argparse.ArgumentParser()
     # Tool Input
     tool = parser.add_argument_group(title='Tool input')
-    tool.add_argument("--input", dest="flagFiles", action='store', 
+    tool.add_argument("-i","--input", dest="flagFiles", action='store', 
                         required=True, nargs="+", help="Input any number of "\
                         "flag files that have the same indexes")
-    tool.add_argument("--filename", dest="filename", action='store', 
+    tool.add_argument("-f","--filename", dest="filename", action='store', 
                         required=True, nargs="+", help="Filename for input data.")
-    tool.add_argument('-fid',"--flagUniqID",dest="flagUniqID",action="store",
+    tool.add_argument("-fid","--flagUniqID",dest="flagUniqID",action="store",
                         required=False, default="rowID",help="Name of the column "\
                         "with unique identifiers in the flag files.")
     # Tool Output
     output = parser.add_argument_group(title='Required output')
-    output.add_argument('--output', dest="mergedFile", action='store', 
+    output.add_argument("-o", "--output", dest="mergedFile", action='store', 
                         required=True, help="Output file")
     args = parser.parse_args()
 
@@ -91,12 +91,15 @@ def main(args):
     if ',' in args.flagFiles[0]:
         args.flagFiles = args.flagFiles[0].split(',')
 
+	print args.flagFiles
+
     # If args.filename is provided then use it to add its name to column names
     # This paramether will should be used only on galaxy
     if args.filename:
         # Cleaning weird characters on file names and replacing them with '_'. 
         filenames = [cleanStr(x=fname) for fname in args.filename]
 
+	print filenames
 
     # Convert files into dataframes and populate into new list
     for flagFile,filename in zip(args.flagFiles,filenames):

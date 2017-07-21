@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/May/06, rev: 2016/June/03
+# DATE: 2016/May/06, rev: 2017/June/12
 #
-# SCRIPT: flag.py
+# SCRIPT: coefficient_vairation_flags.py
 #
-# VERSION: 1.1
+# VERSION: 1.3
 # 
 # AUTHOR: Miguel A Ibarra (miguelib@ufl.edu) Edited by: Matt Thoburn (mthoburn@ufl.edu)
 # 
 # The output is a pdf of distributions, and a spreadsheet of flags
+#
+# Last revision: 
 #
 ################################################################################
 # Import built in libraries
@@ -93,7 +95,8 @@ def getOptions(myopts=None):
     plot.add_argument("-col","--color",dest="color",action="store",required=False, 
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
-    args=parser.parse_args()
+
+    args = parser.parse_args()
 
     # Standardize paths
     args.input  = os.path.abspath(args.input)
@@ -119,37 +122,44 @@ def calculateCV(data, design, cutoff, levels):
         :param design: design dataset
 
         :type cutoff: float
-        :param cutoff: Value of cutoff if non provided it will be canculated.
+        :param cutoff: Value of cutoff if non provided it will be calculated.
 
         :type levels: str
         :param levels: Name of the groups to groupby
+    # Get max CV
     """
 
-    #Open CV dataframe
-    CV = pd.DataFrame(index=data.index)
+    #Open CV and CVcutoffs dataframes
+    CV        = pd.DataFrame(index = data.index)
+    CVcutoff  = pd.Series(index    = list(set(design[levels])))
 
     # Split design file by treatment group
     for title, group in design.groupby(levels):
         # Create empty dataset with metabolites names as index and calculate their
         # standar deviation and mean
         DATstat=pd.DataFrame(index=data[group.index].index)
-        DATstat.loc[:,"std"]  = np.std(data[group.index], axis=1)
+        # ddof =1 is necessary to subtract n-1 in denominatior for standard deviation.
+        DATstat.loc[:,"std"]  = np.std(data[group.index], axis=1, ddof=1)
         DATstat.loc[:,"mean"] = np.mean(data[group.index],axis=1)
 
         # Calculate the Coefficient of Variation for that group (if groups)
         # or al data (if not groups provided).
         CV.loc[:,"cv_"+title] = abs(DATstat["std"] / DATstat["mean"])
 
-    # Get max CV 
+        # Calculate the CVcutoffs for each group (if groups provided)
+        # or all data (if not).
+        if not cutoff:
+            CVcutoff[title] = np.nanpercentile(CV["cv_"+title].values, q=90)
+            CVcutoff[title] = round(CVcutoff[title], 
+                                -int(floor(log(abs(CVcutoff[title]),10)))+2)
+        else:
+            CVcutoff[title] = np.nanpercentile(CV["cv_"+title].values, q=(1-cutoff)*100 )
+            CVcutoff[title] = round(CVcutoff[title], 
+                                -int(floor(log(abs(CVcutoff[title]),10)))+2)
+        
+    # Calculate the maximum coefficient of variation
     CV.loc[:,'cv'] = CV.apply(np.max, axis=1)
-
-    # Calculate a CVcutoff if user provides one use that instead.
-    if not cutoff:
-        CVcutoff = np.nanpercentile(CV['cv'].values, q=90)
-        CVcutoff = round(CVcutoff, -int(floor(log(abs(CVcutoff), 10))) + 2)
-    else:
-        CVcutoff = cutoff
-
+        
     return (CV, CVcutoff)
 
 def plotCVplots(data, cutoff, palette, pdf):
@@ -171,7 +181,7 @@ def plotCVplots(data, cutoff, palette, pdf):
                            colors=palette.ugColors[name])
 
         # Plot cutoff
-        lines.drawCutoffVert(ax=fh.ax[0],x=cutoff, lb="Cutoff at: {0}".format(cutoff))
+        lines.drawCutoffVert(ax=fh.ax[0],x=cutoff[name], lb="Cutoff at: {0}".format(cutoff[name]))
 
         # Plot legend
         fh.makeLegendLabel(ax=fh.ax[0])
@@ -200,15 +210,11 @@ def plotDistributions(data, cutoff, palette,pdf):
         dist.plotDensityDF(data=data["cv_"+name],ax=fh.ax[0],colors=palette.ugColors[name],
                             lb="{0}".format(name))
 
-
-    # Plot cutoff
-    lines.drawCutoffVert(ax=fh.ax[0],x=cutoff,lb="Cutoff at: {0}".format(cutoff))
-
     # Plot legend
     fh.makeLegendLabel(ax=fh.ax[0])
 
     # Give format to the axis
-    fh.formatAxis(yTitle="Density", xlim=(xmin,xmax),
+    fh.formatAxis(yTitle="Density", xlim=(xmin,xmax), ylim="ignore",
         figTitle="Density Plot of Coefficients of Variation by {0}".format(palette.combName))
 
     # Shrink figure
@@ -259,7 +265,7 @@ def main(args):
     flag = Flags(index=CV['cv'].index)
     for name, group in palette.design.groupby(palette.combName):
         flag.addColumn(column="flag_feature_big_CV_{0}".format(name),
-                       mask=((CV['cv_'+name].get_values() > CVcutoff) | CV['cv_'+name].isnull()))
+                       mask=((CV['cv_'+name].get_values() > CVcutoff[name]) | CV['cv_'+name].isnull()))
 
     # Write flag file
     flag.df_flags.to_csv(args.flag, sep='\t')
@@ -269,7 +275,7 @@ def main(args):
 
 if __name__ == '__main__':
     # Command line options
-    args=getOptions()
+    args=getOptions(myopts=True)
 
     # Logger
     logger=logging.getLogger()

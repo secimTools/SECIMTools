@@ -32,7 +32,7 @@ from visualManager.manager_color import colorHandler
 from visualManager.manager_figure import figureHandler
 
 def getOptions():
-    description="Stand alone function to plot Scatter Plots 2D"
+    description="Stand alone Scatter Plots 2D tool"
     parser = argparse.ArgumentParser(description=description, 
                         formatter_class=RawDescriptionHelpFormatter)
     # Standard input

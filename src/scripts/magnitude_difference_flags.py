@@ -2,7 +2,7 @@
 ################################################################################
 # DATE: 2016/May/06, rev: 2016/July/11
 #
-# SCRIPT: countDigits.py
+# SCRIPT: magnitude_difference_flags.py
 #
 # VERSION: 2.0
 # 

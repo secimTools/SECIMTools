@@ -2,7 +2,7 @@
 ################################################################################
 # DATE: 2017/03/07
 # 
-# MODULE: anova_lm.py
+# MODULE: blank_feature_filtering_flags.py
 #
 # VERSION: 1.1
 # 
@@ -27,8 +27,8 @@ from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
-    parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
-                                     "dataset and calculates the LOD on it ")
+    parser = argparse.ArgumentParser(description="Take a peak area or height dataset " \
+                                                 "and calculate the limits of detection for features based on the blank samples. ")
     # Standard Input
     standar = parser.add_argument_group(title='Standard input', description= 
                                         'Standard input for SECIM tools.')

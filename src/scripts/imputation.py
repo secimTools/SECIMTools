@@ -36,7 +36,7 @@ from dataManager.interface import wideToDesign
 
 def getOptions(myOpts = None):
     description="""  
-    This attempts to impute missing values with K Nearest Neighbors Algorithm
+    The tool performs imputations using selected algorith
     """
     parser = argparse.ArgumentParser(description=description, 
                                     formatter_class=RawDescriptionHelpFormatter)

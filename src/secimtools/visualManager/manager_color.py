@@ -325,15 +325,20 @@ class colorHandler:
             },
             "wesanderson": {
                 "Aquatic1_5": wes.Aquatic1_5,
+                "Aquatic2_5": wes.Aquatic2_5,
+                "Aquatic3_5": wes.Aquatic3_5,
                 "Cavalcanti_5": wes.Cavalcanti_5,
                 "Chevalier_4": wes.Chevalier_4,
                 "Darjeeling1_4": wes.Darjeeling1_4,
                 "Darjeeling2_5": wes.Darjeeling2_5,
+                "Darjeeling3_5": wes.Darjeeling3_5,
                 "FantasticFox1_5": wes.FantasticFox1_5,
                 "FantasticFox2_5": wes.FantasticFox2_5,
                 "GrandBudapest1_4": wes.GrandBudapest1_4,
                 "GrandBudapest2_4": wes.GrandBudapest2_4,
                 "GrandBudapest3_6": wes.GrandBudapest3_6,
+                "GrandBudapest4_5": wes.GrandBudapest4_5,
+                "GrandBudapest5_5": wes.GrandBudapest5_5,
                 "Margot1_5": wes.Margot1_5,
                 "Margot2_4": wes.Margot2_4,
                 "Margot3_4": wes.Margot3_4,
@@ -343,8 +348,11 @@ class colorHandler:
                 "Moonrise3_4": wes.Moonrise3_4,
                 "Moonrise4_5": wes.Moonrise4_5,
                 "Moonrise5_6": wes.Moonrise5_6,
+                "Moonrise6_5": wes.Moonrise6_5,
+                "Moonrise7_5": wes.Moonrise7_5,
                 "Royal1_4": wes.Royal1_4,
                 "Royal2_5": wes.Royal2_5,
+                "Royal3_5": wes.Royal3_5,
                 "Zissou_5": wes.Zissou_5   
             }}
 

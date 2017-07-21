@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 ################################################################################
-# SCRIPT: drop_flags.1.py
+# SCRIPT: remove_selected_features_samples.py
 # 
 # LAST VERSION: Includes support to select the type of drop to perform instead
-#               of automatically decide. Also includes better recognition 
-#               between drop by string or by number. (MIA)
+#               of automatically decide. 
 #
 # AUTHOR: Miguel Ibarra Arellano (miguelib@ufl.edu).
 # 
@@ -20,7 +19,6 @@
 #                   Wide file with just the dropped columns
 #                   Wide file without the dropped columns
 #
-# NOTES: Still needs to be added functionality to select index in flag file.
 ################################################################################
 # Import built-in libraries
 import os
@@ -40,8 +38,8 @@ from dataManager.interface import wideToDesign
 
 """Function to pull arguments"""
 def getOptions():
-    parser = argparse.ArgumentParser(description="Drops rows or columns given" \
-                                    "an specific cut value and condition.")
+    parser = argparse.ArgumentParser(description="Removes rows or columns from the data" \
+                                    "using user-defined cut-offs.")
     # Standard Input
     standard = parser.add_argument_group(title='Required Input', 
                         description="Standard inputs for SECIM tools.")

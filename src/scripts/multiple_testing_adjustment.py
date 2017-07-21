@@ -28,8 +28,7 @@ from dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
-    parser = argparse.ArgumentParser(description="Takes a peak area/heigh" \
-                                    " dataset and calculates the LOD on it ")
+    parser = argparse.ArgumentParser(description="")
     # Standar Input
     standar = parser.add_argument_group(title='Standard input', 
                         description='Standard input for SECIM tools.')
@@ -87,8 +86,8 @@ def main(args):
     logger.info("Getting Flags")
     significance_flags = Flags(index=toCorrect_df.index)
     for test in [bonferroni,bHochberg,bYekutieli]:
-        significance_flags.addColumn(column="flag_{0}_off".format(test.name),
-                                     mask=(test>args.alpha))
+        significance_flags.addColumn(column="flag_{0}_significant".format(test.name),
+                                     mask=(test<args.alpha))
     
     # Concatenating results with pvals
     results = pd.concat([toCorrect_df[args.pval],bonferroni,bHochberg,bYekutieli],axis=1)

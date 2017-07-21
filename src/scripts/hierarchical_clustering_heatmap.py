@@ -101,6 +101,8 @@ def main(args):
     if "y" in args.labels:
         y=False
 
+    print "x =", x
+    print "y =", y
 
     #Plotting with dendogram Hierarchical cluster heatmap (HCH)
     logger.info("Plotting heatmaps")
