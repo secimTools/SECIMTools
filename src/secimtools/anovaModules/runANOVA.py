@@ -7,15 +7,15 @@ import pandas as pd
 from statsmodels.formula.api import ols
 
 # Importing anova packages
-from anovaModules.reformatData import reformatData
-from anovaModules.preProcessing import preProcessing
-from anovaModules.changeDFOrder import changeDFOrder
-from anovaModules.flagSignificant import flagSignificant
-from anovaModules.getModelResults import getModelResults
-from anovaModules.startANOVAResults import startANOVAResults
-from anovaModules.generateDinamicCmbs import generateDinamicCmbs
-from anovaModules.removeAnovaDupResults import removeAnovaDupResults
-from anovaModules.getModelResultsByGroup import getModelResultsByGroup
+from secimtools.anovaModules.reformatData import reformatData
+from secimtools.anovaModules.preProcessing import preProcessing
+from secimtools.anovaModules.changeDFOrder import changeDFOrder
+from secimtools.anovaModules.flagSignificant import flagSignificant
+from secimtools.anovaModules.getModelResults import getModelResults
+from secimtools.anovaModules.startANOVAResults import startANOVAResults
+from secimtools.anovaModules.generateDinamicCmbs import generateDinamicCmbs
+from secimtools.anovaModules.removeAnovaDupResults import removeAnovaDupResults
+from secimtools.anovaModules.getModelResultsByGroup import getModelResultsByGroup
 
 
 def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
