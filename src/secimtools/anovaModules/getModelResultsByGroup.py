@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 # Import ANOVA Modules
-from anovaModules.gimmeTheMissin import gimmeTheMissin
+from secimtools.anovaModules.gimmeTheMissin import gimmeTheMissin
 
 def getModelResultsByGroup(model,levels, numerical):
     """
