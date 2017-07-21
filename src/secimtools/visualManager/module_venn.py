@@ -21,8 +21,8 @@ from matplotlib_venn import venn3, venn3_circles
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Local Packages
-from visualManager.manager_color import colorHandler
-from visualManager.manager_figure import figureHandler
+from secimtools.visualManager.manager_color import colorHandler
+from secimtools.visualManager.manager_figure import figureHandler
 
 
 def plotVenn2(data,title,name1,name2,innerLabels=None,circles=None):

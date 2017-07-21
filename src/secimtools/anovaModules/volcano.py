@@ -6,12 +6,12 @@ import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Plotting packages
-from visualManager import module_box as box
-from visualManager import module_hist as hist
-from visualManager import module_lines as lines
-from visualManager import module_scatter as scatter
-from visualManager.manager_color import colorHandler
-from visualManager.manager_figure import figureHandler
+from secimtools.visualManager import module_box as box
+from secimtools.visualManager import module_hist as hist
+from secimtools.visualManager import module_lines as lines
+from secimtools.visualManager import module_scatter as scatter
+from secimtools.visualManager.manager_color import colorHandler
+from secimtools.visualManager.manager_figure import figureHandler
 
 def volcano(combo, results, oname, cutoff=2):
     """ 

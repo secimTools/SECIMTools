@@ -27,7 +27,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # Local Packages
-from visualManager.manager_color import colorHandler
+from secimtools.visualManager.manager_color import colorHandler
 
 
 def plotHeatmap(data,ax,cmap=False,xlbls=True,ylbls=True):
