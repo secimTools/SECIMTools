@@ -1,5 +1,5 @@
-<tool id="distributionSamples2" name="Distribution of Features within Samples." version="2.0.0">
-  <description>Generate distributions for each sample.</description>
+<tool id="distribution_samples" name="Generate Distribution of Features within Samples." version="2.0.0">
+  <description></description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">pandas</requirement>
@@ -38,23 +38,25 @@
   <macros>
       <import>macros.xml</import>
   </macros>
-  <tests>
-    <test>
-        <param name="input" value="./test-data/test_data.tsv" />
-        <param name="design" value="./test-data/test_design.tsv" />
-        <param name="uniqID" value="rowID" />
-        <param name="group" value="treatment" />
-        <param name="order" value="runOrder" />
-        <output name="dist1" file="./test-data/test_distribution_fig.pdf" />
-    </test>
-  </tests>
+    <tests>
+     <test>
+        <param name="input"   value="ST000006_data.tsv"/>
+        <param name="design"  value="ST000006_design.tsv"/>
+        <param name="uniqID"  value="Retention_Index" />
+        <param name="group"   value="White_wine_type_and_source" />
+        <output name="figure" file="ST000006_distribution_samples_with_group_figure.pdf" compare="sim_size" delta="10000"/>
+     </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@
 
 **Tool Description**
 
-The tool plots the distribution of features within each sample.  All samples are colored by group and are plotted on the same graph for comparison purposes.  The distributions of the features within each sample are presented as estimated densities and box and whiskers plots with possible outliers.  It is recommended to use the log transformed data for better performance but the tool will work on any scale.
+The tool plots the distribution of features within each sample.  
+All samples are colored by group and are plotted on the same graph for comparison purposes.  
+The distributions of the features within each sample are presented as estimated densities and box-and-whiskers plots with potential outliers.  
+If the order samples were run is specified in the input, box plots will be displayed according to the run order.
 
 **NOTE:** This script works best with log transformed data.
 
@@ -82,7 +84,10 @@ The tool plots the distribution of features within each sample.  All samples are
 
 **Output**
 
-The output has a single PDF file containing two graphs: the distributions of the features for each sample colored by group sample belongs to and box and whiskers plots for each sample also colored by group sample belongs to.  If run order variable is specified, the box plots will be displayed in the same order.  If no run order variable is specified the sample box plots are ordered by groups they belong to.
+PDF file containing two plots:
+
+(1) Density plots illustrating the distribution of features within a given sample
+(2) Boxplots of the distribution of features within each sample
 
 </help>
 </tool>

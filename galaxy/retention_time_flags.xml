@@ -1,5 +1,5 @@
-<tool id="RTflag2" name="Retention Time (RT) Flags" version="2.0.0">
-  <description>Calculate RT flags.</description>
+<tool id="retention_time_flags" name="Retention Time (RT) Flags" version="2.0.0">
+  <description>based on discrepancies in retention time.</description>
   <requirements>
     <requirement type="python-module">numpy</requirement>
     <requirement type="python-module">pandas</requirement>
@@ -18,7 +18,6 @@
       --figure $RTplot
       --flag $RTflag
       --minutes $minutes
-
       #if $CVcutoff:
 	    --CVcutoff $CVcutoff
       #end if
@@ -30,9 +29,9 @@
     <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
     <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
     <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-    <param name="minutes" type="float" size="30" value=".2" label="Percentile Cutoff" help="Percenctile cutoff in minutes. The default value used is 0.2 minutes." />
-    <param name="CVcutoff" optional="true" type="float" value=".1" size="4" label="CVcutoff" help="The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here."/>
-    <param name="pctl" type="boolean" size="30" label="90th percentile [Optional]" help="Check this box to use a 90th percentile. The default is a 95th percentile (NO). [Optional]" />
+    <param name="CVcutoff" optional="true" type="float" value=".1" size="4" label="Coefficient of Variation (CV) Cutoff" help="Coefficient of variation (CV) cutoff (in decimals) that specifies the proportion of features to flag.  Default CV cutoff = 0.1, which implies that 10% of the features with the largest CVs will be flagged." />
+    <param name="minutes" type="float" size="30" value=".2" label="Retention Time Cutoff Value" help="If the difference in the retention time between the 95th and 5th percentiles (or 90th adn 10th) is greater than this specified RT Cutoff value, features are flagged.  (A default value of 0.2 assumes data units are in minutes)" />
+    <param name="pctl" type="boolean" size="30" label="90th and 10th percentiles [Optional]" help="See RT Cutoff Value above.  Check this box to use the 90th and 10th percentiles instead of the default 95th and 5th percentiles."/>
   </inputs>
   <outputs>
     <data format="pdf" name="RTplot"  label="${tool.name} on ${on_string}: plot" />
@@ -41,15 +40,25 @@
   <macros>
       <import>macros.xml</import>
   </macros>
+    <tests>
+     <test>
+        <param name="input"   value="TEST0000_rt.tsv"/>
+        <param name="design"  value="TEST0000_design.tsv"/>
+        <param name="uniqID"  value="rowID" />
+        <output name="RTplot" file="TEST0000_retention_time_flags_figure.pdf" compare="sim_size" delta="10000"/>
+        <output name="RTflag" file="TEST0000_retention_time_flags_flag.tsv" />
+     </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@
 
 **Tool Description**
 
-**NOTE:** The tool is primarily intended for metabolomics data analysis and retention time flagging.  The goal of the tool is to identify potential problems with the instrument/data processing and pre-processing.
+***NOTE:*** This tool is primarily intended for flagging features with variation in retention times in mass spectrometry data analysis.  
+The goal of the tool is to identify potential problems with the instrument or with data processing and pre-processing.
 
-The tool identifies the abnormalities of the feature’s retention time. The following feature characteristics are investigated with each characteristic having a separate flag column in the output file. 
+The retention time for a given feature is predicted to be relatively consistent across samples.  This tool identifies potential abnormalities or shifts in the retention time for a feature.  
 
 --------------------------------------------------------------------------------
 
@@ -66,23 +75,41 @@ Extra columns will automatically be ignored.
 
 @UNIQID@
 
-**Percentile Cutoff**
+**Coefficient of Variation (CV) Cutoff**
 
-    - Percenctile cutoff in minutes. The default value used is 0.2 minutes.
+    - The coefficient of variation (CV) cutoff (in decimals) specifies the proportion of features to flag.  Default CV cutoff = 0.1, implying that 10% of the features with the largest CV will be flagged.
 
-**CVcutoff**
 
-    - The default CV cutoff will flag 10 percent of the rowIDs with larger CVs. If you want to set a CV cutoff, put the number here.
+**Retention Time Cutoff Value**
+
+    - A user specified value (Default value = 0.2 assumes the data units are in minutes) used with the percentile button below.  Features where the difference in the RT between the 95th and 5th percentiles is greater than the given Retention Time Cutoff Value are flagged. 
+
 
 **90th percentile [Optional]**
 
-    - Check this box to use a 90th percentile. The default is a 95th percentile (NO).
+    - See Retention Time Cutoff Value above. Check this box to use a 90th percentile. The default is a 95th percentile.
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-The tool outputs two files: a TSV file with flags for each feature, where each flagging method results are saved in a separate column and a PDF file containing a density plot of the coefficients of variation (CV) for the retention time.
+The tool outputs two files: 
+
+(1) a TSV file with flags for each feature, where the results from each flagging method are saved in a separate column 
+    
+ - flag_RT_Q95Q05_outlier: 0/1 flag where the value “1” is for features where the difference in the retention time between the 95th and 5th percentile (or 90th and 10th percentiles) is greater than the user specified Retention Time Cutoff Value (default is 0.2 minutes).
+
+ - flag_RT_max_gt_threshold: 0/1 flag where the value “1” is for features where the difference between the retention time maximum and median is greater than the Retention Time Cutoff Value divided by 2.  
+
+ - flag_RT_min_lt_threshold: 0/1 flag where the value “1” is for features where the difference between the retention time minimum and median is greater than the Retention Time Cutoff Value divided by 2.  
+
+ - flag_RT_min_max_outlier: 0/1 flag where the value “1” is for features where the difference between the retention time minimum and maximum is greater than 3 times the standard deviation from the mean.
+
+ - flag_RT_big_CV: 0/1 flag where the value “1” is for features where the coefficient of variation (CV) in retention time is greater than the CV Cutoff.  The default value is 0.1 which corresponds to flagging the 10% of the features with the largest CV.
+
+(2) and a PDF file containing a density plot of the coefficients of variation (CV) for the retention time.  The vertical red dotted line shows the CV cutoff for the top XX% of the data as specified by the CV cutoff values.
+
+
 
 </help>
 </tool>

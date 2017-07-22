@@ -1,5 +1,5 @@
-<tool id="penalizedMahalanobisDistance" name="Penalized Mahalanobis Distance (PMD)" version="1.0.0">
-    <description>Calculate a penalized version of the Mahalanobis distance</description>
+<tool id="mahalanobis_distance" name="Penalized Mahalanobis Distance (PMD)" version="1.0.0">
+    <description>to compare groups</description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -45,9 +45,9 @@
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
         <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications." />
-        <param name="order" type="text" size="30" label="Input Run Order Name [Optional]" help="Enter run order name to calculate from. Spelling and capitalization must be exact." />
-        <param name="levels" type="text" size="30" label="Adittional groups to separate by [Optional]" help="Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ','." />
-        <param name="p" type="text" value= ".95" size="30" label="Percentile of cutoff" help="The percentile cutoff for standard distributions. The default is 0.95." />
+        <param name="order" type="text" size="30" label="Input Run Order Name [Optional]" help="Enter the name of the column containing the order samples were run. Spelling and capitalization must be exact." />
+        <param name="levels" type="text" size="30" label="Additional groups to separate by [Optional]" help="Enter additional group(s) name(s) to include. Spelling and capitalization must be exact. If more than one group separate with ','." />
+        <param name="p" type="text" value= ".95" size="30" label="Threshold" help="Threshold for standard distribution, specified as a percentile. Default = 0.95." />
         <param name="penalty" type="text" value= "0.5" size="30" label="λ Penalty" help="λ Penalty to use in the distance. The default is λ=0.5." />
     </inputs>
     <outputs>
@@ -58,17 +58,36 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+     <test>
+        <param name="input"   value="ST000006_data.tsv"/>
+        <param name="design"  value="ST000006_design.tsv"/>
+        <param name="uniqID"  value="Retention_Index" />
+        <param name="group"   value="White_wine_type_and_source" />
+        <param name="penalty" value="0.5" />
+        <output name="plot"   file="ST000006_mahalanobis_distance_figure.pdf" compare="sim_size" delta="10000" />
+        <output name="out1"   file="ST000006_mahalanobis_distance_to_mean.tsv" />
+        <output name="out2"   file="ST000006_mahalanobis_distance_pairwise.tsv" />
+     </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@
 
 **Tool Description**
 
-The Penalized Mahalanobis Distance (PMD) tool can be used to compare samples within a group accounting for the correlation structure between metabolites. The standardized Euclidian distance (SED) relies solely on geometric distance and ignores the dependency structure between features. The Mahalanobis distance (MD) goes beyond that and incorporates the correlation structure inside the distance measurement. Classic MD relies on the estimate of the inverse of features variance-covariance matrix.  When correlation structure and dependency between metabolites is ignored the inverse variance-covariance matrix simplifies to diagonal matrix with diagonal values equal to 1 divided over variances for the given feature  In this case MD simplifies to SED.  When the number of features is bigger than the number of samples the inverse of features variance-covariance matrix does not exist and classic MD cannot be defined. This is the case for most omics data.  
-In this tool the penalized Mahalanobis distance is introduced to account for correlation structure in omics data.  The PMD tool is based on the penalized version of features variance-covariance matrix where penalty parameter λ is customized by the user.  The penalty parameter ranges from the smallest to the largest of non-zero eigenvalues of the estimated variance-covariance matrix. Please note that variance covariance matrixes are always symmetric and non-negative definite which makes all eigenvalues are nonnegative.  The estimate of the variance-covariance matrix is computed separately for each group if the grouping variable is provided. If no grouping variable is supplied all dataset is treated as a single group.  The user-customizable parameter λ=0 corresponds to the smallest eigenvalue as penalty in each matrix while λ=1 corresponds to the largest eigenvalue as penalty in each matrix.  The default value λ=0.5  corresponds to the medial of eigenvalues for each matrix.  Based on the penalty structure the inverse of the variance-covariance matrix exists for all non-zero values of the penalty.  In case the inverse of the variance covariance matrix exists λ parameter is ignored. In this case the tool computes classic MD instead of PMD and user is provided with a warning.  The details about the penalty structure and computation of PMD are provided Supplementary File 3. 
+The Penalized Mahalanobis distance (PMD) tool can be used to compare samples within a group and accounts for the correlation structure between metabolites. 
+In contrast, Standardized Euclidian distance (SED) relies solely on geometric distance and ignores any dependency structures between features. 
+PMD incorporates the correlation structure inside the distance measurement. 
 
+When correlation structure and dependency between metabolites is ignored, the features inverse variance-covariance matrix simplifies to a diagonal matrix with diagonal values - in this case, MD simplifies to SED.
+When the number of features is greater than the number of samples, the inverse of the features variance-covariance matrix does not exist. 
+This is the case for most -omic data. Here, the inverse is estimated using a regularization method (Archambeau et al. 2004).  
+The details of the regularization algorithm can be found in Supplementary file 3 in Kirpich et al. 2017.
 
-**NOTE:** Because of the nauture of the tool groups and samples where only one or two samples per group are avaialbe in the wide dataset will be discarded from the analysis.
+Archambeau C, Vrins F, Verleysen M. Flexible and Robust Bayesian Classification by Finite Mixture Models. InESANN 2004 (pp. 75-80).​
+
+**NOTE:** Because of the nature of the tool, groups with less than 3 samples will be discarded from the analysis.
 
 
 **Input**
@@ -87,16 +106,14 @@ In this tool the penalized Mahalanobis distance is introduced to account for cor
 @GROUP_OPTIONAL@
 
     - **Warning:** All groups must contain 3 or more samples.
-    - **NOTE:** Groups with one element will be excluded from the test.
 
 
 @RUNORDER_OPTIONAL@
 
-**Adittional groups to separate by [Optional]**
+**Additional groups to separate by [Optional]**
 
-    - Enter group(s) name(s) to calculate from. Spelling and capitalization must be exact. If more than one group separate with ','.
+    - Enter additional group(s) name(s) to include. Spelling and capitalization must be exact. If more than one group separate with ','.
     - **Warning:** All groups must contain 3 or more samples.
-    - **NOTE:** Groups with one element will be excluded from the test.
 
 
 **Percentile cutoff**
@@ -111,7 +128,12 @@ In this tool the penalized Mahalanobis distance is introduced to account for cor
 
 **Output**
 
-The tool will always output three different files: a PDF file containing 2D scatter plots and boxplots for the distances and two TSV files containing distances from the sample to the estimated mean and from the sample to other samples.  If the grouping variable is specified by the user the distances are computed both within the groups and for the entire dataset.
+The tool outputs three different files: 
+(1) a PDF file containing 2D scatter plots and boxplots for the distances and 
+(2) a TSV file containing distances from the sample to the estimated mean and 
+(3) a TSV file containing distances from the sample to other samples.  
+
+If the grouping variable is specified by the user, the distances are computed both within the groups and for the entire dataset.
 
 
 </help>

@@ -63,6 +63,55 @@ A Design file relating samples to various groups/treatment:
 **NOTE:** You must have a column named **sampleID** and the values in this column must match the column names in the wide dataset.
 
 </token>
+<token name="@METADATA_optional@">
+**Design File [Optional]** 
+
+A Design file relating samples to various groups/treatment:
+
+    +----------+--------+
+    | sampleID | group  |
+    +==========+========+
+    | sample1  | g1     |
+    +----------+--------+
+    | sample2  | g1     |
+    +----------+--------+
+    | sample3  | g1     |
+    +----------+--------+
+    | sample4  | g2     |
+    +----------+--------+
+    | sample5  | g2     |
+    +----------+--------+
+    | sample6  | g2     |
+    +----------+--------+
+    | ...      | ...    |
+    +----------+--------+
+
+**NOTE:** You must have a column named **sampleID** and the values in this column must match the column names in the wide dataset.
+
+</token>
+<token name="@LONG@">
+
+**Long Formatted Dataset**
+
+A long formatted dataset that contains measurements for each sample in rows:
+
+    +----------+---------+---------+---------+-----+
+    | sampleID | column1 | column2 | column3 | ... |
+    +==========+=========+=========+=========+=====+
+    | sample1  | 15      | 22      | 15      | ... |
+    +----------+---------+---------+---------+-----+
+    | sample2  | 25      | 25      | 33      | ... |
+    +----------+---------+---------+---------+-----+
+    | sample3  | 34      | 28      | 22      | ... |
+    +----------+---------+---------+---------+-----+
+    | sample4  | 11      | 44      | 88      | ... |
+    +----------+---------+---------+---------+-----+
+    | ...      | ...     | ...     | ...     | ... |
+    +----------+---------+---------+---------+-----+
+
+**NOTE:** The **sampleID** column name should be used for samples in a long formatted dataset.
+
+</token>
 <token name="@FLAGS@">
 **Flag File:** 
 

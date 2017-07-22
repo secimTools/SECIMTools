@@ -1,5 +1,5 @@
-<tool id="Summary Flags2" name="Summary of the Flags" version="2.0.0">
-    <description>Summarize flags of a given flags file.</description>
+<tool id="summarize_flags" name="Summarize Flags in a Flag File" version="2.0.0">
+    <description></description>
     <requirements>
         <requirement type="python-module">numpy</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -22,19 +22,33 @@
     <macros>
         <import>macros.xml</import>
     </macros>
+    <tests>
+     <test>
+        <param name="flags"   value="ST000006_lasso_enet_var_select_flags.tsv"/>
+        <param name="uniqID"  value="Retention_Index" />
+        <output name="output" file="ST000006_summarize_flags_outSummary.tsv" />
+     </test>
+    </tests>
 <help>
 
 @TIP_AND_WARNING@
 
 **Tool Description**
 
-This tool takes a wide format flags file and summarizes the information about the flags.  The tool will output the same wide format flags file with four additional columns: the column with the sum of the flags, the column with the flag means, and two flag indicator columns.  The first indicator column will have a flag (1) if at least one of the original flags had a value (1) and the second indicator column will have a flag (1) if all of the original flags have a value (1).  Summaries are computed separately for each feature. 
+Summary of the Flags
+
+This tool takes a wide format flag file and summarizes the information about the flags.  
+The flag summary includes, for each feature: 
+(i) the sum of the flags, 
+(ii) the mean of the flags, 
+(iii) an indicator if at least one of the original flags had a value of 1 and 
+(iv) a second indicator if all of the original flags had a value of 1.
 
 --------------------------------------------------------------------------------
 
 **Input**
 
-    - One input dataset is requiered.
+    - One input dataset is required.
 
 @FLAGS@
 
@@ -44,7 +58,14 @@ This tool takes a wide format flags file and summarizes the information about th
 
 **Output**
 
-This tool will output the same TSV file that is used for the input with four additional columns containing the flag summaries. The tool will output the same wide format flags file with four additional columns: the column with the sum of the flags, the column with the flag means, and two flag indicator columns.  The first indicator column will have a flag (1) if at least one of the original flags had a value (1) and the second indicator column will have a flag (1) if all of the original flags have a value (1).  Summaries are computed separately for each feature. 
+This tool will output a TSV file containing all original input flag data with four additional columns containing the flag summaries. 
+
+The four additional columns are: 
+
+(i) a column with the sum of the flags, 
+(ii) a column with the flag means, and 
+(iii) a flag indicator column if at least one of the original flags had a value of 1
+(iv) a second flag indicator column if all of the original flags had a value of 1
 
 
 </help>
