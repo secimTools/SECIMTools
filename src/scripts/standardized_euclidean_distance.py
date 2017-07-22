@@ -90,7 +90,7 @@ def getOptions():
     # Tool Input
     tool = parser.add_argument_group(description="Tool Input")
     tool.add_argument("-p","--per", dest="p", action='store', required=False, 
-                        default=0.95, type=float, help="The percentile cutoff "
+                        default=0.95, type=float, help="The threshold "
                         "for standard distributions. The default is 0.95.")
     # Plot Options
     plot = parser.add_argument_group(title='Plot options')
@@ -130,7 +130,7 @@ def plotCutoffs(cut_S,ax,p):
     """
     lines.drawCutoffHoriz(ax=ax,y=float(cut_S.values[0]),
             cl=cutPalette.ugColors[cut_S.name],
-            lb="{0} {1}% Cutoff: {2}".format(cut_S.name,round(p*100,3),
+            lb="{0} {1}% Threshold: {2}".format(cut_S.name,round(p*100,3),
             round(float(cut_S.values[0]),1)),ls="--",lw=2)
 
 def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, levels):
