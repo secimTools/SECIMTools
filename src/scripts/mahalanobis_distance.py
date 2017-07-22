@@ -73,7 +73,7 @@ def getOptions():
     # Tool Input
     tool = parser.add_argument_group(description="Optional Input")
     tool.add_argument("-p","--per", dest="p", action='store', required=False, 
-                        default=0.95, type=float, help="The percentile cutoff" \
+                        default=0.95, type=float, help="The threshold" \
                         "for standard distributions. The default is 0.95.")
     tool.add_argument("-pen", "--penalty", dest="penalty", action="store", 
                         required=False, default=0.5, type=float, help="Value"\
@@ -262,7 +262,7 @@ def plotCutoffs(cut_S,ax,p):
     """
     lines.drawCutoffHoriz(ax=ax,y=float(cut_S.values[0]),
             cl=cutPalette.ugColors[cut_S.name],
-            lb="{0} {1}% Cutoff: {2}".format(cut_S.name,round(p*100,3),
+            lb="{0} {1}% Threshold: {2}".format(cut_S.name,round(p*100,3),
             round(float(cut_S.values[0]),1)),ls="--",lw=2)
 
 def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
