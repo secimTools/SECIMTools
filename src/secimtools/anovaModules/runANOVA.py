@@ -26,7 +26,7 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
         :type dat: wideToDesign object.
         :param dat: wide, design, group, anno, trans.
 
-        :type formula: dictionary 
+        :type formula: dictionary
         :param formula: Contains the formulas in a row:formula fashion.
 
         :type lvlComb: list.
@@ -37,7 +37,7 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
 
         :type levels: list.
         :param levels: Name of the .
-        
+
         :type numerical: list.
         :param numerical: Contains the names of the numerical factors.
 
@@ -47,7 +47,7 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
 
         :rtype residDat: pd.DataFrames
         :return residDat: Contains the residuals of the model
-        
+
         :rtype fitDat: pd.DataFrames
         :return fitDat: dataframe with all the fitted data
     """
@@ -74,18 +74,18 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
 
         # Take one element of the group and pop it
         while len(combs)>0:
-            # Take las element of the list 
+            # Take las element of the list
             elem =  combs.pop()
-            
+
             # Create tempDF to change Order
             tempDF = changeDFOrder(data=dat.trans, combN=elem, factors=categorical)
-            
+
             # Running ANOVA on data
             anova = ols(formula=formula[feat], data=tempDF).fit_regularized()
 
             # Saving a dataframe for anova results
             group_results = getModelResultsByGroup(anova,levels,numerical)
-            
+
             # Dropping duplicates
             group_results = removeAnovaDupResults(indexToDrop,df=group_results)
 
@@ -94,7 +94,7 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
 
             # Appending current indexes to indextoDrop list
             indexToDrop= indexToDrop+group_results.index.tolist()
-            
+
         # Creating one df with all the results
         comb_results = pd.concat(comb_results)
 
@@ -131,7 +131,7 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
     residDat = pd.concat(resids_list, axis=1)
     fitDat   = pd.concat(fitted_list, axis=1)
 
-    # Transpose full_results and concatenate with results 
+    # Transpose full_results and concatenate with results
     results = pd.concat([results,full_results], axis=1)
 
     # Return results

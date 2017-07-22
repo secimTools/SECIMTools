@@ -85,8 +85,8 @@ def qqPlot(tresid, tfit, oname):
                 axTitle=" ",xTitle=" ")
 
             # Format axis 3
-            fig.formatAxis(axnum=3,axTitle="Fitted Values vs Residual Values",
-                xTitle="Fitted Values",yTitle="Residual Values",
+            fig.formatAxis(axnum=3,axTitle="Predicted Values vs Residual Values",
+                xTitle="Predicted Values",yTitle="Residual Values",
                 grid=False)
 
             #Add figure to pdf
