@@ -49,32 +49,42 @@ def qqPlot(tresid, tfit, oname):
             fig = figureHandler(proj='2d',numAx=4,numRow=2,numCol=3,
                                 arrangement=axisLayout)
 
-
             data = tresid[col].values.ravel()
             noColors = list()
             for j in range(0,len(data)):
                 noColors.append('b')#blue
             df_data = pd.DataFrame(data)
 
+            # Removing missing so that it will plot correctly.  
+            mask_nan_data = np.isnan(data)
+            data = data[~mask_nan_data]
+
+
             # Plot qqplot on axis 0
-            sm.graphics.qqplot(tresid[col],fit=True,line='r',ax=fig.ax[0])
+            sm.graphics.qqplot(data,fit=True,line='r',ax=fig.ax[0])
+
 
             # Plot boxplot on axis 1
             box.boxSeries(ser=data,ax=fig.ax[1])
 
+
             # Plot histogram on axis 2
             hist.quickHist(ax=fig.ax[2],dat=df_data,orientation='horizontal')
+
 
             # Plot scatterplot on axis 3
             scatter.scatter2D(ax=fig.ax[3],x=tfit[col], y=tresid[col],
                                 colorList=list('b'))
 
+
             # Draw cutoff line for scatterplot on axis 3
             lines.drawCutoffHoriz(ax=fig.ax[3],y=0)
+
 
             # Format axis 0
             fig.formatAxis(figTitle=col,axnum=0,grid=False,showX=True,
                 yTitle="Sample Quantiles", xTitle=" ")
+
 
             # Format axis 1
             fig.formatAxis(axnum=1,axTitle="Standardized Residuals",
@@ -84,10 +94,12 @@ def qqPlot(tresid, tfit, oname):
             fig.formatAxis(axnum=2,grid=False,showX=True,showY=True,
                 axTitle=" ",xTitle=" ")
 
+
             # Format axis 3
             fig.formatAxis(axnum=3,axTitle="Predicted Values vs Residual Values",
                 xTitle="Predicted Values",yTitle="Residual Values",
                 grid=False)
+
 
             #Add figure to pdf
             fig.addToPdf(pdfPages=pdf)
