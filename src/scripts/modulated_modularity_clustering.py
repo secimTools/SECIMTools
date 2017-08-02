@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 ################################################################################
 # DATE: 2017/01/17
-# 
+#
 # MODULE: modulated_modularity_clustering.py
 #
 # VERSION: 1.2
-# 
+#
 # ADDAPTED: Miguel Ibarra (miguelib@ufl.edu) Matt Thoburn (mthoburn@ufl.edu) 
 #
 # DESCRIPTION: This tool runs modulated modularity clustering (mmc)
-#
 ################################################################################
 # Import built-in libraries
 import os
@@ -17,18 +16,17 @@ import csv
 import logging
 import argparse
 from contextlib import contextmanager
-
 # Import add-on libraries
 import scipy
 import numpy as np
 import pandas as pd
 from numpy.testing import assert_allclose
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib.backends.backend_pdf import PdfPages
-
 # Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-
 # Import local plotting libraries
 from secimtools.visualManager import module_heatmap as hm
 from secimtools.visualManager.manager_color import colorHandler
@@ -90,6 +88,7 @@ def getOptions(myOpts = None):
 
     return args
 
+
 def nontechnical_analysis(args, df, mask, C, clustering):
     # Re-order things more palatably for the user,
     # based on the results of the technical analysis.
@@ -143,8 +142,8 @@ def nontechnical_analysis(args, df, mask, C, clustering):
         ) for i in range(p)]
 
     _a, _b, new_to_old_idx = zip(*sorted(triples))
-    
-     # Make a csv file if requested.
+
+    # Make a csv file if requested.
     header = ('Gene', 'Module', 'Entry Index', 'Average Degree', 'Degree')
     with open(args.out, 'wb') as fout:
         writer = csv.writer(fout, 'excel-tab') #problematic; need to switch to tsv file!
@@ -184,7 +183,7 @@ def nontechnical_analysis(args, df, mask, C, clustering):
 
     # Plot using something like http://stackoverflow.com/questions/15988413/
     # Drawing heatmaps
-    # Draw first heatmap [C]    
+    # Draw first heatmap [C]
     hm.plotHeatmap(C,fh1.ax[0], cmap=palette.mpl_colormap, xlbls=remaining_row_names,
                     ylbls=remaining_row_names)
     fh1.formatAxis(xTitle="sampleID", figTitle="Correlations")
@@ -205,8 +204,9 @@ def nontechnical_analysis(args, df, mask, C, clustering):
         fh2.addToPdf(pdf)
         fh3.addToPdf(pdf)
 
+
 def main(args):
-    # Import data through the SECIMTools interface 
+    # Import data through the SECIMTools interface
     dat = wideToDesign(wide=args.input,design=args.design,uniqID=args.uniqID, 
                         logger=logger)
     logger.info('Number of variables: {0}'.format(dat.wide.shape[0]))
@@ -221,7 +221,7 @@ def main(args):
     # Compute the matrix of correlation coefficients.
     C = dat.wide.T.corr(method=args.correlation).values
     logger.info("Correlated")
-    
+
     # For now, ignore the possibility that a variable
     # will have negligible variation.
     mask = np.ones(dat.wide.shape[0], dtype=bool)
@@ -254,23 +254,16 @@ def main(args):
     nontechnical_analysis(args, dat.wide, mask, C, clustering)
     logger.info("Script Complete!")
 
+
 if __name__ == '__main__':
     args = getOptions()
-
-    # Activate Logger
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Starting script
     logger.info("Importing data with following parameters:"\
                 "\n\tInput: {0}"\
                 "\n\tDesign: {1}"\
                 "\n\tuniqID: {2}".format(args.input, args.design, args.uniqID))
-
-    # Stablishing color palette
     palette = colorHandler(pal=args.palette, col=args.color)
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
-
-    # Starting program
     main(args)
