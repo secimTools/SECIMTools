@@ -1,25 +1,25 @@
 #!/usr/bin/env python
 ######################################################################################
 # DATE: 2016/August/10
-# 
+#
 # MODULE: scatter_plot_3D.py
 #
 # VERSION: 1.1
-# 
+#
 # AUTHOR: Matt Thoburn (mthoburn@ufl.edu), Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This is a standalone executable for graphing 3D scatter plots
 # from wide data
-#
 ################################################################################
 # Import built-in libraries
 import os
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
-
 # Import add-on libraries
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Import local data libraries
@@ -30,6 +30,7 @@ from secimtools.dataManager.interface import wideToDesign
 from secimtools.visualManager import module_scatter as scatter
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
+
 
 def getOptions(myOpts=None):
     description="Standa alone Scatter Plots 3D tool"
@@ -80,7 +81,8 @@ def getOptions(myOpts=None):
     if args.design:
         args.design = os.path.abspath(args.design)
     return(args)
-     
+
+
 def main(args):
     # Loading design
     if args.design:
@@ -104,11 +106,11 @@ def main(args):
         glist = list()
         colorList = palette.mpl_colors[0]
         ucGroups = dict()
-    
+
     # Plot scatterplot 3D
     scatter.scatter3D(ax=fh.ax[0], x=list(wide[args.x]), y=list(wide[args.y]),
                     z=list(wide[args.z]), colorList=colorList)
-    
+
     # Despine axis (spine = tick)
     fh.despine(fh.ax[0])
 
@@ -116,7 +118,7 @@ def main(args):
     fh.format3D(title=args.x + " vs " + args.y + " vs " + args.z, xTitle=args.x,
                 yTitle=args.y, zTitle=args.z, rotation=float(args.rotation),
                 elevation=float(args.elevation))
-    
+
     # If groups are provided create a legend
     if args.group and args.uniqID == "sampleID":
         fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=args.group)
@@ -127,18 +129,12 @@ def main(args):
         fh.addToPdf(dpi=600, pdfPages=pdfOut)
     logger.info("Script Complete!")
 
-if __name__ == '__main__':
-    # Command line options
-    args   = getOptions()
 
-    # Set logger
+if __name__ == '__main__':
+    args   = getOptions()
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Stablishing color palette
     palette = colorHandler(pal=args.palette, col=args.color)
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
-
-    # Run everything
     main(args)
