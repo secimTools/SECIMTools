@@ -1,35 +1,34 @@
 #!/usr/bin/env python
 ################################################################################
 # Date: 2016/July/07
-# 
+#
 # Module: mahalanobis_distance.py
 #
 # VERSION: 1.1
-# 
+#
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This program does a pairwise and to mean  standarized euclidean
 #               comparison for a given dataset.
-#
 ################################################################################
+
 # Import built-in libraries
 import os
 import logging
 import argparse
-
 # Import add-on libraries
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
 from numpy.linalg import svd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from sklearn.neighbors import DistanceMetric
 from matplotlib.backends.backend_pdf import PdfPages
-
+from sklearn.neighbors import DistanceMetric
 # Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-
 # Import local plotting libraries
 from secimtools.visualManager import module_box as box
 from secimtools.visualManager import module_lines as lines
@@ -38,6 +37,7 @@ from secimtools.visualManager import module_distribution as density
 from secimtools.visualManager import manager_color as ch
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
+
 
 def getOptions():
     """ Function to pull in arguments """
@@ -56,9 +56,9 @@ def getOptions():
     standard.add_argument("-g","--group", dest="group",default=False, action='store', 
                         required=False, help="Treatment group")
     standard.add_argument("-o","--order",dest="order",action="store",
-                        default=False,help="Run Order")
+                        default=False, help="Run Order")
     standard.add_argument("-l","--levels",dest="levels",action="store",
-                        default=False,help="Additional notes.")
+                        default=False, help="Additional notes.")
     # Tool output
     output = parser.add_argument_group(description="Output Files")
     output.add_argument("-f", "--figure", dest="figure", action='store', 
@@ -79,7 +79,7 @@ def getOptions():
                         required=False, default=0.5, type=float, help="Value"\
                         " of lambda for the penalty.")
     tool.add_argument("-lg","--log",dest="log",action="store",required=False, 
-                        default=True,help="Log file")
+                        default=True, help="Log file")
     # Plot options
     plot = parser.add_argument_group(title='Plot options')
     plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
@@ -99,6 +99,7 @@ def getOptions():
         args.levels = args.levels.split(",")
 
     return(args)
+
 
 def calculatePenalizedSigma(data, penalty=0.5):
     # Getting n and p of data.
@@ -142,12 +143,13 @@ def calculatePenalizedSigma(data, penalty=0.5):
 
     # Multiply everything by p-1
     penalized_sigma = (p-1)*penalized_sigma
-    
+
     # Returning penalized sigma
     return (penalized_sigma)
 
+
 def calculateDistances(data, V_VI):
-    """ 
+    """
     Calculates euclidean or mahalanobis distances. Returns an array of 
     distances to the Mean and an a matrix of pairwise distances.
 
@@ -166,10 +168,10 @@ def calculateDistances(data, V_VI):
     """
     # Calculating mean
     mean = pd.DataFrame(data.mean(axis=1))
-    
+
     # Getting metric
     dist = DistanceMetric.get_metric("mahalanobis", VI=V_VI)
-    
+
     # Calculate distance from all samples to the mean
     distanceToMean = dist.pairwise(data.values.T, mean.T)
     distanceToMean = pd.DataFrame(distanceToMean, columns = ['distance_to_mean'], 
@@ -181,15 +183,16 @@ def calculateDistances(data, V_VI):
     distancePairwise = pd.DataFrame(distancePairwise, columns=data.columns, 
                                 index=data.columns)
     distancePairwise.name = data.name
-    
+
     #Converts to NaN the diagonal
     for index, row in distancePairwise.iterrows():
         distancePairwise.loc[index, index] = np.nan
 
     return (distanceToMean,distancePairwise)
 
+
 def calculateCutoffs(data,p):
-    """ 
+    """
     Calculate the Standardized Euclidean Distance and return an array of 
     distances to the Mean and a matrix of pairwise distances.
 
@@ -219,7 +222,7 @@ def calculateCutoffs(data,p):
 
     # casting to float so it behaves well
     ps = float(ps)
-    nf = float(nf)    
+    nf = float(nf)
 
     # Calculates cutoffs beta,norm & chisq for data to mean
     betaCut1  = np.sqrt((ps-1)**2/ps*betaP)
@@ -239,12 +242,13 @@ def calculateCutoffs(data,p):
     cutoff2   = pd.DataFrame([[betaCut2, normCut2, chisqCut2],
                             ['Beta(Exact)', 'Normal', 'Chi-sq']],index=["cut","name"],
                             columns=['Beta(Exact)', 'Normal', 'Chi-sq'])
-    
+
     # Create Palette
     cutPalette.getColors(cutoff1.T,["name"])
 
     # Returning colors
     return (cutoff1,cutoff2)
+
 
 def plotCutoffs(cut_S,ax,p):
     """
@@ -264,6 +268,7 @@ def plotCutoffs(cut_S,ax,p):
             cl=cutPalette.ugColors[cut_S.name],
             lb="{0} {1}% Threshold: {2}".format(cut_S.name,round(p*100,3),
             round(float(cut_S.values[0]),1)),ls="--",lw=2)
+
 
 def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
     #Geting number of samples in dataframe (ns stands for number of samples)
@@ -288,10 +293,10 @@ def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
     if disType == "Mahalanobis":
         distType1 = "Penalized"
         distType2 = disType
-    else: 
+    else:
         distType1 = "Standardized"
         distType2 = disType
- 
+
     # Adds Figure title, x axis limits and set the xticks
     figure.formatAxis(figTitle="{0} for {1} {2} Distance for {3} {4}".
                     format(plotType, distType1, distType2, df_distance.name, dataType), 
@@ -332,9 +337,10 @@ def plotDistances(df_distance, palette, plotType, disType, cutoff, p, pdf):
     # Drop "color" column to no mess the results
     df_distance.drop("colors", axis=1, inplace=True)
 
+
 def main(args):
-    """ 
-    Main Script 
+    """
+    Main function
     """
     #Checking if levels
     if args.levels and args.group:
@@ -368,7 +374,7 @@ def main(args):
     toMean_disCuts   = list()
     for indexes,name in disGroups:
         # If less than 3 elements in the group skip to the next
-        if len(indexes) < 3: 
+        if len(indexes) < 3:
             logger.error("Group {0} has less than 3 elements, it will not be"\
                         " included in the analysis".format(level))
             continue
@@ -450,15 +456,11 @@ def main(args):
     # Ending script
     logger.info("Script complete.")
 
-if __name__ == '__main__':
-    # Turn on Logging if option -g was given
-    args = getOptions()
 
-    # Turn on logger
+if __name__ == '__main__':
+    args = getOptions()
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Standar logging
     logger.info(u"""Importing data with following parameters: 
                 \tWide: {0}
                 \tDesign: {1}
@@ -467,13 +469,8 @@ if __name__ == '__main__':
                 \tRun Order: {4}
                 """ .format(args.input, args.design, args.uniqID, args.group, 
                     args.order))
-
-    # Stablishing color palette for adata and cutoffs
     dataPalette = colorHandler(pal=args.palette, col=args.color)
     cutPalette  = colorHandler(pal="tableau",col="TrafficLight_9")
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
-
-
-    #Main script
     main(args)
