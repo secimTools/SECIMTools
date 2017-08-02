@@ -1,37 +1,33 @@
 #!/usr/bin/env python
 ################################################################################
 # Date: 2017/03/13
-# 
+#
 # Module: standardize_euclidean_distance.py
 #
 # VERSION: 1.0
-# 
+#
 # AUTHOR: Miguel A. Ibarra-Arellano (miguelib@ufl.edu)
 #
-# DESCRIPTION: This program does a pairwise and to mean  standarized euclidean
-#               comparison for a given dataset.
-#
+# DESCRIPTION: This program does a pairwise and to mean standarized euclidean
+#               comparisons for a given dataset.
 ################################################################################
 # Import built-in libraries
 import os
 import logging
 import argparse
-
 # Import add-on libraries
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 from numpy import alltrue
 import pandas as pd
 import scipy.stats as stats
-import matplotlib.pyplot as plt
 from sklearn.neighbors import DistanceMetric
-from matplotlib.backends.backend_pdf import PdfPages
-
 # Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-
 # Import local plotting libraries
 from secimtools.visualManager import module_box as box
 from secimtools.visualManager import manager_color as ch
@@ -40,20 +36,20 @@ from secimtools.visualManager import module_scatter as scatter
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
 
+
 def getOptions():
     """ Function to pull in arguments """
-
     description = """For mutivariate data, the standardized Euclidean distance
     (SED) takes the variance into consideration. If we assume all the vectors
-    are identically and independent multinormally distributed with a diagonal
+    are identically and independently multinormally distributed with a diagonal
     covariance matrix (assuming the correlations are 0), the SED follows a
     certain distribution associated with the dimension of the vector. Thus,
-    samples with SEDs higher than the cutoff are dubious and conflict to the
+    samples with SEDs higher than the cutoff are dubious and conflict with the
     multinormal assumption.
 
     The scripts estimate the variance according to the input data and calculate
-    the SEDs from all samples to the estimated Mean and also the sample 
-    pairwise SEDs by group.
+    the SEDs from all samples to the estimated Mean and also the sample pairwise
+    SEDs by group.
 
     The output includes 3 plots for each group and 3 plots in the end for all
     the samples altogether.
@@ -72,7 +68,7 @@ def getOptions():
     standard.add_argument("-g","--group", dest="group",default=False, action='store',
                         required=False, help="Treatment group")
     standard.add_argument("-o","--order",dest="order",action="store",
-                        default=False,help="Run Order")
+                        default=False, help="Run Order")
     standard.add_argument("-l","--levels",dest="levels",action="store", 
                         required=False, default=False, help="Different groups to"\
                         " sort by separeted by comas.")
@@ -100,7 +96,7 @@ def getOptions():
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
     args = parser.parse_args()
-    
+
     # Standardize paths
     args.input    = os.path.abspath(args.input)
     args.design   = os.path.abspath(args.design)
@@ -113,6 +109,7 @@ def getOptions():
         args.levels = args.levels.split(",")
 
     return(args)
+
 
 def plotCutoffs(cut_S,ax,p):
     """
@@ -132,6 +129,7 @@ def plotCutoffs(cut_S,ax,p):
             cl=cutPalette.ugColors[cut_S.name],
             lb="{0} {1}% Threshold: {2}".format(cut_S.name,round(p*100,3),
             round(float(cut_S.values[0]),1)),ls="--",lw=2)
+
 
 def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, levels):
     """
@@ -187,7 +185,6 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
         scatter.scatter2D(ax=figure.ax[0],colorList=SEDData["colors"],
                         x=range(len(SEDData.index)), y=SEDData["SED_to_Mean"])
 
-
     #Plot scatterplot pairwise
     elif(plotType=="scatterPairwise"):
         # Adds Figure title, x axis limits and set the xticks
@@ -215,11 +212,10 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
     cutoff.apply(lambda x: plotCutoffs(x,ax=figure.ax[0],p=p),axis=0)
     figure.shrink()
     # Plot legend
-    #if group:
     figure.makeLegend(figure.ax[0], ugColors, levels)
-
     # Add figure to PDF and close the figure afterwards
     figure.addToPdf(pdf)
+
 
 def prepareSED(data_df, design, pdf, groupName, p, ugColors, levels):
     """
@@ -247,7 +243,7 @@ def prepareSED(data_df, design, pdf, groupName, p, ugColors, levels):
 
         :rtype SEDtoMean: pd.DataFrames
         :return SEDtoMean: SEd for Mean
-        
+
         :rtype SEDpairwise: pd.DataFrames
         :return SEDpairwise: SED for pairwise data
     """
@@ -272,6 +268,7 @@ def prepareSED(data_df, design, pdf, groupName, p, ugColors, levels):
     #Returning data
     return pdf, SEDtoMean, SEDpairwise
 
+
 def calculateSED(dat, levels, combName, pdf, p):
     """
     Manage all the plots for this script
@@ -290,7 +287,6 @@ def calculateSED(dat, levels, combName, pdf, p):
         :type combName: dictionary 
         :param combName: dictionary with colors and different groups
     """
-    
 
     if len(levels.keys()) > 1:
         #Creates dataframes for later use for SED results
@@ -334,7 +330,7 @@ def calculateSED(dat, levels, combName, pdf, p):
                                             how='outer', 
                                             sort=False)
 
-        #Get means of all different groupss
+        #Get means of all different groups
         logger.info("Getting SED for all data")
         cutoffAllMean,cutoffAllPairwise = getCutOffs(dat.wide,p)
 
@@ -365,8 +361,9 @@ def calculateSED(dat, levels, combName, pdf, p):
 
     return SEDtoMean,SEDpairwise
 
+
 def getSED(wide):
-    """ 
+    """
     Calculate the Standardized Euclidean Distance and return an array of 
     distances to the Mean and a matrix of pairwise distances.
 
@@ -408,8 +405,9 @@ def getSED(wide):
     #Returning data
     return SEDtoMean,SEDpairwise
 
+
 def getCutOffs(wide,p):
-    """ 
+    """
     Calculate the Standardized Euclidean Distance and return an array of 
     distances to the Mean and a matrix of pairwise distances.
 
@@ -439,9 +437,9 @@ def getCutOffs(wide,p):
 
     #casting to float so it behaves well
     ps = float(ps)
-    nf = float(nf)    
+    nf = float(nf)
 
-    #Calculates cutoffs beta,norm & chisq for data to mean
+    #Calculates cutoffs beta, norm, and chisq for data to mean
     betaCut1  = np.sqrt((ps-1)**2/ps*betaP)
     normCut1  = np.sqrt(stats.norm.ppf(p, (ps-1)/ps*nf, 
                         np.sqrt(2*nf*(ps-2)*(ps-1)**2/ps**2/(ps+1))))
@@ -459,18 +457,18 @@ def getCutOffs(wide,p):
     cutoff2   = pd.DataFrame([[betaCut2, normCut2, chisqCut2],
                             ['Beta(Exact)', 'Normal', 'Chi-sq']],index=["cut","name"],
                             columns=['Beta(Exact)', 'Normal', 'Chi-sq'])
-    
+
     #Create Palette
     cutPalette.getColors(cutoff1.T,["name"])
 
     #Returning colors
     return cutoff1,cutoff2
 
-def main(args):
-    """ 
-    Main Script 
-    """
 
+def main(args):
+    """
+    Main function
+    """
     #Getting palettes for data and cutoffs
     global cutPalette
     cutPalette = ch.colorHandler(pal="tableau",col="TrafficLight_9")
@@ -486,12 +484,12 @@ def main(args):
     #Parsing data with interface
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
                         anno=args.levels,  logger=logger, runOrder=args.order)
-    
+
     #Dropping missing values and remove groups with just one sample
     dat.dropMissing()
     if args.group:
         dat.removeSingle()
-    
+
     #Select colors for data
     dataPalette.getColors(design=dat.design, groups=levels)
     dat.design=dataPalette.design
@@ -513,15 +511,12 @@ def main(args):
     #Ending script
     logger.info("Script complete.")
 
+
 if __name__ == '__main__':
     # Turn on Logging if option -g was given
     args = getOptions()
-
-    # Turn on logging
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Standar logging
     logger.info("Importing data with following parameters: "\
                 "\n\tWide: {0}"\
                 "\n\tDesign: {1}"\
@@ -529,11 +524,7 @@ if __name__ == '__main__':
                 "\n\tGroup: {3}"\
                 "\n\tRun Order: {4}".format(args.input, args.design,
                  args.uniqID, args.group, args.order))
-
-    # Stablishing color palette
     dataPalette = colorHandler(pal=args.palette, col=args.color)
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
-
-    #Main script
     main(args)
