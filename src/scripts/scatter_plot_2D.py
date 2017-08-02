@@ -1,35 +1,34 @@
 #!/usr/bin/env python
 ################################################################################
 # DATE: 2016/August/10
-# 
+#
 # MODULE: scatter_plot_2D.py
 #
 # VERSION: 1.1
-# 
+#
 # AUTHOR: Matt Thoburn (mthoburn@ufl.edu), Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This is a standalone executable for graphing 2D scatter plots 
 # from wide data
-#
 ################################################################################
 # Import built-in libraries
 import os
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
-
 # Import add-on libraries
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib.backends.backend_pdf import PdfPages
-
 # Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-
 # Import local plotting libraries
 from secimtools.visualManager import module_scatter as scatter
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
+
 
 def getOptions():
     description="Stand alone Scatter Plots 2D tool"
@@ -74,6 +73,7 @@ def getOptions():
         args.design = os.path.abspath(args.design)
     return(args)
 
+
 def main(args):
     # Loading design
     if args.design:
@@ -97,7 +97,7 @@ def main(args):
         glist = list()
         colorList = palette.mpl_colors[0]
         ucGroups = dict()
-    
+
     # Plote scatterplot 2D
     scatter.scatter2D(ax=fh.ax[0], x=list(wide[args.x]), y=list(wide[args.y]),
                     colorList=colorList)
@@ -108,7 +108,7 @@ def main(args):
     # Formating axis
     fh.formatAxis(figTitle=args.x + " vs " + args.y, xTitle=args.x, 
                 yTitle=args.y, grid=False)
-    
+
     # If groups are provided create a legend
     if args.group and args.uniqID == "sampleID":
         fh.makeLegend(ax=fh.ax[0],ucGroups=ucGroups,group=args.group)
@@ -119,18 +119,12 @@ def main(args):
         fh.addToPdf(dpi=600, pdfPages=pdfOut)
     logger.info("Script Complete!")
 
-if __name__ == '__main__':
-    # Command line options
-    args   = getOptions()
 
-    # Set logger
+if __name__ == '__main__':
+    args   = getOptions()
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Stablishing color palette
     palette = colorHandler(pal=args.palette, col=args.color)
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
-
-    # Run everything
     main(args)
