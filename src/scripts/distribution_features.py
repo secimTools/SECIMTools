@@ -1,37 +1,35 @@
+#!/usr/bin/env python
 ######################################################################################
 # Date: 2016/July/06
-# 
+#
 # Module: distribution_features.py
 #
 # VERSION: 1.0
-# 
+#
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This program creates a distribution plot by features for a given datset
-#
 #######################################################################################
 # Import built-in libraries
 import os
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
-
 # Import add-on libraries
 import matplotlib
 matplotlib.use('Agg')
 import numpy as np
 import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
-
 # Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-
 # Import local plotting libraries
 from secimtools.visualManager import module_box as box
 from secimtools.visualManager import module_distribution as density
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
+
 
 def getOptions():
     """
@@ -72,9 +70,10 @@ def getOptions():
 
     return(args)
 
+
 def plotDensity (data, name, pdf):
     """
-    This function takes pandas dataframe data and plots a
+    This function takes a pandas dataframe and plots a
     density plot and a boxplot.
     """
     # Stablishing figure layout (x,y,colspan,rowspan)
@@ -101,6 +100,7 @@ def plotDensity (data, name, pdf):
     # Adding figure to pdf object
     figure.addToPdf(pdf)
 
+
 def main(args):
     """
     Function to call all other functions
@@ -121,7 +121,6 @@ def main(args):
 
     # Saving figure
     with PdfPages(args.figure) as pdf:
-        
         # Iterating over groups
         if args.group:
 
@@ -145,24 +144,16 @@ def main(args):
         #Ending script
         logger.info(u"Ending script")
 
-if __name__ == '__main__':
-    # Command line options
-    args = getOptions()
 
-    # Setting logging
+if __name__ == '__main__':
+    args = getOptions()
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Print logger info
     logger.info("Importing data with following parameters: "\
             "\n\tWide: {0}"\
             "\n\tDesign: {1}"\
             "\n\tUnique ID: {2}".format(args.input, args.design, args.uniqID))
-
-    # Set color palette
     palette = colorHandler(pal=args.palette, col=args.color)
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
-
-    # Main
     main(args)
