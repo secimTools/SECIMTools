@@ -1,22 +1,22 @@
+#!/usr/bin/env python
 ######################################################################################
 # DATE: 2017/03/10
-# 
+#
 # MODULE: imputation.py
 #
 # VERSION: 1.0
-# 
+#
 # AUTHOR: Matt Thoburn (mthoburn@ufl.edu) ed. Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This attempts to impute missing data by an algorithm of the user's choice
-#
 #######################################################################################
+
 # Import built-in libraries
 import os
 import sys
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
-
 # Import add-on libraries
 import numpy as np
 import pandas as pd
@@ -29,13 +29,13 @@ import rpy2.robjects.numpy2ri
 import rpy2.robjects as robjects
 from rpy2.robjects.packages import importr
 from rpy2.robjects.vectors import StrVector
-
 # Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
 
+
 def getOptions(myOpts = None):
-    description="""  
+    description="""
     The tool performs imputations using selected algorith
     """
     parser = argparse.ArgumentParser(description=description, 
@@ -94,6 +94,7 @@ def getOptions(myOpts = None):
 
     return(args)
 
+
 def preprocess(noz,non,ex,data):
     """
     Preprocesses data to replace all unaccepted values with np.nan so they can be imputedDataAsNumpy
@@ -115,13 +116,13 @@ def preprocess(noz,non,ex,data):
         :type data: pandas DataFrame
         :param data: data to be imputed
     """
-    
+
     # The rest of the values will be converted to float
     data = data.applymap(float)
 
     # All string instances on data will be set to nans
     data = data.applymap(lambda x: np.nan if isinstance(x,str) else x)
-    
+
     # If non zero then convert al 0's to nans
     if noz:
         data = data.where(data != 0,np.nan)
@@ -137,6 +138,7 @@ def preprocess(noz,non,ex,data):
 
     # Returning cleaned data
     return data
+
 
 def imputeKNN(rc,cc,k,dat):
     """
@@ -174,7 +176,7 @@ def imputeKNN(rc,cc,k,dat):
 
     out = sys.stdout #Save the stdout path for later, we're going to need it
     f = open('/dev/null','w') #were going to use this to redirect stdout temporarily
-    
+
     logger.info("Running KNN imputation")
     # Iterating over groups
     for title, group in dat.design.groupby(dat.group):
@@ -188,7 +190,7 @@ def imputeKNN(rc,cc,k,dat):
         if len(group.index) <= k: #some nearby, but not enough to use user specified k
             logger.info(title + " group length less than k, will use group length - 1 instead")
             k = len(group.index) - 1
-            
+
         # Convert wide data to a matrix
         wideData = dat.wide[group.index].as_matrix()
 
@@ -216,13 +218,14 @@ def imputeKNN(rc,cc,k,dat):
         fixedFullDataset.append(imputedDataAsPandas)
 
         #reset k back to normal if it was modified @125
-        k = int(args.knn) 
+        k = int(args.knn)
 
         # Concatenating list of results to full dataframe again
         pdFull = pd.concat(fixedFullDataset,axis=1)
 
     # Returning pandas dataframe
     return pdFull
+
 
 def imputeRow(row, rc, strategy, dist=False):
     """
@@ -264,6 +267,7 @@ def imputeRow(row, rc, strategy, dist=False):
         # if the row is complete the return the row as it is
         else:
             return row
+
 
 def imputeBayesian(row, dist):
     out = sys.stdout #Save the stdout path for later, we're going to need it
@@ -310,6 +314,7 @@ def imputeBayesian(row, dist):
     row.replace(0,np.nan, inplace=True)
     return row
 
+
 def iterateGroups(dat,strategy, rc, dist=False):
     # Create a list to concatenate all the results
     imputed = list()
@@ -325,7 +330,7 @@ def iterateGroups(dat,strategy, rc, dist=False):
             # Doing  mean/median imputation
             currentGroup.apply(imputeRow,args=(rc,strategy,dist), axis=1)
 
-        # Appending imputed group to list of groups            
+        # Appending imputed group to list of groups
         imputed.append(currentGroup)
 
     # Concatenate results into one single dataframe that contains all the 
@@ -334,6 +339,7 @@ def iterateGroups(dat,strategy, rc, dist=False):
 
     # Returning full data frame
     return imputed_df
+
 
 def main(args):
     # Import data with interface
@@ -354,34 +360,28 @@ def main(args):
     else:
         # Iterate over groups and perform either a mean or median imputation.
         pdFull = iterateGroups(dat=dat, strategy=args.strategy, dist=args.dist, 
-                                rc=args.rowCutoff) 
-        
+                                rc=args.rowCutoff)
+
     # Convert dataframe to float and round results to 4 digits
     pdFull.applymap(float)
     pdFull = pdFull.round(4)
 
-    # Maake sure that the output has the same unique.ID
+    # Make sure that the output has the same unique.ID
     pdFull.index.name = args.uniqID
 
     # Saving inputed data
     pdFull.to_csv(args.output, sep="\t")
     logger.info("Script Complete!")
 
-if __name__ == '__main__':
-    # Command line options
-    args = getOptions()
 
-    # Activate Logger
+if __name__ == '__main__':
+    args = getOptions()
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Starting script
     logger.info("Importing data with following parameters:"\
                 "\n\tInput: {0}"\
                 "\n\tDesign: {1}"\
                 "\n\tuniqID: {2}"\
                 "\n\tgroup: {3}".format(args.input, args.design, args.uniqID, 
                                 args.group))
-    # Running main script
     main(args)
-
