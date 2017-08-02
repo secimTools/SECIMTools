@@ -1,15 +1,16 @@
+#!/usr/bin/env python
 ################################################################################
 # DATE: 2017/03/10
-# 
+#
 # MODULE: lasso_enet_var_select.py
 #
 # VERSION: 1.1
-# 
+#
 # AUTHOR:  Miguel Ibarra (miguelib@ufl.edu), Matt Thoburn (mthoburn@ufl.edu).
 #
 # DESCRIPTION: This runs an Elastic Net or Lasso Test on wide data
-#
 ################################################################################
+
 # Import built-in libraries
 import os
 import sys
@@ -17,7 +18,6 @@ import logging
 import argparse
 import itertools as it
 from argparse import RawDescriptionHelpFormatter
-
 # Import add-on libraries
 import rpy2
 import rpy2.robjects.numpy2ri
@@ -29,13 +29,13 @@ from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
 import pandas
 import numpy as np
 from numpy import genfromtxt
-
 # Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
 
+
 def getOptions(myOpts=None):
-    description="""  
+    description="""
     The tool performs feature selection using LASSO/Elastic Net feature selection method.
     """
     parser = argparse.ArgumentParser(description=description, 
@@ -77,11 +77,12 @@ def getOptions(myOpts=None):
 
     return(args)
 
+
 def main(args):
     #Get R ready
     # Get current pathway
     myPath = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-    
+
     # Stablish path for LASSO script
     my_r_script_path = os.path.join(myPath, "lasso_enet.R")
     logger.info(my_r_script_path)
@@ -93,7 +94,7 @@ def main(args):
     with open(my_r_script_path, 'r') as f:
         rFile = f.read()
     lassoEnetScript = STAP(rFile, "lasso_enet")
-    
+
     # Importing data trought interface
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group,
                         logger=logger)
@@ -133,21 +134,15 @@ def main(args):
     # Finishing
     logger.info("Script Complete!")
 
-if __name__ == '__main__':
-    # Command line options
-    args = getOptions()
 
-    # Activate Logger
+if __name__ == '__main__':
+    args = getOptions()
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Import data
     logger.info(u"Importing data with the folowing parameters: "\
         "\n\tWide:  {0}"\
         "\n\tDesign:{1}"\
         "\n\tUniqID:{2}"\
         "\n\tAlpha: {3}".\
         format(args.input,args.design,args.uniqID,args.alpha))
-
-    # Run main script
     main(args)
