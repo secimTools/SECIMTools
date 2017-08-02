@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 ######################################################################################
 # DATE: 2017/06/19
-# 
+#
 # MODULE: ttest_single_group.py
 #
 # VERSION: 1.0
-# 
-# AUTHOR: Alexander Kirpich (akirpich@ufl.edu) 
 #
-# DESCRIPTION: This tool runs t-test which can be either:
-#               single sample or differences
+# AUTHOR: Alexander Kirpich <akirpich@ufl.edu>
+#
+# DESCRIPTION: This tool runs t-test which can be either single, sample, or differences
 #
 #######################################################################################
 # Import future libraries
@@ -25,11 +24,11 @@ from argparse import RawDescriptionHelpFormatter
 
 # Import add-on libraries
 import matplotlib
-import numpy as np
-import pandas as pd
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+import numpy as np
+import pandas as pd
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 # Importing cross-validation functions
 from sklearn import datasets
@@ -37,7 +36,6 @@ from sklearn.model_selection import GridSearchCV, cross_val_score
 from sklearn.preprocessing import StandardScaler
 # Importing single sample t-test module
 from scipy.stats import ttest_1samp
-
 
 # Import local plottin libraries
 from secimtools.visualManager import module_box as box
@@ -47,15 +45,14 @@ from secimtools.visualManager import module_scatter as scatter
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
 
-
-
 # Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
 
+
 def getOptions(myopts=None):
     """ Function to pull in arguments """
-    description="""  
+    description="""
     This script runs a t-test for a single sample for each feature in the data.
     """
     # Standard Input
@@ -70,9 +67,9 @@ def getOptions(myopts=None):
     standard.add_argument("-id", "--uniqueID",dest="uniqueID", action='store', required=True, 
                         help="Name of the column with unique identifiers.")
     standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
-                        default=False,help="Name of the column with group variable.")
+                        default=False, help="Name of the column with group variable.")
     standard.add_argument("-mu", "--mu",dest="mu", action='store', required=False, 
-                        default=0,help="Mu value for the null.")
+                        default=0, help="Mu value for the null.")
     # Tool output
     output = parser.add_argument_group(title='Required output')
     output.add_argument("-s","--summaries",dest="summaries",action='store',required=True, 
@@ -101,12 +98,8 @@ def getOptions(myopts=None):
 
 
 def main(args):
-
-
-
     # If the user provides grouping variable we test each group against the null (my supplied by user, 0 is the default).
     if args.group != False:
-
        logger.info(u"""t-test will be performed for all groups saved in [{0}] variable in the desing file pairwise with the H_0: mu = {1}.""".format(args.group, args.mu))
 
 
@@ -117,7 +110,7 @@ def main(args):
 
        # Treat everything as numeric.
        dat.wide = dat.wide.applymap(float)
-    
+
        # Cleaning from the missing data.
        dat.dropMissing()
 
@@ -140,8 +133,6 @@ def main(args):
        variance_value_all = [0] * number_of_features
 
        for j in range(0, number_of_features ):
-  
-
            # Creating duplicate for manipulation.
            data_frame_manipulate = data_frame
 
@@ -184,9 +175,8 @@ def main(args):
            flag_value_0p01   = [0] * number_of_features
            flag_value_0p05   = [0] * number_of_features
            flag_value_0p10   = [0] * number_of_features
-       
+
            for j in range(0, number_of_features ):
-  
                series_current = data_frame_current_group.loc[ indexes_list[j] ] 
                means_value[j] = series_current.mean()
 
@@ -194,7 +184,7 @@ def main(args):
                ttest_1samp_args = [series_current, float(args.mu)]
                p_value[j] = ttest_1samp( *ttest_1samp_args )[1]
                t_value[j] = ttest_1samp( *ttest_1samp_args )[0]
-	       neg_log10_p_value[j] = - np.log10(p_value[j])
+               neg_log10_p_value[j] = - np.log10(p_value[j])
                difference_value[j] = means_value[j] - float(args.mu)
                if p_value[j] < 0.01: flag_value_0p01[j] = 1
                if p_value[j] < 0.05: flag_value_0p05[j] = 1
@@ -227,11 +217,8 @@ def main(args):
            flag_df[flag_value_column_name_current_0p05] = flag_value_0p05
            flag_df[flag_value_column_name_current_0p10] = flag_value_0p10
 
-
-
     # If the user does not provide grouping variable we test all dataset as a single group against the null (my supplied by user, 0 is the default).
     if args.group == False:
-
        logger.info(u"""t-test will be performed for the entire dataset since goruping variable was not provided.""")
 
        # Loading data trough the interface
@@ -240,14 +227,13 @@ def main(args):
 
        # Treat everything as numeric
        dat.wide = dat.wide.applymap(float)
-    
+
        # Cleaning from missing data
        dat.dropMissing()
 
        # Saving the number of unique groups that will be used for plotting.
        # Since we did not feed any grouping variable it is exactly one.
        number_of_unique_groups = 1
-
 
        # Extracting data from the interface.
        data_frame = dat.wide.transpose()
@@ -271,9 +257,7 @@ def main(args):
        flag_value_0p10   = [0] * number_of_features
 
        for j in range(0, number_of_features ):
-
-
-           # We trnaspose here so it will be easier to operate with.
+           # We transpose here so data will be easier to operate on.
            data_frame_manipulate_transpose  = data_frame.transpose()
            # Pulling indexes list from the current data frame.
            indexes_list_complete = data_frame_manipulate_transpose.index.tolist()
@@ -291,8 +275,6 @@ def main(args):
            if p_value[j] < 0.01: flag_value_0p01[j] = 1
            if p_value[j] < 0.05: flag_value_0p05[j] = 1
            if p_value[j] < 0.10: flag_value_0p10[j] = 1
-
-
 
        # Creating the table and putting the results there.
        summary_df     =  pd.DataFrame(data = mean_value_all, columns = ["GrandMean"], index = indexes_list_complete )    
@@ -318,9 +300,6 @@ def main(args):
        flag_df[flag_value_column_name_current_0p05] = flag_value_0p05
        flag_df[flag_value_column_name_current_0p10] = flag_value_0p10
 
-
-
-   
     # Roundign the results up to 4 precision digits.
     summary_df = summary_df.apply(lambda x: x.round(4))
 
@@ -333,9 +312,6 @@ def main(args):
     # Save flag_df to the output
     flag_df.to_csv(args.flags, sep="\t")
 
-
-
-
     # Generating Indexing for volcano plots.
 
     # Getting data for lpvals
@@ -346,11 +322,8 @@ def main(args):
     difs   = {col.split("_of_")[-1]:summary_df[col] for col in summary_df.columns.tolist() \
               if col.startswith("diff_of_")}
 
-
     # The cutoff value for significance.
     cutoff=2
-
-
 
     # Making volcano plots
     with PdfPages( args.volcano ) as pdf:
@@ -358,13 +331,12 @@ def main(args):
              # Set Up Figure
              volcanoPlot = figureHandler(proj="2d")
 
-
              # If no grouping variable is provided.
              if number_of_unique_groups == 1:
-		current_key = 'all_'  + args.mu  
-	     else:
-                current_key =  group_values_series_unique[i] + '_' + args.mu  
-             
+                current_key = 'all_'  + args.mu
+             else:
+                current_key =  group_values_series_unique[i] + '_' + args.mu
+
              # Plot all results
              scatter.scatter2D(x=list(difs[current_key]), y=list(lpvals[current_key]), 
                                 colorList=list('b'), ax=volcanoPlot.ax[0])
@@ -386,7 +358,7 @@ def main(args):
 
              # Add figure to PDF
              volcanoPlot.addToPdf(pdfPages=pdf)
-  
+
     # Informing that the volcano plots are done
     logger.info(u"Volcano plots have been created.")
 
@@ -395,7 +367,7 @@ def main(args):
     # Ending script
     logger.info(u"Finishing running of t-test.")
 
-if __name__ == '__main__':   
+if __name__ == '__main__':
     # Command line options
     args = getOptions()
 
@@ -411,7 +383,7 @@ if __name__ == '__main__':
                 Group: {3}
                 """.format(args.input, args.design, args.uniqueID, args.group ))
 
-    # Stablishing color palette
+    # Setting up color palette
     palette = colorHandler(pal=args.palette, col=args.color)
     logger.info(u"Using {0} color scheme from {1} palette".format(args.color, args.palette))
 
