@@ -1,37 +1,35 @@
 #!/usr/bin/env python
 ################################################################################
 # Date: 2017/03/10
-# 
+#
 # Module: mzrt_match.py
 #
 # VERSION: 1.1
-# 
+#
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
 #
 # DESCRIPTION: This program compares the features among 2 annotation files based
 #               on their retention time and mz.It will output the results of this
 #               comparison at level of combinations and features.
-#
 ################################################################################
 # Import built-in libraries
 import argparse
 import os
 import logging
 import itertools
-
 # Import add-on libraries
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib.backends.backend_pdf import PdfPages
-
 # Import local data libraries
 from secimtools.dataManager import interface
 from secimtools.dataManager import logger as sl
-
 # Import local plotting libraries
 from secimtools.visualManager import module_venn as mVenn
 
-#Getting all the arguments
+
 def getOptions():
     """Function to pull arguments"""
     parser = argparse.ArgumentParser(description="""Matches rows (features) in 2
@@ -104,10 +102,11 @@ def getOptions():
     args.unmatched1 = os.path.abspath(args.unmatched1)
     args.unmatched2 = os.path.abspath(args.unmatched2)
 
-    return(args);
- 
+    return(args)
+
+
 def matchFiles (anno1,anno2,MZCut,RTCut,reverse=False):
-    """ 
+    """
     Match 2 Files and returns an array with the results.
 
     :Arguments:
@@ -142,7 +141,6 @@ def matchFiles (anno1,anno2,MZCut,RTCut,reverse=False):
 
     #Iterating over annotation 1 and comparing with annotation 2
     for rowID1,MZRT1 in anno1.data.iterrows():
-
         #Setting  flag_unmatch
         flag_unmatch = True
 
@@ -154,17 +152,14 @@ def matchFiles (anno1,anno2,MZCut,RTCut,reverse=False):
 
         #Iterating over annotation 2 and comparing with anotation 1
         for rowID2,MZRT2 in anno2.data.iterrows():
-
                 #Match found between anno1 and anno2
-                if ((mzMin<MZRT2[anno2.mz] and MZRT2[anno2.mz]<mzMax) and 
+                if ((mzMin<MZRT2[anno2.mz] and MZRT2[anno2.mz]<mzMax) and
                     (rtMin<MZRT2[anno2.rt] and MZRT2[anno2.rt]<rtMax)):
-
                     #If reverse reverse the output 
                     if reverse:
                         matched_s = pd.DataFrame(data=[[rowID2,MZRT2[anno2.mz],
                             MZRT2[anno2.rt],rowID1,MZRT1[anno1.mz],MZRT1[anno1.rt]]],
                             columns=["rowID1","MZ1","RT1","rowID2","MZ2","RT2"])
-
                     #Creting dataframe to apend latter
                     else:
                         matched_s = pd.DataFrame(data=[[rowID1,MZRT1[anno1.mz],
@@ -176,13 +171,11 @@ def matchFiles (anno1,anno2,MZCut,RTCut,reverse=False):
 
         #Exclusively found on anno1
         if flag_unmatch:
-
             #if reverse reverse output
             if reverse:
                 unmatched_s = pd.DataFrame(data=[["","","",rowID1,MZRT1[anno1.mz],
                     MZRT1[anno1.rt]]], columns=["rowID1","MZ1","RT1",
                     "rowID2","MZ2","RT2"])
-
             #Create dataframe to append to unmateched dataframe
             else:
                 unmatched_s = pd.DataFrame(data=[[rowID1,MZRT1[anno1.mz],
@@ -190,11 +183,11 @@ def matchFiles (anno1,anno2,MZCut,RTCut,reverse=False):
                     "rowID2","MZ2","RT2"])
             unmatched_df = unmatched_df.append(unmatched_s)
 
-    #Returning results
     return matched_df,unmatched_df
 
+
 def getSummary (match,umatch1,umatch2):
-    """ 
+    """
     Plot the standardized Euclidean distance plot for samples to the Mean.
 
     :Arguments:
@@ -220,26 +213,26 @@ def getSummary (match,umatch1,umatch2):
     nUmatchCombinations2 = len(umatch2) #This is the number of unmatched features
     nMatchCombinations = len(match)
     nAllCombinations = len(match) + len(umatch1) + len(umatch2)
-    
+
     #Calculate number of features
     nMatchFeatures1 = len(list(set(match["rowID1"].values)))
     nMatchFeatures2 = len(list(set(match["rowID2"].values)))
     nMatchFeatures = nMatchFeatures1 + nMatchFeatures2
     nAllFeatures = nUmatchCombinations1+nUmatchCombinations2+nMatchFeatures
-    
+
     #Calculate number of multiple features
     nMultupleFeatures1 = len([len(list(count)) for name,count in 
         itertools.groupby(sorted(match["rowID1"])) if (len(list(count))>1)])
     nMultipleFeatures2 = len([len(list(count)) for name,count in 
         itertools.groupby(sorted(match["rowID2"])) if (len(list(count))>1)])
     nMultipleFeatures = nMultupleFeatures1+nMultipleFeatures2
-    
+
     #Calculate number of single features
     nSingleFeatures1 = nMatchFeatures1-nMultupleFeatures1
     nSingleFeatures2 = nMatchFeatures2-nMultipleFeatures2
     nSingleFeatures = nSingleFeatures1+nSingleFeatures2
-    
-    #Creating series 
+
+    #Creating series
     summary_S = pd.Series([nUmatchCombinations1,nUmatchCombinations2,
                            nMatchCombinations,nAllCombinations,
                            nMatchFeatures1,nMatchFeatures2,
@@ -256,8 +249,9 @@ def getSummary (match,umatch1,umatch2):
                                 "SingleFeatures2","SingleFeatures"])
     return summary_S
 
+
 def plotFigures(args,pdf,data):
-    """ 
+    """
     Plot the Venn diagrams of the combinations and features
 
     :Arguments:
@@ -268,8 +262,7 @@ def plotFigures(args,pdf,data):
         :type data: dictionary
         :param data: dictionary with all the data information.
     """
-    
-        #Venn match unmatch combinations
+    #Venn match unmatch combinations
     mvsumCombFig=mVenn.plotVenn2([data["UmatchCombinations1"],
         data["UmatchCombinations2"],data["MatchCombinations"]],
         title="MZ-RT Matched vs Unmatched (Combinations)",name1=args.name1,
@@ -290,6 +283,7 @@ def plotFigures(args,pdf,data):
         name2=args.name2,circles=True)
     svsuFeatFig.addToPdf(dpi=600, pdfPages=pdf)
 
+
 def writeOutput(paths,files):
     """
     Writes output
@@ -307,8 +301,9 @@ def writeOutput(paths,files):
     for i in range(len(files)):
         files[i].to_csv(paths[i],index=False,sep="\t")
 
+
 def main(args):
-    """Function to call all other functions"""
+    """Main function"""
     #Read annotation file 1
     anno1 = interface.annoFormat(data=args.anno1, uniqID=args.uniqID1, 
                                 mz=args.mzID1, rt=args.rtID1)
@@ -330,7 +325,7 @@ def main(args):
     #Create all results file
     all_df    = pd.concat([match_df,umatch12_df,umatch21_df],axis=0)
 
-    #get summary data
+    #Get summary data
     summary_S = getSummary(match_df,umatch12_df,umatch21_df)
 
     #Plot venn Diagrams
@@ -342,20 +337,14 @@ def main(args):
     writeOutput(paths=[args.unmatched1,args.unmatched2,args.matched,args.all],
                 files=[umatch12_df,umatch21_df,match_df,all_df])
     summary_S.to_csv(args.summary,sep="\t")
-    logger.info("Script Complete!")
+    logger.info("Analysis complete")
+
 
 if __name__=='__main__':
-    #Get info
     args = getOptions()
-
-    #Setting logger
     logger = logging.getLogger()
     sl.setLogger(logger)
-
-    # Showing parameters
     logger.info("Importing data with the following parameters:"\
         "\tAnnotation 1: {0}:"\
         "\tAnnotation 2: {1}".format(args.anno1,args.anno2))
-
-    # Runing script
     main(args)
