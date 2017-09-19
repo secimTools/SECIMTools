@@ -16,6 +16,7 @@
 # Import built-in libraries
 from __future__ import division
 import os
+import sys
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
@@ -119,6 +120,11 @@ def runRegression(data):
         # Drop missing values and make sure everything is numeric
         clean = column.dropna().reset_index()
         clean.columns = ["run", "val"]
+        try:
+            clean["run"] = clean["run"].astype('float64')
+        except ValueError as e:
+            logger.error("Invalid runOrder value found: - {}".format(str(e)))
+            sys.exit(1)
 
         # Fit model
         model   = smf.ols(formula="val ~ run", data=clean, missing="drop")
