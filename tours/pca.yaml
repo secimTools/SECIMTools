@@ -1,0 +1,113 @@
+id: PCA
+name: SECIMTools Principal Component Analysis (PCA)
+description: >-
+  This tour shows you how to use the PCA tool.
+title_default: PCA
+steps:
+
+  - title: Using SECIMTools Principal Component Analysis to visualize your data in Galaxy
+    content: "This tour will walk you through using the PCA tool.  The tool performs a principal component analysis of the data.<br><br>Visual summaries of the data are provided as 2D and 3D scatter plots.<br><br>Samples can be colored based on group classifications.<br><br>Please see the SECIMTools Galaxy UserGuide for more details about the method (available for download at: http://secim.ufl.edu/education/training/) <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    backdrop: false
+
+  - title: "Tool Panel"
+    element: "#left"                
+    intro: "This is where all available Galaxy tools are located."
+    position: "right"
+
+  - title: "Upload a wide dataset and a design file"
+    element: ".upload-button"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    position: "right"
+    postclick:
+      - ".upload-button"
+    
+  - title: "Upload your data"
+    element: "#btn-local"
+    intro: "You can upload data from your computer."
+    position: "top"
+    postclick:
+      - "#btn-new"
+
+  - title: "Upload your data"
+    element: "#btn-new"
+    intro: "You can copy and paste data directly into Galaxy or use URLs that lead to your data."
+    position: "top"
+
+  - title: "Insert URLs"
+    element: ".upload-text-content:first"
+    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
+    position: "bottom"
+    textinsert: |
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+
+  - title: "Start the upload"
+    element: "#btn-start"
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status</b> as the upload proceeds."
+    position: "top"
+    postclick:
+      - "#btn-start"
+      - "#btn-close"
+
+  - title: "Now lets run a PCA."
+    element: "#title_secim2 > a"
+    intro: "Select the SECIMTools category."                                             
+    position: "right"
+    preclick:
+      - "#title_secim2 a"
+
+  - title: "Principal Component Analysis tool"
+    intro: "The PCA tool is loaded by clicking on the name of the tool.<br><br>
+            The tool description (scroll down) has lots of useful information about the tool as does the SECIMTools Galaxy UserGuide!"
+    element: 'a[href$="tool_runner?tool_id=secimtools_principal_component_analysis"]'
+    position: bottom
+    preclick:
+      - 'a[href$="tool_runner?tool_id=secimtools_principal_component_analysis"]'
+    postclick:
+      - "#title_stats a"
+
+  - title: "Step 1. Select the wide dataset."
+    element: 'div[tour_id="input"]'
+    intro: "Select the wide dataset from the drop down window.<br> (Really, go ahead and choose the wide dataset)."
+    position: "right"
+
+  - title: "Step 2. Select the design file."
+    element: 'div[tour_id="design"]'
+    intro: "Select the design file from the drop down window.<br> (Pick the design file)."
+    position: "right"
+
+  - title: "Step 3. Enter the unique identifier in the wide dataset."
+    element: 'div[tour_id="uniqID"]'
+    content: "For this data, type in the word <b>rowID</b> into the box."
+    placement: right
+
+  - title: "Step 4.  Now select the column in the Design File that contains the group classifications to color by."
+    element: 'div[tour_id="group"]'
+    content: "For this data, type in the word <b>mating_status</b> into the box."
+    placement: right
+
+  - title: "Execute the tool"
+    element: "#execute"
+    content: "Click the <b>Execute</b> button.<br><br>  <b>WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    position: top
+
+  - title: "The PCA generates a TSV file containing the eigenvectors/variable loadings for each component."
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the file containing the loadings."
+    placement: bottom
+
+  - title: "The PCA Tool generates a TSV file containing the scores for each component."
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the file containing the scores."
+    placement: bottom
+
+  - title: "The PCA Tool generates a 3rd TSV file containing the summary information for each component."
+    element: "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the file containing the summary."
+    placement: bottom
+
+  - title: "The PCA Tool generates a PDF containing 2D and 3D scatter plots of the 1st 3 components."
+    element: "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
+    content: "Samples are color-coded based on the selected group classification.<br><br>The SECIMTools Scatter Plot 2D or 3D tools can be used to plot additional components.<br><br><b>Click</b> the <b>eye</b> to look at the file of scatter plots."
+    placement: bottom
+

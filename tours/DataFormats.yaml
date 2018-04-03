@@ -1,0 +1,99 @@
+id: WidevsTall
+name: SECIMTools Data Formats.
+description: >-                  
+  This tour introduces the main types of data formats used by SECIMTools.  A Wide Formatted Dataset should contain feature measurements for each sample with samples in columns and features in rows.  The Design File relates sample values in the wide format dataset with sample characteristics.  On occasion, an Annotation Dataset will be used that links features in the Wide Dataset to feature characteristics such as compound names.  Flag files are datasets produced and used as input by many of the SECIMTools and contain columns of binary indicator values (1/0) to identify specific values.
+title_default: Data Formats
+steps:
+
+  - title: Data Formats in SECIMTools
+    content: "This tour will walk you through importing a wide formatted dataset, an annotation datasest and a design file.  We'll then talk about the characteristics of each.<br><br> For a more detailed description, please see the  SECIMTools Galaxy UserGuide available for download at:  http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    backdrop: false
+
+  - title: "Tool Panel."
+    element: "#left"                
+    intro: "This is where all available Galaxy tools are located."
+    position: "right"
+
+  - title: "Upload a wide dataset and a design file"
+    element: ".upload-button"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    position: "right"
+    postclick:
+      - ".upload-button"
+    
+  - title: "Upload your data"
+    element: "#btn-local"
+    intro: "You can upload data from your computer."
+    position: "top"
+    postclick:
+      - "#btn-new"
+
+  - title: "Upload your data"
+    element: "#btn-new"
+    intro: "You can copy and paste data directly into Galaxy or use URLs that lead to your data."
+    position: "top"
+
+  - title: "Insert URLs"
+    element: ".upload-text-content:first"
+    intro: "Let's upload a wide dataset, a design file, an annotation file and a flag file using URLs.<br><br> Wait till the bar above is green and 100% before clicking next!"
+    position: "bottom"
+    textinsert: |
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/TEST0000_data.tsv
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/TEST0000_design.tsv
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/TEST0000_anno.tsv
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/ST000006_threshold_based_flags_output.tsv
+
+  - title: "Start the upload"
+    element: "#btn-start"
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>
+            Click the <b>Start</b> button."
+    position: "top"
+    postclick:
+      - "#btn-start"
+      - "#btn-close"
+
+  - title: The Wide Formatted Dataset.
+    element: "#current-history-panel > ul.list-items > div:nth-child(4) > div.primary-actions > a.icon-btn.display-btn"
+    content: '<b>Click</b> on the eye to look at the <b>wide formatted dataset</b>. (Go ahead and click!)'
+    placement: left
+    preclick:
+      - "#current-history-panel > ul.list-items > div:nth-child(4) > div.primary-actions > a.icon-btn.display-btn"
+      
+  - title: "A couple of things to note about the Wide Dataset:"
+    content: 'You <b>must</b> have a column containing unique identifiers for each row.  In the example here, the column containing the unique identifer is called <b>rowID</b>.<br><br>  Try <b>not</b> to start your sampleIDs with a number.<br>  Data columns should be numeric.<br><br>  Missing values can be represented by empty cells or by cells containing a common value denoting a missing observation (e.g. NA).<br><br> Columns containing feature information (e.g. m/z ratios) can be included in Wide Format Datasets.'
+
+  - title: The Design File.
+    element: "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
+    content: 'Click the eye to see the <b>Design File</b>.  (Yup, you should go ahead and click!)'
+    placement: left
+    preclick:
+      - "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
+
+  - title: "A couple of things to note about the Design File:"  
+    content: 'You <b>must</b> have a column called <b>SampleID</b> that contains the same sample identifiers as in the Wide Format Dataset.<br><br>  The Design File relates the sample values in the Wide Format Dataset with sample characteristics.<br><br>  Sample characteristics include treatment group, batch number, sample weight, the order in which a sample was processed on the instrument (run order), etc.<br><br>  All column names and their data are case sensitive!'
+
+
+  - title: The Annotation File.
+    element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+    content: 'Click the eye to see the <b>Annotation File</b>.  (Yup, click!)'
+    placement: left
+    preclick:
+      - "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+
+  - title: "A couple of things to note about Annotation Files:"  
+    content: 'They have a minimum of 2 columns: one containing the feature unique identifiers (here called <b>rowID_first</b>) and the other containing a feature characteristic such as a retention time (here called <b>RT_first</b>).'
+
+
+  - title: The Flag File.
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: 'Click the eye to see the <b>Flag File</b>.  (Yup, click away!)'
+    placement: left
+    preclick:
+      - "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+
+  - title: "A couple of things to note about Flag Files:"  
+    content: 'These files generated by many of the SECIMTools. Flag files contain columns of binary values (0/1) and are used to identify (or flag) features or samples.<br><br>Flag files can either be in wide (to flag features or rows) or design (to flag samples or columns) formats.'
+
+
+
+

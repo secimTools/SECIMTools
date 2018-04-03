@@ -1,0 +1,106 @@
+id: Multiple Testing Adjustment
+name: SECIMTools Multiple Testing Adjustment (MTA)
+description: >-
+  This tour shows you how to use perform multiple testing adjustments of p-Values.
+title_default: MTA
+steps:
+
+  - title: Using SECIMTools to perform multiple testing adjustments in Galaxy
+    content: "This tour will walk you through using the Multiple Testing Adjustment tool to adjust p-values for multiple comparisions using 3 methods.<br><br>
+      (1) Bonferonni based on the family-wide error rate, (2) Benjamini/Hochberg based on the false discovery rate (FDR) and (3) Benjamini/Yekutieli based on the FDR.<br><br>
+      Please see the SECIMTools Galaxy UserGuide for more details about each method (available for download at: http://secim.ufl.edu/education/training/) <br><br> 
+      Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    backdrop: false
+
+  - title: "Tool Panel"
+    element: "#left"                
+    intro: "This is where all available Galaxy tools are located."
+    position: "right"
+
+  - title: "Upload a wide dataset and a design file"
+    element: ".upload-button"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure the 'Regular' Tab is selected above!"
+    position: "right"
+    postclick:
+      - ".upload-button"
+    
+  - title: "Upload your data"
+    element: "#btn-local"
+    intro: "You can upload data from your computer."
+    position: "top"
+    postclick:
+      - "#btn-new"
+
+  - title: "Upload your data"
+    element: "#btn-new"
+    intro: "You can copy and paste data directly into Galaxy or use URLs that lead to your data."
+    position: "top"
+
+  - title: "Insert URLs"
+    element: ".upload-text-content:first"
+    intro: "Let's upload a dataset containing p-Values for multiple testing correction."
+    position: "bottom"
+    textinsert: |
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_data_anova_results_table.tabular
+
+  - title: "Start the upload"
+    element: "#btn-start"
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  
+      Above and to the right, you can see the <b>Status<b> as the upload proceeds.<br><br>
+      Wait to click Next until the data is loaded in your History (green)!"
+    position: "top"
+    postclick:
+      - "#btn-start"
+      - "#btn-close"
+
+  - title: "Now lets carry out multiple testing adjustments."
+    element: "#title_secim2 > a"
+    intro: "Select the SECIMTools category."
+    position: "right"
+    preclick:
+      - "#title_secim2 a"
+
+  - title: "Multiple Testing Adjustment tool"
+    intro: "The MTA tool is loaded by clicking on the name of the tool.<br><br>The tool description (scroll down) has lots of useful information about the tool as does the SECIMTools Galaxy UserGuide!"
+    element: 'a[href$="tool_runner?tool_id=secimtools_multiple_testing_adjustment"]'
+    position: bottom
+    preclick:
+      - 'a[href$="tool_runner?tool_id=secimtools_multiple_testing_adjustment"]'
+    postclick:
+      - "#title_stats a"
+
+  - title: "Step 1. Select the dataset containing your p-values."
+    element: 'div[tour_id="input"]'
+    intro: "Select the dataset from the drop down window.<br>(Really, go ahead and choose the dataset we uploaded with the p-values)."
+    position: "right"
+
+  - title: "Step 2. Enter the unique identifier in the wide dataset."
+    element: 'div[tour_id="uniqID"]'
+    content: "For this data, type in the word <b>rowID</b> into the box."
+    placement: right
+
+  - title: "Step 3.  Enter the name of the column in your file that contains the p-values."
+    element: 'div[tour_id="pval"]'
+    content: "For this data, type <b>p-Value_of_f-Value</b> in the box."
+    placement: right
+
+  - title: "Step 4.  Now enter the alpha value to use for multiple correction."
+    element: 'div[tour_id="alpha"]'
+    content: "For this dataset, let's use the default value of 0.05.<br><br> 
+      This value is used to 'flag' a feature as significant."
+    placement: right
+
+  - title: "Execute the tool"
+    element: "#execute"
+    content: "Click the <b>Execute</b> button.<br><br>  <b>WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    position: top
+
+  - title: "The MTA Tool generates a TSV file containing the adjusted p-Values."
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the adjusted p-values.<br><br> The file contains the non-adusted p-values along with the Bonferroni corrected, Benjamini/Hochberg corrected and Benjamini/Yekutieli adjusted p-values."
+    placement: bottom
+
+  - title: "The MTA Tool also generates a TSV file with 0/1 indicator flags for whether the corrected p-Value is signifcant."
+    element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the TSV file containing the flags.<br><br> A 1 indicates the feature is significant (less than 0.05) after application of the indicated method."
+    placement: bottom

@@ -1,0 +1,114 @@
+id: BFF
+name: SECIMTools Blank Feature Filtering (BFF).
+description: >-                  
+  This tour shows you how to identify (flag with a 0/1 indicator variable) features (rows) in LC-MS data that are below a specified level of detection.  Blank samples, if present, are used to compute a threshold level of detection.  In the absence of blank samples, a user-specified Threshold can be used.      
+title_default: Filtering LC-MS data.
+steps:
+
+  - title: "Using SECIMTools to filter LC-MS data in Galaxy"
+    content: "This tour will walk you through using the Blank Feature Filtering SECIMTool to flag features in LC-MS data below a specified level of detection (computed or user-specified).<br><br>  For a detailed tool description, please see the  SECIMTools Galaxy UserGuide available for download at:  http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    backdrop: false
+
+  - title: "Tool Panel."
+    element: "#left"                
+    intro: "This is where all available Galaxy tools are located."
+    position: "right"
+
+  - title: "Upload a wide dataset and a design file"
+    element: ".upload-button"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    position: "right"
+    postclick:
+      - ".upload-button"
+    
+  - title: "Upload your data"
+    element: "#btn-local"
+    intro: "You can upload data from your computer."
+    position: "top"
+    postclick:
+      - "#btn-new"
+
+  - title: "Upload your data"
+    element: "#btn-new"
+    intro: "You can copy and paste data directly into Galaxy or use URLs that lead to your data."
+    position: "top"
+
+  - title: "Insert URLs"
+    element: ".upload-text-content:first"
+    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
+    position: "bottom"
+    textinsert: |
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/TEST0000_data.tsv
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/TEST0000_design.tsv
+
+  - title: "Start the upload"
+    element: "#btn-start"
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>
+            Click the <b>Start</b> button."
+    position: "top"
+    postclick:
+      - "#btn-start"
+      - "#btn-close"
+
+  - title: "Now lets filter the data using the blank samples"
+    element: '#title_secim2 > a'
+    intro: "Select the SECIMTools category."                                             
+    position: "right"
+    preclick:
+      - "#title_secim2 a"
+    
+  - title: "BFF Tool"
+    intro: "The Blank Feature Filtering tool is loaded by clicking on the name of the tool.<br><br>
+            The tool description (scroll down) has lots of useful information about the tool!"
+    element: 'a[href$="tool_runner?tool_id=secimtools_blank_feature_filtering_flags"]'
+    position: bottom
+    preclick:
+      - 'a[href$="tool_runner?tool_id=secimtools_blank_feature_filtering_flags"]'
+    postclick:
+      - "#title_stats a"
+                
+  - title: "Step 1.  Select the wide dataset."
+    element: 'div[tour_id="input"]'
+    intro: "Select the wide dataset from the drop down window (Really, go ahead and choose the wide dataset)."
+    position: "right"
+
+  - title: "Step 2.  Select the design file."
+    element: 'div[tour_id="design"]'
+    intro: "Select the design file from the drop down window (Pick the design file)."
+    position: "right"
+
+  - title: Step 3.  Enter the unique identifier in the wide dataset.
+    element: 'div[tour_id="uniqID"]'
+    content: 'Type in the word <b>rowID</b> into the box.'
+    placement: right
+  - title: Step 4.  Enter the name of the column in the design file that contains the sample metadata.
+    element: 'div[tour_id="group"]'
+    content: 'Type in the word <b>group_combined</b> into the box.'
+    placement: right
+  - title: Step 5.  Enter the name used for the blank samples in the above metadata column. 
+    element: 'div[tour_id="blank"]'
+    content: 'Type in the word <b>blank</b> into the box.'
+    placement: right
+  - title: Step 6.  Modify the default value for the user-specified BFF Theshold, if desired.
+    element: 'div[tour_id="bff"]'
+    content: 'Feel free to change the BFF Threshold default value.'
+    placement: right
+  - title: Step 7.  Modify the default value for the user-specified Criterion Value, if desired.
+    element: 'div[tour_id="cv"]'
+    content: 'Feel free to change the Criterion default Value.'
+    placement: right
+
+  - title: "Execute the tool"
+    element: "#execute"
+    content: 'click the <b>Execute</b> button'
+    position: "top"
+
+  - title: The BFF Tool outputs a file containing the BFF Threshold values (computed or user-specified) that were compared to the Criterion Value.
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: 'The eye can be used to look at the BFF Threshold values'
+    placement: left
+
+  - title: The BFF Tool outputs a file with indicator flags for whether a feature is 'off' (below the detection limit) for the indicated group.
+    element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+    content: 'The eye can be used to look at the flag file'
+    placement: left

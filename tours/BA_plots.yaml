@@ -1,0 +1,132 @@
+id: BA
+name: SECIMTools Bland-Altman (BA) Plots
+description: >-
+  This tour shows you how to generate Bland-Altman plots to look at the concordance of data between pairs of samples, particularly between replicates. In addition to generating BA-plots, a linear regression fit is produced between the values that correspond to the pair of samples to identify any unusual outlying feature values. Results from the regression fit are used to generate distribution plots and output files for (i) each sample and for (ii) each feature.
+title_default: Generating Bland Altman plots
+steps:
+
+  - title: Using SECIMTools to generate BA plots in Galaxy
+    content: "This tour will walk you through the Bland-Altman Plot tool to look at the concordance of data between pairs of samples, particularly between replicates.<br><br> A linear regression fit is produced between the values that correspond to the pair of samples to identify any unusual outlying feature values. Results from the regression fit are used to generate distribution plots and output files for (i) each sample and for (ii) each feature.<br><br> For a detailed tool description, please see the SECIMTools Galaxy UserGuide available for download at: http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    backdrop: false
+
+  - title: "Tool Panel"
+    element: "#left"                
+    intro: "This is where all available Galaxy tools are located."
+    position: "right"
+
+  - title: "Upload a wide dataset and a design file"
+    element: ".upload-button"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    position: "right"
+    postclick:
+      - ".upload-button"
+    
+  - title: "Upload your data"
+    element: "#btn-local"
+    intro: "You can upload data from your computer."
+    position: "top"
+    postclick:
+      - "#btn-new"
+
+  - title: "Upload your data"
+    element: "#btn-new"
+    intro: "You can copy and paste data directly into Galaxy or use URLs that lead to your data."
+    position: "top"
+
+  - title: "Insert URLs"
+    element: ".upload-text-content:first"
+    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
+    position: "bottom"
+    textinsert: |
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+
+  - title: "Start the upload"
+    element: "#btn-start"
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status<b> as the upload proceeds."
+    position: "top"
+    postclick:
+      - "#btn-start"
+      - "#btn-close"
+
+  - title: "Now lets generate some Bland-Altman plots"
+    element: "#title_secim2 > a"
+    intro: "Select the SECIMTools category."                                             
+    position: "right"
+    preclick:
+      - "#title_secim2 a"
+
+  - title: "BA Plot tool"
+    intro: "The Bland-Altman (BA) Plot tool is loaded by clicking on the name of the tool.<br><br>
+            The tool description (scroll down) has lots of useful information about the tool as does the SECIMTools Galaxy UserGuide!"
+    element: 'a[href$="tool_runner?tool_id=secimtools_bland_altman_plot"]'
+    position: bottom
+    preclick:
+      - 'a[href$="tool_runner?tool_id=secimtools_bland_altman_plot"]'
+    postclick:
+      - "#title_stats a"
+
+  - title: "Step 1. Select the wide dataset."
+    element: 'div[tour_id="input"]'
+    intro: "Select the wide dataset from the drop down window.<br> (Really, go ahead and choose the wide dataset)."
+    position: "right"
+
+  - title: "Step 2. Select the design file."
+    element: 'div[tour_id="design"]'
+    intro: "Select the design file from the drop down window.<br> (Pick the design file)."
+    position: "right"
+
+  - title: "Step 3. Enter the unique identifier in the wide dataset."
+    element: 'div[tour_id="uniqID"]'
+    content: "For this data, type in the word <b>rowID</b> into the box."
+    placement: right
+
+  - title: "Step 4  Flag residuals with a 0/1 indicator that are greater that this value."
+    element: 'div[tour_id="resid_cutoff"]'
+    content: "Any residuals with values greater than or less than the value here will be flagged."
+    placement: right
+
+  - title: "Step 5. You can also change the Sample Flag Cutoff value."
+    element: 'div[tour_id="sample_cutoff"]'
+    content: "Samples are flagged if the proportion of features flagged for a given sample is greater than this value.<br><br> The default value of 0.2 means that 20% of the features in the sample need to be flagged as outliers for the sample to be flagged as an outlier."
+    placement: right
+
+  - title: "Step 6. And the Feature Flag Cutoff value."
+    element: 'div[tour_id="feature_cutoff"]'
+    content: "Features are flagged if the proportion of samples for which that feature is flagged is greater than this value.<br><br> The default value of 0.05 means that 5% of the values for that feature need to be flagged as outliers for the feature to be flagged as well."
+    placement: right
+
+  - title: "Step 7. The name of the column in your design file that contains your group information."
+    element: 'div[tour_id="group"]'
+    content: "If you don't specify a group, all samples will be compared pairwise.<br>  NOTE - this could be A LOT of output if you have a lot of samples!!<br><br> Let's look at samples in a particular group - type <b>mating_status</b> in the box."
+    placement: right
+
+  - title: "Step 8. Now we can specifiy which groups to analyze?"
+    element: 'div[tour_id="processOnly"]'
+    content: "Type the name of the group for which you want to compare samples.<br><br> For this dataset, let's type in <b>V</b>."
+    placement: right
+
+  - title: "Execute the tool"
+    element: "#execute"
+    content: "click the <b>Execute</b> button.<br><br>  Click <b>Next</b> below once the output is in the history."
+    position: top
+
+  - title: "The BA Tool outputs a PDF containing BA-plots and scatterplots for each pair of samples."
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: "The eye can be used to look at the BA-plots and scatterplots."
+    placement: left
+
+  - title: "The BA Tool also outputs a PDF file containing histograms of the most flagged features and samples."
+    element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+    content: "The eye can be used to look at the histograms for the 30 most flagged features and samples."
+    placement: left
+
+  - title: "The BA Tool also generates a TSV file where samples are flagged if the proportion of features within the sample that are outliers exceeds the sample cutoff value."
+    element: "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
+    content: "The eye can be used to look at the file containing sample outliers. Additional comparison measures are Pearson residuals, DFFITS and CooksD."
+    placement: left
+
+  - title: "The BA Tool also generates a TSV file where features are flagged if the proportion of times the feature was identified as an outlier exceeds the feature cutoff value."
+    element: "#current-history-panel > ul.list-items > div:nth-child(4) > div.primary-actions > a.icon-btn.display-btn"
+    content: "The eye can be used to look at the file containing feature outliers. Additional comparison measures are Pearson residuals, DFFITS and CooksD."
+    placement: left

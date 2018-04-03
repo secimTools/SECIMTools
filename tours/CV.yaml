@@ -1,0 +1,107 @@
+id: CV
+name: SECIMTools Coefficient of Variation (CV) Flags
+description: >-
+  This tour shows you how to use the CV Flags tool to calculate the CV (standard deviation as a percent of the mean) of the features (rows).
+title_default: Calculating CV for features
+steps:
+
+  - title: Using SECIMTools to calculate CVs in Galaxy
+    content: "This tour will walk you through using the Coefficeint of Variation (CV) tool to calculate CVs (standard deviation as a percent of the mean) for features.<br><br> CVs can be used to look at the consistency of features across samples.<br><br> The user can define what percent of features with high CVs to flag.<br><br> For a detailed tool description, please see the SECIMTools Galaxy UserGuide available for download at: http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    backdrop: false
+
+  - title: "Tool Panel"
+    element: "#left"                
+    intro: "This is where all available Galaxy tools are located."
+    position: "right"
+
+  - title: "Upload a wide dataset and a design file"
+    element: ".upload-button"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    position: "right"
+    postclick:
+      - ".upload-button"
+    
+  - title: "Upload your data"
+    element: "#btn-local"
+    intro: "You can upload data from your computer."
+    position: "top"
+    postclick:
+      - "#btn-new"
+
+  - title: "Upload your data"
+    element: "#btn-new"
+    intro: "You can copy and paste data directly into Galaxy or use URLs that lead to your data."
+    position: "top"
+
+  - title: "Insert URLs"
+    element: ".upload-text-content:first"
+    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
+    position: "bottom"
+    textinsert: |
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+
+  - title: "Start the upload"
+    element: "#btn-start"
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status</b> as the upload proceeds.<br><br. <b>Don't</b> click next till history is green!"
+    position: "top"
+    postclick:
+      - "#btn-start"
+      - "#btn-close"
+
+  - title: "Now lets calculate some CVs"
+    element: "#title_secim2 > a"
+    intro: "Select the SECIMTools category."                                             
+    position: "right"
+    preclick:
+      - "#title_secim2 a"
+
+  - title: "CV tool"
+    intro: "The Coefficient of Variation tool is loaded by clicking on the name of the tool.<br><br>
+            The tool description (scroll down) has lots of useful information about the tool as does the SECIMTools Galaxy UserGuide!"
+    element: 'a[href$="tool_runner?tool_id=secimtools_coefficient_variation_flags"]'
+    position: bottom
+    preclick:
+      - 'a[href$="tool_runner?tool_id=secimtools_coefficient_variation_flags"]'
+    postclick:
+      - "#title_stats a"
+
+  - title: "Step 1. Select the wide dataset."
+    element: 'div[tour_id="input"]'
+    intro: "Select the wide dataset from the drop down window.<br> (Really, go ahead and choose the wide dataset)."
+    position: "right"
+
+  - title: "Step 2. Select the design file."
+    element: 'div[tour_id="design"]'
+    intro: "Select the design file from the drop down window.<br> (Pick the design file)."
+    position: "right"
+
+  - title: "Step 3. Enter the unique identifier in the wide dataset."
+    element: 'div[tour_id="uniqID"]'
+    content: "For this data, type in the word <b>rowID</b> into the box.<br><br> Yup, go ahead and type it in box."
+    placement: right
+
+  - title: "Step 4.  If you want to calculate CVs by group then enter the name of the column in your Design File that contains group information."
+    element: 'div[tour_id="group"]'
+    content: "If you do not include the group information, CVs will be calculated across all the groups.<br><br>  Let's calculate CVs for each group (M and V) separately:<br><br>  Enter <b>mating_status</b> in the box."
+    placement: right
+
+  - title: "Step 5. Enter the CV Cutoff value - proportion of features to flag."
+    element: 'div[tour_id="CVcutoff"]'
+    content: "The default of 0.1 indicates that 10% of the features will be flagged, starting with those with the largest CVs."
+    placement: right
+
+  - title: "Execute the tool"
+    element: "#execute"
+    content: "click the <b>Execute</b> button.<br><br>  <b>Now WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    position: top
+
+  - title: "The CV Tool generates a TSV file containing CV flags for each feature."
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: "The CV Tool generates a TSV file containing CV flags for each feature.<br<>br> If group information was specified, then each feature will have multiple flags (1 for each group).<br><br> <b>Click</b> the <b>eye</b> to look at the file containing the flags.<br><br> You can see 2 flags for each feature since we specifed group (M and V)."
+    placement: bottom
+
+  - title: "The CV Tool outputs a PDF containing histograms with overlayed density plots of the coefficient of variation for each group, if provided, and a summary density plot minus the histograms."
+    element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+    content: "The CV Tool outputs a PDF containing histograms with overlayed density plots of the coefficient of variation for each group, if provided, and a summary density plot minus the histograms.<br><br> <b>Click</b> the <b>eye</b> to look at the CV histograms.<br><br> The red dashed line is the value of the CV used for flagging the features."
+    placement: bottom

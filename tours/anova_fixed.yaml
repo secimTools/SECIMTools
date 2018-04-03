@@ -1,0 +1,122 @@
+id: Normalization
+name: SECIMTools ANOVA
+description: >-
+  This tour takes shows you how to use the Analysis of Variance (ANOVA) tool.
+title_default: Data Normalization and Re-scaling
+steps:
+
+  - title: Using SECIMTools to re-scale your data in Galaxy
+    content: "This tour will walk you through using the ANOVA tool to fit a fixed effects model with multiple grouping variables, their interations and covariates.<br><br> The analysis is performed independently by feature (row).<br><br>  You can chose whether to include interactions or use a pure additive model.<br><br> Please see the SECIMTools Galaxy UserGuide for more details about the SECIMTools ANOAVA tool (available for download at: http://secim.ufl.edu/education/training/) <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    backdrop: false
+
+  - title: "Tool Panel"
+    element: "#left"                
+    intro: "This is where all available Galaxy tools are located."
+    position: "right"
+
+  - title: "Upload a wide dataset and a design file"
+    element: ".upload-button"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    position: "right"
+    postclick:
+      - ".upload-button"
+    
+  - title: "Upload your data"
+    element: "#btn-local"
+    intro: "You can upload data from your computer."
+    position: "top"
+    postclick:
+      - "#btn-new"
+
+  - title: "Upload your data"
+    element: "#btn-new"
+    intro: "You can copy and paste data directly into Galaxy or use URLs that lead to your data."
+    position: "top"
+
+  - title: "Insert URLs"
+    element: ".upload-text-content:first"
+    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
+    position: "bottom"
+    textinsert: |
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+
+  - title: "Start the upload"
+    element: "#btn-start"
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status<b> as the upload proceeds."
+    position: "top"
+    postclick:
+      - "#btn-start"
+      - "#btn-close"
+
+  - title: "Now lets perform an ANOVA."
+    element: "#title_secim2 > a"
+    intro: "Select the SECIMTools category."                                             
+    position: "right"
+    preclick:
+      - "#title_secim2 a"
+
+  - title: "ANOVA tool"
+    intro: "The ANOVA tool is loaded by clicking on the name of the tool.<br><br>
+            The tool description (scroll down) has lots of useful information about the tool as does the SECIMTools Galaxy UserGuide!"
+    element: 'a[href$="tool_runner?tool_id=secimtools_anova_fixed"]'
+    position: bottom
+    preclick:
+      - 'a[href$="tool_runner?tool_id=secimtools_anova_fixed"]'
+    postclick:
+      - "#title_stats a"
+
+  - title: "Step 1. Select the wide dataset."
+    element: 'div[tour_id="input"]'
+    intro: "Select the wide dataset from the drop down window.<br> (Really, go ahead and choose the wide dataset)."
+    position: "right"
+
+  - title: "Step 2. Select the design file."
+    element: 'div[tour_id="design"]'
+    intro: "Select the design file from the drop down window.<br> (Pick the design file)."
+    position: "right"
+
+  - title: "Step 3. Enter the unique identifier in the wide dataset."
+    element: 'div[tour_id="uniqID"]'
+    content: "For this data, type in the word <b>rowID</b> into the box."
+    placement: right
+
+  - title: "Step 4.  Enter the name of the column(s) in your Design File that contains your group information."
+    element: 'div[tour_id="factor"]'
+    content: "For this data, type <b>mating_status</b> in the box.<br><br> You can use multiple columns, separating them in the box with a comma (no spaces!)"
+    placement: right
+
+  - title: "Step 5.  Now enter the type of data in your group column(s)."
+    element: 'div[tour_id="factorTypes"]'
+    content: "For this dataset, the <b>mating_status</b> column contains categorical data (the column contains 'M' or 'V').<br><br> Enter <b>C</b> in the box."
+    placement: right
+
+  - title: "Step 6.  Enter whether to run the ANOVA with interactions."
+    element: 'div[tour_id="interactions"]'
+    content: "Let's run without interactions.<br><br> Click the <b>No</b> button."
+    placement: right
+
+  - title: "Execute the tool"
+    element: "#execute"
+    content: "Click the <b>Execute</b> button.<br><br>  <b>WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    position: top
+
+  - title: "The ANOVA Tool generates a Volcano Plot."
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the Volcano plot.<br><br> A Volcano Plot is generated with fold change on the x-axis and -log10 of the p-value from the test of the null hypothesis in the y-axis.<br><br>  The red dashed lined corresponds to a p=0.01."
+    placement: bottom
+
+  - title: "The ANOVA Tool generates quantile-quantile (QQ) Plots."
+    element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the QQ plots.<br><br> The QQ Plots display the expected quantiles of a normal distribution on the x-axis and the observed quantiles on the y-axis.<br><br> Also included are a boxplot and a histogram of the residuals.<br><br> In addition, the bottom figure contains the observed values on the x-axis and the corresponding residuals on the y-axis."
+    placement: bottom
+
+  - title: "The ANOVA Tool generates a TSV file containing flags for significant p-values."
+    element: "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the flag file.<br><br> The flags in the TSV file are equal to 1 if the difference between the groups is statistically significant using the indicated alpha level (0.01, 0.05 and 0.1)."
+    placement: bottom
+
+  - title: "The ANOVA Tool generates a second TSV file containing teh fixed effects ANOVA results for each variable, the corresponding contrast and analysis of the means."
+    element: "#current-history-panel > ul.list-items > div:nth-child(4) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the results file.<br><br> This file contains the fixed effects ANOVA results for each feature, the corresponding contrast and the analysis of the means."
+    placement: bottom
