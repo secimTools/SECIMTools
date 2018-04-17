@@ -3,7 +3,8 @@ name: SECIMTools Bland-Altman (BA) Plots
 description: >-
   This tour shows you how to generate Bland-Altman plots to look at the concordance of data between pairs of samples, particularly between replicates. In addition to generating BA-plots, a linear regression fit is produced between the values that correspond to the pair of samples to identify any unusual outlying feature values. Results from the regression fit are used to generate distribution plots and output files for (i) each sample and for (ii) each feature.
 title_default: Generating Bland Altman plots
-tags: SECIM
+tags:
+    - SECIM
 steps:
 
   - title: Using SECIMTools to generate BA plots in Galaxy

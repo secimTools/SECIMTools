@@ -3,7 +3,8 @@ name: SECIMTools Normalization and Re-scaling
 description: >-
   This tour shows you how to use the Normalization and Re-scaling tool to re-scale your data. You can choose to re-scale by sample (column) or by feature (row).
 title_default: Data Normalization and Re-scaling
-tags: SECIM
+tags:
+    - SECIM
 steps:
 
   - title: Using SECIMTools to re-scale your data in Galaxy

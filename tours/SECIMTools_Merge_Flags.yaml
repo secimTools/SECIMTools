@@ -3,7 +3,8 @@ name: SECIMTools Merge Flags
 description: >-
   This tour shows you how to use the Merge Flags tool to merge Flag files using a unique identifier.
 title_default: Merge Flags
-tags: SECIM
+tags:
+    - SECIM
 steps:
   - title: Using SECIMTools to merge Flag files in Galaxy
     content: "This tour will walk you through using the Merge Flags tool to merge 2 or more flag files together.<br><br>For example, the tool can be used to combine flag files generated during a QC workflow. The resulting merged flag file can be used to determine whether multiple tools identified the same features or samples as of poor quality.<br><br> For a detailed tool description, please see the SECIMTools Galaxy UserGuide available for download at: http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
@@ -51,7 +52,7 @@ steps:
 
   - title: "Now lets merge the flag files together"
     element: "#title_secim2 > a"
-    intro: "Click on the SECIMTools category<br><br> Scroll down so that 'Merge Flags' is visible in the tool panel."                                             
+    intro: "Click on the SECIMTools category<br><br> Scroll down so that 'Merge Flags' is visible in the tool panel."
     position: "right"
     preclick:
       - "#title_secim2 a"

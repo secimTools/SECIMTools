@@ -3,13 +3,13 @@ name: SECIMTools Multiple Testing Adjustment (MTA)
 description: >-
   This tour shows you how to use perform multiple testing adjustments of p-Values.
 title_default: MTA
-tags: SECIM
+tags:
+    - SECIM
 steps:
-
   - title: Using SECIMTools to perform multiple testing adjustments in Galaxy
     content: "This tour will walk you through using the Multiple Testing Adjustment tool to adjust p-values for multiple comparisions using 3 methods.<br><br>
       (1) Bonferonni method based on the family-wide error rate, (2) Benjamini/Hochberg method based on the false discovery rate (FDR) and (3) Benjamini/Yekutieli method based on the FDR.<br><br>
-      Please see the SECIMTools Galaxy UserGuide for more details about each method (available for download at: http://secim.ufl.edu/education/training/) <br><br> 
+      Please see the SECIMTools Galaxy UserGuide for more details about each method (available for download at: http://secim.ufl.edu/education/training/) <br><br>
       Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
     backdrop: false
 

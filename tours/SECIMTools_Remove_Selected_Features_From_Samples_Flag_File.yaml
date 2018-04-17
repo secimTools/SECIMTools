@@ -4,7 +4,8 @@ description: >-
   This tour shows you how to use the Remove Selected Features or Samples tool to remove specific features (rows) or samples (columns).<br><br>
     As an example, this tool can be used to generate a Wide Dataset containing only those features that are signifincantly expressed. 
 title_default: Remove Selected Features or Samples using a Flag File
-tags: SECIM
+tags:
+    - SECIM
 steps:
 
   - title: Using SECIMTools to remove selected features or samples in Galaxy
@@ -49,8 +50,8 @@ steps:
 
   - title: "Start the upload"
     element: "#btn-start"
-    intro: "Upload the data into your Galaxy <b>History</b>.<br>  
-        Click the <b>Start</b> button.<br><br>  
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>
+        Click the <b>Start</b> button.<br><br>
         Above and to the right, you can see the <b>Status</b> as the upload proceeds.<br><br>
         <b>Don't</b> click next till history is green!"
     position: "top"
@@ -139,7 +140,7 @@ steps:
 
   - title: "The tool also generates a TSV file containing features from the wide dataset where the flag used was not equal to 0."
     element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
-    content: "The column names are the same as in the original Wide Dataset.  Only those features where the above condition was met are retained in the new Wide Dataset.<br><br> 
+    content: "The column names are the same as in the original Wide Dataset.  Only those features where the above condition was met are retained in the new Wide Dataset.<br><br>
         <b>Click</b> the <b>eye</b> to look at the new Wide Dataset."
     placement: bottom
 

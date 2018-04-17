@@ -3,7 +3,8 @@ name: SECIMTools Principal Component Analysis (PCA)
 description: >-
   This tour shows you how to run a principal component analysis
 title_default: PCA
-tags: SECIM
+tags:
+    - SECIM
 steps:
 
   - title: Using SECIMTools Principal Component Analysis to visualize your data in Galaxy
@@ -52,7 +53,7 @@ steps:
 
   - title: "Now lets run a PCA."
     element: "#title_secim2 > a"
-    intro: "<b>Click</b> on the SECIMTools category<br><br> Scroll down so that 'Principal Component Analysis' is visible in the tool panel."                                             
+    intro: "<b>Click</b> on the SECIMTools category<br><br> Scroll down so that 'Principal Component Analysis' is visible in the tool panel."
     position: "right"
     preclick:
       - "#title_secim2 a"

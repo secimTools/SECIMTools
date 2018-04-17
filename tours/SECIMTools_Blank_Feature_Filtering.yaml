@@ -1,9 +1,10 @@
 id: secim_bff
 name: SECIMTools Blank Feature Filtering (BFF).
-description: >-                  
-  This tour shows you how to identify (flag with a 0/1 indicator variable) features (rows) in LC-MS data that are below a specified level of detection.  Blank samples, if present, are used to compute a threshold level of detection.  In the absence of blank samples, a user-specified threshold can be used.      
+description: >-
+  This tour shows you how to identify (flag with a 0/1 indicator variable) features (rows) in LC-MS data that are below a specified level of detection.  Blank samples, if present, are used to compute a threshold level of detection.  In the absence of blank samples, a user-specified threshold can be used.
 title_default: Filtering LC-MS data.
-tags: SECIM
+tags:
+    - SECIM
 steps:
 
   - title: "Using SECIMTools to filter LC-MS data in Galaxy"
@@ -11,7 +12,7 @@ steps:
     backdrop: false
 
   - title: "Tool Panel."
-    element: "#left"                
+    element: "#left"
     intro: "This is where all available Galaxy tools are located."
     position: "right"
 
@@ -21,7 +22,7 @@ steps:
     position: "right"
     postclick:
       - ".upload-button"
-    
+
   - title: "Upload your data"
     element: "#btn-local"
     intro: "You can upload data from your computer."
@@ -44,7 +45,7 @@ steps:
 
   - title: "Start the upload"
     element: "#btn-start"
-    intro: ""Upload the data into your Galaxy <b>History</b>:<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status</b> as the upload proceeds.<br><br>  Don't click next until the data is loaded in the History (green in the History Panel)!"
+    intro: "Upload the data into your Galaxy <b>History</b>:<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status</b> as the upload proceeds.<br><br>  Don't click next until the data is loaded in the History (green in the History Panel)!"
     position: "top"
     postclick:
       - "#btn-start"
@@ -52,11 +53,11 @@ steps:
 
   - title: "Now lets filter the data using the blank samples"
     element: '#title_secim2 > a'
-    intro: "Select the SECIMTools category."                                             
+    intro: "Select the SECIMTools category."
     position: "right"
     preclick:
       - "#title_secim2 a"
-    
+
   - title: "BFF Tool"
     intro: "The Blank Feature Filtering tool is loaded by clicking on the name of the tool.<br><br>
             The tool description (scroll down) has lots of useful information about the tool!"
@@ -66,7 +67,7 @@ steps:
       - 'a[href$="tool_runner?tool_id=secimtools_blank_feature_filtering_flags"]'
     postclick:
       - "#title_stats a"
-                
+
   - title: "Step 1.  Select the wide dataset."
     element: 'div[tour_id="input"]'
     intro: "Select the wide dataset from the drop down window (Really, go ahead and choose the wide dataset)."

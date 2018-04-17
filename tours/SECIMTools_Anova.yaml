@@ -3,7 +3,8 @@ name: SECIMTools ANOVA
 description: >-
   This tour takes shows you how to use the Analysis of Variance (ANOVA) tool.
 title_default: Data Normalization and Re-scaling
-tags: SECIM
+tags:
+    - SECIM
 steps:
 
   - title: Using SECIMTools to carry out an analysis of variance in Galaxy

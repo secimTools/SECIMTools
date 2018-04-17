@@ -3,7 +3,8 @@ name: SECIMTools Coefficient of Variation (CV) Flags
 description: >-
   This tour shows you how to use the CV Flags tool to calculate the CV (standard deviation as a percent of the mean) of features (rows).
 title_default: Calculating CV for features (rows).
-tags: SECIM
+tags:
+    - SECIM
 steps:
 
   - title: Using SECIMTools to calculate CVs in Galaxy
@@ -11,7 +12,7 @@ steps:
     backdrop: false
 
   - title: "Tool Panel"
-    element: "#left"                
+    element: "#left"
     intro: "This is where all available Galaxy tools are located."
     position: "right"
 
@@ -21,7 +22,7 @@ steps:
     position: "right"
     postclick:
       - ".upload-button"
-    
+
   - title: "Upload your data"
     element: "#btn-local"
     intro: "You can upload data from your computer."
@@ -52,7 +53,7 @@ steps:
 
   - title: "Now lets calculate some CVs"
     element: "#title_secim2 > a"
-    intro: "Select the SECIMTools category."                                             
+    intro: "Select the SECIMTools category."
     position: "right"
     preclick:
       - "#title_secim2 a"
@@ -94,7 +95,7 @@ steps:
 
   - title: "Execute the tool"
     element: "#execute"
-    content: ""Click the <b>Execute</b> button.<br><br>  <b>And WAIT!</b> <br><br> Click the <b>Next</b> button below once the tool is finished (the output in the history will be green).."
+    content: "Click the <b>Execute</b> button.<br><br>  <b>And WAIT!</b> <br><br> Click the <b>Next</b> button below once the tool is finished (the output in the history will be green).."
     position: top
 
   - title: "The CV Tool generates a TSV file containing CV flags for each feature."
