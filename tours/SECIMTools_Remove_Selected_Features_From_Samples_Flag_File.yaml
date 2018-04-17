@@ -1,0 +1,148 @@
+id: git_remove_selected_features
+name: SECIMTools Remove Selected Features or Samples using a Flag File
+description: >-
+  This tour shows you how to use the Remove Selected Features or Samples tool to remove specific features (rows) or samples (columns).<br><br>
+    As an example, this tool can be used to generate a Wide Dataset containing only those features that are signifincantly expressed. 
+title_default: Remove Selected Features or Samples using a Flag File
+tags: SECIM
+steps:
+
+  - title: Using SECIMTools to remove selected features or samples in Galaxy
+    content: "This tour will walk you through using the Remove Selected Features or Samples.<br><br> 
+        The tool uses a Flag file to identify specific features or samples to be removed from a Wide Dataset<br><br> 
+        Please see the SECIMTools Galaxy UserGuide for more details about the tool (available for download at: http://secim.ufl.edu/education/training/) <br><br> 
+        Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    backdrop: false
+
+  - title: "Tool Panel"
+    element: "#left"
+    intro: "This is where all available Galaxy tools are located."
+    position: "right"
+
+  - title: "Upload a wide dataset and a design file"
+    element: ".upload-button"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure the 'Regular' Tab is selected above!"
+    position: "right"
+    postclick:
+      - ".upload-button"
+
+  - title: "Upload your data"
+    element: "#btn-local"
+    intro: "You can upload data from your computer."
+    position: "top"
+    postclick:
+      - "#btn-new"
+
+  - title: "Upload your data"
+    element: "#btn-new"
+    intro: "You can copy and paste data directly into Galaxy or use URLs that lead to your data."
+    position: "top"
+
+  - title: "Insert URLs"
+    element: ".upload-text-content:first"
+    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be in a tall format."
+    position: "bottom"
+    textinsert: |
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_data_anova_Fixed_Effects_Model_Flags_Table.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_design.tsv
+
+  - title: "Start the upload"
+    element: "#btn-start"
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>  
+        Click the <b>Start</b> button.<br><br>  
+        Above and to the right, you can see the <b>Status</b> as the upload proceeds.<br><br>
+        <b>Don't</b> click next till history is green!"
+    position: "top"
+    postclick:
+      - "#btn-start"
+      - "#btn-close"
+
+  - title: "Now lets run the remove features or samples tool."
+    element: "#title_secim2 > a"
+    intro: "Click on the SECIMTools category<br><br> Scroll down so that 'Remove Selected Features or Samples' is visible in the tool panel."
+    position: "right"
+    preclick:
+      - "#title_secim2 a"
+
+  - title: "Remove Selected Features or Samples"
+    intro: "The Remove Selected Features or Samples tool is loaded by clicking on the name of the tool.<br><br>
+            The tool description (scroll down) has lots of useful information about the tool as does the SECIMTools Galaxy UserGuide!"
+    element: 'a[href$="tool_runner?tool_id=secimtools_remove_selected_features"]'
+    position: bottom
+    preclick:
+      - 'a[href$="tool_runner?tool_id=secimtools_remove_selected_features"]'
+    postclick:
+      - "#title_stats a"
+
+  - title: "Step 1. Select the wide dataset."
+    element: 'div[tour_id="input"]'
+    intro: "Select the wide dataset from the drop down window.<br> (Really, go ahead and choose the wide dataset)."
+    position: "right"
+
+  - title: "Step 2. Select the design file."
+    element: 'div[tour_id="design"]'
+    intro: "Select the design file from the drop down window.<br> (Pick the design file)."
+    position: "right"
+
+  - title: "Step 3. Select the flag file."
+    element: 'div[tour_id="flags"]'
+    content: "Select the flag file fdrom the drop down window.<br> (Really, go ahead and choose the flag file dataset)."
+    placement: right
+
+  - title: "Step 4. Enter the unique identifier in the Wide Dataset."
+    element: 'div[tour_id="uniqID"]'
+    content: "This is the unique identifier in your wide Dataset.  For this data, type in the word <b>RowID</b> into the box."
+    placement: right
+
+  - title: "Step 5.  Enter the unique identifier in your Flag File."
+    element: 'div[tour_id="flagUniq"]'
+    content: "This is the unique identifier in your Flag file.  For this data, type in the word <b>RowID</b> into the box."
+    placement: right
+
+  - title: "Step 6.  Enter what flag in the Flag file to use for dropping."
+    element: 'div[tour_id="flagToDrop"]'
+    content: "This is the column in your Flag file that you want to use for dropping.<br><br>
+        Lets create a list of significant features by dropping those that are not significant (0 in our flag file) from the wide dataset.<br><br>
+        For this data, type in the word <b>flag_significant_0p10_on_all_groups</b> into the box.<br><br>"
+    placement: right
+
+  - title: "Step 7.  Now we need to specify what exactly we want to drop from the Wide Dataset"
+    element: 'div[tour_id="conditional"]'
+    content: "Let's drop features that are NOT significant from the Wide Dataset.<>br><br>  
+        Since flag_significant_0.05_on_M-V = 1 for significant features, we'll drop those features that are NOT significant (where flag = 0).<br><br>
+        Here's one way to do this: Select <b>'Equal to'</b>."
+    placement: right
+
+  - title: "Step 8.  Now we need to specify what exactly we want to drop from the Wide Dataset"
+    element: 'div[tour_id="reference"]'
+    content: "Now make sure '<b>0</b>' is in the Cutoff Value box.<br><br>
+        This will drop features where the value of the flag is equal to 0 (and therefore not significant).<br><br>"
+    placement: right
+
+  - title: "Step 9.  Almost ready to execute the tool!"
+    element: 'div[tour_id="typeofdrop"]'
+    content: "Now we need to tell the tool whether we're dropping features (rows) or columns (samples).<br><br>
+        Since we're dropping features, make sure 'Drop Rows' is selected."
+    placement: right
+
+  - title: "Execute the tool"
+    element: "#execute"
+    content: "Click the <b>Execute</b> button.<br><br>  <b>Now WAIT!</b> <br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)"
+    position: top
+
+  - title: "The Remove Selected Features or Samples Tool generates a TSV file containing only the flags that are significant (flag = 1)."
+    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+    content: "The column names are the same as in the original Flag file.  Only those features where the above condition was met are retained in the new Flag file.<br><br> 
+        <b>Click</b> the <b>eye</b> to look at the new Flag file."
+    placement: bottom
+
+  - title: "The tool also generates a TSV file containing features from the wide dataset where the flag used was not equal to 0."
+    element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+    content: "The column names are the same as in the original Wide Dataset.  Only those features where the above condition was met are retained in the new Wide Dataset.<br><br> 
+        <b>Click</b> the <b>eye</b> to look at the new Wide Dataset."
+    placement: bottom
+
+  - title: "Thanks for taking this tour!"
+    intro: "Remember the SECIMTools Galaxy UserGuide is available for more details (available for download at: http://secim.ufl.edu/education/training/)"
+
