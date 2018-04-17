@@ -1,37 +1,39 @@
-<?xml version='1.0' encoding='utf-8'?>
-<toolbox>
-    <section id="secim2" name="SECIM Tools 2.0 (BETA)">
-    <tool file="secimtools_v2/anova_fixed.xml"/>
-    <tool file="secimtools_v2/bland_altmant_plot.xml"/>
-    <tool file="secimtools_v2/blank_feature_filtering_flags.xml"/>
-    <tool file="secimtools_v2/compound_identification.xml"/>
-    <tool file="secimtools_v2/coefificient_variation_flags.xml"/>
-    <tool file="secimtools_v2/data_rescalling.xml"/>
-    <tool file="secimtools_v2/distribution_features.xml"/>
-    <tool file="secimtools_v2/distribution_samples.xml"/>
-    <tool file="secimtools_v2/drop_flags.xml"/>
-    <tool file="secimtools_v2/hierarchical_clustering_heatmap.xml"/>
-    <tool file="secimtools_v2/imputation.xml"/>
-    <tool file="secimtools_v2/lasso_enet_var_select.xml"/>
-    <tool file="secimtools_v2/linear_discriminant_analysis.xml"/>
-    <tool file="secimtools_v2/log_transformation.xml"/>
-    <tool file="secimtools_v2/magnitud_difference_flags.xml"/>
-    <tool file="secimtools_v2/mahalanobis_distance.xml"/>
-    <tool file="secimtools_v2/merge_flags.xml"/>
-    <tool file="secimtools_v2/modulated_modularity_clustering.xml"/>
-    <tool file="secimtools_v2/mzrt_match.xml"/>    
-    <tool file="secimtools_v2/multiple_testing_adjustment.xml"/>
-    <tool file="secimtools_v2/principal_component_analysis.xml"/>
-    <tool file="secimtools_v2/partial_least_squares.xml"/>
-    <tool file="secimtools_v2/random_forest.xml"/>
-    <tool file="secimtools_v2/retention_time_flags.xml"/>
-    <tool file="secimtools_v2/run_order_regression.xml"/>
-    <tool file="secimtools_v2/scatter_plot_2D.xml"/>
-    <tool file="secimtools_v2/scatter_plot_3D.xml"/>
-    <tool file="secimtools_v2/standardized_eucildean_distance.xml"/>
-    <tool file="secimtools_v2/subset_data.xml"/>
-    <tool file="secimtools_v2/summarize_flags.xml"/>
-    <tool file="secimtools_v2/svm_classifier.xml"/>
-    <tool file="secimtools_v2/threshold_based_flags.xml"/>
-    </section>
-</toolbox>
+  <section id="secim" name="SECIM Tools"  version="">
+    <tool file="SECIMTools/galaxy/anova_fixed.xml"/>
+    <tool file="SECIMTools/galaxy/blank_feature_filtering_flags.xml"/>
+    <tool file="SECIMTools/galaxy/coefficient_variation_flags.xml"/>
+    <tool file="SECIMTools/galaxy/compare_flags.xml"/>
+    <tool file="SECIMTools/galaxy/compound_identification.xml"/>
+    <tool file="SECIMTools/galaxy/data_normalization_and_rescaling.xml"/>
+    <tool file="SECIMTools/galaxy/distribution_features.xml"/>
+    <tool file="SECIMTools/galaxy/distribution_samples.xml"/>
+    <tool file="SECIMTools/galaxy/hierarchical_clustering_heatmap.xml"/>
+    <tool file="SECIMTools/galaxy/imputation.xml"/>
+    <tool file="SECIMTools/galaxy/kruskal_wallis.xml"/>
+    <tool file="SECIMTools/galaxy/lasso_enet_var_select.xml"/>
+    <tool file="SECIMTools/galaxy/linear_discriminant_analysis.xml"/>
+    <tool file="SECIMTools/galaxy/log_and_glog_transformation.xml"/>
+    <tool file="SECIMTools/galaxy/macros.xml"/>
+    <tool file="SECIMTools/galaxy/magnitude_difference_flags.xml"/>
+    <tool file="SECIMTools/galaxy/mahalanobis_distance.xml"/>
+    <tool file="SECIMTools/galaxy/merge_flags.xml"/>
+    <tool file="SECIMTools/galaxy/modify_design_file.xml"/>
+    <tool file="SECIMTools/galaxy/modulated_modularity_clustering.xml"/>
+    <tool file="SECIMTools/galaxy/multiple_testing_adjustment.xml"/>
+    <tool file="SECIMTools/galaxy/mzrt_match.xml"/>
+    <tool file="SECIMTools/galaxy/partial_least_squares.xml"/>
+    <tool file="SECIMTools/galaxy/principal_component_analysis.xml"/>
+    <tool file="SECIMTools/galaxy/random_forest.xml"/>
+    <tool file="SECIMTools/galaxy/remove_selected_features_samples.xml"/>
+    <tool file="SECIMTools/galaxy/retention_time_flags.xml"/>
+    <tool file="SECIMTools/galaxy/run_order_regression.xml"/>
+    <tool file="SECIMTools/galaxy/scatter_plot_2D.xml"/>
+    <tool file="SECIMTools/galaxy/scatter_plot_3D.xml"/>
+    <tool file="SECIMTools/galaxy/standardized_euclidean_distance.xml"/>
+    <tool file="SECIMTools/galaxy/summarize_flags.xml"/>
+    <tool file="SECIMTools/galaxy/svm_classifier.xml"/>
+    <tool file="SECIMTools/galaxy/threshold_based_flags.xml"/>
+    <tool file="SECIMTools/galaxy/tool_conf.xml"/>
+    <tool file="SECIMTools/galaxy/ttest_single_group.xml"/>
+    <tool file="SECIMTools/galaxy/ttest.xml"/>
+  </section>
