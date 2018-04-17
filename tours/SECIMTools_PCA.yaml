@@ -1,8 +1,9 @@
-id: PCA
+id: secim_pca
 name: SECIMTools Principal Component Analysis (PCA)
 description: >-
-  This tour shows you how to use the PCA tool.
+  This tour shows you how to run a principal component analysis
 title_default: PCA
+tags: SECIM
 steps:
 
   - title: Using SECIMTools Principal Component Analysis to visualize your data in Galaxy
@@ -10,7 +11,7 @@ steps:
     backdrop: false
 
   - title: "Tool Panel"
-    element: "#left"                
+    element: "#left"
     intro: "This is where all available Galaxy tools are located."
     position: "right"
 
@@ -20,7 +21,7 @@ steps:
     position: "right"
     postclick:
       - ".upload-button"
-    
+
   - title: "Upload your data"
     element: "#btn-local"
     intro: "You can upload data from your computer."
@@ -38,12 +39,12 @@ steps:
     intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
     position: "bottom"
     textinsert: |
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_design.tsv
 
   - title: "Start the upload"
     element: "#btn-start"
-    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status</b> as the upload proceeds."
+    intro: "Upload the data into your Galaxy <b>History</b>:<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status</b> as the upload proceeds.<br><br>  Don't click next until the data is loaded in the History (green in the History Panel)!"
     position: "top"
     postclick:
       - "#btn-start"
@@ -51,7 +52,7 @@ steps:
 
   - title: "Now lets run a PCA."
     element: "#title_secim2 > a"
-    intro: "Select the SECIMTools category."                                             
+    intro: "<b>Click</b> on the SECIMTools category<br><br> Scroll down so that 'Principal Component Analysis' is visible in the tool panel."                                             
     position: "right"
     preclick:
       - "#title_secim2 a"
@@ -83,31 +84,33 @@ steps:
 
   - title: "Step 4.  Now select the column in the Design File that contains the group classifications to color by."
     element: 'div[tour_id="group"]'
-    content: "For this data, type in the word <b>mating_status</b> into the box."
+    content: "For this data, type in the word <b>mating_status</b> into the box.<br><br>  This is the column in your Design File that you wish to color by."
     placement: right
 
   - title: "Execute the tool"
     element: "#execute"
-    content: "Click the <b>Execute</b> button.<br><br>  <b>WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    content: "Click the <b>Execute</b> button.<br><br>  <b>And WAIT!</b> <br><br> Click the <b>Next</b> button below once the tool is finished (the output in the history will be green)."
     position: top
 
-  - title: "The PCA generates a TSV file containing the eigenvectors/variable loadings for each component."
+  - title: "The PCA Tool generates a PDF file containing 2D and 3D scatter plots of the 1st 3 components."
     element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
-    content: "<b>Click</b> the <b>eye</b> to look at the file containing the loadings."
+    content: "Samples are color-coded based on the selected group classification.<br><br> <b>Click</b> the <b>eye</b> to look at the plots.<br><br> Note that the SECIMTools Scatter Plot 2D or 3D tools can be used to plot additional components."
     placement: bottom
 
-  - title: "The PCA Tool generates a TSV file containing the scores for each component."
-    element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
+  - title: "The PCA Tool generates a TSV file containing the summary information for each component."
+    element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the file containing the summary information.<br><br> For each component, the standard deviation, proportion of variance explained and the cumulative proportion of variance explained, are given."
+    placement: bottom
+
+  - title: "The PCA Tool generates another TSV file containing the scores for each component."
+    element: "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
     content: "<b>Click</b> the <b>eye</b> to look at the file containing the scores."
     placement: bottom
 
-  - title: "The PCA Tool generates a 3rd TSV file containing the summary information for each component."
-    element: "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
-    content: "<b>Click</b> the <b>eye</b> to look at the file containing the summary."
+  - title: "Finally, the PCA Tool generates a TSV file containing the loadings for each component."
+    element: "#current-history-panel > ul.list-items > div:nth-child(4) > div.primary-actions > a.icon-btn.display-btn"
+    content: "<b>Click</b> the <b>eye</b> to look at the file containing the loadings."
     placement: bottom
 
-  - title: "The PCA Tool generates a PDF containing 2D and 3D scatter plots of the 1st 3 components."
-    element: "#current-history-panel > ul.list-items > div:nth-child(3) > div.primary-actions > a.icon-btn.display-btn"
-    content: "Samples are color-coded based on the selected group classification.<br><br>The SECIMTools Scatter Plot 2D or 3D tools can be used to plot additional components.<br><br><b>Click</b> the <b>eye</b> to look at the file of scatter plots."
-    placement: bottom
-
+  - title: "Thanks for taking this tour!"
+    intro: "Remember the SECIMTools Galaxy UserGuide is available for more details (available for download at: http://secim.ufl.edu/education/training/)"

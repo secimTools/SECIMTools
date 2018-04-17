@@ -1,26 +1,27 @@
-id: Normalization
+id: secim_anova
 name: SECIMTools ANOVA
 description: >-
   This tour takes shows you how to use the Analysis of Variance (ANOVA) tool.
 title_default: Data Normalization and Re-scaling
+tags: SECIM
 steps:
 
-  - title: Using SECIMTools to re-scale your data in Galaxy
+  - title: Using SECIMTools to carry out an analysis of variance in Galaxy
     content: "This tour will walk you through using the ANOVA tool to fit a fixed effects model with multiple grouping variables, their interations and covariates.<br><br> The analysis is performed independently by feature (row).<br><br>  You can chose whether to include interactions or use a pure additive model.<br><br> Please see the SECIMTools Galaxy UserGuide for more details about the SECIMTools ANOAVA tool (available for download at: http://secim.ufl.edu/education/training/) <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
     backdrop: false
 
   - title: "Tool Panel"
-    element: "#left"                
+    element: "#left"
     intro: "This is where all available Galaxy tools are located."
     position: "right"
 
   - title: "Upload a wide dataset and a design file"
     element: ".upload-button"
-    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure the 'Regular' Tab is selected above!"
     position: "right"
     postclick:
       - ".upload-button"
-    
+
   - title: "Upload your data"
     element: "#btn-local"
     intro: "You can upload data from your computer."
@@ -35,15 +36,15 @@ steps:
 
   - title: "Insert URLs"
     element: ".upload-text-content:first"
-    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
+    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be in a tall format."
     position: "bottom"
     textinsert: |
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_design.tsv
 
   - title: "Start the upload"
     element: "#btn-start"
-    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status<b> as the upload proceeds."
+    intro: "Upload the data into your Galaxy <b>History</b>:<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status<b> as the upload proceeds."
     position: "top"
     postclick:
       - "#btn-start"
@@ -78,7 +79,7 @@ steps:
 
   - title: "Step 3. Enter the unique identifier in the wide dataset."
     element: 'div[tour_id="uniqID"]'
-    content: "For this data, type in the word <b>rowID</b> into the box."
+    content: "For this data, type the word <b>rowID</b> into the box."
     placement: right
 
   - title: "Step 4.  Enter the name of the column(s) in your Design File that contains your group information."
@@ -88,7 +89,7 @@ steps:
 
   - title: "Step 5.  Now enter the type of data in your group column(s)."
     element: 'div[tour_id="factorTypes"]'
-    content: "For this dataset, the <b>mating_status</b> column contains categorical data (the column contains 'M' or 'V').<br><br> Enter <b>C</b> in the box."
+    content: "For this dataset, the <b>mating_status</b> column contains categorical data (the column contains 'M' or 'V').<br><br> Enter <b>C</b> for categorical in the box."
     placement: right
 
   - title: "Step 6.  Enter whether to run the ANOVA with interactions."
@@ -98,7 +99,7 @@ steps:
 
   - title: "Execute the tool"
     element: "#execute"
-    content: "Click the <b>Execute</b> button.<br><br>  <b>WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    content: "Click the <b>Execute</b> button.<br><br>  <b>WAIT!</b><br><br> Befor you click <b>Next</b> below, wait until the tool is finished (the output in the history will be green)."
     position: top
 
   - title: "The ANOVA Tool generates a Volcano Plot."
@@ -120,3 +121,7 @@ steps:
     element: "#current-history-panel > ul.list-items > div:nth-child(4) > div.primary-actions > a.icon-btn.display-btn"
     content: "<b>Click</b> the <b>eye</b> to look at the results file.<br><br> This file contains the fixed effects ANOVA results for each feature, the corresponding contrast and the analysis of the means."
     placement: bottom
+
+  - title: "Thanks for taking this tour!"
+    intro: "Remember the SECIMTools Galaxy UserGuide is available for more details (available for download at: http://secim.ufl.edu/education/training/)"
+

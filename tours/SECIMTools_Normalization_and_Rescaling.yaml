@@ -1,26 +1,27 @@
-id: Normalization
+id: secim_normalization_rescaling
 name: SECIMTools Normalization and Re-scaling
 description: >-
   This tour shows you how to use the Normalization and Re-scaling tool to re-scale your data. You can choose to re-scale by sample (column) or by feature (row).
 title_default: Data Normalization and Re-scaling
+tags: SECIM
 steps:
 
   - title: Using SECIMTools to re-scale your data in Galaxy
-    content: "This tour will walk you through using the Normalization and Re-scaling tool.  The Mean, Sum and Median methods independently re-scale samples while the remaining 6 methods (Centering, Autoscaling, etc.) independently re-scale the data by feature.<br><br>  Please see the SECIMTools Galaxy UserGuide for more details about each normalization/re-scaling method (available for download at: http://secim.ufl.edu/education/training/) <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    content: "This tour will walk you through using the Normalization and Re-scaling tool.<br><br> The Mean, Sum and Median methods independently re-scale samples while the remaining 6 methods (Centering, Autoscaling, etc.) independently re-scale the data by feature.<br><br>  Please see the SECIMTools Galaxy UserGuide for more details about each normalization/re-scaling method (available for download at: http://secim.ufl.edu/education/training/) <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
     backdrop: false
 
   - title: "Tool Panel"
-    element: "#left"                
+    element: "#left"
     intro: "This is where all available Galaxy tools are located."
     position: "right"
 
   - title: "Upload a wide dataset and a design file"
     element: ".upload-button"
-    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure the 'Regular' Tab is selected above!"
     position: "right"
     postclick:
       - ".upload-button"
-    
+
   - title: "Upload your data"
     element: "#btn-local"
     intro: "You can upload data from your computer."
@@ -35,15 +36,15 @@ steps:
 
   - title: "Insert URLs"
     element: ".upload-text-content:first"
-    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
+    intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be in a tall format."
     position: "bottom"
     textinsert: |
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_design.tsv
 
   - title: "Start the upload"
     element: "#btn-start"
-    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status<b> as the upload proceeds."
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status</b> as the upload proceeds.<br><br. <b>Don't</b> click next till history is green!"
     position: "top"
     postclick:
       - "#btn-start"
@@ -51,7 +52,7 @@ steps:
 
   - title: "Now lets try some re-scaling."
     element: "#title_secim2 > a"
-    intro: "Select the SECIMTools category."                                             
+    intro: "Click on the SECIMTools category<br><br> Scroll down so that 'Normalization and Re-scaling' is visible in the tool panel."
     position: "right"
     preclick:
       - "#title_secim2 a"
@@ -81,17 +82,21 @@ steps:
     content: "For this data, type in the word <b>rowID</b> into the box."
     placement: right
 
-  - title: "Step 4.  Now select a Normalization Method. Remember, the 1st 3 re-scale by sample and the bottom 6 by feature."
+  - title: "Step 4.  Now select a Normalization Method. Remember, the 1st 3 re-scale by sample and the bottom 6 re-scale by feature."
     element: 'div[tour_id="method"]'
     content: "Lets re-scale using the median:<br><br>  Click on the <b>Median</b> button."
     placement: right
 
   - title: "Execute the tool"
     element: "#execute"
-    content: "Click the <b>Execute</b> button.<br><br>  <b>WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    content: "lick the <b>Execute</b> button.<br><br>  <b>Now WAIT!</b> <br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)"
     position: top
 
-  - title: "The Normalization and Re-scaling Tool generates a single TSV file containing your re-scaled data."
+  - title: "The Normalization and Re-scaling Tool generates a single TSV file containing the re-scaled data."
     element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
-    content: "The column names are the same as the original Wide Dataset.  The original starting values are replaced with the normalized/re-scaled values.<br><br> <b>Click</b> the <b>eye</b> to look at the file containing the normalized/re-scaled data."
+    content: "The column names are the same as in the original Wide Dataset.  The original starting values are replaced with the normalized/re-scaled values.<br><br> <b>Click</b> the <b>eye</b> to look at the file containing the normalized/re-scaled data."
     placement: bottom
+
+  - title: "Thanks for taking this tour!"
+    intro: "Remember the SECIMTools Galaxy UserGuide is available for more details (available for download at: http://secim.ufl.edu/education/training/)"
+

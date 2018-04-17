@@ -1,8 +1,9 @@
-id: BA
+id: secim_ba_plots
 name: SECIMTools Bland-Altman (BA) Plots
 description: >-
   This tour shows you how to generate Bland-Altman plots to look at the concordance of data between pairs of samples, particularly between replicates. In addition to generating BA-plots, a linear regression fit is produced between the values that correspond to the pair of samples to identify any unusual outlying feature values. Results from the regression fit are used to generate distribution plots and output files for (i) each sample and for (ii) each feature.
 title_default: Generating Bland Altman plots
+tags: SECIM
 steps:
 
   - title: Using SECIMTools to generate BA plots in Galaxy
@@ -10,7 +11,7 @@ steps:
     backdrop: false
 
   - title: "Tool Panel"
-    element: "#left"                
+    element: "#left"
     intro: "This is where all available Galaxy tools are located."
     position: "right"
 
@@ -20,7 +21,7 @@ steps:
     position: "right"
     postclick:
       - ".upload-button"
-    
+
   - title: "Upload your data"
     element: "#btn-local"
     intro: "You can upload data from your computer."
@@ -38,12 +39,12 @@ steps:
     intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
     position: "bottom"
     textinsert: |
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_design.tsv
 
   - title: "Start the upload"
     element: "#btn-start"
-    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status<b> as the upload proceeds."
+    intro: "Upload the data into your Galaxy <b>History</b>:<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status<b> as the upload proceeds.<br><br>  Don't click next until the data is loaded in the History (green in the History Panel)!"
     position: "top"
     postclick:
       - "#btn-start"
@@ -83,7 +84,7 @@ steps:
 
   - title: "Step 4  Flag residuals with a 0/1 indicator that are greater that this value."
     element: 'div[tour_id="resid_cutoff"]'
-    content: "Any residuals with values greater than or less than the value here will be flagged."
+    content: "Any residuals with values greater than or less than the value entered in this box will be flagged."
     placement: right
 
   - title: "Step 5. You can also change the Sample Flag Cutoff value."
@@ -98,7 +99,7 @@ steps:
 
   - title: "Step 7. The name of the column in your design file that contains your group information."
     element: 'div[tour_id="group"]'
-    content: "If you don't specify a group, all samples will be compared pairwise.<br>  NOTE - this could be A LOT of output if you have a lot of samples!!<br><br> Let's look at samples in a particular group - type <b>mating_status</b> in the box."
+    content: "If you don't specify a group, all samples will be compared pairwise.<br><br>  <b>NOTE<b/> - this could be A LOT of output if you have a lot of samples!!<br><br> Let's look at samples in a particular group - type <b>mating_status</b> in the box."
     placement: right
 
   - title: "Step 8. Now we can specifiy which groups to analyze?"
@@ -108,7 +109,7 @@ steps:
 
   - title: "Execute the tool"
     element: "#execute"
-    content: "click the <b>Execute</b> button.<br><br>  Click <b>Next</b> below once the output is in the history."
+    content: "Click the <b>Execute</b> button.<br><br>  Click the <b>Next</b> below once the output is in the history (green)."
     position: top
 
   - title: "The BA Tool outputs a PDF containing BA-plots and scatterplots for each pair of samples."
@@ -130,3 +131,7 @@ steps:
     element: "#current-history-panel > ul.list-items > div:nth-child(4) > div.primary-actions > a.icon-btn.display-btn"
     content: "The eye can be used to look at the file containing feature outliers. Additional comparison measures are Pearson residuals, DFFITS and CooksD."
     placement: left
+
+  - title: "Thanks for taking this tour!"
+    intro: "Remember the SECIMTools Galaxy UserGuide is available for more details (available for download at: http://secim.ufl.edu/education/training/)"
+

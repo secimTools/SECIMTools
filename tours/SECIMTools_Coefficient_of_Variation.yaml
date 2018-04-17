@@ -1,12 +1,13 @@
-id: CV
+id: secim_coefficient_variation
 name: SECIMTools Coefficient of Variation (CV) Flags
 description: >-
-  This tour shows you how to use the CV Flags tool to calculate the CV (standard deviation as a percent of the mean) of the features (rows).
-title_default: Calculating CV for features
+  This tour shows you how to use the CV Flags tool to calculate the CV (standard deviation as a percent of the mean) of features (rows).
+title_default: Calculating CV for features (rows).
+tags: SECIM
 steps:
 
   - title: Using SECIMTools to calculate CVs in Galaxy
-    content: "This tour will walk you through using the Coefficeint of Variation (CV) tool to calculate CVs (standard deviation as a percent of the mean) for features.<br><br> CVs can be used to look at the consistency of features across samples.<br><br> The user can define what percent of features with high CVs to flag.<br><br> For a detailed tool description, please see the SECIMTools Galaxy UserGuide available for download at: http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    content: "This tour will walk you through using the Coefficient of Variation (CV) tool to calculate CVs (standard deviation as a percent of the mean) for features.<br><br> CVs can be used to look at the consistency of features across samples.<br><br> The user can define what percent of features with high CVs to flag.<br><br> For a detailed tool description, please see the SECIMTools Galaxy UserGuide available for download at: http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
     backdrop: false
 
   - title: "Tool Panel"
@@ -16,7 +17,7 @@ steps:
 
   - title: "Upload a wide dataset and a design file"
     element: ".upload-button"
-    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure you're the 'Regular' Tab is selected above!"
+    intro: "You can use this button to upload your data.<br><br>  NOTE: make sure the 'Regular' Tab is selected above!"
     position: "right"
     postclick:
       - ".upload-button"
@@ -38,8 +39,8 @@ steps:
     intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
     position: "bottom"
     textinsert: |
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_sbys.tsv
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/fly_test_design.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_sbys.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/fly_test_design.tsv
 
   - title: "Start the upload"
     element: "#btn-start"
@@ -81,27 +82,31 @@ steps:
     content: "For this data, type in the word <b>rowID</b> into the box.<br><br> Yup, go ahead and type it in box."
     placement: right
 
-  - title: "Step 4.  If you want to calculate CVs by group then enter the name of the column in your Design File that contains group information."
+  - title: "Step 4.  If you want to calculate CVs by group, then enter the name of the column in your Design File that contains the group information."
     element: 'div[tour_id="group"]'
     content: "If you do not include the group information, CVs will be calculated across all the groups.<br><br>  Let's calculate CVs for each group (M and V) separately:<br><br>  Enter <b>mating_status</b> in the box."
     placement: right
 
-  - title: "Step 5. Enter the CV Cutoff value - proportion of features to flag."
+  - title: "Step 5. Enter the CV Cutoff value - this is the proportion of features to flag."
     element: 'div[tour_id="CVcutoff"]'
     content: "The default of 0.1 indicates that 10% of the features will be flagged, starting with those with the largest CVs."
     placement: right
 
   - title: "Execute the tool"
     element: "#execute"
-    content: "click the <b>Execute</b> button.<br><br>  <b>Now WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    content: ""Click the <b>Execute</b> button.<br><br>  <b>And WAIT!</b> <br><br> Click the <b>Next</b> button below once the tool is finished (the output in the history will be green).."
     position: top
 
   - title: "The CV Tool generates a TSV file containing CV flags for each feature."
     element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
-    content: "The CV Tool generates a TSV file containing CV flags for each feature.<br<>br> If group information was specified, then each feature will have multiple flags (1 for each group).<br><br> <b>Click</b> the <b>eye</b> to look at the file containing the flags.<br><br> You can see 2 flags for each feature since we specifed group (M and V)."
+    content: "The CV Tool generates a TSV file containing CV flags for each feature.<br<>br> If group information was specified, then each feature will have multiple flags (a flag for each group).<br><br> <b>Click</b> the <b>eye</b> to look at the file containing the flags.<br><br> You can see there are 2 flag columns for each feature since we specifed 2 groups (M and V)."
     placement: bottom
 
   - title: "The CV Tool outputs a PDF containing histograms with overlayed density plots of the coefficient of variation for each group, if provided, and a summary density plot minus the histograms."
     element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
     content: "The CV Tool outputs a PDF containing histograms with overlayed density plots of the coefficient of variation for each group, if provided, and a summary density plot minus the histograms.<br><br> <b>Click</b> the <b>eye</b> to look at the CV histograms.<br><br> The red dashed line is the value of the CV used for flagging the features."
     placement: bottom
+
+  - title: "Thanks for taking this tour!"
+    intro: "Remember the SECIMTools Galaxy UserGuide is available for more details (available for download at: http://secim.ufl.edu/education/training/)"
+

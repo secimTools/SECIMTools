@@ -1,16 +1,16 @@
-id: Merge Flags
+id: secim_merge_flags
 name: SECIMTools Merge Flags
 description: >-
   This tour shows you how to use the Merge Flags tool to merge Flag files using a unique identifier.
 title_default: Merge Flags
+tags: SECIM
 steps:
-
   - title: Using SECIMTools to merge Flag files in Galaxy
-    content: "This tour will walk you through using the Merge Flags tool to merge 2 or more flag files.<br><br>The tool can be used to combine flag files generated during QC. The resulting file can be used to drop poor quality features or samples prior to analysis.<br><br> For a detailed tool description, please see the SECIMTools Galaxy UserGuide available for download at: http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    content: "This tour will walk you through using the Merge Flags tool to merge 2 or more flag files together.<br><br>For example, the tool can be used to combine flag files generated during a QC workflow. The resulting merged flag file can be used to determine whether multiple tools identified the same features or samples as of poor quality.<br><br> For a detailed tool description, please see the SECIMTools Galaxy UserGuide available for download at: http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
     backdrop: false
 
   - title: "Tool Panel"
-    element: "#left"                
+    element: "#left"
     intro: "This is where all available Galaxy tools are located."
     position: "right"
 
@@ -20,7 +20,7 @@ steps:
     position: "right"
     postclick:
       - ".upload-button"
-    
+
   - title: "Upload your data"
     element: "#btn-local"
     intro: "You can upload data from your computer."
@@ -35,11 +35,11 @@ steps:
 
   - title: "Insert URLs"
     element: ".upload-text-content:first"
-    intro: "Let's upload a couple of different flag files to merge using URLs.<br><br>Flag files can be in wide format or in design format.<br><br> The merging requirements are that:<br> (1) the number of rows should be the same in all files being merged and<br> (2) all files should contain the same Unique ID column name to merge by."
+    intro: "Let's upload a couple of different flag files to merge using URLs.<br><br>Flag files can be in wide format or in design format.<br><br> The merging requirements are:<br> (1) the number of rows should be the same in all files being merged and<br> (2) all files should contain the same Unique ID column name to merge by."
     position: "bottom"
     textinsert: |
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/ST000006_run_order_regression_flags.tsv
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/ST000006_magnitude_difference_flags_flags.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/ST000006_run_order_regression_flags.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/ST000006_magnitude_difference_flags_flags.tsv
 
   - title: "Start the upload"
     element: "#btn-start"
@@ -51,10 +51,12 @@ steps:
 
   - title: "Now lets merge the flag files together"
     element: "#title_secim2 > a"
-    intro: "Select the SECIMTools category."                                             
+    intro: "Click on the SECIMTools category<br><br> Scroll down so that 'Merge Flags' is visible in the tool panel."                                             
     position: "right"
     preclick:
       - "#title_secim2 a"
+    postclick:
+      - 'a[href$="/tool_runner?tool_id=secimtools_merge_flags"]'
 
   - title: "Merge Flags Tool"
     intro: "The Merge Flags tool is loaded by clicking on the name of the tool.<br><br>The tool description (scroll down) has lots of useful information about the tool as does the SECIMTools Galaxy UserGuide!"
@@ -67,20 +69,24 @@ steps:
 
   - title: "Step 1. Use <b>CTRL+CLICK</b> to select multiple files."
     element: 'div[tour_id="input"]'
-    intro: "Select the 2 flag files we uploaded.<br> (Really, go ahead and select them)."
+    intro: "Select the 2 flag files we uploaded. (Really, go ahead and select them)."
     position: "right"
 
   - title: "Step 2. Enter the unique identifier for merging."
     element: 'div[tour_id="uniqID"]'
-    content: "In these 2 flag files, <b>Retention_Index<\b> is the identifier in common between the files. Type the word <b>Retention_Index</b> into the box."
+    content: "In these 2 flag files, <b>Retention_Index</b> is the identifier in common between the files. Type the word <b>Retention_Index</b> into the box."
     placement: right
 
   - title: "Execute the tool"
     element: "#execute"
-    content: "click the <b>Execute</b> button.<br><br>  <b>Now WAIT!</b><br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
+    content: "Click the <b>Execute</b> button.<br><br>  <b>Now WAIT!</b> <br><br> Click <b>Next</b> below once the tool is finished (the output in the history will be green)."
     position: top
 
-  - title: "The Merge Flags Tool generates a single TSV file containing the flags in all starting flag files."
+  - title: "The Merge Flags Tool generates a single TSV file containing the flags in all selected flag files."
     element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
-    content: "<b>Click</b> the <b>eye</b> to look at the file containing the flags."
+    content: "<b>Click</b> the <b>eye</b> to look at the file containing all the flags."
     placement: bottom
+
+  - title: "Thanks for taking this tour!"
+    intro: "Remember the SECIMTools Galaxy UserGuide is available for more details (available for download at: http://secim.ufl.edu/education/training/)"
+

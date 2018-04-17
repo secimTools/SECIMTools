@@ -1,16 +1,16 @@
-id: MMC
+id: secim_mmc
 name: SECIMTools Modulated Modularity Clustering (MMC).
-description: >-                  
+description: >-
   This tour shows you how to run the SECIMTools MMC to detect latent structure in a datasest.  The algorithm searches for an optimal structure and detects the magnitude of pairwise relationships.     
 title_default: MMC
+tags: SECIM
 steps:
-
   - title: "Using SECIMTools to generate a MMC heatmap in Galaxy"
-    content: "This tour will walk you through using the Modulated Modularity Clusterin SECIMTool to detect latent structure in a datasest.<br><br> For a detailed tool description, please see the  SECIMTools Galaxy UserGuide available for download at:  http://secim.ufl.edu/education/training/ <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
+    content: "This tour will walk you through using the Modulated Modularity Clustering SECIMTool to detect latent structure in a datasest.<br><br> For a detailed tool description, please see the  SECIMTools Galaxy UserGuide (available for download at: http://secim.ufl.edu/education/training/) <br><br> Please visit the Galaxy UI or History Introduction tutorials if you haven't used Galaxy before."
     backdrop: false
 
   - title: "Tool Panel."
-    element: "#left"                
+    element: "#left"
     intro: "This is where all available Galaxy tools are located."
     position: "right"
 
@@ -20,7 +20,7 @@ steps:
     position: "right"
     postclick:
       - ".upload-button"
-    
+
   - title: "Upload your data"
     element: "#btn-local"
     intro: "You can upload data from your computer."
@@ -38,13 +38,12 @@ steps:
     intro: "Let's upload a test wide dataset and a test design file using URLs.  Remember that data should be in a wide format and design files should be tall format."
     position: "bottom"
     textinsert: |
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/TEST0000_data.tsv
-      https://bio.rc.ufl.edu/pub/mcintyre/galaxy/TEST0000_design.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/TEST0000_data.tsv
+      https://bio.rc.ufl.edu/pub/secim/galaxy/TEST0000_design.tsv
 
   - title: "Start the upload"
     element: "#btn-start"
-    intro: "Upload the data into your Galaxy <b>History</b>.<br>
-            Click the <b>Start</b> button."
+    intro: "Upload the data into your Galaxy <b>History</b>.<br>  Click the <b>Start</b> button.<br><br>  Above and to the right, you can see the <b>Status</b> as the upload proceeds.<br><br. <b>Don't</b> click next till history is green!"
     position: "top"
     postclick:
       - "#btn-start"
@@ -52,11 +51,11 @@ steps:
 
   - title: "Now lets run the clustering"
     element: '#title_secim2 > a'
-    intro: "Select the SECIMTools category."                                             
+    intro: "Click on the SECIMTools category<br><br> Scroll down so that 'Modulated Modularity Clustering ' is visible in the tool panel."  
     position: "right"
     preclick:
       - "#title_secim2 a"
-    
+
   - title: "MMC Tool"
     intro: "The Modulated Modularity Clustering tool is loaded by clicking on the name of the tool.<br><br>
             The tool description (scroll down) has lots of useful information about the tool as does the SECIMTools Galaxy UserGuide!"
@@ -84,12 +83,12 @@ steps:
 
   - title: Step 4.  Modify the lower sigma bound, if desired.
     element: 'div[tour_id="sigmaLow"]'
-    content: 'Feel free to change the lower sigma bound default value.'
+    content: 'Feel free to change the default lower sigma bound default value.'
     placement: right
 
   - title: Step 5.  Modify the upper sigma bound, if desired.
     element: 'div[tour_id="sigmaHigh"]'
-    content: 'Feel free to change the upper sigma bound default value.'
+    content: 'Feel free to change the default upper sigma bound default value.'
     placement: right
 
   - title: Step 6.  Modify the number of sigma values, if desired.
@@ -109,29 +108,14 @@ steps:
 
   - title: The MMC Tool outputs a PDF containing Heatmaps (unsorted, sorted and smoothed).
     element: "#current-history-panel > ul.list-items > div:nth-child(1) > div.primary-actions > a.icon-btn.display-btn"
-    content: 'The eye can be used to look at the Heatmaps'
+    content: '<b>Click</b> the <b>eye</b> to look at the Heatmaps'
     placement: left
 
   - title: The MMC Tool outputs a file containing the algorithm summaries.
     element: "#current-history-panel > ul.list-items > div:nth-child(2) > div.primary-actions > a.icon-btn.display-btn"
-    content: 'The eye can be used to look at the summaries.'
+    content: '<b>Click</b> the <b>eye</b> to look at the summaries.'
     placement: left
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  - title: "Thanks for taking this tour!"
+    intro: "Remember the SECIMTools Galaxy UserGuide is available for more details (available for download at: http://secim.ufl.edu/education/training/)"
 
