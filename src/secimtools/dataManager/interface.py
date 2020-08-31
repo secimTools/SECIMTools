@@ -1,13 +1,20 @@
 #!/usr/bin/env python
+"""
+Secim Tools data interface library.
+"""
+# Built-in packages
 import re
 import sys
+
+# Add-on packages
 import numpy as np
 import pandas as pd
 
 
 class wideToDesign:
     """ Class to handle generic data in a wide format with an associated design file. """
-    def __init__(self, wide, design, uniqID, group=False, runOrder=False, anno=False, clean_string=True, infer_sampleID=True, keepSample=True, logger=None):
+    def __init__(self, wide, design, uniqID, group=False, runOrder=False, anno=False, clean_string=True,
+                 infer_sampleID=True, keepSample=True, logger=None):
         """ Import and set-up data.
 
         Import data both wide formated data and a design file. Set-up basic
@@ -69,44 +76,65 @@ class wideToDesign:
                 trt1, tr2, control.
 
         """
+        # Setting logger
         if logger is None:
             self.logger = False
         else:
             self.logger = logger
 
+        # Saving original str
         self.origString = dict()
 
+        # Import wide formatted data file
         try:
             self.uniqID = uniqID
             self.wide = pd.read_table(wide)
             if clean_string:
                 self.wide[self.uniqID] = self.wide[self.uniqID].apply(lambda x: self._cleanStr(str(x)))
-                self.wide.rename(columns= lambda x:self._cleanStr(x),inplace=True)
+                self.wide.rename(columns=lambda x: self._cleanStr(x), inplace=True)
+
+            # Make sure index is a string and not numeric
             self.wide[self.uniqID] = self.wide[self.uniqID].astype(str)
+
+            # Set index to uniqID column
             self.wide.set_index(self.uniqID, inplace=True)
-        except:
+
+        except ValueError:
             if self.logger:
                 self.logger.error("Please make sure that your data file has a column called '{0}'.".format(uniqID))
             else:
-                print("Please make sure that your data file has a column called '{0}'.".format(uniqID))
+                print(("Please make sure that your data file has a column called '{0}'.".format(uniqID)))
             raise ValueError
 
+        # Import design file
         try:
             self.design = pd.read_table(design)
+
             # This part of the script allows the user to use any capitalization of "sampleID"
             # ie. "sample Id" would be converted to "sampleID".
             # If you want to accept only the exact capitalization turn infer_sampleID to Fake
+            ## AMM added additional backslash to \s in regex below
             if infer_sampleID:
-                renamed = {column:re.sub(r"[s|S][a|A][m|M][p|P][l|L][e\E][\s?|_?][I|i][d|D]","sampleID",column) for column in self.design.columns}
-                self.design.rename(columns=renamed,inplace=True)
+                renamed = {column: re.sub(r"[s|S][a|A][m|M][p|P][l|L][e|E][\\s?|_?][I|i][d|D]",
+                                          "sampleID", column) for column in self.design.columns}
+                self.design.rename(columns=renamed, inplace=True)
+                log_msg = "Inferring 'sampleID' from data. This will accept different capitalizations of the word"
                 if self.logger:
-                    self.logger.info("Infering 'sampleID' from data. This will accept different capitalizations of the word")
+                    self.logger.info(log_msg)
                 else:
-                    print("Infering 'sampleID' from data. This will accept different capitalizations of the word")
+                    print(log_msg)
+
+            # Make sure index is a string and not numeric
             self.design['sampleID'] = self.design['sampleID'].astype(str)
             self.design.set_index('sampleID', inplace=True)
+            #print(self.design)
+
+            # Cleaning design file
             if clean_string:
-                self.design.rename(index= lambda x:self._cleanStr(x),inplace=True)
+                self.design.rename(index=lambda x: self._cleanStr(x), inplace=True)
+
+            # Create a list of sampleIDs, but first check that they are present
+            # in the wide data.
             self.sampleIDs = list()
 
             for sample in self.design.index.tolist():
@@ -116,7 +144,7 @@ class wideToDesign:
                     if self.logger:
                         self.logger.warn("Sample {0} missing on wide dataset".format(sample))
                     else:
-                        print("WARNING - Sample {0} missing on wide dataset".format(sample))
+                        print(("WARNING - Sample {0} missing on wide dataset".format(sample)))
 
             for sample in self.wide.columns.tolist():
                 if not (sample in self.design.index):
@@ -124,55 +152,78 @@ class wideToDesign:
                         if self.logger:
                             self.logger.warn("Sample {0} missing on design file".format(sample))
                         else:
-                            print("WARNING - Sample {0} missing on design file".format(sample))
+                            print(("WARNING - Sample {0} missing on design file".format(sample)))
                     else:
                         if self.logger:
                             self.logger.error("Sample {0} missing on design file".format(sample))
                             raise
                         else:
-                            print("ERROR - Sample {0} missing on design file".format(sample))
+                            print(("ERROR - Sample {0} missing on design file".format(sample)))
                             raise
 
             # Drop design rows that are not in the wide data set
             self.design = self.design[self.design.index.isin(self.sampleIDs)]
-            self.wide.replace(r'\D',np.nan,regex=True,inplace=True)
-        except:
-            print("Error:", sys.exc_info()[0])
+            #print("DEBUG: design")
+            #print(self.design)
+            # Removing characters from data!!!!!!(EXPERIMENTAL)
+            self.wide.replace(r'\D', np.nan, regex=True, inplace=True)
+        # Possible bad design, bare except should not be used
+        except SystemError:
+            print(("Error:", sys.exc_info()[0]))
             raise
+
+        # Save annotations
         self.anno = anno
+
+        # Save runOrder
         self.runOrder = runOrder
 
+        # Set up group information
         if group:
+            
             if clean_string:
                 self.group = self._cleanStr(group)
                 self.design.columns = [self._cleanStr(x) for x in self.design.columns]
             else:
                 self.group = group
-
+            #print("DEBUB:  group:")
+            #print(self.group)  
+            keep = self.group.split(",")
+            # combine group, anno and runorder
             if self.runOrder and self.anno:
-                keep = [self.group, ] + [self.runOrder, ] + self.anno
+                keep = keep + [self.runOrder, ] + self.anno
             elif self.runOrder and not self.anno:
-                keep = [self.group, ] + [self.runOrder, ]
+                keep = keep + [self.runOrder, ]
             elif not self.runOrder and self.anno:
-                keep = [self.group, ] + self.anno
-            else:
-                keep = [self.group, ]
+                keep = keep + self.anno
+            #print("DEBUG: Keep")
+            #print(keep)
+            #print("DEBUG: design columns")
+            #print(self.design.columns.tolist())  # this is pd dataframe
+            # Check if groups, runOrder and levels columns exist in the design file
+            designCols = self.design.columns.tolist()
+            if keep == designCols:
+            #    print("keep matches design columns")
+            #for elem in keep:
+            #    if not(elem in self.design.columns):
+            #        log_msg = "Make sure '{0}' is correct and exists in your design file".format(elem)
+            #        if self.logger:
+            #            self.logger.error(log_msg)
+            #        else:
+            #            print(log_msg)
+            #        raise ValueError
+            
+            # Check if columns exist on design file.
+                self.design = self.design[keep]   # Only keep group columns in the design file
+                self.design[self.group] = self.design[self.group].astype(str)   # Make sure groups are strings
 
-            for elem in keep:
-                if not(elem in self.design.columns):
-                    if self.logger:
-                        self.logger.error("Please make sure that '{0}' is written correctly or exists on your design file".format(elem))
-                    else:
-                        print("Please make sure that '{0}' is written correctly or exists on your design file".format(elem))
-                    raise ValueError
-
-            self.design = self.design[keep]
-            self.design[self.group] = self.design[self.group].astype(str)
+            # Create list of group levels
             grp = self.design.groupby(self.group)
-            self.levels = sorted(grp.groups.keys())
+            self.levels = sorted(grp.groups.keys())  # Get a list of group levels
         else:
             self.group = None
 
+        # Keep samples listed in design file
         if keepSample:
             self.keep_sample(self.sampleIDs)
 
@@ -258,8 +309,9 @@ class wideToDesign:
         melted = pd.melt(self.wide.reset_index(), id_vars=self.uniqID, value_vars=self.sampleIDs,
                          var_name='sampleID')
         melted.set_index('sampleID', inplace=True)
-        self.long = melted.join(self.design).reset_index()
-
+        self.long = melted.join(self.design).reset_index()   # merge on group information using sampleIDs as key
+        #print(self.long)
+        
     def transpose(self):
         """ Transpose the wide table and merge on treatment information.
 
@@ -275,6 +327,8 @@ class wideToDesign:
 
         """
         trans = self.wide[self.sampleIDs].T
+
+        # Merge on group information using table index (aka 'sampleID')
         merged = trans.join(self.design)
         merged.index.name = 'sampleID'
         return merged
@@ -298,7 +352,7 @@ class wideToDesign:
         return self.wide[self.wide[self.uniqID] == ID]
 
     def keep_sample(self, sampleIDs):
-        """ 
+        """
         Keep only the given sampleIDs in the wide and design file.
 
         :Arguments:
@@ -318,34 +372,40 @@ class wideToDesign:
         Removes groups with just one sample
         """
         if self.group:
-            for level,current in self.design.groupby(self.group):
+            for level, current in self.design.groupby(self.group):
                 if len(current) < 2:
                     self.design.drop(current.index, inplace=True)
                     self.wide.drop(current.index, axis=1, inplace=True)
+                    log_msg = """Your group '{0}' has only one element,"
+                                 "this group is going to be removed from"
+                                 "further calculations.""".format(level)
                     if self.logger:
-                        self.logger.warn("Your group '{0}' has only one element, "\
-                            "this group is going to be removed from "\
-                            "further calculations.".format(level))
+                        self.logger.warn(log_msg)
                     else:
-                        print("Your group '{0}' has only one element, this "\
-                        "group is going to be remove to perform further "\
-                        "calculations.".format(level))
+                        print(log_msg)
 
     def dropMissing(self):
         """
         Drops rows with missing data
         """
+        # Asks if any missing value
         if np.isnan(self.wide.values).any():
+            # Count original number of rows
             n_rows = len(self.wide.index)
+
+            # Drop missing values
             self.wide.dropna(inplace=True)
-            n_rows_keeped = len(self.wide.index)
+
+            # Count the dropped rows
+            n_rows_kept = len(self.wide.index)
+
+            # Logging!!!
+            log_msg = """Missing values were found in wide data.
+                         [{0}] rows were dropped""".format(n_rows - n_rows_kept)
             if self.logger:
-                self.logger.warn("Missing values were found on wide data "\
-                    "[{0}] rows were dropped.".
-                    format(n_rows - n_rows_keeped))
+                self.logger.warn(log_msg)
             else:
-                print("Missing values were found on wide data "\
-                    "[{0}] rows were dropped.".format(n_rows - n_rows_keeped))
+                print(log_msg)
 
 
 class annoFormat:
@@ -412,29 +472,35 @@ class annoFormat:
         """
         self.origString = dict()
 
+        # Import anno formatted data file
         try:
             self.uniqID = uniqID
             self.mz = mz
             self.rt = rt
+
+            # Trying to import
             self.data = pd.read_table(data)
 
             if clean_string:
                 self.data[self.uniqID] = self.data[self.uniqID].apply(lambda x: self._cleanStr(x))
-                self.data.rename(columns= lambda x:self._cleanStr(x),inplace=True)
+                self.data.rename(columns=lambda x: self._cleanStr(x), inplace=True)
 
+            # Make sure index is a string and not numeric
             self.data[self.uniqID] = self.data[self.uniqID].astype(str)
-            self.data.set_index(self.uniqID, inplace=True)
-            self.anno = None
 
+            # Set index to uniqID column
+            self.data.set_index(self.uniqID, inplace=True)
+
+            # If not annotation then ignoring additional columns
+            self.anno = None
             if not(anno):
-                self.data = self.data[[self.mz,self.rt]]
+                self.data = self.data[[self.mz, self.rt]]
             else:
                 self.anno = self.data.columns.tolist()
                 self.anno.remove(self.mz)
                 self.anno.remove(self.rt)
-        except:
-            print("Please make sure that your data file have columns called \
-                '{0}','{1}' and '{2}'.".format(uniqID,mz,rt))
+        except ValueError:
+            print(("Data file must have columns called '{0}','{1}' and '{2}'.".format(uniqID, mz, rt)))
             raise ValueError
 
     def _cleanStr(self, x):
@@ -475,3 +541,6 @@ class annoFormat:
             self.origString[x] = val
         return x
 
+
+if __name__ == '__main__':
+    pass

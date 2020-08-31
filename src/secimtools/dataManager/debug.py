@@ -1,4 +1,4 @@
-import cPickle as pk
+import pickle as pk
 
 
 def pickleDict(objDict, fname):

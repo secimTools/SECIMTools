@@ -196,7 +196,8 @@ class Flags:
             # Return merged flag file
             return df_mergedFlags
         else:
-            print("Not all indexes overlap. Check that flags are features OR samples.")
+            print("Not all indexes overlap. Check that flags are features OR \
+                   samples.")
             raise SystemExit
 
 
