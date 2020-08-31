@@ -151,8 +151,8 @@ def drawBar(ax,groups,ch,dat,field):
     xAxLen = len(vm.noDupes(groups))
     values = list(dat[field])
     if len(ch.hexClrs) == 1:
-        print np.arange(xAxLen)
-        print groups
+        print(np.arange(xAxLen))
+        print(groups)
         ax.bar(left=np.arange(xAxLen),height=values,width=.3,color=ch.hexClrs[0],align='center',tick_label=groups)
     else:
         clrSz = len(ch.groupsNoDupes)

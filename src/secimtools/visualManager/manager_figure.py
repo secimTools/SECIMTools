@@ -148,7 +148,7 @@ class figureHandler:
 
         #Add personalized xticks
         if len(xticks) > 0:
-            plt.xticks(range(len(xticks)), xticks, rotation='vertical')
+            plt.xticks(list(range(len(xticks))), xticks, rotation='vertical')
         
         # Re-Orient the labels on x and y axis 
         plt.setp(self.ax[axnum].xaxis.get_majorticklabels(),rotation=90)
@@ -304,12 +304,12 @@ class figureHandler:
         if numAx == 1:
             if proj == "2d":
                 self.ax.append(self.fig.add_subplot(111))
-                self.ax[0].set_axis_bgcolor('w')
+                self.ax[0].set_facecolor('w')
                 self.despine(self.ax[0])
 
             else:
                 self.ax.append(self.fig.add_subplot(111,projection=proj))
-                self.ax[0].set_axis_bgcolor('w')
+                self.ax[0].set_facecolor('w')
                 self.despine(self.ax[0])
         else:
             for i in range(0,numAx):
@@ -319,5 +319,5 @@ class figureHandler:
                 rs = arrangement[i][3]
                 self.ax.append(plt.subplot2grid((numRow,numCol),(x,y),rowspan=rs,colspan=cs))
                 for axis in self.ax:
-                    axis.set_axis_bgcolor('w')
+                    axis.set_facecolor('w')
                     self.despine(axis)

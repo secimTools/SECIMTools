@@ -89,5 +89,5 @@ def hist(ax,dat,colors,range=None,bins=10,normed=False,orientation="vertical",la
         
     for group,color in zip(dat.levels,colors):
         valPerGroup =  dat.wide[dat.design.index[dat.design[dat.group]==group]].values
-        lists = sum(map(list,valPerGroup),[])
+        lists = sum(list(map(list,valPerGroup)),[])
         ax.hist(lists,color=color,alpha=.7,orientation=orientation,range=range,bins=bins,normed=normed,label=label)

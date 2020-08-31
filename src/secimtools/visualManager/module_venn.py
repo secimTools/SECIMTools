@@ -71,7 +71,7 @@ def plotVenn2(data,title,name1,name2,innerLabels=None,circles=None):
 
     # If not inner labels are provided use the data as a string
     if innerLabels is None:
-        innerLabels=map(str,data)
+        innerLabels=list(map(str,data))
 
     #Art of the venn diagram
     _artVenn2(venn2fig,innerLabels=innerLabels)
