@@ -4,7 +4,9 @@ import copy
 # import add-on packages
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 from statsmodels.formula.api import ols
+
 
 # Importing anova packages
 from secimtools.anovaModules.reformatData import reformatData
@@ -62,7 +64,7 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
     significant_list = list()
 
     # iterating over all the formula keys
-    for feat in formula.keys():
+    for feat in list(formula.keys()):
         combs=copy.copy(lvlComb)
 
         # Creating list for fullRes and IndexToDrop
@@ -81,7 +83,8 @@ def runANOVA(dat, formula, lvlComb, categorical, levels, numerical):
             tempDF = changeDFOrder(data=dat.trans, combN=elem, factors=categorical)
 
             # Running ANOVA on data
-            anova = ols(formula=formula[feat], data=tempDF).fit_regularized()
+	    # AMM changed from .fit_regularized() to .fit()
+            anova = ols(formula=formula[feat], data=tempDF).fit()
 
             # Saving a dataframe for anova results
             group_results = getModelResultsByGroup(anova,levels,numerical)

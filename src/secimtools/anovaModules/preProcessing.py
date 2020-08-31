@@ -37,7 +37,8 @@ def preProcessing(factorNames, factorTypes, design):
     # Split by ',' the names and the types of the factors
     factorNames = factorNames.split(",")
     factorTypes = factorTypes.split(",")
-    
+    factorInteractor = factorInteractor.split(",")  # AMM added this to specify which col to use for interactions
+
     # Get the list of columns on the design file
     designCols = design.columns.tolist()
     
@@ -52,7 +53,7 @@ def preProcessing(factorNames, factorTypes, design):
     numerical   = list()
     
     # Identify wheter a factor is categorical or numerical
-    for fName,fType in zip(factorNames,factorTypes):
+    for fName,fType in list(zip(factorNames,factorTypes)):
         if fName not in designCols:
             logger.error("'{}' is not located in your design file".format(factor))
         if fType =="C" or fType=="c":
@@ -76,7 +77,7 @@ def preProcessing(factorNames, factorTypes, design):
     
     # Sort levels by number of elements on levels
     lvlsNams = sorted(lvlsNams,key=lambda x:len(x[0]),reverse=True)
-    lvlsNams =  zip(*lvlsNams)
+    lvlsNams =  list(zip(*lvlsNams))
     
     # Geting sorted levels and names
     levels = list(lvlsNams[0])

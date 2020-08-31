@@ -32,7 +32,7 @@ def parseFormula(f,uid):
     if "~"in f:
         preForm = f.split("~")[1]
     else:
-        print "'~' is missing from your formula"
+        print("'~' is missing from your formula")
     
     # Replace all alowed  characther with \t to further tokenize
     f2 = re.sub("[~|*|+|:]","\t",f)
@@ -45,9 +45,9 @@ def parseFormula(f,uid):
     try:
         tokens.remove(uid)
     except:
-        print "{0} is not located in your formula, writte your \
+        print("{0} is not located in your formula, writte your \
                 formula again and make sure your first element match \
-                your unique ID.".format(uid)    
+                your unique ID.".format(uid))    
         
     # Getting indexes for given token    
     tokDict = {tok:"{"+str(i)+"}"for i,tok in enumerate(tokens)}
