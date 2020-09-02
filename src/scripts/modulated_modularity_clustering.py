@@ -145,7 +145,7 @@ def nontechnical_analysis(args, df, mask, C, clustering):
 
     # Make a csv file if requested.
     header = ('Gene', 'Module', 'Entry Index', 'Average Degree', 'Degree')
-    with open(args.out, 'wb') as fout:
+    with open(args.out, 'w') as fout:          # amm changed wb to w
         writer = csv.writer(fout, 'excel-tab') #problematic; need to switch to tsv file!
         writer.writerow(header)
         for old_i in new_to_old_idx:

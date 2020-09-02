@@ -177,7 +177,7 @@ if __name__ == '__main__':
     # Setting up logger
     logger = logging.getLogger()
     sl.setLogger(logger)
-    logger.info(u"""Importing data with following parameters: \
+    logger.info("""Importing data with following parameters: \
         \n\tWide: {0}\
         \n\tDesign: {1}\
         \n\tUnique ID: {2}\

@@ -1,0 +1,87 @@
+<tool id="secimtools_remove_user_specified_features" name="Remove User-Specified Features or Samples" version="@WRAPPER_VERSION@">
+    <description>from the data.</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <command><![CDATA[
+remove_user_specified_row_col_02amm.py
+--input $input
+--design $design
+--ID $uniqID
+--outWide $outWide
+--row $rowID
+--col $colID
+    ]]></command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset"
+               help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File"
+               help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID"
+               help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="rowID" type="text" size="30" value="" label="Space separated list of features (rows) to drop from wide dataset."
+               help="Name of the rows in your Wide dataset to drop. Separate more than 1 row with a space."/>
+        <param name="colID" type="text" size="30" value="" label="Space separated list of columns (samples) to drop from Wide dataset."
+               help="Name of the columns in your Wide dataset to drop. Separate more than 1 column with a space."/>
+    </inputs>
+    <outputs>
+        <data format="tabular" name="outWide" label="${tool.name} on ${on_string}: Dropped wide"/>
+    </outputs>
+    <tests>
+        <test>
+            <param name="input"       value="fly_test_sbys.tsv"/>
+            <param name="design"      value="fly_test_design.tsv"/>
+            <param name="uniqID"      value="rowID" />
+            <param name="rowID"       value="_15" />
+            <param name="colID"       value="r101_V_3" />
+            <output name="outWide"    file="fly_remove_specified_features_samples_wide.tsv" />
+        </test>
+    </tests>
+    <help><![CDATA[
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The tool removes user-specified features (rows) or samples (columns) from a wide format dataset.
+The user manually enters space delimited rows (features) and / or columns (samples).
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+**Unique ID for Flag file (feature ID or sample ID).**
+
+    - Name of the column in your Wide dataset that contains unique Feature IDs.
+
+**rowID.** 
+
+    - Name of the row(s) in your Wide dataset to drop.
+
+**colID.**
+
+    - Name of the column(s) in your Wide dataset to drop.
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+This tool outputs one TSV file:
+
+(1) A wide format dataset generated from the input wide format dataset where features and/or samples specified by the user have been removed.
+
+    ]]></help>
+    <expand macro="citations"/>
+</tool>

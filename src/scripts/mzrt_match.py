@@ -329,9 +329,9 @@ def main(args):
     summary_S = getSummary(match_df,umatch12_df,umatch21_df)
 
     #Plot venn Diagrams
-    logger.info(u"Plotting Figures")
-    with PdfPages(args.figure) as pdfOut:
-        plotFigures(args=args,pdf=pdfOut,data=summary_S)
+#    logger.info(u"Plotting Figures")
+#    with PdfPages(args.figure) as pdfOut:
+#        plotFigures(args=args,pdf=pdfOut,data=summary_S)
 
     #Output data
     writeOutput(paths=[args.unmatched1,args.unmatched2,args.matched,args.all],

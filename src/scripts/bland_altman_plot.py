@@ -15,7 +15,7 @@
 #
 ################################################################################
 # Import future libraries
-from __future__ import division
+
 
 # Import built-in libraries
 import os
@@ -92,6 +92,13 @@ def getOptions():
             required=True, help="Name of the output TSV for sample flags.")
     output.add_argument('-ff',"--flag_feature", dest="flagFeature", action='store', 
             required=True, help="Name of the output TSV for feature flags.")
+    ## AMM added following 2 arguments
+    output.add_argument('-pf',"--prop_feature", dest="propFeature", action='store', 
+            required=True, help="Name of the output TSV for proportion of features.")
+    output.add_argument('-ps',"--prop_sample", dest="propSample", action='store', 
+            required=True, help="Name of the output TSV for proportion of samples.")
+
+
     # Tool Input
     tool = parser.add_argument_group(title='Optional Settings')
     tool.add_argument('-po',"--process_only", dest="processOnly",
@@ -126,6 +133,9 @@ def getOptions():
     args.distName    = os.path.abspath(args.distName)
     args.flagSample  = os.path.abspath(args.flagSample)
     args.flagFeature = os.path.abspath(args.flagFeature)
+    # AMM added following 2
+    args.propFeature = os.path.abspath(args.propFeature)
+    args.propSamplee = os.path.abspath(args.propSample)
 
     return args
 
@@ -198,16 +208,16 @@ def summarizeFlags(dat, flags, combos):
         flagList_d = ["flag_dffits_{0}_{1}".format(c[0], c[1]) for c in combos if sampleID in c]
 
         # Sum the flags in flags for the current sampleID
-        flagSum.ix[:, sampleID] = flags[flagList].sum(axis=1).values
-        flagSum_p.ix[:, sampleID] = flags[flagList_p].sum(axis=1).values
-        flagSum_c.ix[:, sampleID] = flags[flagList_c].sum(axis=1).values
-        flagSum_d.ix[:, sampleID] = flags[flagList_d].sum(axis=1).values
+        flagSum.loc[:, sampleID] = flags[flagList].sum(axis=1).values
+        flagSum_p.loc[:, sampleID] = flags[flagList_p].sum(axis=1).values
+        flagSum_c.loc[:, sampleID] = flags[flagList_c].sum(axis=1).values
+        flagSum_d.loc[:, sampleID] = flags[flagList_d].sum(axis=1).values
 
         # Get the totals of possible flags in flags for the current sampleID
-        flagTotal.ix[:, sampleID] = flags[flagList].count(axis=1).values
-        flagTotal_p.ix[:, sampleID] = flags[flagList_p].count(axis=1).values
-        flagTotal_c.ix[:, sampleID] = flags[flagList_c].count(axis=1).values
-        flagTotal_d.ix[:, sampleID] = flags[flagList_d].count(axis=1).values
+        flagTotal.loc[:, sampleID] = flags[flagList].count(axis=1).values
+        flagTotal_p.loc[:, sampleID] = flags[flagList_p].count(axis=1).values
+        flagTotal_c.loc[:, sampleID] = flags[flagList_c].count(axis=1).values
+        flagTotal_d.loc[:, sampleID] = flags[flagList_d].count(axis=1).values
 
     # Calculate the proportion of samples and features using the marginal sums.
     propSample = flagSum.sum(axis=0) / flagTotal.sum(axis=0)
@@ -561,7 +571,7 @@ def main(args):
 
     # Loop over combinations and generate plots and return a list of flags.
     logger.info('Generating flags and plots.')
-    flags = map(lambda combo: iterateCombo(dat, combo, ppBA), combos)
+    flags = [iterateCombo(dat, combo, ppBA) for combo in combos]
     
     # Close PDF with plots
     ppBA.close()
@@ -574,6 +584,10 @@ def main(args):
     logger.info('Summarizing outlier flags.')
     propSample, propFeature, propSample_p, propFeature_p, propSample_c, propFeature_c, propSample_d, propFeature_d = summarizeFlags(dat, merged, combos)
     plotFlagDist(propSample, propFeature, args.distName)
+
+    ## AMM - output sample and feature proportions
+    propSample.to_csv(args.propSample, sep='\t')
+    propFeature.to_csv(args.propFeature, sep='\t')
 
     # Create sample level flags
     flag_sample = Flags(index=dat.sampleIDs)

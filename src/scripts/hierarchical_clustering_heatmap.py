@@ -143,7 +143,7 @@ if __name__ == '__main__':
 
     # Stablishing color palette
     palette = colorHandler(pal=args.palette, col=args.color)
-    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+    logger.info("Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
 
     # Calling main method

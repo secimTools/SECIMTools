@@ -131,10 +131,10 @@ def main(args):
         levels = [args.group]
     else:
         levels = []
-    logger.info(u"Groups used to color by: {0}".format(",".join(levels)))
+    logger.info("Groups used to color by: {0}".format(",".join(levels)))
 
     # Parsing files with interface
-    logger.info(u"Loading data with the Interface")
+    logger.info("Loading data with the Interface")
     dat = wideToDesign(args.input, args.design, args.uniqID, args.group,
                     anno=args.levels, runOrder=args.order, logger=logger)
 
@@ -143,7 +143,7 @@ def main(args):
     
     # Sort data by runOrder if provided
     if args.order:
-       logger.info(u"Sorting by runOrder")
+       logger.info("Sorting by runOrder")
        design_final = dat.design.sort_values(by=args.order, axis=0)
        wide_final = dat.wide.reindex(columns= design_final.index )
 		
@@ -159,14 +159,14 @@ def main(args):
     with PdfPages(args.figure) as pdf:
 
         # Plot density plot
-        logger.info(u"Plotting density for sample distribution")
+        logger.info("Plotting density for sample distribution")
         plotDensityDistribution(pdf=pdf, wide=wide_final, palette=palette)
 
         # Plot boxplots
-        logger.info(u"Plotting boxplot for sample distribution")
+        logger.info("Plotting boxplot for sample distribution")
         plotBoxplotDistribution(pdf=pdf, wide=wide_final, palette=palette)
         
-    logger.info(u"Script complete!")
+    logger.info("Script complete!")
 
 if __name__ == '__main__':
     # import Arguments
@@ -177,7 +177,7 @@ if __name__ == '__main__':
     sl.setLogger(logger)
 
     # Print logger info
-    logger.info(u"""Importing data with following parameters: 
+    logger.info("""Importing data with following parameters: 
             \tWide: {0}
             \tDesign: {1}
             \tUnique ID: {2}
@@ -189,7 +189,7 @@ if __name__ == '__main__':
 
     # Set color palette
     palette = colorHandler(pal=args.palette, col=args.color)
-    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+    logger.info("Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
     # main
     main(args)

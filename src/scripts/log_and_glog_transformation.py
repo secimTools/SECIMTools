@@ -106,17 +106,32 @@ def main(args):
        elif args.log_base == 'log10':
             logger.info(u"Running G-Log transformation with log 10")
             norm = np.log10( norm + np.sqrt( np.square(norm) + float(args.lambda_value) ) )
+
+
+
+    # Round results to 8 digits
     norm = norm.apply(lambda x: x.round(8))
+
+    # Treat inf as NaN
     norm.replace([np.inf, -np.inf], np.nan, inplace=True)
+
+    # Debugging step
+    # print "norm", norm
+
+    # Save file to CSV
     norm.to_csv(args.oname, sep="\t")
     logger.info("Finishing Script")
-
-
+    
 if __name__ == '__main__':
     # Command line options
     args = getOptions()
+
+    # Set up logger
     logger = logging.getLogger()
     sl.setLogger(logger)
+
+
+    #Starting script
     logger.info(u"""Importing data with following parameters:
                 Input: {0}
                 Design: {1}
@@ -124,8 +139,7 @@ if __name__ == '__main__':
                 Transformation: {3}
                 Log Base: {4}
                 Lambda: {5}
-                """.format(args.input, args.design, args.uniqID,
-                           args.transformation, args.log_base,
-                           args.lambda_value))
-    main(args)
+                """.format(args.input, args.design, args.uniqID, args.transformation, args.log_base, args.lambda_value ))
 
+    # Runing log transformation
+    main(args)

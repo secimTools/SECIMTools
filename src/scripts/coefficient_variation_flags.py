@@ -232,7 +232,7 @@ def main(args):
         levels = [args.group]
     else:
         levels = []
-    logger.info(u"Groups used to color by: {0}".format(",".join(levels)))
+    logger.info("Groups used to color by: {0}".format(",".join(levels)))
 
     # Import data
     dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group,
@@ -282,7 +282,7 @@ if __name__ == '__main__':
     sl.setLogger(logger)
 
     # Standar logging
-    logger.info(u"Importing data with following parameters: "\
+    logger.info("Importing data with following parameters: "\
                 "\n\tWide: {0}"\
                 "\n\tDesign: {1}"\
                 "\n\tUnique ID: {2}"\
@@ -291,7 +291,7 @@ if __name__ == '__main__':
 
     # Stablishing color palette for adata and cutoffs
     palette = colorHandler(pal=args.palette, col=args.color)
-    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+    logger.info("Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
     # Main
     main(args)

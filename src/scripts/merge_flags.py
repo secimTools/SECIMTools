@@ -85,22 +85,45 @@ def main(args):
     # Need to take each arg and turn into data frame and add to new list
     flagDataFrameList = []
     logger.info("Importing data")
+
+    # Check for commas, commas are used in galaxy. If there are commas separate
+    # the list by commas
     if ',' in args.flagFiles[0]:
         args.flagFiles = args.flagFiles[0].split(',')
-    print(args.flagFiles)
+
+        print(args.flagFiles)
+
+    # If args.filename is provided then use it to add its name to column names
+    # This paramether will should be used only on galaxy
     if args.filename:
+        # Cleaning weird characters on file names and replacing them with '_'. 
         filenames = [cleanStr(x=fname) for fname in args.filename]
-    print(filenames)
+
+        print(filenames)
+
+    # Convert files into dataframes and populate into new list
     for flagFile,filename in zip(args.flagFiles,filenames):
+        # Read table
         dataFrame = pd.read_table(flagFile)
+
+        # Flag uniqID
         if args.flagUniqID:
             try:
                 dataFrame.set_index(args.flagUniqID, inplace=True)
             except:
                 logger.error("Index {0} does not exist on file.".format(args.flagUniqID))
+
         dataFrame.columns=[name+"_"+filename for name in dataFrame.columns]
+
+        # List of frame
         flagDataFrameList.append(dataFrame)
+
+    #logger.info("Checking all indexes are the same")
+
+    # Merge flags using Flags class
     mergedFlags = Flags.merge(flagDataFrameList)
+
+    # Export merged flags
     # NOTE: Pandas cannot store NANs as an int. If there are NANs from the
     # merge, then the column becomes a float. Here I change the float output to
     # look like an int.

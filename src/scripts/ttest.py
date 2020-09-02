@@ -1,18 +1,18 @@
 #!/usr/bin/env python
-###############################################################################
+######################################################################################
 # DATE: 2017/06/19
 #
 # MODULE: ttest_unpaired_paired.py
 #
 # VERSION: 1.0
 #
-# AUTHOR: Alexander Kirpich (akirpich@ufl.edu)
+# AUTHOR: Alexander Kirpich (akirpich@ufl.edu) 
 #
 # DESCRIPTION: This tool runs t-test which can be either:
-#              "paired"   (for two groups, pairingID has to be provided) or
-#              "unpaired" (pairwise for all groups).
+#                   "paired"   (for two groups, pairingID has to be provided) or
+#                   "unpaired" (pairwise for all groups).
 #
-###############################################################################
+#######################################################################################
 # Import future libraries
 from __future__ import division
 # Import built-in libraries

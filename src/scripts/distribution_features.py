@@ -106,7 +106,7 @@ def main(args):
     Function to call all other functions
     """
     # Loading files with interface
-    logger.info(u"Loading data with the Interface")
+    logger.info("Loading data with the Interface")
     dat = wideToDesign(args.input,args.design,args.uniqID,group=args.group, logger=logger)
 
     # Cleaning from missing data
@@ -129,20 +129,20 @@ def main(args):
 
             # Iterating over groups
             for name, group in dat.design.groupby(args.group):
-                logger.info(u"Plotting for group {0}".format(name))
+                logger.info("Plotting for group {0}".format(name))
 
                 # Plotting Density and Box plot for the group
                 plotDensity(data=wide.T[group.index],name=name,pdf=pdf)
 
         # Get colors for each feature for "All groups"
-        logger.info(u"Plotting for group {0}".format("samples"))
+        logger.info("Plotting for group {0}".format("samples"))
         palette.getColors(design=dat.design, groups=[])
 
         # Plotting density and boxplots for all
         plotDensity(data=wide, name="samples", pdf=pdf)
 
         #Ending script
-        logger.info(u"Ending script")
+        logger.info("Ending script")
 
 
 if __name__ == '__main__':
@@ -154,6 +154,6 @@ if __name__ == '__main__':
             "\n\tDesign: {1}"\
             "\n\tUnique ID: {2}".format(args.input, args.design, args.uniqID))
     palette = colorHandler(pal=args.palette, col=args.color)
-    logger.info(u"Using {0} color scheme from {1} palette".format(args.color,
+    logger.info("Using {0} color scheme from {1} palette".format(args.color,
                 args.palette))
     main(args)
