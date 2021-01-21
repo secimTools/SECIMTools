@@ -5,12 +5,13 @@
 # SCRIPT: bland_altmant_plot.py
 #
 # VERSION: 1.3
-# 
-# AUTHOR: Miguel A Ibarra (miguelib@ufl.edu) 
-#            Edited by: Matt Thoburn (mthoburn@ufl.edu)
-# 
+#
+# AUTHORS: Miguel A Ibarra <miguelib@ufl.edu>
+#          Matt Thoburn <mthoburn@ufl.edu>
+#          Oleksandr Moskalenko <om@rc.ufl.edu>
+#
 # DESCRIPTION: This script takes a a wide format file and makes a Bland-Altman plot
-# 
+#
 # The output is a set of graphs and spreadsheets of flags
 #
 ################################################################################
@@ -67,57 +68,57 @@ def getOptions():
     summarized flags are saved by (--flag_summary).
 
     """
-    parser = argparse.ArgumentParser(description=description, 
+    parser = argparse.ArgumentParser(description=description,
             formatter_class=RawDescriptionHelpFormatter)
     # Standard Input
-    Standard = parser.add_argument_group(title='Standard input', 
+    Standard = parser.add_argument_group(title='Standard input',
             description='Standard input for SECIM tools.')
-    Standard.add_argument('-i',"--input", dest="input", action='store', 
+    Standard.add_argument('-i',"--input", dest="input", action='store',
             required=True, help="Input dataset in wide format.")
-    Standard.add_argument('-d',"--design", dest="design", action='store', 
+    Standard.add_argument('-d',"--design", dest="design", action='store',
             required=True, help="Design file.")
-    Standard.add_argument('-id',"--ID", dest="uniqID", action='store', 
+    Standard.add_argument('-id',"--ID", dest="uniqID", action='store',
             required=True, help="Name of the column with unique identifiers.")
-    Standard.add_argument('-g',"--group", dest="group", action='store', 
+    Standard.add_argument('-g',"--group", dest="group", action='store',
             required=False, help="Group/treatment identifier in design file"\
             " [Optional].")
     # Tool output
-    output = parser.add_argument_group(title='Required input', 
+    output = parser.add_argument_group(title='Required input',
             description='Additional required input for this tool.')
-    output.add_argument('-f',"--figure", dest="baName", action='store', 
+    output.add_argument('-f',"--figure", dest="baName", action='store',
             required=True, help="Name of the output PDF for Bland-Altman plots.")
-    output.add_argument('-fd',"--flag_dist", dest="distName", action='store', 
+    output.add_argument('-fd',"--flag_dist", dest="distName", action='store',
             required=True, help="Name of the output TSV for distribution flags.")
-    output.add_argument('-fs',"--flag_sample", dest="flagSample", action='store', 
+    output.add_argument('-fs',"--flag_sample", dest="flagSample", action='store',
             required=True, help="Name of the output TSV for sample flags.")
-    output.add_argument('-ff',"--flag_feature", dest="flagFeature", action='store', 
+    output.add_argument('-ff',"--flag_feature", dest="flagFeature", action='store',
             required=True, help="Name of the output TSV for feature flags.")
     ## AMM added following 2 arguments
-    output.add_argument('-pf',"--prop_feature", dest="propFeature", action='store', 
+    output.add_argument('-pf',"--prop_feature", dest="propFeature", action='store',
             required=True, help="Name of the output TSV for proportion of features.")
-    output.add_argument('-ps',"--prop_sample", dest="propSample", action='store', 
+    output.add_argument('-ps',"--prop_sample", dest="propSample", action='store',
             required=True, help="Name of the output TSV for proportion of samples.")
 
 
     # Tool Input
     tool = parser.add_argument_group(title='Optional Settings')
     tool.add_argument('-po',"--process_only", dest="processOnly",
-            action='store', nargs='+', default=False, required=False, 
+            action='store', nargs='+', default=False, required=False,
             help="Only process the given groups (list groups separated by"\
             " spaces) [Optional].")
     tool.add_argument('-rc',"--resid_cutoff", dest="residCutoff",
-            action='store', default=3, type=int, required=False, 
+            action='store', default=3, type=int, required=False,
             help="Cutoff value for flagging outliers [default=3].")
 
-    tool.add_argument('-sfc',"--sample_flag_cutoff", dest="sampleCutoff", 
-            action='store', default=.20, type=float, required=False, 
+    tool.add_argument('-sfc',"--sample_flag_cutoff", dest="sampleCutoff",
+            action='store', default=.20, type=float, required=False,
             help="Proportion cutoff value when flagging samples [default=0.20].")
-    tool.add_argument('-ffc',"--feature_flag_cutoff", dest="featureCutoff", 
-            action='store', default=.05, type=float, required=False, 
+    tool.add_argument('-ffc',"--feature_flag_cutoff", dest="featureCutoff",
+            action='store', default=.05, type=float, required=False,
             help="Proportion cutoff value when flagging features [default=0.05].")
 
     group4 = parser.add_argument_group(title='Development Settings')
-    group4.add_argument("--debug", dest="debug", action='store_true', 
+    group4.add_argument("--debug", dest="debug", action='store_true',
             required=False, help="Add debugging log output.")
     args = parser.parse_args()
     # Check if sample cutoff is within 0-1
@@ -140,7 +141,7 @@ def getOptions():
     return args
 
 def summarizeFlags(dat, flags, combos):
-    """ Given a set of flags calculate the proportion of times a feature is 
+    """ Given a set of flags calculate the proportion of times a feature is
         flagged.
 
     :Arguments:
@@ -226,7 +227,7 @@ def summarizeFlags(dat, flags, combos):
     # Calculate the proportion of samples and features using the marginal sums.
     propSample_p = flagSum_p.sum(axis=0) / flagTotal_p.sum(axis=0)
     propFeature_p = flagSum_p.sum(axis=1) / flagTotal_p.sum(axis=1)
-    
+
     # Calculate the proportion of samples and features using the marginal sums.
     propSample_c = flagSum_c.sum(axis=0) / flagTotal_c.sum(axis=0)
     propFeature_c = flagSum_c.sum(axis=1) / flagTotal_c.sum(axis=1)
@@ -238,8 +239,8 @@ def summarizeFlags(dat, flags, combos):
     return propSample, propFeature, propSample_p, propFeature_p, propSample_c, propFeature_c, propSample_d, propFeature_d
 
 def plotFlagDist(propSample, propFeature, pdf):
-    """ 
-    Plot the distribution of proportion of samples and features that 
+    """
+    Plot the distribution of proportion of samples and features that
     were outliers.
 
     :Arguments:
@@ -274,10 +275,11 @@ def plotFlagDist(propSample, propFeature, pdf):
     keys = list(propSample.head(30).keys())
 
     # Plotting quickBar
-    bar.quickBar(ax=fh.ax[0],y=list(propSample.head(30).get_values()),x=keys)
+    #breakpoint()
+    bar.quickBar(ax=fh.ax[0],y=list(propSample.head(30)),x=keys)
 
     # Formating axis
-    fh.formatAxis(xlim=(0,len(keys) + 1), ylim="ignore", xTitle="Sample ID", 
+    fh.formatAxis(xlim=(0,len(keys) + 1), ylim="ignore", xTitle="Sample ID",
                 yTitle="Proportion of features that were outliers.")
 
     # Save Figure in PDF
@@ -289,7 +291,7 @@ def plotFlagDist(propSample, propFeature, pdf):
     keys = list(propFeature.head(30).keys())
 
     # Plot bar plot
-    bar.quickBar(ax=fh.ax[0],y=list(propFeature.head(30).get_values()),x=keys)
+    bar.quickBar(ax=fh.ax[0],y=list(propFeature.head(30)),x=keys)
 
     # Format Axis
     fh.formatAxis(xlim=(0,len(keys) + 1), ylim="ignore", xTitle="Feature ID",
@@ -423,7 +425,7 @@ def makeBA(x, y, ax, fh):
     mask2 = infl['cooks_pval'] <= 0.5
     mask3 = infl['dffits']
     mask  = mask1 | mask2 | mask3
-    
+
     # Create BA plot
     scatter.scatter2D(ax=ax, x=mean[~mask], y=diff[~mask],colorList='b')
     scatter.scatter2D(ax=ax, x=mean[mask],  y=diff[mask], colorList='r')
@@ -506,7 +508,6 @@ def iterateCombo(dat, combo, pdf):
 
     # Set up figure with 2 subplots
     fh = figureHandler(proj='2d',numAx=2,numRow=2,numCol=2,arrangement=[(0,0,1,2),(0,1,1,2)])
-    
 
     # Scatter Plot of c1 vs c2
     makeScatter(dat.wide.loc[:, c1], dat.wide.loc[:, c2], fh.ax[0],fh)
@@ -525,7 +526,7 @@ def iterateCombo(dat, combo, pdf):
 
     # Shinking figure
     fh.shrink(top=.85,bottom=.25,left=.15,right=.9)
-    
+
     # Output figure to pdf
     fh.addToPdf(dpi=90,pdfPages=pdf)
 
@@ -543,7 +544,7 @@ def main(args):
     dat = wideToDesign(args.input, args.design, args.uniqID, args.group,
                         logger=logger)
 
-    # Get a list of samples to process, if processOnly is specified only 
+    # Get a list of samples to process, if processOnly is specified only
     # analyze specified group.
     if args.processOnly:
         dat.design = dat.design[dat.design[args.group].isin(args.processOnly)]
@@ -553,7 +554,7 @@ def main(args):
     # Create dataframe with sampleIDs that are to be analyzed.
     dat.keep_sample(dat.sampleIDs)
 
-    # Get list of pairwise combinations. If group is specified, only do 
+    # Get list of pairwise combinations. If group is specified, only do
     # within group combinations.
     combos = list()
     if args.group:
@@ -572,7 +573,7 @@ def main(args):
     # Loop over combinations and generate plots and return a list of flags.
     logger.info('Generating flags and plots.')
     flags = [iterateCombo(dat, combo, ppBA) for combo in combos]
-    
+
     # Close PDF with plots
     ppBA.close()
 
@@ -591,49 +592,41 @@ def main(args):
 
     # Create sample level flags
     flag_sample = Flags(index=dat.sampleIDs)
-    flag_sample.addColumn(column='flag_sample_BA_outlier', 
+    flag_sample.addColumn(column='flag_sample_BA_outlier',
                         mask=(propSample >= args.sampleCutoff))
-    flag_sample.addColumn(column='flag_sample_BA_pearson', 
+    flag_sample.addColumn(column='flag_sample_BA_pearson',
                         mask=(propSample_p >= args.sampleCutoff))
-    flag_sample.addColumn(column='flag_sample_BA_cooks', 
+    flag_sample.addColumn(column='flag_sample_BA_cooks',
                         mask=(propSample_c >= args.sampleCutoff))
-    flag_sample.addColumn(column='flag_sample_BA_dffits', 
+    flag_sample.addColumn(column='flag_sample_BA_dffits',
                         mask=(propSample_d >= args.sampleCutoff))
     flag_sample.df_flags.index.name = "sampleID"
     flag_sample.df_flags.to_csv(args.flagSample, sep='\t')
 
     # Create metabolite level flags
     flag_metabolite = Flags(dat.wide.index)
-    flag_metabolite.addColumn(column='flag_feature_BA_outlier', 
+    flag_metabolite.addColumn(column='flag_feature_BA_outlier',
                         mask=(propFeature >= args.featureCutoff))
-    flag_metabolite.addColumn(column='flag_feature_BA_pearson', 
+    flag_metabolite.addColumn(column='flag_feature_BA_pearson',
                         mask=(propFeature_p >= args.featureCutoff))
-    flag_metabolite.addColumn(column='flag_feature_BA_cooks', 
+    flag_metabolite.addColumn(column='flag_feature_BA_cooks',
                         mask=(propFeature_c >= args.featureCutoff))
-    flag_metabolite.addColumn(column='flag_feature_BA_dffits', 
+    flag_metabolite.addColumn(column='flag_feature_BA_dffits',
                         mask=(propFeature_d >= args.featureCutoff))
     flag_metabolite.df_flags.to_csv(args.flagFeature, sep='\t')
 
     # Finish Script
     logger.info("Script Complete!")
 
-if __name__ == '__main__':
-    # Command line options
-    args = getOptions()
 
-    # Expose cutoff as global
+if __name__ == '__main__':
+    args = getOptions()
     global cutoff
     cutoff = args.residCutoff
-
-    # Set up logging
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel='debug')
     else:
         sl.setLogger(logger)
-
-    # Plotting import info 
     logger.info('Importing Data')
-
-    # Running script
     main(args)
