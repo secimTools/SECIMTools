@@ -37,8 +37,7 @@ def preProcessing(factorNames, factorTypes, design):
     # Split by ',' the names and the types of the factors
     factorNames = factorNames.split(",")
     factorTypes = factorTypes.split(",")
-    factorInteractor = factorInteractor.split(",")  # AMM added this to specify which col to use for interactions
-
+    
     # Get the list of columns on the design file
     designCols = design.columns.tolist()
     
