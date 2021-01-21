@@ -6,3 +6,5 @@ notebook/.ipynb_checkpoints/*
 out*
 test-results*
 .run/
+src/dist
+src/build
