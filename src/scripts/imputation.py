@@ -1,23 +1,20 @@
 #!/usr/bin/env python
 ######################################################################################
-# DATE: 2017/03/10
 #
 # MODULE: imputation.py
 #
-# VERSION: 1.0
-#
-# AUTHOR: Matt Thoburn (mthoburn@ufl.edu) ed. Miguel Ibarra (miguelib@ufl.edu)
+# AUTHORS: Matt Thoburn <mthoburn@ufl.edu>
+#          Miguel Ibarra <miguelib@ufl.edu>
 #
 # DESCRIPTION: This attempts to impute missing data by an algorithm of the user's choice
 #######################################################################################
 
-# Import built-in libraries
+
 import os
 import sys
 import logging
 import argparse
 from argparse import RawDescriptionHelpFormatter
-# Import add-on libraries
 import numpy as np
 import pandas as pd
 import pymc
@@ -29,73 +26,158 @@ import rpy2.robjects.numpy2ri
 import rpy2.robjects as robjects
 from rpy2.robjects.packages import importr
 from rpy2.robjects.vectors import StrVector
-# Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
 
 
-def getOptions(myOpts = None):
-    description="""
+def getOptions(myOpts=None):
+    description = """
     The tool performs imputations using selected algorith
     """
-    parser = argparse.ArgumentParser(description=description, 
-                                    formatter_class=RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=description, formatter_class=RawDescriptionHelpFormatter
+    )
     # Standard Input
-    standard = parser.add_argument_group(title='Standard input', 
-                        description='Standard input for SECIM tools.')
-    standard.add_argument( "-i","--input", dest="input", action='store', required=True, 
-                        help="Input dataset in wide format.")
-    standard.add_argument("-d" ,"--design",dest="design", action='store', required=True,
-                        help="Design file.")
-    standard.add_argument("-id", "--ID",dest="uniqID", action='store', required=True, 
-                        help="Name of the column with unique identifiers.")
-    standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
-                        default=False,help="Name of the column with groups.")
+    standard = parser.add_argument_group(
+        title="Standard input", description="Standard input for SECIM tools."
+    )
+    standard.add_argument(
+        "-i",
+        "--input",
+        dest="input",
+        action="store",
+        required=True,
+        help="Input dataset in wide format.",
+    )
+    standard.add_argument(
+        "-d",
+        "--design",
+        dest="design",
+        action="store",
+        required=True,
+        help="Design file.",
+    )
+    standard.add_argument(
+        "-id",
+        "--ID",
+        dest="uniqID",
+        action="store",
+        required=True,
+        help="Name of the column with unique identifiers.",
+    )
+    standard.add_argument(
+        "-g",
+        "--group",
+        dest="group",
+        action="store",
+        required=False,
+        default=False,
+        help="Name of the column with groups.",
+    )
     # Tool Output
-    output = parser.add_argument_group(title='Required output')
-    output.add_argument("-o","--output",dest="output",action="store",required=False,
-                        help="Path of output file.")
+    output = parser.add_argument_group(title="Required output")
+    output.add_argument(
+        "-o",
+        "--output",
+        dest="output",
+        action="store",
+        required=False,
+        help="Path of output file.",
+    )
     # Tool Input
-    tool = parser.add_argument_group(title='Tool input',
-                        description="Tool specific input.")
-    tool.add_argument("-s","--strategy", dest="strategy", action="store", 
-                        required=True, choices=["knn","mean","median","bayesian"],
-                        default=None, help="Imputation strategy: KNN, mean, "
-                        "median, or most frequent")
-    tool.add_argument("-noz","--no_zero",dest="noZero",action='store_true',
-                        required=False,default=True,help="Treat 0 as missing?")
-    tool.add_argument("-noneg","--no_negative",dest="noNegative",action='store_true',
-                        required=False,default=True,help="Treat negative as missing?")
-    tool.add_argument("-ex","--exclude",dest="exclude",action='store',required=False,
-                        default=False,help="Additional values to treat as missing" \
-                        "data, seperated by commas")
-    tool.add_argument("-rc","--row_cutoff",dest="rowCutoff",action='store',
-                        required=False,default=.5,help="Percent cutoff for "\
-                        "imputation of rows.If this is exceeded, imputation will"\
-                        "be done by mean instead of knn. Default: .5")
-    tool.add_argument("-dist","--distribution", dest="dist", required=False,
-                        default="poisson", choices =  ["Poisson","Normal"],
-                        help="use mean or median to generate mu value for "\
-                        "bayesian imputation")
+    tool = parser.add_argument_group(
+        title="Tool input", description="Tool specific input."
+    )
+    tool.add_argument(
+        "-s",
+        "--strategy",
+        dest="strategy",
+        action="store",
+        required=True,
+        choices=["knn", "mean", "median", "bayesian"],
+        default=None,
+        help="Imputation strategy: KNN, mean, " "median, or most frequent",
+    )
+    tool.add_argument(
+        "-noz",
+        "--no_zero",
+        dest="noZero",
+        action="store_true",
+        required=False,
+        default=True,
+        help="Treat 0 as missing?",
+    )
+    tool.add_argument(
+        "-noneg",
+        "--no_negative",
+        dest="noNegative",
+        action="store_true",
+        required=False,
+        default=True,
+        help="Treat negative as missing?",
+    )
+    tool.add_argument(
+        "-ex",
+        "--exclude",
+        dest="exclude",
+        action="store",
+        required=False,
+        default=False,
+        help="Additional values to treat as missing" "data, seperated by commas",
+    )
+    tool.add_argument(
+        "-rc",
+        "--row_cutoff",
+        dest="rowCutoff",
+        action="store",
+        required=False,
+        default=0.5,
+        help="Percent cutoff for "
+        "imputation of rows.If this is exceeded, imputation will"
+        "be done by mean instead of knn. Default: .5",
+    )
+    tool.add_argument(
+        "-dist",
+        "--distribution",
+        dest="dist",
+        required=False,
+        default="poisson",
+        choices=["Poisson", "Normal"],
+        help="use mean or median to generate mu value for " "bayesian imputation",
+    )
     # KNN Input
-    knn = parser.add_argument_group(title='KNN input')
-    knn.add_argument("-k","--knn",dest="knn",action='store', required=False,
-                        default=5,help="Number of nearest neighbors to search Default: 5.")
-    knn.add_argument("-cc", "--col_cutoff", dest="colCutoff", action='store',
-                        required=False, default=.8, help="Percent cutoff for" \
-                        "imputation of columns. If this is exceeded, imputation"\
-                        "will be done by mean instead of knn. Default: .8")
+    knn = parser.add_argument_group(title="KNN input")
+    knn.add_argument(
+        "-k",
+        "--knn",
+        dest="knn",
+        action="store",
+        required=False,
+        default=5,
+        help="Number of nearest neighbors to search Default: 5.",
+    )
+    knn.add_argument(
+        "-cc",
+        "--col_cutoff",
+        dest="colCutoff",
+        action="store",
+        required=False,
+        default=0.8,
+        help="Percent cutoff for"
+        "imputation of columns. If this is exceeded, imputation"
+        "will be done by mean instead of knn. Default: .8",
+    )
     args = parser.parse_args()
 
     # Standardize paths
-    args.input  = os.path.abspath(args.input)
+    args.input = os.path.abspath(args.input)
     args.design = os.path.abspath(args.design)
     args.output = os.path.abspath(args.output)
 
-    return(args)
+    return args
 
 
-def preprocess(noz,non,ex,data):
+def preprocess(noz, non, ex, data):
     """
     Preprocesses data to replace all unaccepted values with np.nan so they can be imputedDataAsNumpy
 
@@ -121,26 +203,24 @@ def preprocess(noz,non,ex,data):
     data = data.applymap(float)
 
     # All string instances on data will be set to nans
-    data = data.applymap(lambda x: np.nan if isinstance(x,str) else x)
+    data = data.applymap(lambda x: np.nan if isinstance(x, str) else x)
 
     # If non zero then convert al 0's to nans
     if noz:
-        data = data.where(data != 0,np.nan)
+        data = data.where(data != 0, np.nan)
 
     # if non negative numbers then convert al negative numbers to nans
     if non:
         data = data.where(data > 0, np.nan)
 
-    # If custum character to be removed
+    # If a custom character is to be removed
     if ex:
         exclude = ex.split(",")
-        data = data.applymap(lambda x:  np.nan if x in exclude else x)
-
-    # Returning cleaned data
+        data = data.applymap(lambda x: np.nan if x in exclude else x)
     return data
 
 
-def imputeKNN(rc,cc,k,dat):
+def imputeKNN(rc, cc, k, dat):
     """
     Imputes by K-Nearest Neighbors algorithm
 
@@ -166,29 +246,31 @@ def imputeKNN(rc,cc,k,dat):
     rpy2.robjects.numpy2ri.activate()
 
     # Import R packages
-    base = importr('base')
-    utils = importr('utils')
-    robjects.r('library(impute)')
+    base = importr("base")
+    utils = importr("utils")
+    robjects.r("library(impute)")
 
     # Creating a list with all the different groups
     # once inputed they will be concatenated back
     fixedFullDataset = list()
 
-    out = sys.stdout #Save the stdout path for later, we're going to need it
-    f = open('/dev/null','w') #were going to use this to redirect stdout temporarily
+    out = sys.stdout  # Save the stdout path for later, we're going to need it
+    f = open("/dev/null", "w")  # were going to use this to redirect stdout temporarily
 
     logger.info("Running KNN imputation")
     # Iterating over groups
     for title, group in dat.design.groupby(dat.group):
         # If len of the group then do not inpute
-        if len(group.index) == 1: #No nearby neighbors to impute
+        if len(group.index) == 1:  # No nearby neighbors to impute
             logger.info(title + " has no neighbors, will not impute")
             fixedFullDataset.append(dat.wide[group.index])
             continue
 
         # If group len is not enough for k then use len - 1
-        if len(group.index) <= k: #some nearby, but not enough to use user specified k
-            logger.info(title + " group length less than k, will use group length - 1 instead")
+        if len(group.index) <= k:  # some nearby, but not enough to use user specified k
+            logger.info(
+                title + " group length less than k, will use group length - 1 instead"
+            )
             k = len(group.index) - 1
 
         # Convert wide data to a matrix
@@ -198,30 +280,32 @@ def imputeKNN(rc,cc,k,dat):
         numRows, numCols = wideData.shape
 
         # Creatting R objects
-        matrixInR = robjects.r['matrix'](wideData, nrow=numRows, ncol=numCols)
-        imputeKNN = robjects.r('impute.knn')
+        matrixInR = robjects.r["matrix"](wideData, nrow=numRows, ncol=numCols)
+        imputeKNN = robjects.r("impute.knn")
 
         # Impute on R module
         sys.stdout = f
-        imputedObject = imputeKNN(data=matrixInR,k=k,rowmax=rc,colmax=cc)
+        imputedObject = imputeKNN(data=matrixInR, k=k, rowmax=rc, colmax=cc)
         sys.stdout = out
 
         # Taking the inputed object back to python
         imputedDataAsNumpy = np.array(imputedObject[0])
 
         # Saving the inputed data as pandas DataFrame
-        imputedDataAsPandas = pd.DataFrame(imputedDataAsNumpy,
-                                            index=dat.wide[group.index].index,
-                                            columns=dat.wide[group.index].columns)
+        imputedDataAsPandas = pd.DataFrame(
+            imputedDataAsNumpy,
+            index=dat.wide[group.index].index,
+            columns=dat.wide[group.index].columns,
+        )
 
         # Apending the inputed data to the full pandas datset
         fixedFullDataset.append(imputedDataAsPandas)
 
-        #reset k back to normal if it was modified @125
+        # reset k back to normal if it was modified @125
         k = int(args.knn)
 
         # Concatenating list of results to full dataframe again
-        pdFull = pd.concat(fixedFullDataset,axis=1)
+        pdFull = pd.concat(fixedFullDataset, axis=1)
 
     # Returning pandas dataframe
     return pdFull
@@ -250,7 +334,7 @@ def imputeRow(row, rc, strategy, dist=False):
     """
     # If ratio of missing/present values is greater than the row cutoff then
     # don't impute and save the row as it is
-    if float(row.isnull().sum())/float(len(row)) > rc:
+    if float(row.isnull().sum()) / float(len(row)) > rc:
         return row
 
     # If ratio is less than the rc then review for impute
@@ -258,9 +342,9 @@ def imputeRow(row, rc, strategy, dist=False):
         # If there's any missing value impute with either mean, median or bayesian.
         if row.isnull().any():
             if strategy == "mean":
-                row.fillna(np.nanmean(row),inplace=True)
+                row.fillna(np.nanmean(row), inplace=True)
             elif strategy == "median":
-                row.fillna(np.nanmedian(row),inplace=True)
+                row.fillna(np.nanmedian(row), inplace=True)
             elif strategy == "bayesian":
                 row = imputeBayesian(row=row, dist=dist)
             return row
@@ -270,52 +354,52 @@ def imputeRow(row, rc, strategy, dist=False):
 
 
 def imputeBayesian(row, dist):
-    out = sys.stdout #Save the stdout path for later, we're going to need it
-    f = open('/dev/null','w') #were going to use this to redirect stdout 
+    out = sys.stdout  # Save the stdout path for later, we're going to need it
+    f = open("/dev/null", "w")  # were going to use this to redirect stdout
 
     # filling nan with 0 so everything works
     row.fillna(0, inplace=True)
 
     # Masked Values
-    maskedValues = np.ma.masked_equal(row.values,value=0)
+    maskedValues = np.ma.masked_equal(row.values, value=0)
 
     # Choose between distributions, either normal or Poisson.
     if dist == "Normal":
 
         # Calculate tau
         if np.std(maskedValues) == 0:
-            tau = np.square(1/(np.mean(maskedValues)/3))
+            tau = np.square(1 / (np.mean(maskedValues) / 3))
         else:
-            tau = np.square((1/(np.std(maskedValues))))
+            tau = np.square((1 / (np.std(maskedValues))))
 
         # Uses only mean
-        x = Impute('x', Normal, maskedValues, tau=tau, mu=np.mean(maskedValues))
+        x = Impute("x", Normal, maskedValues, tau=tau, mu=np.mean(maskedValues))
 
     # For Poisson
     elif dist == "Poisson":
-        x = Impute('x', Poisson, maskedValues, mu=np.mean(maskedValues))
+        x = Impute("x", Poisson, maskedValues, mu=np.mean(maskedValues))
 
     # Fancy test
-    sys.stdout = f # Skipin stdout
+    sys.stdout = f  # Skipin stdout
     m = MCMC(x)
-    m.sample(iter=1,burn=0,thin=1)
-    sys.stdout = out # coming back 
+    m.sample(iter=1, burn=0, thin=1)
+    sys.stdout = out  # coming back
 
     # Getting list of missing values
     missing = [i for i in range(len(row.values)) if row.values[i] == 0]
 
     # Getting the imputed values from the model
     for i in range(len(missing)):
-                keyString = "x[" + str(missing[i]) + "]"
-                imputedValue = m.trace(keyString)[:]
-                row.iloc[missing[i]] = imputedValue[0]
+        keyString = "x[" + str(missing[i]) + "]"
+        imputedValue = m.trace(keyString)[:]
+        row.iloc[missing[i]] = imputedValue[0]
 
     # Returning to use nans
-    row.replace(0,np.nan, inplace=True)
+    row.replace(0, np.nan, inplace=True)
     return row
 
 
-def iterateGroups(dat,strategy, rc, dist=False):
+def iterateGroups(dat, strategy, rc, dist=False):
     # Create a list to concatenate all the results
     imputed = list()
 
@@ -328,12 +412,12 @@ def iterateGroups(dat,strategy, rc, dist=False):
         if len(currentGroup.index) > 1:
 
             # Doing  mean/median imputation
-            currentGroup.apply(imputeRow,args=(rc,strategy,dist), axis=1)
+            currentGroup.apply(imputeRow, args=(rc, strategy, dist), axis=1)
 
         # Appending imputed group to list of groups
         imputed.append(currentGroup)
 
-    # Concatenate results into one single dataframe that contains all the 
+    # Concatenate results into one single dataframe that contains all the
     # Columns of the orignal one but with imputed values when possible
     imputed_df = pd.concat(imputed, axis=1)
 
@@ -344,23 +428,27 @@ def iterateGroups(dat,strategy, rc, dist=False):
 def main(args):
     # Import data with interface
     logger.info("Importig data with interface")
-    dat = wideToDesign(args.input, args.design, uniqID=args.uniqID, group=args.group,
-                        logger=logger)
+    dat = wideToDesign(
+        args.input, args.design, uniqID=args.uniqID, group=args.group, logger=logger
+    )
 
     # Preprocessing
     logger.info("Preprocessing")
-    dat.wide = preprocess(noz=args.noZero, non=args.noNegative, ex=args.exclude,
-                            data=dat.wide)
+    dat.wide = preprocess(
+        noz=args.noZero, non=args.noNegative, ex=args.exclude, data=dat.wide
+    )
 
     # Choosing knn as imputation method
     logger.info("Inpute")
     if args.strategy == "knn":
-        pdFull = imputeKNN(rc=float(args.rowCutoff), cc=float(args.colCutoff),
-                            k=int(args.knn), dat=dat)
+        pdFull = imputeKNN(
+            rc=float(args.rowCutoff), cc=float(args.colCutoff), k=int(args.knn), dat=dat
+        )
     else:
         # Iterate over groups and perform either a mean or median imputation.
-        pdFull = iterateGroups(dat=dat, strategy=args.strategy, dist=args.dist, 
-                                rc=args.rowCutoff)
+        pdFull = iterateGroups(
+            dat=dat, strategy=args.strategy, dist=args.dist, rc=args.rowCutoff
+        )
 
     # Convert dataframe to float and round results to 4 digits
     pdFull.applymap(float)
@@ -374,14 +462,15 @@ def main(args):
     logger.info("Script Complete!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = getOptions()
     logger = logging.getLogger()
     sl.setLogger(logger)
-    logger.info("Importing data with following parameters:"\
-                "\n\tInput: {0}"\
-                "\n\tDesign: {1}"\
-                "\n\tuniqID: {2}"\
-                "\n\tgroup: {3}".format(args.input, args.design, args.uniqID, 
-                                args.group))
+    logger.info(
+        "Importing data with following parameters:"
+        "\n\tInput: {0}"
+        "\n\tDesign: {1}"
+        "\n\tuniqID: {2}"
+        "\n\tgroup: {3}".format(args.input, args.design, args.uniqID, args.group)
+    )
     main(args)
