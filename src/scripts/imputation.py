@@ -192,7 +192,7 @@ def imputeKNN(rc,cc,k,dat):
             k = len(group.index) - 1
 
         # Convert wide data to a matrix
-        wideData = dat.wide[group.index].as_matrix()
+        wideData = dat.wide[group.index].values
 
         # Getting number of rows and columns in wide matrix
         numRows, numCols = wideData.shape
