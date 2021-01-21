@@ -56,7 +56,7 @@ def serHist(ax,dat,color,range=None,bins=10,normed=False,orientation="vertical",
         :type orientation: string
         :param orientation: vertical or horizontal
     """
-    ax.hist(dat,color=color,alpha=.7,orientation=orientation,range=range,bins=bins,normed=normed,label=label)
+    ax.hist(dat,color=color,alpha=.7,orientation=orientation,range=range,bins=bins,label=label)
 
 def hist(ax,dat,colors,range=None,bins=10,normed=False,orientation="vertical",label=""):
     """
