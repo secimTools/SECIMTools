@@ -1,0 +1,61 @@
+{% set name = "secimtools" %}
+{% set version = "1.1.0" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "5344ef2767b280bb976d0971fb9894a59c8fc83b1fe1ee5cc9a42270c1880b3c" %}
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  url: https://files.pythonhosted.org/packages/7c/ed/d6d5156ed2590ad8f58bf9604bccff9ff52784a5bd257d835fb1b3894dee/{{ name }}-{{ version }}.tar.gz
+  '{{ hash_type }}': '{{ hash_value }}'
+
+build:
+  skip: True  # [py3k]
+  number: 1
+  script: python -m pip install --no-deps --ignore-installed .
+
+requirements:
+  host:
+    - python
+    - pip
+    - wheel
+    - setuptools
+    - numpy >=1.18
+    - lxml
+  run:
+    - python
+    - {{ pin_compatible('numpy') }}
+    - bioconductor-impute >=1.46.0
+    - lxml
+    - matplotlib >=3.2
+    - matplotlib-venn >=0.11.1
+    - palettable >=3.0.0
+    - pandas >=1.0
+    - patsy >=0.5
+    - pymc >=2.3
+    - r-glmnet >=4.0
+    - rpy2 >=3.1
+    - scikit-learn >=0.22
+    - scipy >=1.4
+    - seaborn >=0.10
+    - statsmodels >=0.11
+
+test:
+  imports:
+    - secimtools
+    - secimtools.anovaModules
+    - secimtools.dataManager
+    - secimtools.visualManager
+
+about:
+  home: https://github.com/secimTools/SECIMTools
+  license: MIT License
+  license_family: MIT
+  summary: Metabolomics tools from the SECIM project
+  description: 'SECIMTools project aims to develop a suite of tools for processing of metabolomics data, which can be run in a standalone mode or via Galaxy Genomics Framework.'
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers: 'om@rc.ufl.edu'
