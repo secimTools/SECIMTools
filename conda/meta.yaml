@@ -1,5 +1,5 @@
 {% set name = "secimtools" %}
-{% set version = "1.1.0" %}
+{% set version = "21.1.21" %}
 {% set hash_type = "sha256" %}
 {% set hash_value = "5344ef2767b280bb976d0971fb9894a59c8fc83b1fe1ee5cc9a42270c1880b3c" %}
 package:
@@ -12,7 +12,7 @@ source:
 
 build:
   skip: True  # [py3k]
-  number: 1
+  number: 0
   script: python -m pip install --no-deps --ignore-installed .
 
 requirements:
@@ -25,7 +25,7 @@ requirements:
     - lxml
   run:
     - python
-    - {{ pin_compatible('numpy') }}
+    - numpy
     - bioconductor-impute >=1.46.0
     - lxml
     - matplotlib >=3.2
