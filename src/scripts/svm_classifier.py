@@ -189,8 +189,8 @@ def main(args):
 
        # Checking if the sample sizes is smaller than 100 and exiting if that is the case.
        if (len(train_classes_to_feed) < 100):
-	  logger.info(u"The required number of samples for a single cross-validation procedure is at least 100. The dataset has {0}.".format(len(train_classes_to_feed)))
-	  logger.info(u"Exiting the tool.")
+          logger.info(u"The required number of samples for a single cross-validation procedure is at least 100. The dataset has {0}.".format(len(train_classes_to_feed)))
+          logger.info(u"Exiting the tool.")
           exit()	
 
        # Defining boundaries of C used for a grid for a cross-validation procedure that user has supplied.
@@ -264,19 +264,19 @@ def main(args):
 
        # Checking if the sample sizes is smaller than 100 and exiting if that is the case.
        if (len(train_classes_to_feed) < 100):
-	  logger.info(u"The required number of samples for a double cross-validation procedure is at least 100. The dataset has {0}.".format(len(train_classes_to_feed)))
-	  logger.info(u"Exiting the tool.")
-          exit()	
+          logger.info(u"The required number of samples for a double cross-validation procedure is at least 100. The dataset has {0}.".format(len(train_classes_to_feed)))
+          logger.info(u"Exiting the tool.")
+          exit()
 
        # Defining boundaries of C used for a grid for a cross-validation procedure that user has supplied.
        C_lower = float(args.C_lower_bound)
        C_upper = float(args.C_upper_bound)
-       
+
        # Debugging step.  
        # print "C_lower", C_lower
        # print "C_upper", C_upper
-       
-       # Creating a list of values to perform single cross-validation over.	
+
+       # Creating a list of values to perform single cross-validation over.
        # We tell the user that the user-specified range will be splitted into 20 pieces and each value will be investigated in cross-validation procedure.
        C_list_of_values =  np.linspace(C_lower, C_upper, 20)
 
@@ -286,8 +286,8 @@ def main(args):
 
        for index_current in range(0, 20):
 
-	   # Creating the set of candidates that we will use for both cross-validation loops: internal and external
-	   C_list_of_values_current =  np.linspace(C_list_of_values[0], C_list_of_values[index_current], (index_current+1) )
+       # Creating the set of candidates that we will use for both cross-validation loops: internal and external
+           C_list_of_values_current =  np.linspace(C_list_of_values[0], C_list_of_values[index_current], (index_current+1) )
   
            # Creating dictionary we gonna feed to the single cross-validation procedure.
            # In this disctionary gamma is speficied by the user.
@@ -347,7 +347,7 @@ def main(args):
            else:
               # Checking whether adding this extra component helped to what we already had. 
               if external_cv.mean() > best_predction_proportion:
-              	 best_predction_proportion = external_cv.mean()
+                 best_predction_proportion = external_cv.mean()
                  C_final = C_list_of_values[index_current]
 
 
@@ -358,13 +358,7 @@ def main(args):
     # This number shoul be saved by now in C_final variable.
     # Debugging piece.
     C_final = float(C_final)
-    print "The value of C used for the SVM classifier is ", C_final
-
-    
-    # Debugging step
-    # print "train_classes_to_feed",train_classes_to_feed
-    # print "train_data_to_feed",train_data_to_feed
-
+    print("The value of C used for the SVM classifier is ", C_final)
 
     # Trainig the SVM
     try:
