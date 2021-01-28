@@ -9,3 +9,4 @@ test-results*
 src/dist
 src/build
 src/secimtools.egg-info
+testout
