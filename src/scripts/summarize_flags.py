@@ -64,7 +64,7 @@ def getOptions():
 
 def main(args):
     # Convert flag file to DataFrame
-    df_inp_flags = pd.DataFrame.from_csv(args.flagFile, sep='\t')
+    df_inp_flags = pd.read_csv(args.flagFile, sep='\t')
 
     #Creating flag object
     offFlags_df = Flags(index=df_inp_flags.index)
