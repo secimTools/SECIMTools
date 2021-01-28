@@ -5,9 +5,9 @@
 # SCRIPT: magnitude_difference_flags.py
 #
 # VERSION: 2.0
-# 
+#
 # AUTHOR: Miguel A Ibarra (miguelib@ufl.edu)
-# 
+#
 # DESCRIPTION: This script takes a a wide format file and counts digits in 
 # decimal numbers.The output is an html file containing graphs and data
 #
@@ -17,7 +17,7 @@ import os
 import logging
 import zipfile
 import argparse
-from StringIO import StringIO as IO
+from io import StringIO
 
 # Import add-on libraries
 import matplotlib
@@ -270,7 +270,10 @@ def main(args):
         folderDir = args.htmlPath
         try:
             os.makedirs(folderDir)
-        except Exception, e:
+#KAS: changing raising exception error. Gives syntax error
+#        except Exception, e:
+#        raise Exception (e)
+        except Exception as e:
             logger.error("Error. {}".format(e))
 
         # Initiation zip files
