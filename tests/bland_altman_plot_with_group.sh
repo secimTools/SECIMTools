@@ -10,14 +10,14 @@
 #        <output name="flag_feature"       file="ST000006_bland_altman_plot_with_group_flag_feature.tsv" />
 #     </test>
 
-TEST="bland_altman_plot_with_group"
+SCRIPT=$(basename "${BASH_SOURCE[0]}");
+TEST="${SCRIPT%.*}"
 TESTDIR="testout/${TEST}"
-rm -rf ${TESTDIR}
-mkdir -p ${TESTDIR}
-echo "### Starting test: ${TEST}"
-
 INPUT_DIR="galaxy/test-data"
 OUTPUT_DIR=$TESTDIR
+rm -rf "${TESTDIR}"
+mkdir -p "${TESTDIR}"
+echo "### Starting test: ${TEST}"
 if [[ $# -gt 0 ]]; then OUTPUT_DIR=$1 ; fi
 mkdir -p "${OUTPUT_DIR}"
 
@@ -33,5 +33,4 @@ bland_altman_plot.py \
     -pf "$OUTPUT_DIR/ST000006_bland_altman_plot_prop_feature.tsv" \
     -ps "$OUTPUT_DIR/ST000006_bland_altman_plot_prop_sample.tsv"
 
-    date
-echo "### Finished test: ${TEST}"
+echo "### Finished test: ${TEST} on $(date)"
