@@ -77,13 +77,16 @@ def getOptions():
 def main(args):
     # Loading design
     if args.design:
-        design = pd.DataFrame.from_csv(args.design,sep="\t")
-        design.reset_index(inplace=True)
-    else:
-        design = False
+    #    design = pd.DataFrame.from_csv(args.design,sep="\t")
+        design = pd.read_csv(args.design,sep="\t")
+    design.reset_index(inplace=True)
+#    else:
+#        design = False
 
     # Loading wide file
-    wide = pd.DataFrame.from_csv(args.input,sep="\t")
+   #KAS: from_csv is deprecated
+   # wide = pd.DataFrame.from_csv(args.input,sep="\t")
+    wide = pd.read_csv(args.input,sep="\t")
 
     # Create figureHandler object
     fh = figureHandler(proj="2d",figsize=(14,8))
