@@ -125,7 +125,7 @@ def runLDA(dat,nComp,cv_status):
 
         :type cv_status: string
         :param cv_status: Cross-validation status for nComp. Can be none, single and double. 
-			  If "none" no cross-validation is performed and nComp specified by the user is used instead.
+              If "none" no cross-validation is performed and nComp specified by the user is used instead.
 
     :Returns:
         :rtype scores_df: pandas.DataFrame
@@ -136,7 +136,7 @@ def runLDA(dat,nComp,cv_status):
     # The code below depends on cross validation status. The status can be either "single", "double" or "none".
 
 
-    # Case 1: User provides cv_status = "none". No cross-validation will be performed.	
+    # Case 1: User provides cv_status = "none". No cross-validation will be performed.    
     # The number of components shoul be specified by the user in the nComp variable. The default in xml shoul be 2.
     if cv_status == "none":
       
@@ -146,14 +146,14 @@ def runLDA(dat,nComp,cv_status):
        # If by mistake the number the componentes nComp was not provided we hardcode it to 2.
        if nComp is None:
           logger.info(u"The number of componets was not provided! Default number 2 is used.")
-	  nComp = 2
+          nComp = 2
 
        # Putting the user defined (or corrected if nothing imputted) number of compoents nComp directly into index_min.
-       index_min = nComp	
+       index_min = nComp    
 
 
 
-    # Case 2: User provides cv_status = "single". Only single cross-validation will be performed.	
+    # Case 2: User provides cv_status = "single". Only single cross-validation will be performed.    
     if cv_status == "single":
 
        # Telling the user that we are using the number of components determined via a single cross-validation.
@@ -161,12 +161,12 @@ def runLDA(dat,nComp,cv_status):
 
        # Pulling the number of unique groups that we will feed to cross-validation.
        group_values_series = dat.transpose()[dat.group].T.squeeze()
-	
+    
        # Checking if the sample sizes is smaller than 100 and exiting if that is the case.
        if (len(group_values_series) < 100):
-	  logger.info(u"The required number of samples for a single cross-validation procedure is at least 100. The dataset has {0}.".format(len(group_values_series)))
-	  logger.info(u"Exiting the tool.")
-          exit()	
+          logger.info(u"The required number of samples for a single cross-validation procedure is at least 100. The dataset has {0}.".format(len(group_values_series)))
+          logger.info(u"Exiting the tool.")
+          exit()    
 
        group_values_series_unique = group_values_series.unique()
        number_of_unique_groups = group_values_series_unique.shape[0]
@@ -174,7 +174,7 @@ def runLDA(dat,nComp,cv_status):
        n_max = max( number_of_unique_groups - 1, 2 )
    
 
-       # Creating a list of values to perform single cross-validation over.	
+       # Creating a list of values to perform single cross-validation over.    
        # P.S. We do not consider scenario of a single component so that we can produce at least single 2D plot in the end.
        n_list = range(2, n_max + 1)
 
@@ -205,9 +205,9 @@ def runLDA(dat,nComp,cv_status):
 
        # Checking if the sample sizes is smaller than 100 and exiting if that is the case.
        if (len(group_values_series) < 100):
-	  logger.info(u"The required number of samples for a double cross-validation procedure is at least 100. The dataset has {0}.".format(len(group_values_series)))
-	  logger.info(u"Exiting the tool.")
-          exit()	
+          logger.info(u"The required number of samples for a double cross-validation procedure is at least 100. The dataset has {0}.".format(len(group_values_series)))
+          logger.info(u"Exiting the tool.")
+          exit()    
 
        group_values_series_unique = group_values_series.unique()
        number_of_unique_groups = group_values_series_unique.shape[0]
@@ -215,7 +215,7 @@ def runLDA(dat,nComp,cv_status):
        n_max = max( (number_of_unique_groups - 1), 2 )
 
        
-       # Here we are looping over possible lists we have to cross-validate over.	
+       # Here we are looping over possible lists we have to cross-validate over.    
        # We do not consider scenario of a single components so that we can produce at least one 2D plot in the end.
 
        # Creating index of the minimum variable that will give us the best prediction. 
@@ -224,14 +224,14 @@ def runLDA(dat,nComp,cv_status):
 
        for n_current in range(2, n_max+1):
 
-	   # Creating the set of candidates that we will use for both cross-validation loops: internal and external
-	   # n_list = range(2, n_current + 1)
-	   n_list = range(2, n_current+1)				
+       # Creating the set of candidates that we will use for both cross-validation loops: internal and external
+       # n_list = range(2, n_current + 1)
+           n_list = range(2, n_current+1)                
       
            # Creating dictionary we gonna feed to the internal cross-validation procedure.
            n_list_dictionary = dict( n_components = n_list )
-	
-	   # Creating a gridsearch object with parameter "n_list_dictionary"
+    
+       # Creating a gridsearch object with parameter "n_list_dictionary"
            internal_cv = GridSearchCV( estimator = LinearDiscriminantAnalysis(), param_grid = n_list_dictionary)
            
            # Performing internal_cv for debugging purposes.
@@ -242,15 +242,15 @@ def runLDA(dat,nComp,cv_status):
            
 
            # Checking whether adding this extra component to our anlaysis will help.
-	   # For the first 2 components we assume they are the best and update it later if necessary.
+       # For the first 2 components we assume they are the best and update it later if necessary.
            if n_current == 2:
               best_predction_proportion = external_cv.mean()
            
            else:
               # Checking whether adding this extra component helped to what we already had. 
               if external_cv.mean() > best_predction_proportion:
-              	 best_predction_proportion = external_cv.mean()
-                 index_min = n_current
+                   best_predction_proportion = external_cv.mean()
+                   index_min = n_current
 
 
 
@@ -279,7 +279,7 @@ def runLDA(dat,nComp,cv_status):
 
     # Combining results into the data_frame so that it can be exported.
     classification_df = pd.DataFrame( {'Group_Observed': original_values ,
-			               'Group_Predicted': fitted_values } )
+                           'Group_Predicted': fitted_values } )
 
     # Return scores for LDA
     return scores_df, classification_df
