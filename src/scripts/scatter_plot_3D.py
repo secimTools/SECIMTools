@@ -86,13 +86,13 @@ def getOptions(myOpts=None):
 def main(args):
     # Loading design
     if args.design:
-        design = pd.DataFrame.from_csv(args.design,sep="\t")
+        design = pd.read_csv(args.design,sep="\t")
         design.reset_index(inplace=True)
     else:
         design = False
 
     # Loading wide file
-    wide = pd.DataFrame.from_csv(args.input,sep="\t")
+    wide = pd.read_csv(args.input,sep="\t")
 
     # Open Figure handler
     fh = figureHandler(proj="3d", figsize=(14,8))
