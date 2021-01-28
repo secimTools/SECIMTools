@@ -33,6 +33,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn import datasets
 from sklearn.model_selection import GridSearchCV, cross_val_score
 from sklearn.preprocessing import StandardScaler
+from sklearn import preprocessing
 # Importing single sample t-test module
 from scipy.stats import ttest_1samp
 # Import local plotting libraries
@@ -136,9 +137,15 @@ def main(args):
             # Dropping columns that characterize group. Only feature columns will remain.
             # We also transpose here so it will be easier to operate with.
             data_frame_manipulate_transpose  = data_frame_manipulate.drop(  args.group, 1 ).transpose()
+
+            #Using LabelEncoder, the whatever is categorized as type object are converted to integers (1s and 0s)
+           # pd.to_numeric(indexes_list_complete,downcast='signed')
+            le= preprocessing.LabelEncoder()
+            for index in data_frame_manipulate.columns:
+                if data_frame_manipulate[index].dtype==object:
+                    data_frame_manipulate[index]=le.fit_transform(data_frame_manipulate[index])
             # Pulling indexes list from the current data frame.
             indexes_list_complete = data_frame_manipulate_transpose.index.tolist()
-
             # Computing dataset summaries for feature j.
             mean_value_all[j] = np.mean(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ]) 
             variance_value_all[j] = np.var(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ], ddof = 1)
