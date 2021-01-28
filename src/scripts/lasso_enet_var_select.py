@@ -10,7 +10,10 @@ import os
 import sys
 import logging
 import argparse
-import importlib_resources as ires
+try:
+    from importlib import resources as ires
+except ImportError:
+    import importlib_resources as ires
 import itertools as it
 import numpy as np
 import pandas
