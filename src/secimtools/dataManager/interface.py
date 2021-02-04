@@ -180,14 +180,11 @@ class wideToDesign:
 
         # Set up group information
         if group:
-            
             if clean_string:
                 self.group = self._cleanStr(group)
                 self.design.columns = [self._cleanStr(x) for x in self.design.columns]
             else:
                 self.group = group
-            #print("DEBUB:  group:")
-            #print(self.group)  
             keep = self.group.split(",")
             # combine group, anno and runorder
             if self.runOrder and self.anno:
@@ -196,27 +193,12 @@ class wideToDesign:
                 keep = keep + [self.runOrder, ]
             elif not self.runOrder and self.anno:
                 keep = keep + self.anno
-            #print("DEBUG: Keep")
-            #print(keep)
-            #print("DEBUG: design columns")
-            #print(self.design.columns.tolist())  # this is pd dataframe
             # Check if groups, runOrder and levels columns exist in the design file
             designCols = self.design.columns.tolist()
             if keep == designCols:
-            #    print("keep matches design columns")
-            #for elem in keep:
-            #    if not(elem in self.design.columns):
-            #        log_msg = "Make sure '{0}' is correct and exists in your design file".format(elem)
-            #        if self.logger:
-            #            self.logger.error(log_msg)
-            #        else:
-            #            print(log_msg)
-            #        raise ValueError
-            
             # Check if columns exist on design file.
                 self.design = self.design[keep]   # Only keep group columns in the design file
                 self.design[self.group] = self.design[self.group].astype(str)   # Make sure groups are strings
-
             # Create list of group levels
             grp = self.design.groupby(self.group)
             self.levels = sorted(grp.groups.keys())  # Get a list of group levels
@@ -310,8 +292,7 @@ class wideToDesign:
                          var_name='sampleID')
         melted.set_index('sampleID', inplace=True)
         self.long = melted.join(self.design).reset_index()   # merge on group information using sampleIDs as key
-        #print(self.long)
-        
+
     def transpose(self):
         """ Transpose the wide table and merge on treatment information.
 
