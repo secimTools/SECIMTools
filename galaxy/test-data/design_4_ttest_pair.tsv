@@ -1,0 +1,69 @@
+mb_sample_id	sampleID	subject_type	subject_species	White_wine_type_and_source	run_Order_fake_variable	fake_pairID
+SA000203	421724	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2003 (CH01)	1	p1
+SA000204	421728	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2003 (CH01)	2	p2
+SA000205	421732	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2003 (CH01)	3	p3
+SA000206	421736	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2003 (CH01)	4	p4
+SA000209	421749	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2003 (CH02)	7	p1
+SA000210	421753	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2003 (CH02)	8	p2
+SA000211	421757	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2003 (CH02)	9	p3
+SA000212	421761	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2003 (CH02)	10	p4
+SA000215	421774	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2004	13	p1
+SA000216	421778	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2004	14	p2
+SA000217	421782	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2004	15	p3
+SA000218	421786	Plant	Vitis vinifera	Chardonnay, Carneros, CA 2004	16	p4
+SA000221	421799	Plant	Vitis vinifera	Chardonnay, Monterey, CA 2003	19	p1
+SA000222	421803	Plant	Vitis vinifera	Chardonnay, Monterey, CA 2003	20	p2
+SA000223	421807	Plant	Vitis vinifera	Chardonnay, Monterey, CA 2003	21	p3
+SA000224	421811	Plant	Vitis vinifera	Chardonnay, Monterey, CA 2003	22	p4
+SA000227	421824	Plant	Vitis vinifera	Chardonnay, Napa, CA 2003	25	p1
+SA000228	421828	Plant	Vitis vinifera	Chardonnay, Napa, CA 2003	26	p2
+SA000229	421832	Plant	Vitis vinifera	Chardonnay, Napa, CA 2003	27	p3
+SA000230	421836	Plant	Vitis vinifera	Chardonnay, Napa, CA 2003	28	p4
+SA000233	421849	Plant	Vitis vinifera	Chardonnay, SE Australia, 2004	31	p1
+SA000234	421853	Plant	Vitis vinifera	Chardonnay, SE Australia, 2004	32	p2
+SA000235	421857	Plant	Vitis vinifera	Chardonnay, SE Australia, 2004	33	p3
+SA000236	421861	Plant	Vitis vinifera	Chardonnay, SE Australia, 2004	34	p4
+SA000239	421874	Plant	Vitis vinifera	Elevage Blanc, Napa, CA 2004	37	p1
+SA000240	421878	Plant	Vitis vinifera	Elevage Blanc, Napa, CA 2004	38	p2
+SA000241	421882	Plant	Vitis vinifera	Elevage Blanc, Napa, CA 2004	39	p3
+SA000242	421886	Plant	Vitis vinifera	Elevage Blanc, Napa, CA 2004	40	p4
+SA000185	421649	Plant	Vitis vinifera	Fume Blanc, Napa, CA 2004	42	p1
+SA000186	421653	Plant	Vitis vinifera	Fume Blanc, Napa, CA 2004	43	p2
+SA000187	421657	Plant	Vitis vinifera	Fume Blanc, Napa, CA 2004	44	p3
+SA000188	421661	Plant	Vitis vinifera	Fume Blanc, Napa, CA 2004	45	p4
+SA000161	421549	Plant	Vitis vinifera	Pinot gris, Napa, CA 2004	48	p1
+SA000162	421553	Plant	Vitis vinifera	Pinot gris, Napa, CA 2004	49	p2
+SA000163	421557	Plant	Vitis vinifera	Pinot gris, Napa, CA 2004	50	p3
+SA000164	421561	Plant	Vitis vinifera	Pinot gris, Napa, CA 2004	51	p4
+SA000155	421524	Plant	Vitis vinifera	Pinot gris, Oregon 2003	54	p1
+SA000156	421528	Plant	Vitis vinifera	Pinot gris, Oregon 2003	55	p2
+SA000157	421532	Plant	Vitis vinifera	Pinot gris, Oregon 2003	56	p3
+SA000158	421536	Plant	Vitis vinifera	Pinot gris, Oregon 2003	57	p4
+SA000167	421574	Plant	Vitis vinifera	Riesling, CA 2004	60	p1
+SA000168	421578	Plant	Vitis vinifera	Riesling, CA 2004	61	p2
+SA000169	421582	Plant	Vitis vinifera	Riesling, CA 2004	62	p3
+SA000170	421586	Plant	Vitis vinifera	Riesling, CA 2004	63	p4
+SA000173	421599	Plant	Vitis vinifera	Riesling, Finger Lakes, NY 2004	66	p1
+SA000174	421603	Plant	Vitis vinifera	Riesling, Finger Lakes, NY 2004	67	p2
+SA000175	421607	Plant	Vitis vinifera	Riesling, Finger Lakes, NY 2004	68	p3
+SA000176	421611	Plant	Vitis vinifera	Riesling, Finger Lakes, NY 2004	69	p4
+SA000179	421624	Plant	Vitis vinifera	Sauvignon Blanc, Lake County, CA 200	72	p1
+SA000180	421628	Plant	Vitis vinifera	Sauvignon Blanc, Lake County, CA 200	73	p2
+SA000181	421632	Plant	Vitis vinifera	Sauvignon Blanc, Lake County, CA 200	74	p3
+SA000182	421636	Plant	Vitis vinifera	Sauvignon Blanc, Lake County, CA 200	75	p4
+SA000191	421674	Plant	Vitis vinifera	Sauvignon Blanc, Napa, CA 2004 (SB03	78	p1
+SA000192	421678	Plant	Vitis vinifera	Sauvignon Blanc, Napa, CA 2004 (SB03	79	p2
+SA000193	421682	Plant	Vitis vinifera	Sauvignon Blanc, Napa, CA 2004 (SB03	80	p3
+SA000194	421686	Plant	Vitis vinifera	Sauvignon Blanc, Napa, CA 2004 (SB03	81	p4
+SA000197	421699	Plant	Vitis vinifera	Sauvignon Blanc, Napa, CA 2004 (SB04	84	p1
+SA000198	421703	Plant	Vitis vinifera	Sauvignon Blanc, Napa, CA 2004 (SB04	85	p2
+SA000199	421707	Plant	Vitis vinifera	Sauvignon Blanc, Napa, CA 2004 (SB04	86	p3
+SA000200	421711	Plant	Vitis vinifera	Sauvignon Blanc, Napa, CA 2004 (SB04	87	p4
+SA000143	421474	Plant	Vitis vinifera	Viognier, Dunnigan Hills, CA 2004	90	p1
+SA000144	421478	Plant	Vitis vinifera	Viognier, Dunnigan Hills, CA 2004	91	p2
+SA000145	421482	Plant	Vitis vinifera	Viognier, Dunnigan Hills, CA 2004	92	p3
+SA000146	421486	Plant	Vitis vinifera	Viognier, Dunnigan Hills, CA 2004	93	p4
+SA000149	421499	Plant	Vitis vinifera	Viognier, Napa, CA 2004	96	p1
+SA000150	421503	Plant	Vitis vinifera	Viognier, Napa, CA 2004	97	p2
+SA000151	421507	Plant	Vitis vinifera	Viognier, Napa, CA 2004	98	p3
+SA000152	421511	Plant	Vitis vinifera	Viognier, Napa, CA 2004	99	p4
