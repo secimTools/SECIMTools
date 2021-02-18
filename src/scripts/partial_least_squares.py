@@ -1,50 +1,27 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2017/06/29
-#
-# SCRIPT: partial_least_squares.py
-#
-# VERSION: 2.0
-#
-# AUTHORS: Miguel A Ibarra (miguelib@ufl.edu) and Alexander Kirpich (akirpich@ufl.edu)
-# Edited by: Matt Thoburn (mthoburn@ufl.edu)
+# AUTHORS: Miguel A Ibarra (miguelib@ufl.edu)
+#          Alexander Kirpich (akirpich@ufl.edu)
+#          Matt Thoburn (mthoburn@ufl.edu)
 #
 # DESCRIPTION: This script takes a a wide format file and makes a partial
 #               least squares discriminant analysis (PLS-DA).
-#
 ################################################################################
-# Import future libraries
 
-
-# Import built-in libraries
 import os
-import math
 import logging
 import argparse
 import itertools
-from argparse import RawDescriptionHelpFormatter
-
-# Import add-on libraries
-import matplotlib
 import numpy as np
 import pandas as pd
-
+import matplotlib
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from argparse import RawDescriptionHelpFormatter
 from sklearn.cross_decomposition import PLSRegression
-
-# Importing cross-validation functions
-from sklearn import datasets
 from sklearn.model_selection import GridSearchCV, cross_val_score
-from sklearn.preprocessing import StandardScaler
-
-
-# Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-
-# Import local plotting libraries
 from secimtools.visualManager import module_scatter as scatter
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
