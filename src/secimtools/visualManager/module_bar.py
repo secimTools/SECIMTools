@@ -74,7 +74,7 @@ def quickHBar(ax, xticks, values, colors="b", lw=None):
 
     # Horizontal barplot
     ax.barh(
-        bottom=ticks,
+        ticks,
         width=values,
         height=0.8,
         color=colors,
