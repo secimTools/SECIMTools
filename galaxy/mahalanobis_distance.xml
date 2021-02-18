@@ -122,8 +122,11 @@ Archambeau C, Vrins F, Verleysen M. Flexible and Robust Bayesian Classification 
 **Output**
 
 The tool outputs three different files:
-(1) a PDF file containing 2D scatter plots and boxplots for the distances and
-(2) a TSV file containing distances from the sample to the estimated mean and
+
+(1) a PDF file containing 2D scatter plots and boxplots for the distances 
+
+(2) a TSV file containing distances from the sample to the estimated mean 
+
 (3) a TSV file containing distances from the sample to other samples.
 
 If the grouping variable is specified by the user, the distances are computed both within the groups and for the entire dataset.
