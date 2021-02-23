@@ -96,7 +96,7 @@
     <token name="@MZRTFILE@">
     **M/Z RT File:** 
 
-    A wide formated dataset that contains M/Z and RT mesuarementes for each sample:
+    A wide formated dataset that contains M/Z and RT measurements for each sample:
 
         +----------+--------+----------------+
         | sampleID | M/Z    | Retention Time |

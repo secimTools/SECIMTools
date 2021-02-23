@@ -48,8 +48,8 @@ blank_feature_filtering_flags.py
 
 **Tool Description**
 
-**NOTE:** The tool is relevant for Liquid Chromatography Mass Spectroscopy (LC-MS) data analysis and allows removing “noise” from the data using values of features in the blank samples as a reference.
-The tool becomes relevant when the values of features in the experimental samples are not much larger than the values of the same features in the blank samples.
+**NOTE:** The tool is relevant for Liquid Chromatography Mass Spectroscopy (LC-MS) data analysis and removes “noise” from the data using values of features in the blank samples as a reference.
+The tool becomes relevant when the values of features in the experimental samples are not much larger than the values of the same features in the blank samples (arbitrary) **How much larger??*.
 The features with such a signal are treated as noise inherited by the sample due to the instrument and are flagged by the tool.
 
 The computed BFF Threshold for each feature is equal to ((3*Standard Deviation of the blank group) + (the average of the blank group)) and is calculated aross blank samples only.
@@ -66,7 +66,7 @@ A feature is flagged as below the detection limit for a given group if the ratio
 
 @WIDE@
 
-**NOTE:** The sample IDs must match the sample IDs in the Design File
+**NOTE:** The sample IDs in the wide dataset must match the sample IDs in the Design File
 (below). Extra columns will automatically be ignored.
 
 @METADATA@
@@ -81,11 +81,11 @@ A feature is flagged as below the detection limit for a given group if the ratio
 
 **BFF Threshold**
 
-    - Default value to use as limit of detection. This is the user specified BFF Threshold.
+    - User-specified BFF threshold to use as the limit of detection. The default value is 5000.
 
 **Criterion Value**
 
-    - Number of times the signal in the experimental samples shoud be greater than the corresponding signal in the blanks.
+    - Number of times the signal in the experimental samples should be greater than the corresponding signal in the blanks. [Clarify]
 
 --------------------------------------------------------------------------------
 
