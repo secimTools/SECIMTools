@@ -1,44 +1,26 @@
 #!/usr/bin/env python
-################################################################################
-# Date: 2016/July/07
-#
-# Module: mahalanobis_distance.py
-#
-# VERSION: 1.1
-#
+####################################################################
 # AUTHOR: Miguel Ibarra (miguelib@ufl.edu)
 #
-# DESCRIPTION: This program does a pairwise and to mean  standarized euclidean
-#               comparison for a given dataset.
-################################################################################
+# DESCRIPTION: Pairwise and to mean standarized euclidean comparison
+####################################################################
 
-# Import built-in libraries
 import os
 import logging
 import argparse
-
-# Import add-on libraries
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
 from numpy.linalg import svd
 import matplotlib
-
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.neighbors import DistanceMetric
-
-# Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-
-# Import local plotting libraries
 from secimtools.visualManager import module_box as box
 from secimtools.visualManager import module_lines as lines
 from secimtools.visualManager import module_scatter as scatter
-from secimtools.visualManager import module_distribution as density
-from secimtools.visualManager import manager_color as ch
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
 
@@ -62,8 +44,7 @@ def getOptions():
     )
     standard.add_argument(
         "-d",
-        "--design",
-        dest="design",
+        "--design", dest="design",
         action="store",
         required=True,
         help="Design file",
@@ -236,12 +217,12 @@ def calculatePenalizedSigma(data, penalty=0.5):
 
 def calculateDistances(data, V_VI):
     """
-    Calculates euclidean or mahalanobis distances. Returns an array of 
+    Calculates euclidean or mahalanobis distances. Returns an array of
     distances to the Mean and an a matrix of pairwise distances.
 
     :Arguments:
         :type wide: pandas.DataFrame
-        :param wide: A wide formatted data frame with samples as columns and 
+        :param wide: A wide formatted data frame with samples as columns and
                      compounds as rows.
 
     :Returns:
@@ -281,12 +262,12 @@ def calculateDistances(data, V_VI):
 
 def calculateCutoffs(data, p):
     """
-    Calculate the Standardized Euclidean Distance and return an array of 
+    Calculate the Standardized Euclidean Distance and return an array of
     distances to the Mean and a matrix of pairwise distances.
 
     :Arguments:
         :type wide: pandas.DataFrame
-        :param wide: A wide formatted data frame with samples as columns and 
+        :param wide: A wide formatted data frame with samples as columns and
                      compounds as rows.
 
         :type p: float.
@@ -462,16 +443,14 @@ def main(args):
     """
     Main function
     """
-    # Checking if levels
     if args.levels and args.group:
         levels = [args.group] + args.levels
     elif args.group and not args.levels:
         levels = [args.group]
     else:
         levels = []
-    logger.info(u"Groups used to color by: {0}".format(",".join(levels)))
+    logger.info(u"Color selection groups: {0}".format(",".join(levels)))
 
-    # Parsing data with interface
     dat = wideToDesign(
         args.input,
         args.design,
@@ -486,11 +465,9 @@ def main(args):
     dat.removeSingle()
     dat.dropMissing()
 
-    # Select colors for data (dat.design contains a copy of dat.design with an
-    # additional columns for colors).
+    # Select colors for data by adding an additional column for colors
     dataPalette.getColors(design=dat.design, groups=levels)
 
-    # Getting list of indexex to subset wide file
     if args.group:
         disGroups = [
             (group.index, level)
@@ -499,15 +476,13 @@ def main(args):
     else:
         disGroups = [(dat.design.index, "samples")]
 
-    # Iterating over subgroups
     pairwise_disCuts = list()
     toMean_disCuts = list()
     for indexes, name in disGroups:
         # If less than 3 elements in the group skip to the next
         if len(indexes) < 3:
             logger.error(
-                "Group {0} has less than 3 elements, it will not be"
-                " included in the analysis".format(level)
+                "Group {0} with fewer than 3 elements is excluded from the analysis".format(name)
             )
             continue
 
@@ -520,7 +495,7 @@ def main(args):
             data=currentFrame, penalty=args.penalty
         )
 
-        # Calculate Distances (dis estands for distance)
+        # Calculate Distances (dis stands for distance)
         disToMean, disPairwise = calculateDistances(
             data=currentFrame, V_VI=penalizedSigma
         )
@@ -538,48 +513,36 @@ def main(args):
         toMean_dis = [distance for distance, cutoff in toMean_disCuts]
 
         # Merging to get distance for all pairwise
-        pairwise_dis_all = pd.DataFrame(columns=["group"])
+        pairwise_dis_all = pd.DataFrame()
         for dis in pairwise_dis:
-            dis.loc[:, "group"] = [dis.name] * len(dis.columns)
             pairwise_dis_all = pd.DataFrame.merge(
                 pairwise_dis_all,
                 dis,
-                on=["group"],
                 left_index=True,
                 right_index=True,
                 how="outer",
                 sort=False,
             )
-        pairwise_dis_all.sort_values(by="group", inplace=True)
-        pairwise_dis_all.drop("group", axis=1, inplace=True)
         pairwise_dis_all.name = "samples"
 
         # Merging to get distance for all to mean
-        toMean_dis_all = pd.DataFrame(columns=["group", "distance_to_mean"])
+        toMean_dis_all = pd.DataFrame(columns=["distance_to_mean","group"])
         for dis in toMean_dis:
-            dis.loc[:, "group"] = [dis.name] * len(dis.columns)
-            toMean_dis_all = pd.DataFrame.merge(
-                toMean_dis_all,
-                dis,
-                on=["distance_to_mean", "group"],
-                left_index=True,
-                right_index=True,
-                how="outer",
-                sort=False,
-            )
+            dis["group"] = dis.name
+            toMean_dis_all = toMean_dis_all.append(dis)
         toMean_dis_all.sort_values(by="group", inplace=True)
         toMean_dis_all.drop("group", axis=1, inplace=True)
         toMean_dis_all.name = "samples"
 
-        # Geting cuttoffs for distances
+        # Get cuttoffs for distances
         cutoff1, cutoff2 = calculateCutoffs(dat.wide, args.p)
 
-        # Appending toMean_dis_all and pairwise_dis_all to toMean_dis_cuts and
+        # Append toMean_dis_all and pairwise_dis_all to toMean_dis_cuts and
         # pairwise_dis_cuts respectively.
         toMean_disCuts.append([toMean_dis_all, cutoff1])
         pairwise_disCuts.append([pairwise_dis_all, cutoff2])
 
-    # Iterating over each pair of (distance,cutoff) for toMean and pairwise to
+    # Iterate over each pair of (distance,cutoff) for toMean and pairwise to
     # plot  distances.
     with PdfPages((args.figure)) as pdf:
         # Iterating over toMean,pairwise distances in parallel
@@ -628,7 +591,7 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     sl.setLogger(logger)
     logger.info(
-        u"""Importing data with following parameters: 
+        u"""Importing data with following parameters:
                 \tWide: {0}
                 \tDesign: {1}
                 \tUnique ID: {2}
