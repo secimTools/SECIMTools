@@ -317,14 +317,14 @@ def calculateSED(dat, levels, combName, pdf, p):
             #Merges dataframes onto an All dataframe 
             SEDtoMean = pd.DataFrame.merge(SEDtoMean,
                                             SEDtoMean_G, 
-                                            on=['SED_to_Mean', 'group'], 
+                                            #on=['SED_to_Mean', 'group'], 
                                             left_index=True, 
                                             right_index=True, 
                                             how='outer', 
                                             sort=False)
             SEDpairwise = pd.DataFrame.merge(SEDpairwise, 
                                             SEDpairwise_G, 
-                                            on=["group"], 
+                                            #on=["group"], 
                                             left_index=True, 
                                             right_index=True,
                                             how='outer', 
