@@ -119,6 +119,8 @@ def main(args):
     # Making sure all the groups to drop actually exist on the design column
     if args.group:
         for todrop in args.drops:
+            print("design file: ")
+            print(dat.design)
             if todrop in list(set(dat.design[args.group].values)):
                 pass
             else:
