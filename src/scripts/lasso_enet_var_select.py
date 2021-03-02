@@ -7,7 +7,6 @@
 ################################################################################
 
 import os
-import sys
 import logging
 import argparse
 try:
@@ -16,16 +15,10 @@ except ImportError:
     import importlib_resources as ires
 import itertools as it
 import numpy as np
-import pandas
-import rpy2
-import rpy2.robjects.numpy2ri
 import rpy2.robjects as robjects
 from argparse import RawDescriptionHelpFormatter
 from rpy2.robjects import pandas2ri
-from rpy2.robjects.packages import importr
-from rpy2.robjects.vectors import StrVector
 from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
-from numpy import genfromtxt
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
 
@@ -131,8 +124,6 @@ def getOptions(myOpts=None):
 
 
 def main(args):
-    myPath = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-
     if not args.rscript:
         with ires.path("secimtools.data", "lasso_enet.R") as R_path:
             my_r_script_path = str(R_path)

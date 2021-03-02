@@ -1,50 +1,28 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2017/06/29
-#
-# SCRIPT: partial_least_squares.py
-#
-# VERSION: 2.0
-#
-# AUTHORS: Miguel A Ibarra (miguelib@ufl.edu) and Alexander Kirpich (akirpich@ufl.edu)
-# Edited by: Matt Thoburn (mthoburn@ufl.edu)
+# AUTHORS: Miguel A Ibarra (miguelib@ufl.edu)
+#          Alexander Kirpich (akirpich@ufl.edu)
+#          Matt Thoburn (mthoburn@ufl.edu)
 #
 # DESCRIPTION: This script takes a a wide format file and makes a partial
 #               least squares discriminant analysis (PLS-DA).
-#
 ################################################################################
-# Import future libraries
 
-
-# Import built-in libraries
 import os
-import math
 import logging
 import argparse
 import itertools
-from argparse import RawDescriptionHelpFormatter
-
-# Import add-on libraries
-import matplotlib
 import numpy as np
 import pandas as pd
+import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from argparse import RawDescriptionHelpFormatter
 from sklearn.cross_decomposition import PLSRegression
-
-# Importing cross-validation functions
-from sklearn import datasets
 from sklearn.model_selection import GridSearchCV, cross_val_score
-from sklearn.preprocessing import StandardScaler
-
-
-# Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-
-# Import local plotting libraries
 from secimtools.visualManager import module_scatter as scatter
 from secimtools.visualManager.manager_color import colorHandler
 from secimtools.visualManager.manager_figure import figureHandler
@@ -59,7 +37,6 @@ def getOptions(myopts=None):
     parser = argparse.ArgumentParser(
         description=description, formatter_class=RawDescriptionHelpFormatter
     )
-    # Standard Input
     standard = parser.add_argument_group(
         title="Standard input", description="Standard input for SECIM tools."
     )
@@ -105,7 +82,6 @@ def getOptions(myopts=None):
         default=False,
         help="Different groups to" " sort by separeted by commas.",
     )
-    # Tool Input
     tool = parser.add_argument_group(
         title="Tool specific input", description="Input specific for this tool."
     )
@@ -137,7 +113,6 @@ def getOptions(myopts=None):
         type=int,
         help="Number" " of components.",
     )
-    # Tool output
     output = parser.add_argument_group(title="Required output")
     output.add_argument(
         "-os",
@@ -179,7 +154,6 @@ def getOptions(myopts=None):
         required=False,
         help="Name of output file to store scatter plots for scores",
     )
-    # Plot Options
     plot = parser.add_argument_group(title="Plot options")
     plot.add_argument(
         "-pal",
@@ -199,7 +173,6 @@ def getOptions(myopts=None):
         default="Tableau_20",
         help="Name of a valid color scheme" " on the selected palette",
     )
-    # Development Options
     development = parser.add_argument_group(title="Development Settings")
     development.add_argument(
         "--debug",
@@ -245,19 +218,19 @@ def runPLS(trans, group, toCompare, nComp, cv_status):
         :return weights: weights of the PCA
     """
     logger.info("Runing PLS on data")
-    # Subsetting data to just have the value we're interested in
+
+    subset = pd.DataFrame
+    print(f"Groups to compare: {toCompare}")
     subset = [subs for name, subs in trans.groupby(group) if name in toCompare]
     subset = pd.concat(subset, axis=0)
 
     # Creating pseudolinear Y value
     Y = np.where(subset[group] == toCompare[0], int(1), int(0))
-    subset
 
-    # Remove group column from the subseted data
+    # Remove group column from the subset data
     subset.drop(group, axis=1, inplace=True)
 
-    # Debuggin step: we are checking what is the status fro cross-validation procedure
-
+    # Check the status from the cross-validation procedure
     # The code below depends on cross validation status. The status can be either "single", "double" or "none".
 
     # Case 1: User provides cv_status = "none". No cross-validation will be performed.
@@ -265,7 +238,7 @@ def runPLS(trans, group, toCompare, nComp, cv_status):
     if cv_status == "none":
 
         # Telling the user that we are using the number of components pre-specified by the user.
-        logger.info("Using the number of components pe-specified by the user.")
+        logger.info("Using the number of components specified by the user.")
 
         # If by mistake the number the componentes nComp was not provided we hardcode it to 2.
         if nComp is None:
@@ -469,7 +442,7 @@ def plotScores(data, palette, pdf):
 
 
 def main(args):
-    # Checking if levels
+    """Main function"""
     if args.levels and args.group:
         levels = [args.group] + args.levels
     elif args.group and not args.levels:
@@ -477,7 +450,6 @@ def main(args):
     else:
         levels = []
 
-    # Loading data trought Interface
     dat = wideToDesign(
         args.input,
         args.design,
@@ -493,11 +465,18 @@ def main(args):
     # Cleaning from missing data
     dat.dropMissing()
 
+    # Get remaining Sample IDs for dataframe filtering
+    sample_ids = dat.wide.index.tolist()
+    # Re-add the group variable needed for downstream analysis
+    sample_ids.append(dat.group)
+
     # Get colors for each sample based on the group
     palette.getColors(design=dat.design, groups=levels)
 
     # Transpose data
     dat.trans = dat.transpose()
+
+    dat.trans = dat.trans.loc[:, sample_ids]
 
     # Run PLS
     df_scores, df_weights, df_classification = runPLS(
@@ -538,23 +517,16 @@ def main(args):
         "echo %s > %s"
         % (classification_mismatch_percent_string, args.outClassificationAccuracy)
     )
-
-    # Ending script
-    logger.info("Finishing running of PLS")
+    logger.info("Finishing PLS execution")
 
 
 if __name__ == "__main__":
-    # Command line options
     args = getOptions()
-
-    # Set logger
     logger = logging.getLogger()
     if args.debug:
         sl.setLogger(logger, logLevel="debug")
     else:
         sl.setLogger(logger)
-
-    # Starting script
     logger.info(
         """Importing data with following parameters:
                 Input: {0}
@@ -565,12 +537,8 @@ if __name__ == "__main__":
             args.input, args.design, args.uniqID, args.group
         )
     )
-
-    # Stablishing color palette
     palette = colorHandler(pal=args.palette, col=args.color)
     logger.info(
         "Using {0} color scheme from {1} palette".format(args.color, args.palette)
     )
-
-    # running main script
     main(args)

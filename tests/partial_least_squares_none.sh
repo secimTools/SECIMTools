@@ -30,7 +30,7 @@ partial_least_squares.py \
     -d   "$INPUT_DIR/ST000006_design_group_name_underscore.tsv" \
     -id  Retention_Index \
     -g   White_wine_type_and_source \
-    -t " Chardonnay_ Napa_ CA 2003,Riesling_ CA 2004" \
+    -t   "Chardonnay_ Napa_ CA 2003,Riesling_ CA 2004" \
     -cv  none \
     -n   2 \
     -os  "$OUTPUT_DIR/ST000006_partial_least_squares_none_scores.tsv" \
