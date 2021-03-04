@@ -1,5 +1,5 @@
 <tool id="secimtools_threshold_based_flags" name="Threshold Based Flags" version="@WRAPPER_VERSION@">
-    <description>to flag features based on a user-specified threshold.</description>
+    <description>- Flag features based on a user-specified threshold.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -17,11 +17,11 @@ threshold_based_flags.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications.  The resulting indicator flags will generated for these group categories." />
-        <param name="cutoff" type="integer" optional="true" size="6" value="30000" label="Cutoff" help="Cutoff to use for which values to flag. Defaults = 30,000."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique identifiers."/>
+        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your design file that contains group classifications.  The resulting indicator flags will generated for these group categories." />
+        <param name="cutoff" type="integer" optional="true" size="6" value="30000" label="Cutoff" help="Cutoff to use for which values to flag. Default = 30,000."/>
     </inputs>
     <outputs>
         <data format="tabular" name="output" label="${tool.name} on ${on_string}" />

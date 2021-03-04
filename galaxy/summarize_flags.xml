@@ -12,9 +12,9 @@ summarize_flags.py
     ]]></command>
     <inputs>
         <param name="flags" type="data" format="tabular" label="Flag File"
-               help="Input flagged dataset containing the flag value for each feature."/>
+               help="Input dataset containing the binary indicator flag values for each feature."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID"
-               help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+               help="Name of the column in your flag file containing  unique identifiers."/>
     </inputs>
     <outputs>
         <data name="summaryFlags" format="tabular" label="${tool.name} on ${on_string}"/>
@@ -34,7 +34,7 @@ summarize_flags.py
 
 Summary of the Flags
 
-This tool takes a wide format flag file and summarizes the information about the flags.
+This tool takes a wide format flag file and summarizes information about the flags.
 The flag summary includes, for each feature:
 (i) the sum of the flags,
 (ii) the mean of the flags,
