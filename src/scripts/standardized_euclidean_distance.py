@@ -1,34 +1,22 @@
 #!/usr/bin/env python
-################################################################################
-# Date: 2017/03/13
-#
-# Module: standardize_euclidean_distance.py
-#
-# VERSION: 1.0
-#
+##################################################################
 # AUTHOR: Miguel A. Ibarra-Arellano (miguelib@ufl.edu)
 #
-# DESCRIPTION: This program does a pairwise and to mean standarized euclidean
-#               comparisons for a given dataset.
-################################################################################
-# Import built-in libraries
+# DESCRIPTION: Pairwise and mean standarized euclidean comparisons
+##################################################################
+
 import os
 import logging
 import argparse
-# Import add-on libraries
 import matplotlib
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
-from numpy import alltrue
 import pandas as pd
 import scipy.stats as stats
 from sklearn.neighbors import DistanceMetric
-# Import local data libraries
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
-# Import local plotting libraries
 from secimtools.visualManager import module_box as box
 from secimtools.visualManager import manager_color as ch
 from secimtools.visualManager import module_lines as lines
@@ -61,38 +49,38 @@ def getOptions():
     standard = parser.add_argument_group(description="Standard Input")
     standard.add_argument("-i","--input", dest="input", action='store',required=True,
                          help="Dataset in Wide format")
-    standard.add_argument("-d","--design", dest="design", action='store', 
+    standard.add_argument("-d","--design", dest="design", action='store',
                          required=True, help="Design file")
-    standard.add_argument("-id","--ID", dest="uniqID", action='store', required=True, 
+    standard.add_argument("-id","--ID", dest="uniqID", action='store', required=True,
                          help="Name of the column with unique identifiers.")
     standard.add_argument("-g","--group", dest="group",default=False, action='store',
                         required=False, help="Treatment group")
     standard.add_argument("-o","--order",dest="order",action="store",
                         default=False, help="Run Order")
-    standard.add_argument("-l","--levels",dest="levels",action="store", 
+    standard.add_argument("-l","--levels",dest="levels",action="store",
                         required=False, default=False, help="Different groups to"\
                         " sort by separeted by comas.")
     # Tool Output
     output = parser.add_argument_group(description="Output Files")
-    output.add_argument("-f", "--figure", dest="figure", action='store', 
+    output.add_argument("-f", "--figure", dest="figure", action='store',
                         required=True, help="PDF Output of standardized "\
                         "Euclidean distance plot")
-    output.add_argument("-m","--SEDtoMean", dest="toMean", action='store', 
+    output.add_argument("-m","--SEDtoMean", dest="toMean", action='store',
                         required=True, help="TSV Output of standardized "
                         "Euclidean distances from samples to the mean.")
-    output.add_argument("-pw","--SEDpairwise", dest="pairwise", action='store', 
+    output.add_argument("-pw","--SEDpairwise", dest="pairwise", action='store',
                         required=True, help="TSV Output of sample-pairwise "
                         "standardized Euclidean distances.")
     # Tool Input
     tool = parser.add_argument_group(description="Tool Input")
-    tool.add_argument("-p","--per", dest="p", action='store', required=False, 
+    tool.add_argument("-p","--per", dest="p", action='store', required=False,
                         default=0.95, type=float, help="The threshold "
                         "for standard distributions. The default is 0.95.")
     # Plot Options
     plot = parser.add_argument_group(title='Plot options')
-    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
+    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False,
                         default="tableau", help="Name of the palette to use.")
-    plot.add_argument("-col","--color",dest="color",action="store",required=False, 
+    plot.add_argument("-col","--color",dest="color",action="store",required=False,
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
     args = parser.parse_args()
@@ -247,10 +235,10 @@ def prepareSED(data_df, design, pdf, groupName, p, ugColors, levels):
         :rtype SEDpairwise: pd.DataFrames
         :return SEDpairwise: SED for pairwise data
     """
-    #Calculate SED without groups
+    # Calculate SED without groups
     SEDtoMean, SEDpairwise = getSED(data_df)
 
-    #Calculate cutOffs
+    # Calculate cutOffs
     cutoff1,cutoff2 = getCutOffs(data_df, p)
 
     # Call function to do a scatter plot on SEDs from samples to the Mean
@@ -284,73 +272,77 @@ def calculateSED(dat, levels, combName, pdf, p):
         :param levels: Name of the column on desing file (after get colors)
                          with the name of the column containing the combinations.
 
-        :type combName: dictionary 
+        :type combName: dictionary
         :param combName: dictionary with colors and different groups
     """
 
     if len(levels.keys()) > 1:
-        #Creates dataframes for later use for SED results
-        SEDtoMean=pd.DataFrame(columns=['SED_to_Mean', 'group'])
-        SEDpairwise=pd.DataFrame(columns=["group"])
+        # Create dataframes for later use for SED results
+        SEDtoMean=pd.DataFrame(columns=['SampleID','SED_to_Mean', 'group'])
+        SEDpairwise=pd.DataFrame(columns=['SampleID', 'group'])
 
-        #Calculates pairwise and to mean distances by group(or levels)
+        # Calculate pairwise and mean distances by group or by levels
         for level, group in dat.design.groupby(combName):
-            #Subsetting wide
+            # Subset wide
             currentFrame = dat.wide[group.index]
 
-            # Sending error if less than 3 groups
+            # Log an error if there are fewer than 3 groups
             if len(group.index) < 3:
                 logger.error("Group {0} has less than 3 elements".\
                     format(level))
                 exit()
 
-            #Getting SED per group
+            # Getting SED per group
             logger.info("Getting SED for {0}".format(level))
-            pdf, SEDtoMean_G, SEDpairwise_G = prepareSED(currentFrame, group, 
+            pdf, SEDtoMean_G, SEDpairwise_G = prepareSED(currentFrame, group,
                                                 pdf, "in group "+str(level), p,
                                                 levels, combName)
 
-            #Add 'group' column to the current group
+            # Add 'group' column to the current group
             SEDtoMean_G['group'] = [level]*len(currentFrame.columns)
+            SEDtoMean_G['SampleID'] = SEDtoMean_G.index
             SEDpairwise_G['group'] = [level]*len(currentFrame.columns)
+            SEDpairwise_G['SampleID'] = SEDpairwise_G.index
 
-            #Merges dataframes onto an All dataframe 
+            # Merge group dataframes into the all-encompassing dataframe
             SEDtoMean = pd.DataFrame.merge(SEDtoMean,
-                                            SEDtoMean_G, 
-                                            #on=['SED_to_Mean', 'group'], 
-                                            left_index=True, 
-                                            right_index=True, 
-                                            how='outer', 
-                                            sort=False)
-            SEDpairwise = pd.DataFrame.merge(SEDpairwise, 
-                                            SEDpairwise_G, 
-                                            #on=["group"], 
-                                            left_index=True, 
-                                            right_index=True,
-                                            how='outer', 
+                                            SEDtoMean_G,
+                                            on=['SED_to_Mean', 'group', 'SampleID'],
+                                            how='outer',
                                             sort=False)
 
-        #Get means of all different groups
+
+            SEDpairwise = pd.DataFrame.merge(SEDpairwise,
+                                            SEDpairwise_G,
+                                            on=['group', 'SampleID'],
+                                            how='outer',
+                                            sort=False)
+
+        # Recover the index from SampleID
+        SEDtoMean.set_index('SampleID', inplace=True)
+        SEDpairwise.set_index('SampleID', inplace=True)
+
+        # Get means for all different groups
         logger.info("Getting SED for all data")
         cutoffAllMean,cutoffAllPairwise = getCutOffs(dat.wide,p)
 
-        #Sort df by group
+        # Sort df by group
         SEDtoMean = SEDtoMean.sort_values(by='group')
         SEDpairwise = SEDpairwise.sort_values(by='group')
 
         # Plot a scatter plot on SEDs from samples to the Mean
-        makePlots (SEDtoMean, dat.design, pdf, "", cutoffAllMean, p, 
+        makePlots (SEDtoMean, dat.design, pdf, "", cutoffAllMean, p,
                     "scatterToMean", levels, combName)
 
         # Plot a scatter plot on SEDs for pairwise samples
-        makePlots (SEDpairwise, dat.design, pdf, "", cutoffAllPairwise, p, 
+        makePlots (SEDpairwise, dat.design, pdf, "", cutoffAllPairwise, p,
                     "scatterPairwise", levels, combName)
 
         # Plot a boxplot on SEDs for pairwise samples
-        makePlots (SEDpairwise, dat.design, pdf, "", cutoffAllPairwise, p, 
+        makePlots (SEDpairwise, dat.design, pdf, "", cutoffAllPairwise, p,
                     "boxplotPairwise", levels, combName)
 
-        #If group drop "group" column
+        # If group drop "group" column
         SEDtoMean.drop('group', axis=1, inplace=True)
         SEDpairwise.drop('group', axis=1, inplace=True)
 
@@ -364,41 +356,41 @@ def calculateSED(dat, levels, combName, pdf, p):
 
 def getSED(wide):
     """
-    Calculate the Standardized Euclidean Distance and return an array of 
+    Calculate the Standardized Euclidean Distance and return an array of
     distances to the Mean and a matrix of pairwise distances.
 
     :Arguments:
         :type wide: pandas.DataFrame
-        :param wide: A wide formatted data frame with samples as columns and 
+        :param wide: A wide formatted data frame with samples as columns and
                      compounds as rows.
 
     :Returns:
         :return: Return 4 pd.DataFrames with SED values and cutoffs.
         :rtype: pd.DataFrames
     """
-    #Calculate means
+    # Calculate means
     mean = pd.DataFrame(wide.mean(axis=1))
 
-    #Calculate variance
+    # Calculate variance
     variance = wide.var(axis=1,ddof=1)
 
-    #Flag if variance == 0
+    # Flag if variance == 0
     variance[variance==0]=1
 
-    #Get SED distances!
+    # Get SED distances!
     dist = DistanceMetric.get_metric('seuclidean', V=variance)
 
-    #Calculate the SED from all samples to the mean
+    # Calculate the SED from all samples to the mean
     SEDtoMean = dist.pairwise(wide.values.T, mean.T)
-    SEDtoMean = pd.DataFrame(SEDtoMean, columns = ['SED_to_Mean'], 
+    SEDtoMean = pd.DataFrame(SEDtoMean, columns = ['SED_to_Mean'],
                                index = wide.columns)
 
-    #Calculate the pairwise standardized Euclidean Distance of all samples
+    # Calculate the pairwise standardized Euclidean Distance of all samples
     SEDpairwise = dist.pairwise(wide.values.T)
-    SEDpairwise = pd.DataFrame(SEDpairwise, columns=wide.columns, 
+    SEDpairwise = pd.DataFrame(SEDpairwise, columns=wide.columns,
                                index=wide.columns)
 
-    #Converts to NaN the diagonal
+    # Convert the diagonal to NaN
     for index, row in SEDpairwise.iterrows():
         SEDpairwise.loc[index, index] = np.nan
 
@@ -408,12 +400,12 @@ def getSED(wide):
 
 def getCutOffs(wide,p):
     """
-    Calculate the Standardized Euclidean Distance and return an array of 
+    Calculate the Standardized Euclidean Distance and return an array of
     distances to the Mean and a matrix of pairwise distances.
 
     :Arguments:
         :type wide: pandas.DataFrame
-        :param wide: A wide formatted data frame with samples as columns and 
+        :param wide: A wide formatted data frame with samples as columns and
                      compounds as rows.
 
         :type p: float.
@@ -427,25 +419,25 @@ def getCutOffs(wide,p):
         :return cutoff2: Cutoff values for pairwise, beta, chi-sqr and normal.
     """
 
-    #Stablish iterations, and numer of colums ps and number of rows nf
+    # Establish iterations, and numer of colums ps and number of rows nf
     ps  = len(wide.columns)
     nf = len(wide.index)
     iters  = 20000
 
-    #Calculates betaP
+    # Calculate betaP
     betaP=np.percentile(pd.DataFrame(stats.beta.rvs(0.5, 0.5*(ps-2),size=iters*nf).reshape(iters,nf)).sum(axis=1), p*100.0)
 
     #casting to float so it behaves well
     ps = float(ps)
     nf = float(nf)
 
-    #Calculates cutoffs beta, norm, and chisq for data to mean
+    # Calculate cutoffs beta, norm, and chisq for data to mean
     betaCut1  = np.sqrt((ps-1)**2/ps*betaP)
-    normCut1  = np.sqrt(stats.norm.ppf(p, (ps-1)/ps*nf, 
+    normCut1  = np.sqrt(stats.norm.ppf(p, (ps-1)/ps*nf,
                         np.sqrt(2*nf*(ps-2)*(ps-1)**2/ps**2/(ps+1))))
     chisqCut1 = np.sqrt((ps-1)/ps*stats.chi2.ppf(p, nf))
 
-    #Calculates cutoffs beta,n norm & chisq for pairwise
+    # Calculate cutoffs beta,n norm & chisq for pairwise
     betaCut2  = np.sqrt((ps-1)*2*betaP)
     normCut2  = np.sqrt(stats.norm.ppf(p, 2*nf, np.sqrt(8*nf*(ps-2)/(ps+1))))
     chisqCut2 = np.sqrt(2*stats.chi2.ppf(p, nf))
@@ -458,10 +450,10 @@ def getCutOffs(wide,p):
                             ['Beta(Exact)', 'Normal', 'Chi-sq']],index=["cut","name"],
                             columns=['Beta(Exact)', 'Normal', 'Chi-sq'])
 
-    #Create Palette
+    # Create a palette
     cutPalette.getColors(cutoff1.T,["name"])
 
-    #Returning colors
+    # Return colors
     return cutoff1,cutoff2
 
 
@@ -482,7 +474,7 @@ def main(args):
         levels = []
 
     #Parsing data with interface
-    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group, 
+    dat = wideToDesign(args.input, args.design, args.uniqID, group=args.group,
                         anno=args.levels,  logger=logger, runOrder=args.order)
 
     #Dropping missing values and remove groups with just one sample
