@@ -156,7 +156,7 @@ https://jiffyclub.github.io/palettable/wesanderson/
 
     - The elevation angle for viewing in degrees. The default value = 45 degrees. The ideal elevation angle for viewing may involve trial and error.
 
-@METADATA_optional@
+@DF@
 
 **Group/Treatment [Optional]**
 
@@ -174,7 +174,7 @@ https://jiffyclub.github.io/palettable/wesanderson/
 
 **Output**
 
-The tool produces a PDF file containing 3D scatter plot.
+The tool produces a PDF file containing a 3D scatter plot.
 The coloring of the features by group and the corresponding legend will be included in the plot if the user provides the Design File and Palette.
 
     ]]></help>

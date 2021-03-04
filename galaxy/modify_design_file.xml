@@ -70,7 +70,7 @@ The tool creates a new design file based on the existing wide dataset and design
 
 **Output**
 
-This tool will output a single design desing file that contains only the samples not selected for removal.
+This tool will output a single design file that contains only the samples not selected for removal.
 
     ]]></help>
     <expand macro="citations"/>
