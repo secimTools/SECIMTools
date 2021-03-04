@@ -54,23 +54,23 @@ def getOptions(myopts=None):
     This script runs a t-test for a single sample for each feature in the data.
     """
     # Standard Input
-    parser = argparse.ArgumentParser(description=description, 
+    parser = argparse.ArgumentParser(description=description,
                                     formatter_class=RawDescriptionHelpFormatter)
-    standard = parser.add_argument_group(title='Standard input', 
+    standard = parser.add_argument_group(title='Standard input',
                                 description='Standard input for SECIM tools.')
-    standard.add_argument( "-i","--input", dest="input", action='store', 
+    standard.add_argument( "-i","--input", dest="input", action='store',
                         required=True, help="Input dataset in wide format.")
-    standard.add_argument("-d" ,"--design",dest="design", action='store', 
+    standard.add_argument("-d" ,"--design",dest="design", action='store',
                         required=True, help="Design file.")
-    standard.add_argument("-id", "--uniqueID",dest="uniqueID", action='store', required=True, 
+    standard.add_argument("-id", "--uniqueID",dest="uniqueID", action='store', required=True,
                         help="Name of the column with unique identifiers.")
-    standard.add_argument("-g", "--group",dest="group", action='store', required=False, 
+    standard.add_argument("-g", "--group",dest="group", action='store', required=False,
                         default=False, help="Name of the column with group variable.")
-    standard.add_argument("-mu", "--mu",dest="mu", action='store', required=False, 
+    standard.add_argument("-mu", "--mu",dest="mu", action='store', required=False,
                         default=0, help="Mu value for the null.")
     # Tool output
     output = parser.add_argument_group(title='Required output')
-    output.add_argument("-s","--summaries",dest="summaries",action='store',required=True, 
+    output.add_argument("-s","--summaries",dest="summaries",action='store',required=True,
                         help="Summaries file name. TSV format.")
     output.add_argument("-f","--flags",dest="flags",action='store',required=True,
                         help="Flags file. TSV format.")
@@ -78,9 +78,9 @@ def getOptions(myopts=None):
                         help="Volcano plot. PDF Format.")
     # Plot Options
     plot = parser.add_argument_group(title='Plot options')
-    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False, 
+    plot.add_argument("-pal","--palette",dest="palette",action='store',required=False,
                         default="tableau", help="Name of the palette to use.")
-    plot.add_argument("-col","--color",dest="color",action="store",required=False, 
+    plot.add_argument("-col","--color",dest="color",action="store",required=False,
                         default="Tableau_20", help="Name of a valid color scheme"\
                         " on the selected palette")
     args = parser.parse_args()
@@ -103,7 +103,7 @@ def main(args):
 
         # Loading data trought Interface.
         logger.info("Loading data with the Interface")
-        dat = wideToDesign(args.input, args.design, args.uniqueID, group = args.group, 
+        dat = wideToDesign(args.input, args.design, args.uniqueID, group = args.group,
                          logger=logger)
 
         # Treat everything as numeric.
@@ -126,7 +126,7 @@ def main(args):
 
         # Computing overall summaries (mean and variance).
         # This part just produces sumamry statistics for the output table.
-        # This has nothing to do with the single sample t-test. 
+        # This has nothing to do with the single sample t-test.
         mean_value_all = [0] * number_of_features
         variance_value_all = [0] * number_of_features
 
@@ -147,11 +147,11 @@ def main(args):
             # Pulling indexes list from the current data frame.
             indexes_list_complete = data_frame_manipulate_transpose.index.tolist()
             # Computing dataset summaries for feature j.
-            mean_value_all[j] = np.mean(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ]) 
+            mean_value_all[j] = np.mean(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ])
             variance_value_all[j] = np.var(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ], ddof = 1)
 
         # Creating the table and putting the results there.
-        summary_df     =  pd.DataFrame(data = mean_value_all, columns = ["GrandMean"], index = indexes_list_complete )    
+        summary_df     =  pd.DataFrame(data = mean_value_all, columns = ["GrandMean"], index = indexes_list_complete )
         summary_df['SampleVariance'] =  variance_value_all
 
 
@@ -181,7 +181,7 @@ def main(args):
             flag_value_0p10   = [0] * number_of_features
 
             for j in range(0, number_of_features ):
-                series_current = data_frame_current_group.loc[ indexes_list[j] ] 
+                series_current = data_frame_current_group.loc[ indexes_list[j] ]
                 means_value[j] = series_current.mean()
 
                 # Performing one sample t-test
@@ -196,19 +196,19 @@ def main(args):
 
 
             # Creating names for the current analysis columns and adding result columns to the data frame.
-            means_value_column_name_current       = 'mean_treatment_' + group_values_series_unique[i] 
-            p_value_column_name_current           = 'prob_greater_than_t_for_diff_' + group_values_series_unique[i] + '_' + args.mu   
-            t_value_column_name_current           = 't_value_for_diff_' + group_values_series_unique[i] + '_' + args.mu   
-            neg_log10_p_value_column_name_current = 'neg_log10_p_value_' + group_values_series_unique[i] + '_' + args.mu  
-            difference_value_column_name_current  = 'diff_of_' + group_values_series_unique[i] + '_' + args.mu  
-            flag_value_column_name_current_0p01 = 'flag_significant_0p01_on_' + group_values_series_unique[i] + '_' + args.mu   
-            flag_value_column_name_current_0p05 = 'flag_significant_0p05_on_' + group_values_series_unique[i] + '_' + args.mu  
-            flag_value_column_name_current_0p10 = 'flag_significant_0p10_on_' + group_values_series_unique[i] + '_' + args.mu  
+            means_value_column_name_current       = 'mean_treatment_' + group_values_series_unique[i]
+            p_value_column_name_current           = 'prob_greater_than_t_for_diff_' + group_values_series_unique[i] + '_' + args.mu
+            t_value_column_name_current           = 't_value_for_diff_' + group_values_series_unique[i] + '_' + args.mu
+            neg_log10_p_value_column_name_current = 'neg_log10_p_value_' + group_values_series_unique[i] + '_' + args.mu
+            difference_value_column_name_current  = 'diff_of_' + group_values_series_unique[i] + '_' + args.mu
+            flag_value_column_name_current_0p01 = 'flag_significant_0p01_on_' + group_values_series_unique[i] + '_' + args.mu
+            flag_value_column_name_current_0p05 = 'flag_significant_0p05_on_' + group_values_series_unique[i] + '_' + args.mu
+            flag_value_column_name_current_0p10 = 'flag_significant_0p10_on_' + group_values_series_unique[i] + '_' + args.mu
 
             # Adding flag_value column to the data frame and assigning the name.
             # If the data frame for flags has not been created yet we create it on the fly. i.e. if i == 0 create it.
             if i == 0:
-               flag_df     =  pd.DataFrame(data = flag_value_0p01, columns = [flag_value_column_name_current_0p01], index = indexes_list )    
+               flag_df     =  pd.DataFrame(data = flag_value_0p01, columns = [flag_value_column_name_current_0p01], index = indexes_list )
             else:
                flag_df[flag_value_column_name_current_0p01] = flag_value_0p01
 
@@ -267,7 +267,7 @@ def main(args):
             indexes_list_complete = data_frame_manipulate_transpose.index.tolist()
 
             # Computing dataset summaries.
-            mean_value_all[j] = np.mean(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ]) 
+            mean_value_all[j] = np.mean(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ])
             variance_value_all[j] = np.var(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ], ddof = 1)
 
             # Performing one sample t-test for the entire dataset.
@@ -281,18 +281,18 @@ def main(args):
             if p_value[j] < 0.10: flag_value_0p10[j] = 1
 
         # Creating the table and putting the results there.
-        summary_df     =  pd.DataFrame(data = mean_value_all, columns = ["GrandMean"], index = indexes_list_complete )    
+        summary_df     =  pd.DataFrame(data = mean_value_all, columns = ["GrandMean"], index = indexes_list_complete )
         summary_df['SampleVariance']              =  variance_value_all
 
         # Creating names for the current analysis columns and adding result columns to the data frame.
         means_value_column_name_current       = 'mean_treatment_all'
-        p_value_column_name_current           = 'prob_greater_than_t_for_diff_all_' + args.mu   
-        t_value_column_name_current           = 't_value_for_diff_all_' + args.mu   
-        neg_log10_p_value_column_name_current = 'neg_log10_p_value_all_' + args.mu  
-        difference_value_column_name_current  = 'diff_of_all_' + args.mu  
-        flag_value_column_name_current_0p01 = 'flag_significant_0p01_on_all_' + args.mu   
-        flag_value_column_name_current_0p05 = 'flag_significant_0p05_on_all_' + args.mu  
-        flag_value_column_name_current_0p10 = 'flag_significant_0p10_on_all_' + args.mu  
+        p_value_column_name_current           = 'prob_greater_than_t_for_diff_all_' + args.mu
+        t_value_column_name_current           = 't_value_for_diff_all_' + args.mu
+        neg_log10_p_value_column_name_current = 'neg_log10_p_value_all_' + args.mu
+        difference_value_column_name_current  = 'diff_of_all_' + args.mu
+        flag_value_column_name_current_0p01 = 'flag_significant_0p01_on_all_' + args.mu
+        flag_value_column_name_current_0p05 = 'flag_significant_0p05_on_all_' + args.mu
+        flag_value_column_name_current_0p10 = 'flag_significant_0p10_on_all_' + args.mu
 
         summary_df[means_value_column_name_current]       = mean_value_all
         summary_df[p_value_column_name_current]           = p_value
@@ -300,7 +300,7 @@ def main(args):
         summary_df[neg_log10_p_value_column_name_current] = neg_log10_p_value
         summary_df[difference_value_column_name_current]  = difference_value
 
-        flag_df  =  pd.DataFrame(data = flag_value_0p01, columns = [flag_value_column_name_current_0p01], index = indexes_list_complete )    
+        flag_df  =  pd.DataFrame(data = flag_value_0p01, columns = [flag_value_column_name_current_0p01], index = indexes_list_complete )
         flag_df[flag_value_column_name_current_0p05] = flag_value_0p05
         flag_df[flag_value_column_name_current_0p10] = flag_value_0p10
 
@@ -341,14 +341,14 @@ def main(args):
                current_key =  group_values_series_unique[i] + '_' + args.mu
 
             # Plot all results
-            scatter.scatter2D(x=list(difs[current_key]), y=list(lpvals[current_key]), 
+            scatter.scatter2D(x=list(difs[current_key]), y=list(lpvals[current_key]),
                                colorList=list('b'), ax=volcanoPlot.ax[0])
 
             # Color results beyond treshold red
             cutLpvals = lpvals[current_key][lpvals[current_key]>cutoff]
             if not cutLpvals.empty:
                 cutDiff = difs[current_key][cutLpvals.index]
-                scatter.scatter2D(x=list(cutDiff), y=list(cutLpvals), 
+                scatter.scatter2D(x=list(cutDiff), y=list(cutLpvals),
                                colorList=list('r'), ax=volcanoPlot.ax[0])
 
             # Drawing cutoffs

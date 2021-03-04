@@ -246,8 +246,10 @@ def main(args):
     palette.getColors(dat.design,levels)
 
     # Use group separation or not depending on user input
+
     CV,CVcutoff = calculateCV(data=dat.wide, design=palette.design,
                               cutoff=args.CVcutoff, levels=palette.combName)
+
     # Plot CVplots for each group and a distribution plot for all groups together
     logger.info("Plotting Data")
     with PdfPages(args.figure) as pdf:

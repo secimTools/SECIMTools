@@ -13,7 +13,6 @@
 import os
 import logging
 import argparse
-import sys
 import warnings
 from itertools import combinations
 from argparse import RawDescriptionHelpFormatter
@@ -22,7 +21,6 @@ import numpy as np
 import pandas as pd
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy.stats.mstats import kruskalwallis
 from secimtools.visualManager import module_lines as lines
@@ -150,6 +148,7 @@ def main(args):
     number_of_unique_groups = group_values_series_unique.shape[0]
     groups_pairwise = list(combinations(group_values_series_unique, 2))
     number_of_groups_pairwise = len(groups_pairwise)
+    sample_ids = dat.wide.index.tolist()
     data_frame = dat.transpose()
     number_of_features = len(dat.wide.index)
     logger.info(f"Number of features: {number_of_features}")
@@ -169,9 +168,9 @@ def main(args):
         # Dropping columns that characterize group. Only feature columns will remain.
         # We also trnaspose here so it will be easier to operate with.
         # group = 'White_wine_type_and_source'
-        data_frame_manipulate_transpose = data_frame_manipulate.drop(
-            args.group, 1
-        ).transpose()
+        data_frame_manipulate.drop(args.group, 1)
+        data_frame_manipulate = data_frame_manipulate.loc[:,sample_ids]
+        data_frame_manipulate_transpose = data_frame_manipulate.transpose()
         # Pulling indexes list from the current data frame.
         indexes_list_complete = data_frame_manipulate_transpose.index.tolist()
         # Computing dataset summaries.
@@ -189,9 +188,9 @@ def main(args):
             ]
             # Dropping columns that characterize group. Only feature columns will remain.
             # We also trnaspose here so it will be easier to operate with.
-            data_frame_current_group = data_frame_current_group.drop(
-                args.group, 1
-            ).transpose()
+            data_frame_current_group.drop(args.group, 1)
+            data_frame_current_group = data_frame_current_group.loc[:,sample_ids]
+            data_frame_current_group = data_frame_current_group.transpose()
             # Pulling indexes list from the current data frame.
             indexes_list = data_frame_current_group.index.tolist()
             # Series current for group i and row (feature) j.
@@ -201,7 +200,6 @@ def main(args):
                 series_total = [series_current]
             else:
                 series_total.append(series_current)
-            breakpoint()
         # Checking if the compared elements are different.
         # Combining for checking.
         combined_list = data_frame_manipulate_transpose.loc[
@@ -336,8 +334,7 @@ def main(args):
                     flag_value_0p10[j] = 1
             else:
                 kruskal_wallis_args = [series_first, series_second]
-                p_value[j] = kruskalwallis(*kruskal_wallis_args)[1]
-                H_value[j] = kruskalwallis(*kruskal_wallis_args)[0]
+                p_value[j], H_value[j] = kruskalwallis(kruskal_wallis_args[0].values, kruskal_wallis_args[1].values)
                 # Possible alternative for two groups.
                 # p_value[j] = kruskalwallis(series_first, series_second)[1]
                 neg_log10_p_value[j] = -np.log10(p_value[j])
