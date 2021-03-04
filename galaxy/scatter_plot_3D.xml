@@ -1,5 +1,5 @@
 <tool id="secimtools_scatter_plot_3D" name="Scatter Plot 3D" version="@WRAPPER_VERSION@">
-    <description>standalone tool.</description>
+    <description>- A standalone tool.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -39,11 +39,11 @@ scatter_plot_3D.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Long Dataset" help="Input dataset in Long Format and tab separated. Please see the description of the file format below. If the file is not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Sample ID" help="Name of the column in your Long Dataset with unique sample IDs. If coloring by group, sampleIDs must match sampleIDs in the Design File."/>
-        <param name="x" type="text" size="30" value="" label="X Group Title" help="Name of the column in Long Format dataset for X values."/>
-        <param name="y" type="text" size="30" value="" label="Y Group Title" help="Name of the column in Long Format dataset for Y values."/>
-        <param name="z" type="text" size="30" value="" label="Z Group Title" help="Name of the column in Long Format dataset for Z values."/>
+        <param name="input" type="data" format="tabular" label="Long Dataset" help="Input dataset in tab-separated long format. Please see the description of the file format below. If the file is not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="SampleID" help="Name of the column in your long dataset with unique sample identifiers (sampleID). If coloring by group, sampleIDs must match sampleIDs in the Design File."/>
+        <param name="x" type="text" size="30" value="" label="X Group Title" help="Name of the column in long format dataset for X values."/>
+        <param name="y" type="text" size="30" value="" label="Y Group Title" help="Name of the column in long format dataset for Y values."/>
+        <param name="z" type="text" size="30" value="" label="Z Group Title" help="Name of the column in long format dataset for Z values."/>
         <param name="rotation" type="text" size="30" value="" label="Azimuth (Rotation) Angle for Viewing [Optional]" help="The azimuth (rotation) angle for viewing in degrees. Default = 45 degrees. The ideal azimuth (rotation) angle may be a process of trial and error."/>
         <param name="elevation" type="text" size="30" value="" label="Elevation Angle for Viewing [Optional]" help="The elevation angle for viewing in degrees. Default = 45 degrees. The ideal elevation angle may be a process of trial and error."/>
         <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
