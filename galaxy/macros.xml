@@ -73,6 +73,23 @@
 
     **NOTE:** You must have a column named **sampleID** and the values in this column must match the column names in the wide dataset.
     </token>
+    <token name="@TALL@">
+    **Tall/ Stacked Dataset:**
+
+    A dataset in stacked format that contains measurements for each sample:
+    
+    +----------+--------+------------+
+    | Feature  | Sample | Peak Height| 
+    +==========+========+============+
+    |  One     |   1    |      10    |    
+    +----------+--------+------------+
+    |  One     |   2    |      20    |
+    +----------+--------+------------+
+    |  One     |   3    |      10    |
+    +----------+--------+------------+
+    |  Two     |   1    |      5     |
+    +----------+--------+------------+
+    </token> 
     <token name="@FLAGS@">
     **Flag File:** 
 
