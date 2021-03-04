@@ -27,7 +27,6 @@ tests/principal_component_analysis.sh
 tests/random_forest.sh
 tests/remove_selected_features_samples.sh
 tests/retention_time_flags.sh
-tests/run_all.sh
 tests/run_order_regression.sh
 tests/scatter_plot_2D_default.sh
 tests/scatter_plot_2D_palette_color.sh

@@ -1,5 +1,5 @@
-<tool id="secimtools_blank_feature_filtering_flags" name="Blank Feature Filtering (BFF) Flag" version="@WRAPPER_VERSION@">
-    <description>assigns flags to features using the blank samples for thresholding.</description>
+<tool id="secimtools_blank_feature_filtering_flags" name="Blank Feature Filtering (BFF)" version="@WRAPPER_VERSION@">
+    <description> - Calculate LOD and flag features in non-blank samples below threshold.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -17,11 +17,11 @@ blank_feature_filtering_flags.py
 --outbff $outbff
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-    <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-    <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
-    <param name="blank" type="text" size="30" optional="true" label="Blank Name" help="Name of the group in your Design File that designates the blanks. Used to calculate baseline in filtering."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input tab-separated wide format dataset. If not tab separated see TIP below."/>
+    <param name="design" type="data" format="tabular" label="Design File" help="Design file, tab separated. Note: you need a 'sampleID' column. If not tab-separated, see TIP below."/>
+    <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that contains unique feature identifiers."/>
+    <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment" help="Name of the column in your design file that contains classification information."/>
+    <param name="blank" type="text" size="30" optional="true" label="Blank Name" help="Name given to the blank samples in your Group/Treatment column. Used to calculate baseline in filtering."/>
     <param name="bff" type="integer" size="30" value="5000" optional="true" label="BFF Threshold" help="Default value to use as the limit of detection."/>
     <param name="cv" type="integer" size="30" value="100" optional="true" label="Criterion Value" help="Number of times the signal in the samples shoud be stronger than the corresponding signal in the blanks."/>
     </inputs>
@@ -77,7 +77,7 @@ A feature is flagged as below the detection limit for a given group if the ratio
 
 **Blank Name**
 
-    - Name of the group in your Design File that contains the blanks. Used to calculate the computed BFF Threshold for filtering.
+    - Name given to the blanks samples in your Group/Treatment column. Used to calculate the computed BFF Threshold for filtering.
 
 **BFF Threshold**
 
