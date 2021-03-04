@@ -20,10 +20,10 @@ partial_least_squares.py
 --figure $figures
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that has unique identifiers."/>
+        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your design file that contains group classifications."/>
         <param name="toCompare" type="text" size="30" label="Names of the Groups to Compare" help="Names of the two groups to compare. The user should insure that group names do not contain commas. The separator for the two groups should only include commas (no spaces)."/>
         <param name="cross_validation" type="select" size="30" display="radio" value="double" label="Cross-Validation Options">
             <option value="none">None</option>
