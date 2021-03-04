@@ -1,4 +1,4 @@
-<tool id="secimtools_imputation" name="Imputation (Mean, Median, K-Nearest Neighbours (KNN), Stochastic)" version="@WRAPPER_VERSION@">
+<tool id="secimtools_imputation" name="Imputation (Mean, Median, K-Nearest Neighbours, Stochastic)" version="@WRAPPER_VERSION@">
     <description>of missing values using selected algorithm.</description>
     <macros>
         <import>macros.xml</import>
@@ -36,11 +36,11 @@ imputation.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
-        <param name="imputation" size="30" type="select" value="" label="Imputation Strategy" help="Choose imputation strategy.">
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that has unique identifiers.."/>
+        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your design file that contains group classifications."/>
+        <param name="imputation" size="30" type="select" value="" label="Imputation Strategy" help="Choose an imputation strategy.">
             <option value="knn" selected="true">K-Nearest Neighbors</option>
             <option value="bayesian" selected="true">Stochastic</option>
             <option value="mean" selected="true">Mean</option>
@@ -49,10 +49,10 @@ imputation.py
         <param name="noZero" type="boolean" label="Count Zeroes as missing" help="Zeroes can be counted as missing or left as data."/>
         <param name="noNeg" type="boolean" label="Count Negative as missing" help="Negatives can be counted as missing or left as data."/>
         <param name="exclude" type="text" size="30" value="" label="Additional values to treat as missing [Optional]" help="Separate additional values to treat as missing data with commas."/>
-        <param name="rowCutoff" type="text" size="30" value=".5" label="Row Percent Cutoff Value" help="Proportion of missing values allowed per group per row. If the proportion of missing values for each feature is greater than the specifed value, then the sample mean is imputed instead of values from the KNN algorithm. Default: 0.5 (50%)."/>
-        <param name="k" type="text" size="30" value="5" label="K value" help="Only for KNN Imputation, ignore for other imputation methods. K value is the number of neighbors to search. Default: 5. If less then 5 neighbours are available, all are used."/>
-        <param name="colCutoff" type="text" size="30" value=".8" label="Column Percent Cutoff Value" help="Only for KNN Imputation, ignore for other imputation methods. If the proportion of missing values is greater than the specified value, the imputation stops and the tool returns an error. Default: 0.8 (80%)."/>
-        <param name="distribution" size="30" type="select" value="" label="Bayesian Distribution" help="Stochastic Imputation only.  Choose between normal and Poisson distributions.">
+        <param name="rowCutoff" type="text" size="30" value=".5" label="Row Percent Cutoff Value" help="Proportion of missing values allowed per group per row. If the proportion of missing values for each feature is greater than the specifed value, then the sample mean is imputed instead of values from the K-Nearest Neighbors algorithm. Default: 0.5 (50%)."/>
+        <param name="k" type="text" size="30" value="5" label="K value" help="Only for K-Nearest Neighbors Imputation, ignore for other imputation methods. K value is the number of neighbors to search. Default: 5. If less then 5 neighbours are available, all are used."/>
+        <param name="colCutoff" type="text" size="30" value=".8" label="Column Percent Cutoff Value" help="Only for K-Nearest Neighbors Imputation, ignore for other imputation methods. If the proportion of missing values is greater than the specified value, the imputation stops and the tool returns an error. Default: 0.8 (80%)."/>
+        <param name="distribution" size="30" type="select" value="" label="Bayesian Distribution" help="Only for Stochastic Imputation, ignore for other imputation methods.  Choose between normal and Poisson distributions.">
             <option value="Poisson" selected="true">Poisson</option>
             <option value="Normal" selected="true">Normal</option>
         </param>
