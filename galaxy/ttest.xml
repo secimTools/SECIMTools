@@ -52,10 +52,10 @@ ttest.py
 
 **Tool Description**
 
-The tool performs a two-sided t-test for two groups of dependent samples (paired or dependent t-test) or multiple (two or more) groups of independent sample (unpaired or independent t-test).
+The tool performs a two-sided t-test for two groups of dependent samples (paired or dependent t-test) or multiple (two or more) groups of independent samples (unpaired or independent t-test).
 The user selects which test (paired or unpaired) to perform.
 
-In an unpaired t-test the samples within and between groups are independent.
+In an unpaired t-test, the samples within and between groups are independent.
 The test is performed for all pairs of conditions specified using the Group/Treatment field.
 For example, if there are three treatment conditions (Control, Time1 and Time2) then t-tests will be performed for: (i) Control vs Time1, (ii) Control vs Time2, and (iii) Time1 vs Time2.
 Note that this will give slightly different results than the contrast in an ANOVA because the ANOVA uses all groups to estimate the error.

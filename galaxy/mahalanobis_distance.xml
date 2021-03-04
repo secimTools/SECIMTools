@@ -105,7 +105,7 @@ Archambeau C, Vrins F, Verleysen M. Flexible and Robust Bayesian Classification 
 
 **Additional groups to separate by [Optional]**
 
-    - Enter additional group(s) name(s) to include. Spelling and capitalization must be exact. If more than one group separate with ','.
+    - Enter additional group(s) name(s) to include. Spelling and capitalization must be exact. If more than one group, separate them with a comma
     - **Warning:** All groups must contain 3 or more samples.
 
 
