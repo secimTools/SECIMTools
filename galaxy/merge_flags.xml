@@ -1,5 +1,5 @@
-<tool id="secimtools_merge_flags" name="Merge Flags" version="@WRAPPER_VERSION@">
-    <description>with same uniqueID into a single file.</description>
+<tool id="secimtools_merge_flags" name="Merge Flag Files" version="@WRAPPER_VERSION@">
+    <description>with the same unique identifiers into a single file.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -15,8 +15,8 @@ merge_flags.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" format="tabular" type="data"  label="Wide Dataset" multiple="true" help="Input dataset in wide format and tab separated.CTRL+CLICK to select multiple. If not tab separated see TIP below." />
-        <param name="flagUniqID" type="text" size="30" value="" label="Unique ID for Flag file (for feature ID or sample ID)" help="Name of the column in your Flag file that contains unique IDs."/>
+        <param name="input" format="tabular" type="data"  label="Input Flag Files" multiple="true" help="Input your tab-separated flag files. CTRL+CLICK to select multiple files. If not tab separated see TIP below." />
+        <param name="flagUniqID" type="text" size="30" value="" label="Unique identifier in the flag files (feature or sample)" help="Name of the column in your flag file that contains unique identifiers."/>
     </inputs>
     <outputs>
         <data format="tabular" name="output" label="${tool.name} on ${on_string}: Flags"/>

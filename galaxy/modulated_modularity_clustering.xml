@@ -17,9 +17,9 @@ modulated_modularity_clustering.py
 --correlation $corr
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below." />
-        <param name="design" type="data" format="tabular" label="Design Dataset" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs." />
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If not tab separated see TIP below." />
+        <param name="design" type="data" format="tabular" label="Design Dataset" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" label="Unique Feature ID" help="Name of the column in your wide dataset that has unique identifiers.." />
         <param name="sigmaLow" type="float" size="6" value="0.05" label="Lower sigma bound" help="Default: 0.05." />
         <param name="sigmaHigh" type="float" size="6" value="0.50" label="Upper sigma bound" help="Default: 0.50." />
         <param name="sigmaNum" type="float" size="6" value="451" label="Number of Sigma values" help="Number of values of sigma to search. Default: 451." />

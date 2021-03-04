@@ -13,9 +13,9 @@ compare_flags.py
     ]]></command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Flag File"
-               help="Input Flag File tab separated. If file is not tab separated see TIP below."/>
-        <param name="flag1" type="text" size="30" optional="False" label="Column Name for Flag 1" help="Name of the first flag column to compare"/>
-        <param name="flag2" type="text" size="30" optional="False" label="Column Name for Flag 2" help="Name of the second flag column to compare"/>
+               help="Input tab-separated Flag File. If file is not tab separated see TIP below."/>
+        <param name="flag1" type="text" size="30" optional="False" label="Column Name for Flag 1" help="Name of the column containing the first flag to compare"/>
+        <param name="flag2" type="text" size="30" optional="False" label="Column Name for Flag 2" help="Name of the column containing the second flag to compare"/>
     </inputs>
     <outputs>
         <data format="tabular" name="output" label="${tool.name} on ${on_string}: Flag Feature"/>
@@ -33,7 +33,7 @@ compare_flags.py
 
 **Tool Description**
 
-This tool compares 2 flags in a flag file and generates a 'cross tabulation' results file.
+This tool compares 2 columns containing binary indicators (flags) in a flag file and generates a 'cross tabulation' results file.
 Flags from multiple flag files can by combined by first running the 'Merge_Flags' tool.
 
 --------------------------------------------------------------------------------
