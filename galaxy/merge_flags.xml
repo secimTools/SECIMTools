@@ -1,5 +1,5 @@
-<tool id="secimtools_merge_flags" name="Merge Flags" version="@WRAPPER_VERSION@">
-    <description>with same uniqueID into a single file.</description>
+<tool id="secimtools_merge_flags" name="Merge Flag Files" version="@WRAPPER_VERSION@">
+    <description>with the same unique identifiers into a single file.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
