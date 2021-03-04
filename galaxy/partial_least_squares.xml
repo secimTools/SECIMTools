@@ -68,8 +68,11 @@ The tool performs partial least square discriminant analysis (PLS-DA) for two tr
 The subspace dimension defines the number of components that will be used to describe the variability within the data.
 The user can specify subspace dimension in the range of two to the sample number.
 The user has the option to specify the dimension of the subspace directly (Default =2) or to perform single or double cross-validation to determine the dimension of the subspace.
+
 For single and double cross-validation: the data set is split differently when the model fit is performed.
+
 For double cross-validation: the data set is split into pieces and the model fit is performed on one piece using cross-validation and evaluated on the other pieces.
+
 For single cross-validation: the same data are used to fit the model and to evaluate the model using three-fold cross validation.
 
 More details can be found in:
@@ -108,8 +111,7 @@ Extra columns will automatically be ignored.
 
 **Names of the Groups to Compare**
 
-    - Comma separated names of the two groups in your Group/Treatment column that you want to compare. The user should ensure that group names do not contain commas. The separator for
-the two groups should only include commas (no spaces).
+    - Comma separated names of the two groups in your Group/Treatment column that you want to compare. The user should ensure that group names do not contain commas. The separator for the two groups should only include commas (no spaces).
 
 **Cross-Validation Options**
 

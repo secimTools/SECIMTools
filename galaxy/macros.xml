@@ -73,6 +73,32 @@
 
     **NOTE:** You must have a column named **sampleID** and the values in this column must match the column names in the wide dataset.
     </token>
+    <token name="@DF@">
+    **Design File** 
+
+    A Design file relating samples to various groups/treatment:
+
+        +----------+--------+
+        | sampleID | group  |
+        +==========+========+
+        | sample1  | g1     |
+        +----------+--------+
+        | sample2  | g1     |
+        +----------+--------+
+        | sample3  | g1     |
+        +----------+--------+
+        | sample4  | g2     |
+        +----------+--------+
+        | sample5  | g2     |
+        +----------+--------+
+        | sample6  | g2     |
+        +----------+--------+
+        | ...      | ...    |
+        +----------+--------+
+
+    **NOTE:** You must have a column named **sampleID** and the values in this column must match  
+    the column names in the long dataset.
+    </token>
     <token name="@LONG@">
     **Long Dataset:**
 
