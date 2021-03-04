@@ -1,5 +1,5 @@
 <tool id="secimtools_retention_time_flags" name="Retention Time (RT) Flags" version="@WRAPPER_VERSION@">
-    <description>based on discrepancies in retention time.</description>
+    <description>- Flag features with discrepancies in retention time.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -23,11 +23,11 @@ retention_time_flags.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file(tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique identifiers."/>
         <param name="CVcutoff" optional="true" type="float" value="0.1" size="4" label="Coefficient of Variation (CV) Cutoff" help="Coefficient of variation (CV) cutoff (in decimals) that specifies the proportion of features to flag.  Default CV cutoff = 0.1, which implies that 10% of the features with the largest CVs will be flagged." />
-        <param name="minutes" type="float" size="4" value="0.2" label="Retention Time Cutoff Value" help="If the difference in the retention time between the 95th and 5th percentiles (or 90th adn 10th) is greater than this specified RT Cutoff value, features are flagged.  (A default value of 0.2 assumes data units are in minutes)" />
+        <param name="minutes" type="float" size="4" value="0.2" label="Retention Time Cutoff Value" help="If the difference in the retention time between the 95th and 5th percentiles (or 90th and 10th) is greater than this specified RT Cutoff value, features are flagged.  (A default value of 0.2 assumes data units are in minutes)" />
         <param name="pctl" type="boolean" size="6" label="90th and 10th percentiles [Optional]" help="See RT Cutoff Value above.  Check this box to use the 90th and 10th percentiles instead of the default 95th and 5th percentiles."/>
     </inputs>
     <outputs>

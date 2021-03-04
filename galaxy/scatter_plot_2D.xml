@@ -1,5 +1,5 @@
 <tool id="secimtools_scatter_plot_2D" name="Scatter Plot 2D" version="@WRAPPER_VERSION@">
-    <description>standalone tool.</description>
+    <description>- A standalone tool.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -30,14 +30,14 @@ scatter_plot_2D.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Long Dataset" help="Input dataset in Long Format and tab separated. Please see the description of the file format below. If the file is not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Sample ID" help="Name of the column in your Long Dataset that has the unique sample IDs."/>
-        <param name="x" type="text" size="30" value="" label="X Group Title" help="Name of the column in Long Format dataset for X values."/>
-        <param name="y" type="text" size="30" value="" label="Y Group Title" help="Name of the column in Long Format dataset for Y values."/>
-        <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Design File tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="group" type="text" size="30" value="" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classification to be used for coloring."/>
+        <param name="input" type="data" format="tabular" label="Long Dataset" help="Input dataset in tab-separated long format. Please see the description of the file format below. If the file is not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="SampleID" help="Name of the column in your long dataset that has the unique sample idenifiers (sampleID)."/>
+        <param name="x" type="text" size="30" value="" label="X Group Title" help="Name of the column in your long format dataset for X values."/>
+        <param name="y" type="text" size="30" value="" label="Y Group Title" help="Name of the column in your long format dataset for Y values."/>
+        <param name="design" type="data" format="tabular" optional="true" label="Design File [Optional]" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment [Optional]" help="Name of the column in your design file that contains group classification to be used for coloring."/>
         <param name="palette" type="text" size="30" label="Palette [Optional]" help="Select color palette. Default = tableau. Other options are diverging, qualitative, sequential, cubehelix, tableau, and  wesanderson. Please see the descriptions for the palettes below."/>
-        <param name="color" type="text" size="30" label="Color Scheme [Optional]" help="Select color scheme within the palette. Default color scheme for palette tableau = Tableau_20. User must specify a Color Scheme if the Palette field has been filled. Please see the descriptions for the color schemes below."/>
+        <param name="color" type="text" size="30" label="Color Scheme [Optional]" help="Select color scheme within the palette. Default color scheme for palette tableau = Tableau_20. User must specify a color scheme if the palette field has been filled. Please see the descriptions for the color schemes below."/>
     </inputs>
     <outputs>
         <data format="pdf" name="figure" label="${tool.name} on ${on_string}: scatter plots"/>

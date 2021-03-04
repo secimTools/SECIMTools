@@ -15,15 +15,15 @@ remove_user_specified_row_col.py
     ]]></command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset"
-               help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
+               help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File"
-               help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+               help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID"
-               help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="rowID" type="text" size="30" value="" label="Space separated list of features (rows) to drop from wide dataset."
-               help="Name of the rows in your Wide dataset to drop. Separate more than 1 row with a space."/>
-        <param name="colID" type="text" size="30" value="" label="Space separated list of columns (samples) to drop from Wide dataset."
-               help="Name of the columns in your Wide dataset to drop. Separate more than 1 column with a space."/>
+               help="Name of the column in your wide dataset that has unique identifiers."/>
+        <param name="rowID" type="text" size="30" value="" label="Features to drop [Optional]."
+               help="Space-separated list of unique identifiers (rows) in your wide dataset to delete."/>
+        <param name="colID" type="text" size="30" value="" label="Samples to drop [Optional]."
+               help="Space-separated list of unique sampleIDs (columns) to be removed from the wide dataset."/>
     </inputs>
     <outputs>
         <data format="tabular" name="outWide" label="${tool.name} on ${on_string}: Dropped wide"/>
