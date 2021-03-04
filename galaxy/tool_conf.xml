@@ -1,6 +1,7 @@
   <section id="secim" name="SECIM Tools"  version="">
     <tool file="SECIMTools/galaxy/anova_fixed.xml"/>
     <tool file="SECIMTools/galaxy/blank_feature_filtering_flags.xml"/>
+    <tool file="SECIMTools/galaxy/bland_altman_plot.xml"/>
     <tool file="SECIMTools/galaxy/coefficient_variation_flags.xml"/>
     <tool file="SECIMTools/galaxy/compare_flags.xml"/>
     <tool file="SECIMTools/galaxy/compound_identification.xml"/>
