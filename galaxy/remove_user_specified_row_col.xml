@@ -5,7 +5,7 @@
     </macros>
     <expand macro="requirements" />
     <command><![CDATA[
-remove_user_specified_row_col_02amm.py
+remove_user_specified_row_col.py
 --input $input
 --design $design
 --ID $uniqID

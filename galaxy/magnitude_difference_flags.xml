@@ -89,7 +89,7 @@ The tool outputs a variable number of files (from 2 to n+1) depending on the num
 
 (1) TSV file containing a 0/1 indicator flag where “1” is used to flag features where the difference in the digit counts is greater than 2.
 
-(2) TSV file containing the digit counts for all samples or for the samples within groups,  depending on whether the Group/Treatment[Optional] parameter was provided.
+(2) TSV file containing the digit counts for all samples or for the samples within groups,  depending on whether the Group/Treatment [Optional] parameter was provided.
 
 (3) A PDF file of the distribution of digit counts within each group of samples.
 

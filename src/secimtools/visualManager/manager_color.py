@@ -478,7 +478,7 @@ class colorHandler:
 
         #Getting the columns we are interested in dropping missing data columns
         if len(groups):
-            self.design = design.loc[:,groups].dropna(axis=1)
+            self.design = design.loc[:,groups].dropna(axis=0)
         else:
             self.design = pd.DataFrame(design.index.values,index=design.index,columns=["samples"])
             self.design.index.name = "sampleID"
@@ -494,6 +494,8 @@ class colorHandler:
                                     x[groups].values)),axis=1)
         #Getting uniq combinations
         uGroups = list(set(self.design[self.combName].values))
+
+        #Remove the nan in the selected group column 
 
         #Get colours
         if self.combName == "samples":

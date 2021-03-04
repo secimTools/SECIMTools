@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <macros>
-    <token name="@WRAPPER_VERSION@">1.1.0</token>
+    <token name="@WRAPPER_VERSION@">21.2.21</token>
     <xml name="requirements">
         <requirements>
             <requirement type="package" version="@WRAPPER_VERSION@">secimtools</requirement>
@@ -22,7 +22,7 @@
 
     **WARNINGS:**
 
-       (1) SampleIDs in the wide data that have no matching name in the design file, as well as sampleIDs in the desing file that have no match in data will be included in the analysis.
+       (1) SampleIDs in the wide data that have no matching name in the design file, as well as sampleIDs in the design file that have no match in data will be included in the analysis.
        (2) This script automatically removes spaces and special characters from strings.
        (3) If a compound/feature name starts with a number it will prepend an '_'.
        (4) Input names are case sensitive and must match exactly (e.g use 'Feature' not 'feature').
@@ -96,7 +96,7 @@
     <token name="@MZRTFILE@">
     **M/Z RT File:** 
 
-    A wide formated dataset that contains M/Z and RT mesuarementes for each sample:
+    A wide formated dataset that contains M/Z and RT measurements for each sample:
 
         +----------+--------+----------------+
         | sampleID | M/Z    | Retention Time |

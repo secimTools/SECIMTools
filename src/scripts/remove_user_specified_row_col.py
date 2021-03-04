@@ -82,10 +82,10 @@ def dropRowCol(df_wide, args):
         :returns: updates the wide DataFrame where indicated rows and cols are dropped and writes to tsv
     """
     # drop rows
-    df_row_UPD = df_wide.drop(rowID)
+    df_row_UPD = df_wide.drop(args.row)
 
     # now drop cols
-    df_col_UPD = df_row_UPD.drop(colID, axis=1)
+    df_col_UPD = df_row_UPD.drop(args.col, axis=1)
 
     return df_col_UPD
 
@@ -93,7 +93,7 @@ def main(args):
     # import data with interface
     dat = wideToDesign(wide=args.input, design=args.design, uniqID=args.uniqID, logger=logger)
 
-    kpd_wide=dropRowCol(df_col_UPD=dat.wide, rowID=args.row, colID=args.col, args=args)
+    kpd_wide=dropRowCol(dat.wide, args=args)
 
     # output new wide dataset
     kpd_wide.to_csv(args.outWide, sep='\t')
