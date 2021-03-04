@@ -19,6 +19,7 @@ import rpy2.robjects as robjects
 from argparse import RawDescriptionHelpFormatter
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
+from rpy2.rinterface_lib.embedded import RRuntimeError
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
 
@@ -164,16 +165,29 @@ def main(args):
     comboLength = len(comboMatrix)
 
     correct_list_of_names = np.array(dat.trans.columns.values.tolist())
-    returns = lassoEnetScript.lassoEN(
-        dat.trans,
-        dat.design,
-        args.uniqID,
-        correct_list_of_names,
-        comboMatrix,
-        comboLength,
-        args.alpha,
-        args.plots,
-    )
+    try:
+        returns = lassoEnetScript.lassoEN(
+            dat.trans,
+            dat.design,
+            args.uniqID,
+            correct_list_of_names,
+            comboMatrix,
+            comboLength,
+            args.alpha,
+            args.plots,
+        )
+    except RRuntimeError as e:
+        try:
+            e.context = {
+                'r_traceback': '\n'.join((r'unlist(traceback())'))
+            }
+        except Exception as traceback_exc:
+            e.context = {
+                'r_traceback':
+                    '(an error occurred while getting traceback from R)',
+                'r_traceback_err': traceback_exc,
+            }
+        raise
     robjects.r["write.table"](
         returns[0],
         file=args.coefficients,

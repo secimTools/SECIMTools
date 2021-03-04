@@ -14,13 +14,22 @@ lassoEN <- function(Dataset_varsel, Design_file, rowID_name, correct_list_of_col
       paste("Dataset_varsel_", pairs_comparison[pair, 1], "_", pairs_comparison[pair, 2], "_only", sep = ""),
       Dataset_varsel[as.character(Dataset_varsel$group) %in% as.character(pairs_comparison[pair, ]), ]
     )
+    #DEBUG
+    #save(pairs_comparison, file = "pairs_comparison.RData")
 
     # Creating design matrix with only the levels of interest.
     # Dataset with only groups on interest i.e. pairs_comparison[pair,]
     # Putting dataset into a temporary one to fix the names if necessary.
-    current_dataset <- model.matrix(group ~ ., data = eval(as.name(paste("Dataset_varsel_", pairs_comparison[pair, 1], "_", pairs_comparison[pair, 2], "_only", sep = "")))[
-      !(names(eval(as.name(paste("Dataset_varsel_", pairs_comparison[pair, 1], "_", pairs_comparison[pair, 2], "_only", sep = "")))) %in% "sampleID")
-    ])[, -1]
+    print("DEBUG 1")
+    evaluated_data <- eval(as.name(paste("Dataset_varsel_", pairs_comparison[pair, 1], "_", pairs_comparison[pair, 2], "_only", sep = "")))
+    print(head(evaluated_data))
+    # print(evaluated_data)
+    evaluated_names <- names(evaluated_data)
+    # print(evaluated_names)
+    print("DEBUG 2")
+    mmatrix <- model.matrix(group ~ ., data = evaluated_data[!(evaluated_names %in% "sampleID")])
+    print("DEBUG 3")
+    current_dataset <- mmatrix[, -1]
     # Updating the names with the ones we passed to be sure we did not have "X_" instead of "_".
     colnames(current_dataset) <- correct_list_of_column_names[-length(correct_list_of_column_names)]
     assign(paste("Dataset_varsel_", pairs_comparison[pair, 1], "_", pairs_comparison[pair, 2], "_only_matrix", sep = ""), current_dataset)
