@@ -22,12 +22,12 @@ if [[ $# -gt 0 ]]; then OUTPUT_DIR=$1 ; fi
 mkdir -p "${OUTPUT_DIR}"
 
 ttest.py \
-    -i  "$INPUT_DIR/ST000006_data.tsv" \
-    -d  "$INPUT_DIR/ST000006_design_paired_ttest.tsv" \
+    -i  "$INPUT_DIR/data_4_ttest_pair.tsv" \
+    -d  "$INPUT_DIR/design_4_ttest_pair.tsv" \
     -id "Retention_Index" \
-    -g  "White_wine_type_and_source" \
+    -g  "group" \
     -p  "paired" \
-    -o  "run_Order_fake_variable" \
+    -o  "fake_pairID" \
     -s  "$OUTPUT_DIR/ST000006_ttest_select_paired_summary.tsv" \
     -f  "$OUTPUT_DIR/ST000006_ttest_select_paired_flags.tsv" \
     -v  "$OUTPUT_DIR/ST000006_ttest_select_paired_volcano.pdf"
