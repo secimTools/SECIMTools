@@ -71,7 +71,7 @@ Extra columns will automatically be ignored.
 
 **Output**
 
-This tool outputs a TSV file containing indicator flags for each group, the number of indicator flags is determined by the number of groups.
+This tool outputs a TSV file containing indicator flags for each group, where the number of indicator flags is determined by the number of groups.
 
     ]]></help>
     <expand macro="citations"/>

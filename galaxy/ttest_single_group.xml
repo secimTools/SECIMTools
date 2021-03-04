@@ -57,7 +57,7 @@ ttest_single_group.py
 **Tool Description**
 
 The tool performs a one sample t-test for each feature.
-Two options are available for the t-test: if the user provides the Group/Treatment variable then the mean for each treatment condition is compared with Mu, the user-specified value of the true mean under the null hypothesis.
+Two options are available for the t-test: if the user provides the Group/Treatment variable, then the mean for each treatment condition is compared with Mu, the user-specified value of the true mean under the null hypothesis.
 If Group/Treatment is not provided, then the mean across all samples is compared to Mu.
 
 --------------------------------------------------------------------------------

@@ -98,11 +98,14 @@ SVM classification is performed on the target data and accuracy is estimated for
 SVM uses different kernel functions to carry out different types of classification such as radial bassis (gaussian), linear, polynomial, and sigmoid.
 The classification model can be trained with and without cross-validation (single or double).
 
-For single and double cross-validation, the training dataset is split differently when the model fit is performed.
-In single cross-validation, the same data are used to both fit and evaluate the model.
-In double cross-validation, the training dataset is split into pieces and the model fit is performed on one of the pieces and evaluated on the other pieces.
+For single and double cross-validation: the training dataset is split differently when the model fit is performed.
+
+In single cross-validation: the same data are used to both fit and evaluate the model.
+
+In double cross-validation: the training dataset is split into pieces and the model fit is performed on one of the pieces and evaluated on the other pieces.
+
 Under cross-validation, the user specifies Regularization Parameter C and the Upper and Lower bounds of Regularization Parameter C.
-For more information about Regularization Parameter C see references below.
+For more information about Regularization Parameter C, see references below:
 
 Cortes, C. and Vapnik, V. 1995.  Support-vector networks. Machine Learning. 20(3) 273-297.
 

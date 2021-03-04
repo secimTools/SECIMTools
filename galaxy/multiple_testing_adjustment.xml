@@ -1,5 +1,5 @@
 <tool id="secimtools_multiple_testing_adjustment" name="Multiple Testing Adjustment (MTA)" version="@WRAPPER_VERSION@">
-    <description>of p-values to account for multiple testing.</description>
+    <description>of p-values.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -14,9 +14,9 @@ multiple_testing_adjustment.py
 --flags $flags
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="pval" type="text" size="30" value="" label="p-value column" help="Name of the column in your Wide Dataset that contains the p-values."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique identifiers.."/>
+        <param name="pval" type="text" size="30" value="" label="p-value column" help="Name of the column in your wide dataset that contains the p-values."/>
         <param name="alpha" type="float" size="6" value="0.05" label="α" help="Value of α to be used for multiple correction.  Default α = 0.05."/>
     </inputs>
     <outputs>
@@ -75,7 +75,7 @@ Benjamini, Y., and Yekutieli, D. (2001). The control of the false discovery rate
 
 The tool produces two TSV files:
 
-(1) One TSV contains five columns:
+(1) One TSV that contains the following five columns:
 	a column with unique feature IDs,
 	a column of the original p-values and
 	the last three columns contain the p-values adjusted using the 3 methods described above which are reflected in the column name.
