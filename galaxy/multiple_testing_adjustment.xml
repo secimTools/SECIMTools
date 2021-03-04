@@ -75,7 +75,7 @@ Benjamini, Y., and Yekutieli, D. (2001). The control of the false discovery rate
 
 The tool produces two TSV files:
 
-(1) One TSV contains five columns:
+(1) One TSV that contains the following five columns:
 	a column with unique feature IDs,
 	a column of the original p-values and
 	the last three columns contain the p-values adjusted using the 3 methods described above which are reflected in the column name.
