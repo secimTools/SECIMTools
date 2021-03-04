@@ -88,7 +88,7 @@ If a group or treatment variable is provided, then the same distance plots are g
 
 **Additional groups to separate by [Optional]**
 
-    - Enter group(s) name(s). Spelling and capitalization must be exact. If more than one group separate with ','.
+    - Enter group(s) name(s). Spelling and capitalization must be exact. If more than one group, separate with commas.
     - **Warning:** All groups must contain 3 or more samples.
     - **NOTE:** Groups with one element will be excluded from the analysis.
 
