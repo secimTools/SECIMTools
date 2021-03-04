@@ -49,11 +49,12 @@ blank_feature_filtering_flags.py
 **Tool Description**
 
 **NOTE:** The tool is relevant for Liquid Chromatography Mass Spectroscopy (LC-MS) data analysis and removes “noise” from the data using values of features in the blank samples as a reference.
-The tool becomes relevant when the values of features in the experimental samples are not much larger than the values of the same features in the blank samples (arbitrary) **How much larger??*.
+The tool becomes relevant when the values of features in the experimental samples are not much larger than the values of the same features in the blank samples.
 The features with such a signal are treated as noise inherited by the sample due to the instrument and are flagged by the tool.
 
 The computed BFF Threshold for each feature is equal to ((3*Standard Deviation of the blank group) + (the average of the blank group)) and is calculated aross blank samples only.
 If, for a given feature, the computed BFF Threshold is less than or equal to 0, the user specified BFF Threshold overrides the computed BFF Threshold (default value for user specfied BFF Threshold is 5000).
+
 The user specified BFF Threshold becomes relevant when the blank group contains a lot of zero values or is on log-transformed scale.
 
 A feature is flagged as below the detection limit for a given group if the ratio ((group mean – BFF Threshold) / BFF Threshold) is less than the Criterion Value (default 100) for the average within the group.
@@ -85,7 +86,7 @@ A feature is flagged as below the detection limit for a given group if the ratio
 
 **Criterion Value**
 
-    - Number of times the signal in the experimental samples should be greater than the corresponding signal in the blanks. [Clarify]
+    - Number of times the signal in the experimental samples should be greater than the corresponding signal in the blanks. 
 
 --------------------------------------------------------------------------------
 
