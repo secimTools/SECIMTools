@@ -1,5 +1,5 @@
-<tool id="subsetData" name="Subset of Data" version="1.0,0">
-    <description>Subset your data base on groups or features.</description>
+<tool id="subsetData" name="Subset Wide Data and Design File" version="1.0,0">
+    <description>- Based on groups.</description>
     <requirements>
         <requirement type="python-module">os</requirement>
         <requirement type="python-module">pandas</requirement>
@@ -17,11 +17,11 @@
         --out $out
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" value="" optional="false" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications. If none provided the drop will be performed by 'sampleID'."/>
-        <param name="toDrop" type="text" size="30" optional="false" label="Group(s)/Sample(s) to drop" help="Name of the Group(s)/Sample(s), comma separeted, that will be removed from your wide datset."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that has unique identifiers."/>
+        <param name="group" type="text" size="30" value="" optional="false" label="Group/Treatment [Optional]" help="Name of the column in your design file that contains group classifications. If not provided, the drop will be performed by 'sampleID'."/>
+        <param name="toDrop" type="text" size="30" optional="false" label="Group(s)/Sample(s) to drop" help="Name of the Group(s)/Sample(s), comma separated, that will be removed from your wide datset."/>
     </inputs>
     <outputs>
         <data format="tabular" name="out" label="${tool.name} on ${on_string}: Value"/>
@@ -45,7 +45,8 @@
 
 **Tool Description**
 
-The tool creates new wide format dataset and desing dataset based on the existing wide and desing datasets where only groups specified by the user are present.  User has to choose which group(s) to include in the new datasets.
+The tool creates new wide format dataset and design dataset based on the existing wide and design datasets where only groups specified by the user are present.  
+The user chooses which group(s) to include in the new datasets.
 
 --------------------------------------------------------------------------------
 
