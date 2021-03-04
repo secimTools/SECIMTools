@@ -144,6 +144,8 @@ def main(args):
     )
 
     dat.dropMissing()
+    # Get remaining Sample IDs for dataframe filtering of irrelevant columns
+    sample_ids = dat.wide.index.tolist()
     dat.trans = dat.transpose()
     dat.trans.columns.name = ""
 
@@ -151,6 +153,7 @@ def main(args):
     removed = dat.design[dat.design[dat.group] == "nan"]
     dat.design = dat.design[dat.design[dat.group] != "nan"]
     dat.trans.drop(removed.index.values, axis=0, inplace=True)
+    dat.trans = dat.trans.loc[:,sample_ids]
 
     logger.info("{0} removed from analysis".format(removed.index.values))
     dat.design.rename(columns={dat.group: "group"}, inplace=True)

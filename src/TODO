@@ -1,0 +1,43 @@
+$ tests/lasso_enet_var_select.sh
+### Starting test: lasso_enet_var_select
+2021-03-04 09:51:03,361 - INFO - Importing data with the folowing parameters:
+        Wide:  /home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/SECIMTools/galaxy/test-data/ST000006_data.tsv
+        Design:/home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/SECIMTools/galaxy/test-data/ST000006_design.tsv
+        UniqID:Retention_Index
+        Alpha: 0.5
+2021-03-04 09:51:03,362 - INFO - R script path: /home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/SECIMTools/src/secimtools/data/lasso_enet.R
+2021-03-04 09:51:03,383 - INFO - Inferring 'sampleID' from data. This will accept different capitalizations of the word
+2021-03-04 09:51:03,385 - WARNING - Sample Quantification_Ion missing in design file
+2021-03-04 09:51:03,385 - WARNING - Sample Name missing in design file
+2021-03-04 09:51:03,385 - WARNING - Sample units missing in design file
+2021-03-04 09:51:03,385 - WARNING - Sample _421894 missing in design file
+2021-03-04 09:51:03,393 - WARNING - Missing values were found in wide data.
+                         [48] rows were dropped
+2021-03-04 09:51:03,398 - INFO - [] removed from analysis
+[1] "DEBUG 1"
+ [1] _652000 _506359 _510153 _589230 _243537 _507734 _546892 _480543 _435138
+[10] _942646 _456959 _704220 _633331 _471274 _638631 _577861 _488961 _647787
+[19] _670193 _828610 _693140 _666743 _529370 _377001 _344223 _368041 _729867
+[28] _930708 _358756 _489846 _216442 _547810 _663088 _575571 _462908 _665209
+[37] _736220 _755073 _713542 _399163 _537760 _403598 _364232 _587728 _598019
+[46] _553606 _394656 _610984 _953453 _667682 _787358 _370518 _534894 _467314
+[55] _497167 _409403 _947837 _671085 _313224 _563718 _542808
+<0 rows> (or 0-length row.names)
+[1] "DEBUG 2"
+2021-03-04 09:51:03,455 - WARNING - R[write to console]: Error in eval(predvars, data, env) : object 'group' not found
+
+Traceback (most recent call last):
+  File "/home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/conda/bin/lasso_enet_var_select.py", line 225, in <module>
+    main(args)
+  File "/home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/conda/bin/lasso_enet_var_select.py", line 172, in main
+    returns = lassoEnetScript.lassoEN(
+  File "/home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/conda/lib/python3.8/site-packages/rpy2/robjects/functions.py", line 198, in __call__
+    return (super(SignatureTranslatedFunction, self)
+  File "/home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/conda/lib/python3.8/site-packages/rpy2/robjects/functions.py", line 125, in __call__
+    res = super(Function, self).__call__(*new_args, **new_kwargs)
+  File "/home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/conda/lib/python3.8/site-packages/rpy2/rinterface_lib/conversion.py", line 45, in _
+    cdata = function(*args, **kwargs)
+  File "/home/moskalenko/projects/bioinformatics/mcintyre-cid/SECIM/conda/lib/python3.8/site-packages/rpy2/rinterface.py", line 677, in __call__
+    raise embedded.RRuntimeError(_rinterface._geterrmessage())
+rpy2.rinterface_lib.embedded.RRuntimeError: Error in eval(predvars, data, env) : object 'group' not found
+

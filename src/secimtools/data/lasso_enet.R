@@ -27,7 +27,7 @@ lassoEN <- function(Dataset_varsel, Design_file, rowID_name, correct_list_of_col
     evaluated_names <- names(evaluated_data)
     # print(evaluated_names)
     print("DEBUG 2")
-    mmatrix <- model.matrix(group ~ ., data = evaluated_data[!(evaluated_names %in% "sampleID")])
+    mmatrix <- model.matrix( group~. , data = evaluated_data[!(evaluated_names %in% "sampleID")])
     print("DEBUG 3")
     current_dataset <- mmatrix[, -1]
     # Updating the names with the ones we passed to be sure we did not have "X_" instead of "_".
