@@ -564,8 +564,8 @@ def run_paired_ttest(args, dat):
 
         # Sorting data frame by args.group index
         # This will ensure datasets are aligned by pair when fed to the t-test.
-        data_frame_first_group = data_frame_first_group.sort(args.order)
-        data_frame_second_group = data_frame_second_group.sort(args.order)
+        data_frame_first_group = data_frame_first_group.sort_values(args.order)
+        data_frame_second_group = data_frame_second_group.sort_values(args.order)
 
         # Sorting data frame by args.group index
         data_frame_first_group = data_frame_first_group.drop(
