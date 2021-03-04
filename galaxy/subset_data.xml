@@ -77,6 +77,6 @@ The user chooses which group(s) to include in the new datasets.
 
 This tool will output two TSV files: a TSV file containing the subset of the original wide format dataset and a TSV file containing the subset of the original design dataset.  Both datasets will contain only the samples belonging to groups selected by the user.
 
-
-</help>
+    ]]></help>
+    <expand macro="citations"/>
 </tool>
