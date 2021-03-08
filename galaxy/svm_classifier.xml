@@ -1,5 +1,5 @@
 <tool id="secimtools_svm_classifier" name="Support Vector Machine (SVM) Classifier" version="@WRAPPER_VERSION@">
-    <description>to predict sample groups.</description>
+    <description>- Predict sample groups.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -26,12 +26,12 @@ svm_classifier.py
 --outPredictionAccuracy     $outPredictionAccuracy
     ]]></command>
     <inputs>
-        <param name="train_wide" type="data" format="tabular" label="Training Wide Dataset" help="Dataset missing? See TIP below."/>
-        <param name="train_design" type="data" format="tabular" label="Training Design Dataset" help="Dataset missing? See TIP below."/>
-        <param name="test_wide" type="data" format="tabular" label="Target Wide Dataset" help="Dataset missing? See TIP below."/>
-        <param name="test_design" type="data" format="tabular" label="Target Design Dataset" help="Dataset missing? See TIP below."/>
-        <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="train_wide" type="data" format="tabular" label="Training wide dataset" help="Dataset missing? See TIP below."/>
+        <param name="train_design" type="data" format="tabular" label="Training design file" help="Dataset missing? See TIP below."/>
+        <param name="test_wide" type="data" format="tabular" label="Target wide dataset" help="Dataset missing? See TIP below."/>
+        <param name="test_design" type="data" format="tabular" label="Target design file" help="Dataset missing? See TIP below."/>
+        <param name="group" size="30" type="text" value="" label="Group/Treatment" help="Name of the column in your Training and Target design files that contain group classifications."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Training and Target wide datasets that contain unique identifiers."/>
         <param name="kernel" type="select" size="30" display="radio" value="rbf" label="Select a SVM Kernel Function">
             <option value="rbf">Radial Basis function (Gaussian)</option>
             <option value="linear">Linear</option>
