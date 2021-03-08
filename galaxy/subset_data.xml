@@ -1,4 +1,4 @@
-<tool id="subsetData" name="Subset Wide Data and Design File" version="1.0,0">
+<tool id="subsetData" name="Subset Wide Data and Design File" version="@WRAPPER_VERSION@">
     <description>- Based on groups.</description>
     <requirements>
         <requirement type="python-module">os</requirement>
