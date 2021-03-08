@@ -1,4 +1,4 @@
-<tool id="generate_rank_wide" name="Ranked wide file"  version="@WRAPPER_VERSION@">
+<tool id="secimtools_generate_rank_wide" name="Ranked wide file"  version="@WRAPPER_VERSION@">
     <description>Generate a wide format file with ranked columns from an input wide file.</description>
     <macros>
         <import>macros.xml</import>
