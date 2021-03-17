@@ -334,7 +334,8 @@ def main(args):
                     flag_value_0p10[j] = 1
             else:
                 kruskal_wallis_args = [series_first, series_second]
-                p_value[j], H_value[j] = kruskalwallis(kruskal_wallis_args[0].values, kruskal_wallis_args[1].values)
+                H_value[j], p_value[j] = kruskalwallis(kruskal_wallis_args[0].values, kruskal_wallis_args[1].values)
+               #p_value[j], H_value[j] = kruskalwallis(kruskal_wallis_args[0].values, kruskal_wallis_args[1].values)
                 # Possible alternative for two groups.
                 # p_value[j] = kruskalwallis(series_first, series_second)[1]
                 neg_log10_p_value[j] = -np.log10(p_value[j])
