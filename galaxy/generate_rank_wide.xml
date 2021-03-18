@@ -5,7 +5,7 @@
     </macros>
     <expand macro="requirements" />
     <command detect_errors="exit_code"><![CDATA[
-addGroupRank.py
+add_group_rank.py
 --wide $wide
 --design $design
 --out $out
