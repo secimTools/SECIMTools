@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/October/10
+# DATE: 2021/March/10
 # 
-# MODULE: addGroupRank.py
+# MODULE: add_group_rank.py
 #
-# VERSION: 1.2
+# VERSION: 2.0
 # 
 # AUTHOR: Zihao Liu (zihaoliu@ufl.edu) 
 #
