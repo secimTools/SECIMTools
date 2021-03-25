@@ -1,11 +1,11 @@
-<tool id="secimtools_generate_rank_wide" name="Ranked wide file"  version="@WRAPPER_VERSION@">
+<tool id="secimtools_rank_group_wide" name="Ranked wide file"  version="@WRAPPER_VERSION@">
     <description>Generate a wide format file with ranked columns from an input wide file.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
     <expand macro="requirements" />
     <command detect_errors="exit_code"><![CDATA[
-addGroupRank.py
+add_group_rank.py
 --wide $wide
 --design $design
 --out $out
@@ -19,7 +19,7 @@ addGroupRank.py
         <param name="wide" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="ngroup" type="integer" size="30" value="" optional="true" label="number of groups for each feature being ranked" help="number of bins/groups for each feature being ranked. If there is no input, the default behavir is ranking each column."/>
+        <param name="ngroup" type="integer" size="30" value="" optional="true" label="number of groups for each feature being ranked" help="number of bins/groups for each feature being ranked. If there is no input, the default behavir is ranking each column without grouping."/>
         <param name="rank" type="text" size="30" value="Rank" label=" Name of flag column" help="The column name in your design file that contains the flags to specify whether a sampleID will be ranked in the input wide file."/>
     </inputs>
     <outputs>
