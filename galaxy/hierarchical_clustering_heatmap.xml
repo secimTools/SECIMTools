@@ -1,5 +1,5 @@
 <tool id="secimtools_hierarchical_clustering_heatmap" name="Hierarchical Clustering Heatmap" version="@WRAPPER_VERSION@">
-    <description>to calculate means per group and plots a heatmap.</description>
+    <description>- Calculate means per group and plot a heatmap.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -16,9 +16,9 @@ hierarchical_clustering_heatmap.py
 --fig $fig
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that has unique identifiers."/>
         <param name="dendogram" type="boolean" value="False" label="Add dendogram on heatmap" help="Select 'Yes' to print a dendogram over the heatmap."/>
         <param name="labels" type="select" label="Select to remove labels from plots" multiple="true" display="checkboxes">
             <option value="x">X-axis labels</option>

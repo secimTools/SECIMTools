@@ -18,11 +18,11 @@ ttest_single_group.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqueID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqueID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that has unique identifiers."/>
         <param name="mu" type="text" size="30" value = "0" label="Mu" help="The value of the mean under the null hypothesis. Default = 0. "/>
-        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="group" type="text" size="30" label="Group/Treatment [Optional]" help="Name of the column in your design file that contains group classifications."/>
     </inputs>
     <outputs>
         <data format="tabular" name="summaries" label="${tool.name} on ${on_string}: Summaries that include p-values and mean differences."/>
@@ -57,7 +57,7 @@ ttest_single_group.py
 **Tool Description**
 
 The tool performs a one sample t-test for each feature.
-Two options are available for the t-test: if the user provides the Group/Treatment variable then the mean for each treatment condition is compared with Mu, the user-specified value of the true mean under the null hypothesis.
+Two options are available for the t-test: if the user provides the Group/Treatment variable, then the mean for each treatment condition is compared with Mu, the user-specified value of the true mean under the null hypothesis.
 If Group/Treatment is not provided, then the mean across all samples is compared to Mu.
 
 --------------------------------------------------------------------------------

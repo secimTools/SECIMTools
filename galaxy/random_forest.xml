@@ -17,10 +17,10 @@ random_forest.py
 --figure $figure
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that has unique identifiers."/>
+        <param name="group" type="text" size="30" value="" label="Group/Treatment" help="Name of the column in your design file that contains group classifications."/>
         <param name="number_of_estimators" type="integer" size="30" value="1000" label="Number of trees in the forest" help="Recommend a minimum of 1000 trees."/>
         <param name="number_of_factors" type="integer" size="30" value="20" label="Number of factors to plot" help="Plots the (Default = 20) most important factors."/>
     </inputs>
@@ -86,15 +86,17 @@ Extra columns will automatically be ignored.
 
 This tool will always output three different files:
 
-(1) a TSV file with features ranked according to their relative importance,
-(2) a TSV file where ranked features from the wide format dataset are saved in columns in the order that corresponds to their relative importance
-(3) and a PDF file a variable importance plot for the first 50 components. The variable importance plot displays the X (Default = 20) most important features based on the random forest algorithm.
-The color of each feature changes from the most important (dark blue) to the least important (light blue).
+(1) a TSV file with features ranked according to their relative importance
 
-**NOTE:** The user can take the resulting TSV file and plot any two (or three) features using the Scatter Plot 2D or Scatter Plot 2D tools.
+(2) a TSV file where ranked features from the wide format dataset are saved in columns in the order that corresponds to their relative importance
+
+(3) and a PDF file a variable importance plot for the first 50 components. The variable importance plot displays the X (Default = 20) most important features based on the random forest algorithm. The color of each feature changes from the most important (dark blue) to the least important (light blue).
+
+    **NOTE:** The user can take the resulting TSV file and plot any two (or three) features using the Scatter Plot 2D or Scatter Plot 2D tools.
+
 A plot of two (or three) most important features is recommended since they are probably the most meaningful, but other features can be also considered for plotting.
 
-**To plot the 2 most important features** use the SECIM Tools 'Scatter Plot 2D' tool on the transformed dataset to plot the features against each other and evaluate separation levels.
+    **To plot the 2 most important features**: use the SECIM Tools 'Scatter Plot 2D' tool on the transformed dataset to plot the features against each other and evaluate separation levels.
 
     ]]></help>
     <expand macro="citations"/>

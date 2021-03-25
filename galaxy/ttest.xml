@@ -19,15 +19,15 @@ ttest.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqueID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your Design File that contains group classifications."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqueID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that has unique identifiers."/>
+        <param name="group" type="text" size="30" label="Group/Treatment" help="Name of the column in your design file that contains group classifications."/>
         <param name="pairing" size="30" display="radio" type="select" value="unpaired" label="Select Test" help="Select either paired (dependent samples) or unpaired (independent samples) tests.">
            <option value="unpaired"  selected="true">Unpaired (Independent Samples)</option>
            <option value="paired"    selected="true">Paired (Dependent Samples)</option>
         </param>
-        <param name="order" type="text" value="" size="30" label="Pairing ID" help="Name of the column in your Design File that contains Pairing IDs. Ignored for Unpaired (Independent Samples) test."/>
+        <param name="order" type="text" value="" size="30" label="Pairing ID" help="Name of the column in your design file that contains Pairing IDs. Ignored for Unpaired (Independent Samples) test."/>
     </inputs>
     <outputs>
         <data format="tabular" name="summaries" label="${tool.name} on ${on_string}: Summaries that include p-values and mean differences."/>
@@ -52,10 +52,10 @@ ttest.py
 
 **Tool Description**
 
-The tool performs a two-sided t-test for two groups of dependent samples (paired or dependent t-test) or multiple (two or more) groups of independent sample (unpaired or independent t-test).
+The tool performs a two-sided t-test for two groups of dependent samples (paired or dependent t-test) or multiple (two or more) groups of independent samples (unpaired or independent t-test).
 The user selects which test (paired or unpaired) to perform.
 
-In an unpaired t-test the samples within and between groups are independent.
+In an unpaired t-test, the samples within and between groups are independent.
 The test is performed for all pairs of conditions specified using the Group/Treatment field.
 For example, if there are three treatment conditions (Control, Time1 and Time2) then t-tests will be performed for: (i) Control vs Time1, (ii) Control vs Time2, and (iii) Time1 vs Time2.
 Note that this will give slightly different results than the contrast in an ANOVA because the ANOVA uses all groups to estimate the error.

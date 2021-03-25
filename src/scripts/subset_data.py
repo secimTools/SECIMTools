@@ -25,8 +25,8 @@ import numpy as np
 import pandas as pd
 
 # Local Libraries
-from dataManager import logger as sl
-from dataManager.interface import wideToDesign
+from secimtools.dataManager import logger as sl
+from secimtools.dataManager.interface import wideToDesign
 
 def getOptions():
     """Function to pull arguments"""
@@ -46,8 +46,8 @@ def getOptions():
                         required=False, help="Name of column in design file" \
                         "with Group/treatment information.")
     # Tool Especific
-    tool = parser.add_argument_group(title="Tool especific input", 
-                        description= "Input that is especific for this tool.")
+    tool = parser.add_argument_group(title="Tool specific input", 
+                        description= "Input that is specific for this tool.")
     tool.add_argument("-dp","--drops", dest="drops", action='store', 
                         required=True, help="Name of the groups in your"\
                         "group/treatment column that you want to keep.")

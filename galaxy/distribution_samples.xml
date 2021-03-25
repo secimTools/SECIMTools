@@ -20,11 +20,11 @@ distribution_samples.py
 #end if
     ]]></command>
     <inputs>
-        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If not tab separated see TIP below."/>
-        <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your Design File that contains group classifications."/>
-        <param name="order" type="text" size="30" value="" optional="true" label="Run Order [Optional]" help="The column name in your Design file that contains the order samples were run."/>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If not tab separated see TIP below."/>
+        <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
+        <param name="uniqID" type="text" size="30" value="" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique identifiers."/>
+        <param name="group" type="text" size="30" value="" optional="true" label="Group/Treatment [Optional]" help="Name of the column in your design file that contains group classifications."/>
+        <param name="order" type="text" size="30" value="" optional="true" label="Run Order [Optional]" help="The column name in your design file that contains the order samples were run."/>
     </inputs>
     <outputs>
         <data format="pdf" name="figure" label="${tool.name} on ${on_string}: Plot"/>
