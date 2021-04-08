@@ -77,7 +77,7 @@ For single cross-validation: the same data are used to fit the model and to eval
 
 More details can be found in:
 
-Geladi, Paul, and Bruce R. Kowalski. "Partial least-squares regression: a tutorial." Analytica chimica acta 185 (1986): 1-17.
+Geladi, Paul and Bruce R. Kowalski. "Partial least-squares regression: a tutorial." Analytica chimica acta 185 (1986): 1-17.
 
 
 --------------------------------------------------------------------------------
@@ -120,6 +120,7 @@ Extra columns will automatically be ignored.
 **Number of Components**
 
     - The parameter is used only when the "None" cross-validation option is selected. If the field is left blank, the number of components is set to the default value (2).
+
 --------------------------------------------------------------------------------
 
 **Output**
@@ -133,7 +134,7 @@ Three different files are generated:
 
 (3) a TSV file containing the classification produced by the model for each sample.
 
-(4) a TSV file containing the algorithm classification accuracy (in percent).
+(4) a TSV file containing the algorithm classification accuracy (by percentage).
 
 (5) a PDF file containing the 2D plots for all pairwise comparisons of components between the two treatment groups.
 

@@ -67,7 +67,7 @@ Extra columns will automatically be ignored.
 
 **CV cutoff [Optional]**
 
-    - The cutoff (in decimals) that specifies the proportion of the features to flag.  The default CV cutoff is 0.1 which implies that 10% of the features with the largest CV will be flagged. If the Group/Treatment variable is provided, then the analysis is performed independently for each group. If no Group/Treatment variable is provided, the analysis is performed on the entire dataset.
+    - The cutoff point (in decimals) that specifies the proportion of the features to flag.  The default CV cutoff is 0.1 which implies that 10% of the features with the largest CV will be flagged. If the Group/Treatment variable is provided, then the analysis is performed independently for each group. If no Group/Treatment variable is provided, the analysis is performed on the entire dataset.
 
 @GROUP_OPTIONAL@
 
