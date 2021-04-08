@@ -67,7 +67,7 @@ bland_altman_plot.py
 
 The Bland-Altman plot (BA-Plot) is used to look at the concordance of data between pairs of samples, particularly between replicates.
 The script generates BA-plots for all pairwise combinations of samples.
-If the Group/Treatment column and group name(s) in that column are provided then BA-Plots are generated only for pairwise combinations within the specified Group -- group name combination.
+If the Group/Treatment column and group name(s) in that column are provided, then BA-Plots are generated only for pairwise combinations within the specified Group -- group name combination.
 In addition to generating the BA-plots, a linear regression fit is calculated between the values that correspond to the pair of samples to identify (flag) any unusual outlying values.
 The flags produced by the regression fit are used to generate distribution plots and text files for (i) each sample (column) and for (ii) each feature (row).
 
@@ -90,13 +90,13 @@ The flags produced by the regression fit are used to generate distribution plots
 
 **Outlier Cutoff – flagging values**
 
-- Residual cutoff value, this value will flag samples with residuals ≥ than this cutoff value.
+- Residual cutoff value; this value will flag samples with residuals ≥ than this cutoff value.
 
-        (1) If the magnitude of the residuals from the linear regression on the BA-plot exceeds the user-defined threshold, then a value is flagged as an outlier. This cutoff can be adjusted by the user, the default is 3.
+        (1) If the magnitude of the residuals from the linear regression on the BA-plot exceeds the user-defined threshold, then a value is flagged as an outlier. This cutoff can be adjusted by the user; the default is 3.
 
         (2) If a value is identified as a leverage point using Cook's D with a p-value cutoff of 0.5, then the value is flagged. This cannot be adjusted.
 
-        (3) If a value is identified as a leverage point using the DFFITS technique it is also flagged. This cannot be adjusted.
+        (3) If a value is identified as a leverage point using the DFFITS technique, it is also flagged. This cannot be adjusted.
 
 **Sample Flag Cutoff – flagging samples**
 
