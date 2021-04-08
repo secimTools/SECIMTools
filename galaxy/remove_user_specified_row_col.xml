@@ -45,7 +45,7 @@ remove_user_specified_row_col.py
 **Tool Description**
 
 The tool removes user-specified features (rows) or samples (columns) from a wide format dataset.
-The user manually enters space delimited rows (features) and / or columns (samples).
+The user manually enters space delimited rows (features) and / or columns (samples) to be dropped.
 
 --------------------------------------------------------------------------------
 
