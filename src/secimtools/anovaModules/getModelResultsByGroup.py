@@ -38,7 +38,6 @@ def getModelResultsByGroup(model,levels, numerical):
     t    = -(model.tvalues)
     pt   = model.pvalues
     log  = -np.log10(model.pvalues)
-    pval = model.pvalues
         
     #Add name to previous series
     t.name    ="t-Value_for_Diff"
@@ -46,11 +45,10 @@ def getModelResultsByGroup(model,levels, numerical):
     coef.name ="diff_of"
     pt.name   ="prob_greater_than_t_for_diff"
     log.name  ="-log10_p-value_"
-    pval.name = "p-value_"
 
 
     # Concat all dataframes
-    df = pd.concat([coef,stde,t,pt,log,pval],axis=1)
+    df = pd.concat([coef,stde,t,pt,log],axis=1)
     
     # Removing intercepts
     df.drop("Intercept",inplace=True,axis="index")
