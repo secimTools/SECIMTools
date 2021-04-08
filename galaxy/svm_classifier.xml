@@ -53,8 +53,8 @@ svm_classifier.py
     <outputs>
         <data name="outClassification" format="tabular" label="${tool.name} on ${on_string}: Classification of the Training Data Set"/>
         <data name="outClassificationAccuracy" format='tabular' label="${tool.name} on ${on_string}: Classification Accuracy of the Training Data Set"/>
-        <data name="outPrediction" format="tabular" label="${tool.name} on ${on_string}: Prediction Accuracy of the Training Data Set"/>
-        <data name="outPredictionAccuracy" format='tabular' label="${tool.name} on ${on_string}: Prediction Accuracy of the Training Data Set"/>
+        <data name="outPrediction" format="tabular" label="${tool.name} on ${on_string}: Prediction Accuracy of the Target Data Set"/>
+        <data name="outPredictionAccuracy" format='tabular' label="${tool.name} on ${on_string}: Prediction Accuracy of the Target Data Set"/>
     </outputs>
     <tests>
         <test>

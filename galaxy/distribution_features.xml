@@ -70,7 +70,7 @@ If a group or treatment variable is not provided, boxplots are provided for all 
 
 A PDF file with boxplot(s) and density plot(s):
 
-if Group/Treatment [Optional] is provided  plots will be generated for every group as well as for all samples. Otherwise, a single plot will be generated for all samples.
+If Group/Treatment [Optional] is provided  plots will be generated for every group as well as for all samples. Otherwise, a single plot will be generated for all samples.
 
     ]]></help>
     <expand macro="citations"/>

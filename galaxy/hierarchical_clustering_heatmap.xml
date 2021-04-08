@@ -68,7 +68,7 @@ An option to add a hierarchical clustering dendrogram on the top of the heatmap 
 **Unique Feature ID**
 
     - The column name in your wide dataset that contains the unique IDs for
-      your features. In our example dataset you would input *Compound*.
+      your features. In our example dataset, you would input *Compound*.
 
 --------------------------------------------------------------------------------
 
