@@ -132,6 +132,7 @@ def getOptions(myOpts=None):
         action="store",
         required=False,
         default=0.5,
+        type=float,
         help="Percent cutoff for "
         "imputation of rows.If this is exceeded, imputation will"
         "be done by mean instead of knn. Default: .5",
