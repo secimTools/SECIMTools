@@ -148,7 +148,7 @@ A detection window set to zero (0) would provide an exact match
 
 This tool outputs six files:
 
-(1) a TSV All peak combinations file that contains all combinations of possible­features between File 1 and File 2.
+(1) a TSV All peak combinations file that contains all combinations of possible­ features between File 1 and File 2.
 (2) a TSV Matched peak combinations file that contains only the features that match between File 1 and File 2.
 (3) a TSV Unmatched peak combinations in file1 that contains the features in File 1 that do not have a match in File 2.
 (4) a TSV Unmatched peak combinations in file2 that contains the features in File 2 that do not have a match in File 1.

@@ -1,20 +1,19 @@
 <tool id="secimtools_subset_data" name="Subset Wide Data and Design File" version="@WRAPPER_VERSION@">
     <description>- Based on groups.</description>
-    <requirements>
-        <requirement type="python-module">os</requirement>
-        <requirement type="python-module">pandas</requirement>
-        <requirement type="python-module">interface</requirement>
-    </requirements>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
     <command detect_errors="exit_code"><![CDATA[
-        subset_data.py
-        --input $input
-        --design $design
-        --uniqID $uniqID
-        #if $group
-            --group $group
-        #end if
-        --drops $toDrop
-        --out $out
+subset_data.py
+--input $input
+--design $design
+--uniqID $uniqID
+#if $group
+   --group $group
+#end if
+--drops $toDrop
+--out $out
     ]]></command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If not tab separated see TIP below."/>
@@ -26,20 +25,17 @@
     <outputs>
         <data format="tabular" name="out" label="${tool.name} on ${on_string}: Value"/>
     </outputs>
-    <macros>
-            <import>macros.xml</import>
-    </macros>
     <tests>
-     <test>
-        <param name="input"  value="ST000006_data.tsv"/>
-        <param name="design" value="ST000006_design_names_underscore.tsv"/>
-        <param name="uniqID" value="Retention_Index" />
-        <param name="group"  value="White_wine_type_and_source" />
-        <param name="drops"  value="Chardonnay_ Napa_ CA 2003,Riesling_ CA 2004" />
-        <output name="out"   file="ST000006_subset_data_output.tsv" />
-     </test>
+        <test>
+            <param name="input"  value="ST000006_data.tsv"/>
+            <param name="design" value="ST000006_design_names_underscore.tsv"/>
+            <param name="uniqID" value="Retention_Index" />
+            <param name="group"  value="White_wine_type_and_source" />
+            <param name="drops"  value="Chardonnay_ Napa_ CA 2003,Riesling_ CA 2004" />
+            <output name="out"   file="ST000006_subset_data_output.tsv" />
+        </test>
     </tests>
-<help>
+    <help><![CDATA[
 
 @TIP_AND_WARNING@
 

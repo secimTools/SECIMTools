@@ -34,7 +34,7 @@ magnitude_difference_flags.py
     </inputs>
     <outputs>
         <data format="pdf" name="figure"  label="${tool.name} on ${on_string}: Figure" />
-        <data format="tabular" name="flags" label="C${tool.name} on ${on_string}: Flags" />
+        <data format="tabular" name="flags" label="${tool.name} on ${on_string}: Flags" />
         <data format="html" name="html" label="${tool.name} on ${on_string}: Counts" />
     </outputs>
     <tests>

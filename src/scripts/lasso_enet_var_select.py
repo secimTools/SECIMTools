@@ -74,6 +74,7 @@ def getOptions(myOpts=None):
         "-a",
         "--alpha",
         dest="alpha",
+        type=float,
         action="store",
         required=True,
         help="Alpha Value.",
