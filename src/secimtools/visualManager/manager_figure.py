@@ -32,9 +32,10 @@ class figureHandler:
         """
         # with warnings.catch_warnings():
         #    warnings.simplefilter("ignore")
+        self.fig.set_rasterized(True)
         self.fig.savefig(out, dpi=dpi, format="pdf")
 
-    def addToPdf(self, pdfPages, dpi=90):
+    def addToPdf(self, pdfPages, dpi=300):
         """
         Adds a figure to a pdfPages object, so that
         multiple figures can be printed in one document
@@ -48,6 +49,7 @@ class figureHandler:
         """
         # with warnings.catch_warnings():
         #    warnings.simplefilter("ignore")
+        self.fig.set_rasterized(True)
         self.fig.savefig(pdfPages, dpi=dpi, format="pdf")
         plt.close(self.fig)
 
