@@ -37,7 +37,22 @@ The tool is used to generate a wide format file with each column being ranked in
 **Input**
 
     - Two input datasets are required.
+    
+    An example of input wide file is like:
 
+        +---------+---------+---------+---------+-----+
+        | Feature | sample1 | sample2 | sample3 | ... |
+        +=========+=========+=========+=========+=====+
+        | one     | 10.2    | 20      | 10      | ... |
+        +---------+---------+---------+---------+-----+
+        | two     | 5.1     | 22      | 30      | ... |
+        +---------+---------+---------+---------+-----+
+        | three   | 30.5    | 27      | 2       | ... |
+        +---------+---------+---------+---------+-----+
+        | four    | 32.9    | 17      | 8       | ... |
+        +---------+---------+---------+---------+-----+
+        | ...     | ...     | ...     | ...     | ... |
+        +---------+---------+---------+---------+-----+
 
 --------------------------------------------------------------------------------
 
@@ -45,8 +60,23 @@ The tool is used to generate a wide format file with each column being ranked in
 
 The user will get a output file from the tool:
 
-(1) a wide format file with each column being ranked. The columns will be selected using the flag column in the design file.
+- a wide format file with each column being ranked.
 
+The output wide file for the example above will be like:
+        
++---------+---------+---------+---------+-----+
+| Feature | sample1 | sample2 | sample3 | ... |
++=========+=========+=========+=========+=====+
+| one     | 2       | 2       | 3       | ... |
++---------+---------+---------+---------+-----+
+| two     | 1       | 3       | 4       | ... |
++---------+---------+---------+---------+-----+
+| three   | 3       | 4       | 1       | ... |
++---------+---------+---------+---------+-----+
+| four    | 4       | 1       | 2       | ... |
++---------+---------+---------+---------+-----+
+| ...     | ...     | ...     | ...     | ... |
++---------+---------+---------+---------+-----+
 
     ]]></help>
     <expand macro="citations"/>
