@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 ################################################################################
-# DATE: 2016/October/10
+# DATE: 2021/April/10
 # 
-# MODULE: addGroupRank.py
+# MODULE: add_group_rank.py
 #
 # VERSION: 1.2
 # 
@@ -24,7 +24,6 @@ def getOptions():
     parser.add_argument('-o', '--out', dest='out', required=True, help="Output file name with full path")
     parser.add_argument('-n', '--ngroup', dest='ngroup', default=None, help="Percentage for each column to be ranked ")
     parser.add_argument('-d', '--design', dest='design', required=True, help="A design file assigns which columns to be ranked")
-    parser.add_argument('-r', '--rank', dest='rank', default="Rank", help="Specify the column in the design file that assigns columns to be ranked in the wide format file")
     parser.add_argument('-u', '--uniqID', dest='uniqID', default='rowID', help="Specify the unique row ID column in the wide format input")
     args=parser.parse_args()
     return args
@@ -32,7 +31,6 @@ def getOptions():
 
 def main():
     args = getOptions()
-    rankflag = args.rank
     uniId = args.uniqID
 
     logger = logging.getLogger()
@@ -46,8 +44,7 @@ def main():
     dat = wideToDesign(args.wide, args.design, args.uniqID, 
                         logger=logger)
 
-    selectColRanks = dat.design[dat.design[rankflag] == 1].index
-    df = dat.wide[selectColRanks]
+    df = dat.wide
 
     if args.ngroup != None:
         groupBins = int(args.ngroup)
