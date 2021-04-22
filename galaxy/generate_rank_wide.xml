@@ -23,7 +23,15 @@ add_group_rank.py
     <outputs>
         <data format="tabular" name="out" label="${tool.name} on ${on_string}: Results Table"/>
     </outputs>
-
+    <tests>
+      <test>
+	<param name="wide" value="ST000006_data.tsv"/>
+	<param name="design" value="ST000006_design.tsv"/>
+	<param name="uniqID" value="Retention_Index" />
+	<param name="ngroup" value="100" />
+	<output name="out" file="ST000006_add_group_rank_output_wide.tsv" />
+      </test>
+    </tests>
     <help><![CDATA[
 
 @TIP_AND_WARNING@
