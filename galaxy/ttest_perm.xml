@@ -14,7 +14,7 @@ ttest_perm.py
 --summaries $summaries
 --flags $flags
 --volcano $volcano
-    ]]</command>
+        ]]></command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
