@@ -78,9 +78,9 @@ imputation.py
 
 The tool performs an imputation procedure for missing data based on three conceptually different methods:
 
-(1) naive imputation (mean, median),
-(2) K-nearest neighbor imputation (KNN) and
-(3) stochastic imputation (based on normal and Poisson distributions)
+(1) Naive imputation (mean, median)
+(2) K-nearest neighbor imputation (KNN) 
+(3) Stochastic imputation (based on normal and Poisson distributions)
 
 Imputations are performed separately for each sample group since treatment groups are expected to be different.
 If only a single sample (column) is available for a given group, nothing is imputed and the sample is kept intact.
@@ -182,7 +182,7 @@ Extra columns will automatically be ignored.
 
 **Output**
 
-TSV file containing the same column names as the original Wide Dataset where the values in each cell correspond to either the original values or to values obtained during the imputation procedure.
+TSV file containing the same column names as the original Wide Dataset, where the values in each cell correspond to either the original values or to values obtained during the imputation procedure.
 
 
     ]]></help>

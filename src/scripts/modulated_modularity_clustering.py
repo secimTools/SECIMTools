@@ -20,6 +20,7 @@ from contextlib import contextmanager
 import scipy
 import numpy as np
 import pandas as pd
+import decimal
 from numpy.testing import assert_allclose
 import matplotlib
 matplotlib.use('Agg')
@@ -60,8 +61,8 @@ def getOptions(myOpts = None):
                         default=0.05, help="Low value of sigma (Default: 0.05).")
     tool.add_argument("-sh",'--sigmaHigh',dest="sigmaHigh", type=float, 
                         default=0.50, help="High value of sigma (Default: 0.50).")
-    tool.add_argument("-sn",'--sigmaNum',dest="sigmaNum", type=float, 
-                        default=451, help="Number of values of sigma to search"\
+    tool.add_argument("-sn",'--sigmaNum',dest="sigmaNum", type=int, 
+                        default=451, help="Number of values of sigma to search"
                         " (Default: 451).")
     # Tool Output
     output = parser.add_argument_group(title='Output paths', 

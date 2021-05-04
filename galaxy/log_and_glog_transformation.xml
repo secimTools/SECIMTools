@@ -105,7 +105,7 @@ Extra columns will automatically be ignored.
 
 **Output**
 
-A TSV file containing the same column names as the original Wide Dataset where the values in each cell correspond to the values obtained by the selected log transformation procedure.
+A TSV file containing the same column names as the original Wide Dataset, where the values in each cell correspond to the values obtained by the selected log transformation procedure.
 
 ***NOTE:*** If the original dataset contains 0 or negative values, they will be replaced with missing values after log transformation since logarithms are not defined for non-positive values.
 Any values missing in the original dataset will remain missing.

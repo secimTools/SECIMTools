@@ -306,7 +306,8 @@ def main(args):
     #Save to html
     if args.html:
         with open(args.html,"w") as  htmlOut:
-            print >> htmlOut,etree.tostring(html,pretty_print=True)
+            print(etree.tostring(html,pretty_print=True), file=htmlOut)
+            # print >> htmlOut,etree.tostring(html,pretty_print=True)
 
     # Finishing script    
     logger.info(u"Count Digits Complete!")
