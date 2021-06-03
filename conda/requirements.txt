@@ -6,6 +6,7 @@ matplotlib-venn
 numpy>=1.16
 palettable
 pandas
+perl-vcftools-vcf
 pymc
 r-glmnet
 rpy2
