@@ -27,6 +27,7 @@ def getoptions():
     parser.add_argument('-id', '--uniqID', dest='uniqID', default='rowID', help="Specify the unique row ID column in the wide format input")
     parser.add_argument("-s", "--study", dest="study", required=True, help="The column name in the design file to specify study")
     parser.add_argument("-t", "--treatment", dest="treatment", required=True, help="The column name in the design file to specify treatment")
+    parser.add_argument("-c", "--contrast", dest="contrast", required=True, help="The contrast to be used for the meta-anlysis")
     parser.add_argument("-fr", "--forest", dest="forest", default="No", help="The forest plot output prefix")
     parser.add_argument("-o", "--summary", dest="summary", required=True, help="The anlysis summary file output name and path")
     parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied")
@@ -57,20 +58,24 @@ def main():
 
     dat = wideToDesign(args.wide, args.design, args.uniqID, 
                         logger=logger)
-    dat.trans  = dat.transpose()
 
+
+    dat.trans  = dat.transpose()
+    contrast = args.contrast.split(",")    
     with localconverter(ro.default_converter + pandas2ri.converter):
         data_rform = ro.conversion.py2rpy(dat.trans)
+        rcontrast = ro.conversion.py2rpy(contrast)
 
     features  = dat.wide.index.values
     with open("report.txt", "w+") as f:
-        sys.stdout = f
+        #sys.stdout = f
         for fea in features:
             print("\n\n\n===============================================\ntest feature: " + fea)
             res_fromR = r.meta_batchCorrect(data = data_rform, 
                                       dependent = fea, 
                                       study = args.study, 
-                                      treatment = args.treatment, 
+                                      treatment = args.treatment,
+                                      factors = rcontrast, 
                                       forest = args.forest, 
                                       myMethod = args.model, 
                                       myMeasure = args.effectSize)
@@ -80,7 +85,7 @@ def main():
 
             for i, j in zip(res, summary):
                 j.append(i)
-    sys.stdout = saveStdout
+    #sys.stdout = saveStdout
     df = pd.DataFrame({"se" : se,
                        "z_value" : z_value,
                        "p_valuie" : p_value,

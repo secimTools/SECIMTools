@@ -1,7 +1,6 @@
 library(metafor)
 
-meta_batchCorrect <- function(data, dependent, study, treatment, forest, myMethod = "FE", myMeasure = 'MD') {
-
+meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest, myMethod = "FE", myMeasure = 'MD') {
   num_ml = aggregate(data[[dependent]],
                      list(study=data[[study]], 
                      treatment = data[[treatment]]), 
@@ -14,8 +13,7 @@ meta_batchCorrect <- function(data, dependent, study, treatment, forest, myMetho
                     list(study=data[[study]], 
                     treatment = data[[treatment]]), 
                     sd)
-
-  factors = unique(num_ml$treatment)
+  
   estimate_ml = escalc(measure=myMeasure, 
                      n1i= num_ml$x[num_ml$treatment==factors[1]],
                      n2i= num_ml$x[num_ml$treatment==factors[2]],
@@ -24,6 +22,7 @@ meta_batchCorrect <- function(data, dependent, study, treatment, forest, myMetho
                      sd1i= sd_ml$x[sd_ml$treatment==factors[1]],
                      sd2i= sd_ml$x[sd_ml$treatment==factors[2]], 
                      append=T)
+
   rownames(estimate_ml) = num_ml[[study]][num_ml$treatment==factors[1]]
 
   meta_ml = rma(yi, vi,
@@ -43,16 +42,17 @@ meta_batchCorrect <- function(data, dependent, study, treatment, forest, myMetho
     #ranef(meta_ml)
     #cumul(meta_ml)
   #}
-  res = getTestResults(meta_ml)
+  res = getTestResults(meta_ml, digits = 4)
+  print(meta_ml)
   return(res)
 }
 
-getTestResults <- function(model) {
-  se = round(model$se, digits =2)
-  zv = round(model$zval, digits =2)
-  pv = round(model$pval, digits =2)
-  ci_l = round(model$ci.lb, digits =2)
-  ci_u = round(model$ci.ub, digits =2)
+getTestResults <- function(model, digits = 4) {
+  se = round(model$se, digits =digits)
+  zv = round(model$zval, digits =digits)
+  pv = round(model$pval, digits =digits)
+  ci_l = round(model$ci.lb, digits =digits)
+  ci_u = round(model$ci.ub, digits =digits)
   
   meta_summary = c(se, zv, pv, ci_l, ci_u)
   names(meta_summary) <- c("se", "z_value", "p_value", "ci_lb", "ci_ub")
