@@ -12,20 +12,26 @@ add_group_rank.py
 #if $ngroup:
     --ngroup $ngroup
 #end if
---rank $rank
 --uniqID $uniqID
     ]]></command>
     <inputs>
         <param name="wide" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="ngroup" type="integer" size="30" value="" optional="true" label="number of groups for each feature being ranked" help="number of bins/groups for each feature being ranked. If there is no input, the default behavir is ranking each column without grouping."/>
-        <param name="rank" type="text" size="30" value="Rank" label=" Name of flag column" help="The column name in your design file that contains the flags to specify whether a sampleID will be ranked in the input wide file."/>
+        <param name="ngroup" type="integer" size="30" value="" optional="true" label="number of groups for each feature being ranked" help="number of bins/groups for each feature being ranked. If there is no input, the default behavir is ranking each column."/>
     </inputs>
     <outputs>
         <data format="tabular" name="out" label="${tool.name} on ${on_string}: Results Table"/>
     </outputs>
-
+    <tests>
+      <test>
+	<param name="wide" value="ST000006_data.tsv"/>
+	<param name="design" value="ST000006_design.tsv"/>
+	<param name="uniqID" value="Retention_Index" />
+	<param name="ngroup" value="100" />
+	<output name="out" file="ST000006_add_group_rank_output_wide.tsv" />
+      </test>
+    </tests>
     <help><![CDATA[
 
 @TIP_AND_WARNING@
@@ -39,7 +45,22 @@ The tool is used to generate a wide format file with each column being ranked in
 **Input**
 
     - Two input datasets are required.
+    
+    An example of input wide file is like:
 
+        +---------+---------+---------+---------+-----+
+        | Feature | sample1 | sample2 | sample3 | ... |
+        +=========+=========+=========+=========+=====+
+        | one     | 10.2    | 20      | 10      | ... |
+        +---------+---------+---------+---------+-----+
+        | two     | 5.1     | 22      | 30      | ... |
+        +---------+---------+---------+---------+-----+
+        | three   | 30.5    | 27      | 2       | ... |
+        +---------+---------+---------+---------+-----+
+        | four    | 32.9    | 17      | 8       | ... |
+        +---------+---------+---------+---------+-----+
+        | ...     | ...     | ...     | ...     | ... |
+        +---------+---------+---------+---------+-----+
 
 --------------------------------------------------------------------------------
 
@@ -47,8 +68,23 @@ The tool is used to generate a wide format file with each column being ranked in
 
 The user will get a output file from the tool:
 
-(1) a wide format file with each column being ranked. The columns will be selected using the flag column in the design file.
+- a wide format file with each column being ranked.
 
+The output wide file for the example above will be like:
+        
++---------+---------+---------+---------+-----+
+| Feature | sample1 | sample2 | sample3 | ... |
++=========+=========+=========+=========+=====+
+| one     | 2       | 2       | 3       | ... |
++---------+---------+---------+---------+-----+
+| two     | 1       | 3       | 4       | ... |
++---------+---------+---------+---------+-----+
+| three   | 3       | 4       | 1       | ... |
++---------+---------+---------+---------+-----+
+| four    | 4       | 1       | 2       | ... |
++---------+---------+---------+---------+-----+
+| ...     | ...     | ...     | ...     | ... |
++---------+---------+---------+---------+-----+
 
     ]]></help>
     <expand macro="citations"/>
