@@ -28,10 +28,11 @@ def getoptions():
     parser.add_argument("-s", "--study", dest="study", required=True, help="The column name in the design file to specify study")
     parser.add_argument("-t", "--treatment", dest="treatment", required=True, help="The column name in the design file to specify treatment")
     parser.add_argument("-c", "--contrast", dest="contrast", required=True, help="The contrast to be used for the meta-anlysis")
-    parser.add_argument("-fr", "--forest", dest="forest", default="No", help="The forest plot output prefix")
+    parser.add_argument("-fr", "--forest", dest="forest", default=None, help="The forest plot output prefix")
     parser.add_argument("-o", "--summary", dest="summary", required=True, help="The anlysis summary file output name and path")
     parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied")
     parser.add_argument("-es", "--effectSize", dest="effectSize", default="MD", help="The approach used to calculate the effect size")
+    parser.add_argument("-cm", "--cmMethod", dest="cmMethod", default = 'UB', help="The method used to compute the sampling variances, default is unbiased estimation, can be 'LS' and 'AV' etc.")
     
     args = parser.parse_args()
     return(args)
@@ -68,24 +69,29 @@ def main():
 
     features  = dat.wide.index.values
     with open("report.txt", "w+") as f:
-        #sys.stdout = f
+        sys.stdout = f
         for fea in features:
             print("\n\n\n===============================================\ntest feature: " + fea)
+            if args.forest:
+                outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
+            else:
+                outfig = 'NOFIG'
             res_fromR = r.meta_batchCorrect(data = data_rform, 
                                       dependent = fea, 
                                       study = args.study, 
                                       treatment = args.treatment,
-                                      factors = rcontrast, 
-                                      forest = args.forest, 
+                                      factors = rcontrast,
+                                      forest = outfig, 
                                       myMethod = args.model, 
-                                      myMeasure = args.effectSize)
+                                      myMeasure = args.effectSize,
+                                      myvtype = args.cmMethod)
         
             with localconverter(ro.default_converter + pandas2ri.converter):
                 res = ro.conversion.rpy2py(res_fromR)
 
             for i, j in zip(res, summary):
                 j.append(i)
-    #sys.stdout = saveStdout
+    sys.stdout = saveStdout
     df = pd.DataFrame({"se" : se,
                        "z_value" : z_value,
                        "p_valuie" : p_value,
