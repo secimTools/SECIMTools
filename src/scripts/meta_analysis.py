@@ -33,7 +33,8 @@ def getoptions():
     parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied")
     parser.add_argument("-es", "--effectSize", dest="effectSize", default="MD", help="The approach used to calculate the effect size")
     parser.add_argument("-cm", "--cmMethod", dest="cmMethod", default = 'UB', help="The method used to compute the sampling variances, default is unbiased estimation, can be 'LS' and 'AV' etc.")
-    
+    parser.add_argument("-bg", "--background", dest="background", default = False, help="whether each factor will compare to the whole controls")
+    parser.add_argument("-cv", "--commonVar", dest="commonVar", default = True, help="whether use a common variance for each study")
     args = parser.parse_args()
     return(args)
 
@@ -49,12 +50,13 @@ def main():
 
     logger.info("Importing data through wideToDesign data manager")  
     
+    effect = []
     se = []
     z_value = []
     p_value = []
     ci_low = []
     ci_upper = []
-    summary = [se, z_value, p_value, ci_low, ci_upper]
+    summary = [effect, se, z_value, p_value, ci_low, ci_upper]
     
 
     dat = wideToDesign(args.wide, args.design, args.uniqID, 
@@ -84,7 +86,9 @@ def main():
                                       forest = outfig, 
                                       myMethod = args.model, 
                                       myMeasure = args.effectSize,
-                                      myvtype = args.cmMethod)
+                                      myvtype = args.cmMethod,
+                                      toBackground = args.background,
+                                      commonVar = args.commonVar)
         
             with localconverter(ro.default_converter + pandas2ri.converter):
                 res = ro.conversion.rpy2py(res_fromR)
@@ -92,9 +96,10 @@ def main():
             for i, j in zip(res, summary):
                 j.append(i)
     sys.stdout = saveStdout
-    df = pd.DataFrame({"se" : se,
+    df = pd.DataFrame({"effect" : effect,
+                       "se" : se,
                        "z_value" : z_value,
-                       "p_valuie" : p_value,
+                       "p_value" : p_value,
                        "ci_low" : ci_low,
                        "ci_upper" : ci_upper})
     
