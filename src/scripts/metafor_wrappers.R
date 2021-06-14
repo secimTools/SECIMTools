@@ -1,6 +1,6 @@
 library(metafor)
 
-meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest, myMethod = "FE", myMeasure = 'MD', myvtype = 'UB', toBackground = FALSE, varianceforNA = 0, commonVar = TRUE) {
+meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest, myMethod = "FE", myMeasure = 'MD', myvtype = 'UB', toBackground = FALSE, varianceforNA = 0) {
   num_ml = aggregate(data[[dependent]],
                      list(batch=data[[study]],
                      treatment = data[[treatment]]), 
@@ -15,32 +15,13 @@ meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest
                       sd)
   sd_ml[is.na(sd_ml)] <- varianceforNA
 
-  if (commonVar) {
-    print("use common variance for each batch")
-    sd_common = aggregate(data[[dependent]],
-                        list(batch=data[[study]]), 
-                        sd)
-    for (b in sd_common$batch) {
-      sd_ml$x[sd_ml$batch == b] <- sd_common$x[sd_common$batch==b]
-    }
-  }
-
 
   ctl = length(factors)
   if (toBackground) {
-    print("effect size calculated based on all controls as the background")
-    num_ml_ctl = aggregate(data[[dependent]],
-                 list(treatment = data[[treatment]]),
-                 length)
-    mean_ml_ctl = aggregate(data[[dependent]],
-                      list(treatment = data[[treatment]]), 
-                      mean)
-    sd_ml_ctl = aggregate(data[[dependent]],
-                    list(treatment = data[[treatment]]),
-                    sd)
-    num_ml$x[num_ml$treatment==factors[ctl]] <- num_ml_ctl$x[num_ml_ctl$treatment==factors[ctl]]
-    mean_ml$x[mean_ml$treatment==factors[ctl]] <- mean_ml_ctl$x[mean_ml_ctl$treatment==factors[ctl]]
-    sd_ml$x[sd_ml$treatment==factors[ctl]] <- sd_ml_ctl$x[sd_ml_ctl$treatment==factors[ctl]]
+    print("use common variance for each batch")
+    num_ml = replaceSetData(num_ml, length, dependent, ctl, data, factors)
+    mean_ml = replaceSetData(mean_ml, mean, dependent, ctl, data, factors)
+    sd_ml= replaceSetData(sd_ml, sd, dependent, ctl, data, factors)
   }
 
   es_all = data.frame()
@@ -105,4 +86,20 @@ getTestResults <- function(model, digits = 6) {
   return(meta_summary)
 }
 
-#res = meta_batchCorrect(data, "rawScale", "batch", "strain", ".", myMethod = "DL")
+
+replaceSetData <- function(x, fun, dependent, ctl, data, factors) {
+  batch_set = rep(c("set1", "set2", "set3"), each = 2)
+  names(batch_set) = c(1, 2, 3, 4, 5, 6)
+
+  x$sets = batch_set[x$batch]
+
+  common = aggregate(data[[dependent]],
+                        list(sets=data[["sets"]]), 
+                        fun)
+  for (b in common$sets) {
+    x$x[(x$sets == b) & (x$treatment == factors[ctl])] <- common$x[common$sets == b]
+  }
+  return(x)
+}
+
+

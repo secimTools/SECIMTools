@@ -33,8 +33,7 @@ def getoptions():
     parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied")
     parser.add_argument("-es", "--effectSize", dest="effectSize", default="MD", help="The approach used to calculate the effect size")
     parser.add_argument("-cm", "--cmMethod", dest="cmMethod", default = 'UB', help="The method used to compute the sampling variances, default is unbiased estimation, can be 'LS' and 'AV' etc.")
-    parser.add_argument("-bg", "--background", dest="background", default = False, help="whether each factor will compare to the whole controls")
-    parser.add_argument("-cv", "--commonVar", dest="commonVar", default = True, help="whether use a common variance for each study")
+    parser.add_argument("-bg", "--background", dest="background", default = True, help="whether each factor will compare to all the controls in a set")
     args = parser.parse_args()
     return(args)
 
@@ -87,8 +86,7 @@ def main():
                                       myMethod = args.model, 
                                       myMeasure = args.effectSize,
                                       myvtype = args.cmMethod,
-                                      toBackground = args.background,
-                                      commonVar = args.commonVar)
+                                      toBackground = args.background)
         
             with localconverter(ro.default_converter + pandas2ri.converter):
                 res = ro.conversion.rpy2py(res_fromR)
