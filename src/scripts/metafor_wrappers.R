@@ -1,6 +1,11 @@
 library(metafor)
 
-meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest, myMethod = "FE", myMeasure = 'MD', myvtype = 'UB', toBackground = FALSE, varianceforNA = 0) {
+meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest, myMethod = "FE", myMeasure = 'MD', myvtype = 'LS', toBackground = FALSE) {
+  batch_set = rep(c("set1", "set2", "set3"), each = 2)
+  names(batch_set) = c(1, 2, 3, 4, 5, 6)
+  data$sets <- batch_set[data[[study]]]
+  varianceforNA <- sd(data[[dependent]])
+
   num_ml = aggregate(data[[dependent]],
                      list(batch=data[[study]],
                      treatment = data[[treatment]]), 
@@ -13,7 +18,9 @@ meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest
                       list(batch=data[[study]], 
                       treatment = data[[treatment]]), 
                       sd)
-  sd_ml[is.na(sd_ml)] <- varianceforNA
+  #sd_ml[is.na(sd_ml)] <- 0.01
+  sd_ml[is.na(sd_ml)] <- 0.01
+  sd_ml$x[sd_ml$x==0] <- 0.01
 
 
   ctl = length(factors)
@@ -22,6 +29,9 @@ meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest
     num_ml = replaceSetData(num_ml, length, dependent, ctl, data, factors)
     mean_ml = replaceSetData(mean_ml, mean, dependent, ctl, data, factors)
     sd_ml= replaceSetData(sd_ml, sd, dependent, ctl, data, factors)
+  }
+  else {
+    print("default metafor behavior")
   }
 
   es_all = data.frame()
@@ -88,11 +98,6 @@ getTestResults <- function(model, digits = 6) {
 
 
 replaceSetData <- function(x, fun, dependent, ctl, data, factors) {
-  batch_set = rep(c("set1", "set2", "set3"), each = 2)
-  names(batch_set) = c(1, 2, 3, 4, 5, 6)
-
-  x$sets = batch_set[x$batch]
-
   common = aggregate(data[[dependent]],
                         list(sets=data[["sets"]]), 
                         fun)
