@@ -279,7 +279,7 @@ def plotFlagDist(propSample, propFeature, pdf):
     bar.quickBar(ax=fh.ax[0],y=list(propSample.head(30)),x=keys)
 
     # Formating axis
-    fh.formatAxis(xlim=(0,len(keys) + 1), ylim="ignore", xTitle="Sample ID",
+    fh.formatAxis(xlim=(-1,len(keys) + 1), ylim="ignore", xTitle="Sample ID",
                 yTitle="Proportion of features that were outliers.")
 
     # Save Figure in PDF
@@ -294,7 +294,7 @@ def plotFlagDist(propSample, propFeature, pdf):
     bar.quickBar(ax=fh.ax[0],y=list(propFeature.head(30)),x=keys)
 
     # Format Axis
-    fh.formatAxis(xlim=(0,len(keys) + 1), ylim="ignore", xTitle="Feature ID",
+    fh.formatAxis(xlim=(-1,len(keys) + 1), ylim="ignore", xTitle="Feature ID",
         yTitle="Proportion of samples that a feature was an outlier.")
 
     # Plot samples

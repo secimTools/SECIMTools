@@ -36,8 +36,8 @@ def quickBar(ax, x, y):
     """
     width = 1 / float(len(x)) + 0.5
 
-    ticks = np.arange(len(x)) + 1
-
+ #   ticks = np.arange(len(x)) + 1
+    ticks = np.arange(len(x)) 
     ax.bar(x=x, height=y, width=width, color="b", align="center")
     ax.set_xticks(ticks)
     ax.set_xticklabels(x, rotation="vertical")
