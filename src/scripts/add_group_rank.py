@@ -48,7 +48,8 @@ def main():
 
     if args.ngroup != None:
         groupBins = int(args.ngroup)
-        df_rank = df.apply(lambda x: pd.qcut(x.rank(method='first')+1, q=groupBins, labels = False), axis=0)
+        # Changed location of +1 from outside x.rank to outside pd.qcut(), 
+        df_rank = df.apply(lambda x: pd.qcut(x.rank(method='first'), q=groupBins, labels = False) + 1, axis=0)
         df_rank.insert(0, uniId, dat.wide.index)
     else:
         df_rank = df.apply(lambda x: x.rank(method='first'), axis = 0)
