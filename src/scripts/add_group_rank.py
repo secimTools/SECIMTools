@@ -50,12 +50,12 @@ def main():
     if args.ngroup != None:
         groupBins = int(args.ngroup)
         # Changed location of +1 from outside x.rank to outside pd.qcut(), 
-        df_rank = df.apply(lambda x: pd.qcut(x.rank(method='first'), q=groupBins, labels = False) + 1, axis=0)
+        df_rank = df.apply(lambda x: pd.qcut(x.rank(method='average'), q=groupBins, labels = False, duplicates = 'drop') + 1, axis=0)
         df_rank.insert(0, uniId, dat.wide.index)
     else:
         #Need to add option for how to break ties
         #Previous code method = 'first', which ranks assigned in order they appear in the array for tie breaks
-        df_rank = df.apply(lambda x: x.rank(method='first'), axis = 0)
+        df_rank = df.apply(lambda x: x.rank(method='average'), axis = 0)
         df_rank.insert(0, uniId, dat.wide.index)
     df_rank.to_csv(args.out, sep='\t', index = False)
 
