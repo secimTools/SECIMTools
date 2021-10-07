@@ -28,8 +28,9 @@ def getoptions():
     parser.add_argument("-s", "--study", dest="study", required=True, help="The column name in the design file to specify study")
     parser.add_argument("-t", "--treatment", dest="treatment", required=True, help="The column name in the design file to specify treatment")
     parser.add_argument("-c", "--contrast", dest="contrast", required=True, help="The contrast to be used for the meta-anlysis")
-    parser.add_argument("-fr", "--forest", dest="forest", default=None, help="The forest plot output prefix")
-    parser.add_argument("-o", "--summary", dest="summary", required=True, help="The anlysis summary file output name and path")
+    parser.add_argument("-fr", "--forest", dest="forest", default=None, help="The forest plot output directory plus prefix")
+    parser.add_argument("-o", "--summary", dest="summary", required=True, help="The analysis summary file output name and path")
+    parser.add_argument("-r", "--report", dest="report", required=True, help="The analysis report file output name and path")
     parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied")
     parser.add_argument("-es", "--effectSize", dest="effectSize", default="MD", help="The approach used to calculate the effect size")
     parser.add_argument("-cm", "--cmMethod", dest="cmMethod", default = 'UB', help="The method used to compute the sampling variances, default is unbiased estimation, can be 'LS' and 'AV' etc.")
@@ -63,18 +64,22 @@ def main():
 
 
     dat.trans  = dat.transpose()
+    
+    ## subset here based on user provided mutant and set (to pull relevant pd1074)
+
     contrast = args.contrast.split(",")    
     with localconverter(ro.default_converter + pandas2ri.converter):
         data_rform = ro.conversion.py2rpy(dat.trans)
         rcontrast = ro.conversion.py2rpy(contrast)
 
     features  = dat.wide.index.values
-    with open("report.txt", "w+") as f:
+    with open(args.report, "w+") as f:
         sys.stdout = f
         for fea in features:
             print("\n\n\n===============================================\ntest feature: " + fea)
             if args.forest:
-                outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
+                outfig = args.forest + "_" + fea + "_" + args.model + "_forest.pdf"
+                #outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
             else:
                 outfig = 'NOFIG'
             res_fromR = r.meta_batchCorrect(data = data_rform, 
@@ -102,6 +107,7 @@ def main():
                        "ci_upper" : ci_upper})
     
     df.index = features
+    df.index.name = "featureID"
     df.to_csv(args.summary)
     return
 
