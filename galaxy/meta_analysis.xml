@@ -1,5 +1,5 @@
 <tool id="secimtools_meta_analysis" name="Meta-Analysis" version="@WRAPPER_VERSION@">
-    <description> </description>
+    <description> run statistical analyses to determine the extent of batch effects on a set of data </description>
     <macros>
         <import>macros.xml</import>
     </macros>
