@@ -12,9 +12,11 @@ meta_analysis.py
 --study $study
 --treatment "$treatment"
 --contrast $contrast
---model $model
---effectSize $effectSize
---cmMethod $cmMethod
+
+##Default is set to only use Fixed-effect model, use standard mean difference for effect size, and unbiased estimation for cmMethod 
+--model "FE"
+--effectSize "SMD"
+--cmMethod "UB"
 --summary $summary
 --report $report
 
@@ -23,12 +25,9 @@ meta_analysis.py
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab-separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" size="30" type="text" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that contains unique feature identifiers."/>
-        <param name="study" type="text" size="30" value="" label="Study" help="Name of the column in your design file that contains study information."/>
-        <param name="treatment" type="text" size="30" label="Treatment/Group" help="Name of the column in your design file that specifies treatment"/>
-        <param name="contrast" type="text"  size="30" label="Contrast" help="The contrast to be used for the meta-anlysis"/>
-        <param name="effectSize" type="text" size="30" label="" help="Calculate the effect size"/>
-        <param name="cmMethod" type="text" size="30" label="" help="The method used to compute the sampling variances, default is unbiased estimation, can be 'LS' and 'AV' etc."/>
-        <param name="model" type="text" size="30" label="Model"/>
+        <param name="study" type="text" size="30" value="batch" label="Study" help="Name of the column in your design file that contains batch information."/>
+        <param name="treatment" type="text" size="30" label="Treatment/Group" help="Name of the column in your design file that specifies which mutants and wildtype genotypes are to be compared"/>
+        <param name="contrast" type="text"  size="30" label="The contrast to be used for the meta-analysis" help="Enter the name of the mutant that will be compared followed by the wildtype. Make sure these are only separated by a single comma (no spaces)"/>
     </inputs>
     <outputs>
         <data format="tsv" name="report" label= "${tool.name} on ${on_string}: Report"  />
@@ -54,11 +53,7 @@ meta_analysis.py
 
 **Tool Description**
 
-The Bland-Altman plot (BA-Plot) is used to look at the concordance of data between pairs of samples, particularly between replicates.
-The script generates BA-plots for all pairwise combinations of samples.
-If the Group/Treatment column and group name(s) in that column are provided, then BA-Plots are generated only for pairwise combinations within the specified Group -- group name combination.
-In addition to generating the BA-plots, a linear regression fit is calculated between the values that correspond to the pair of samples to identify (flag) any unusual outlying values.
-The flags produced by the regression fit are used to generate distribution plots and text files for (i) each sample (column) and for (ii) each feature (row).
+The meta-analysis tool is used to study batch effect corrections in large-scale metabolomics studies. In large scale studies, samples are broken up into several batches, where each batch constitutes replicates of a sample. Batch effects can occur biases when testing on the replicates, can be caused due to differences in laboratory conditions that the batches are run under, such as temperature, amount of reagents used, and even particles that are leftover from past runs in the LC/MS equipment. This tool is used to determine the extent to which batch effects are present so that steps may be taken to minimize them. 
 
 
 --------------------------------------------------------------------------------
@@ -76,43 +71,26 @@ The flags produced by the regression fit are used to generate distribution plots
 
 @UNIQID@
 
+**Study**
 
-**Outlier Cutoff – flagging values**
 
-- Residual cutoff value; this value will flag samples with residuals ≥ than this cutoff value.
+**Treatment**
 
-        (1) If the magnitude of the residuals from the linear regression on the BA-plot exceeds the user-defined threshold, then a value is flagged as an outlier. This cutoff can be adjusted by the user; the default is 3.
-
-        (2) If a value is identified as a leverage point using Cook's D with a p-value cutoff of 0.5, then the value is flagged. This cannot be adjusted.
-
-        (3) If a value is identified as a leverage point using the DFFITS technique, it is also flagged. This cannot be adjusted.
-
-**Sample Flag Cutoff – flagging samples**
-
-    - Flag a sample as 1 if the proportion of features within a sample that are outliers exceeds this cutoff. [Number between 0-1].
-
-**Feature Flag Cutoff  – flagging features**
-
-    - Flag a feature as 1 if the proportion of times this feature was identified as an outlier exceeds this cutoff. [Number between 0-1].
+    - Enter the name of the column that contains the list of the different strains that are to be compared. For example, if the mutant is KJ550 and the wildtype is PD1074, then these should both be under one column designating the genotype/strain to be compared. 
 
 @GROUP@
 
-**Group ID**
+**Contrast**
 
-    - Name of the group(s) that you want to process. Separate multiple groupIDs with spaces. Leave blank to process all groups. Requires the group parameter.
+    - Name of the group(s) that you want to process. Separate multiple genotypes/strains with commas (no spaces)
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-This tool outputs four (or five) different files depending on the input settings:
-(1) a PDF file containing BA-plots and scatterplots for each pair of samples
-(2) a PDF file containing histograms of the most flagged features and samples
-(3) two TSV files containing flags: one for samples and one for features
-(4) if a grouping variable name is specified in the input, a TSV file containing flags for each group is also generated.
-(5) two TSV files containing (i) the proportion of features flagged per sample and (ii) the proportion of samples flagged per feature.
-If a sample (or feature) is flagged, the user should consider removing it from further analysis.
-
+This tool outputs two different files:
+(1) a summary CSV file that contains the statistical metrics of the batch effect
+(2) a report file 
     ]]></help>
     <expand macro="citations"/>
 </tool>
