@@ -103,8 +103,25 @@ def main(args):
 
         # Loading data trought Interface.
         logger.info("Loading data with the Interface")
-        dat = wideToDesign(args.input, args.design, args.uniqueID, group = args.group,
-                         logger=logger)
+        
+        
+        #====================================================TEST=================================================
+              
+        pathIN = "/ufgi-suz/data/jaciah.rashid/SECIMTools/galaxy/test-data"
+        input_df = pd.read_csv(os.path.join(pathIN, 'ST000006_data.tsv'), sep="\t", header = 0)
+        design_df = pd.read_csv(os.path.join(pathIN, 'ST000006_design.tsv'), sep="\t", header = 0)
+        
+        
+        dat = wideToDesign("/ufgi-suz/data/jaciah.rashid/SECIMTools/galaxy/test-data/ST000006_data.tsv", "/ufgi-suz/data/jaciah.rashid/SECIMTools/galaxy/test-data/ST000006_design.tsv", 'Retention_Index', logger=logger) 
+        
+        
+        #Previous Attempt: 
+        #df = pd.read_csv('/ufgi-suz/data/jaciah.rashid/SECIMTools/galaxy/test-data/ST000006_data.tsv', sep='\t')
+        #dat = wideToDesign(df, args.design, args.uniqueID, group = args.group,
+        #                 logger=logger)
+
+        #=========================================================================================================
+
 
         # Treat everything as numeric.
         dat.wide = dat.wide.applymap(float)
@@ -114,12 +131,25 @@ def main(args):
 
 
         # Getting the uinique group values so that we will feed them to the t-tests.
-        group_values_series = dat.transpose()[dat.group].T.squeeze()
+        group_values_series = dat.transpose()['White_wine_type_and_source'].T.squeeze()
         group_values_series_unique = group_values_series.unique()
         number_of_unique_groups = group_values_series_unique.shape[0]
 
         # Extracting data from the interface.
+        #nice, transpose
         data_frame = dat.transpose()
+        
+        
+        #===================================================TEST==================================================
+        
+        #NEW STUFF
+        check_df = data_frame.head()
+        print(check_df)
+        
+        #=========================================================================================================
+    
+ 
+    
         # Extracting number of features. We subtract 1 since we have provided args.group
         number_of_features = data_frame.shape[1] - 1
         # Saving treatment group name from the arguments.
@@ -136,16 +166,16 @@ def main(args):
 
             # Dropping columns that characterize group. Only feature columns will remain.
             # We also transpose here so it will be easier to operate with.
-            data_frame_manipulate_transpose  = data_frame_manipulate.drop(  args.group, 1 ).transpose()
+            data_frame_manipulate_transpose  = data_frame_manipulate.drop(  'White_wine_type_and_source', 1 ).transpose()
 
             #Using LabelEncoder, the whatever is categorized as type object are converted to integers (1s and 0s)
-           # pd.to_numeric(indexes_list_complete,downcast='signed')
             le= preprocessing.LabelEncoder()
             for index in data_frame_manipulate.columns:
                 if data_frame_manipulate[index].dtype==object:
                     data_frame_manipulate[index]=le.fit_transform(data_frame_manipulate[index])
             # Pulling indexes list from the current data frame.
             indexes_list_complete = data_frame_manipulate_transpose.index.tolist()
+            #pd.to_numeric(indexes_list_complete,downcast='signed')
             # Computing dataset summaries for feature j.
             mean_value_all[j] = np.mean(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ])
             variance_value_all[j] = np.var(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ], ddof = 1)
@@ -158,13 +188,16 @@ def main(args):
         # Running single sample t-test for all groups.
         # We are also computing means for each group and outputting them.
         for i in range(0, number_of_unique_groups ):
-
+          
             # Extracting the pieces of the data frame that belong to the ith group.
-            data_frame_current_group  = data_frame.loc[data_frame[args.group].isin( [group_values_series_unique[i]]  )]
-
+            
+            #ASK WTF THIS LINE IS
+            data_frame_current_group  = data_frame.loc[data_frame['White_wine_type_and_source'].isin( [group_values_series_unique[i]]  )]
+            
             # Dropping columns that characterize group. Only feature columns will remain.
             # We also trnaspose here so it will be easier to operate with.
-            data_frame_current_group  = data_frame_current_group.drop(  args.group, 1 ).transpose()
+            data_frame_current_group  = data_frame_current_group.drop(  'White_wine_type_and_source', 1 ).transpose()
+            print(data_frame_current_group)
 
             # Pulling indexes list from the current group.
             indexes_list = data_frame_current_group.index.tolist()
@@ -181,15 +214,18 @@ def main(args):
             flag_value_0p10   = [0] * number_of_features
 
             for j in range(0, number_of_features ):
-                series_current = data_frame_current_group.loc[ indexes_list[j] ]
+                #WHERE THE ISSUE STARTS
+                #series_current = data_frame_current_group.loc[ indexes_list[j] ]
+                data_frame = data_frame.set_index('sampleID')
+                series_current = data_frame.loc[ indexes_list_complete[j] ]
                 means_value[j] = series_current.mean()
 
                 # Performing one sample t-test
-                ttest_1samp_args = [series_current, float(args.mu)]
+                ttest_1samp_args = [series_current, float(0)]
                 p_value[j] = ttest_1samp( *ttest_1samp_args )[1]
                 t_value[j] = ttest_1samp( *ttest_1samp_args )[0]
                 neg_log10_p_value[j] = - np.log10(p_value[j])
-                difference_value[j] = means_value[j] - float(args.mu)
+                difference_value[j] = means_value[j] - float(0)
                 if p_value[j] < 0.01: flag_value_0p01[j] = 1
                 if p_value[j] < 0.05: flag_value_0p05[j] = 1
                 if p_value[j] < 0.10: flag_value_0p10[j] = 1
@@ -197,18 +233,18 @@ def main(args):
 
             # Creating names for the current analysis columns and adding result columns to the data frame.
             means_value_column_name_current       = 'mean_treatment_' + group_values_series_unique[i]
-            p_value_column_name_current           = 'prob_greater_than_t_for_diff_' + group_values_series_unique[i] + '_' + args.mu
-            t_value_column_name_current           = 't_value_for_diff_' + group_values_series_unique[i] + '_' + args.mu
-            neg_log10_p_value_column_name_current = 'neg_log10_p_value_' + group_values_series_unique[i] + '_' + args.mu
-            difference_value_column_name_current  = 'diff_of_' + group_values_series_unique[i] + '_' + args.mu
-            flag_value_column_name_current_0p01 = 'flag_significant_0p01_on_' + group_values_series_unique[i] + '_' + args.mu
-            flag_value_column_name_current_0p05 = 'flag_significant_0p05_on_' + group_values_series_unique[i] + '_' + args.mu
-            flag_value_column_name_current_0p10 = 'flag_significant_0p10_on_' + group_values_series_unique[i] + '_' + args.mu
+            p_value_column_name_current           = 'prob_greater_than_t_for_diff_' + group_values_series_unique[i] + '_' + str(0)
+            t_value_column_name_current           = 't_value_for_diff_' + group_values_series_unique[i] + '_' + str(0)
+            neg_log10_p_value_column_name_current = 'neg_log10_p_value_' + group_values_series_unique[i] + '_' + str(0)
+            difference_value_column_name_current  = 'diff_of_' + group_values_series_unique[i] + '_' + str(0)
+            flag_value_column_name_current_0p01 = 'flag_significant_0p01_on_' + group_values_series_unique[i] + '_' + str(0)
+            flag_value_column_name_current_0p05 = 'flag_significant_0p05_on_' + group_values_series_unique[i] + '_' + str(0)
+            flag_value_column_name_current_0p10 = 'flag_significant_0p10_on_' + group_values_series_unique[i] + '_' + str(0)
 
             # Adding flag_value column to the data frame and assigning the name.
             # If the data frame for flags has not been created yet we create it on the fly. i.e. if i == 0 create it.
             if i == 0:
-               flag_df     =  pd.DataFrame(data = flag_value_0p01, columns = [flag_value_column_name_current_0p01], index = indexes_list )
+               flag_df    =  pd.DataFrame(data = flag_value_0p01, columns = [flag_value_column_name_current_0p01], index = indexes_list )
             else:
                flag_df[flag_value_column_name_current_0p01] = flag_value_0p01
 
@@ -227,7 +263,8 @@ def main(args):
 
         # Loading data trough the interface
         logger.info("Loading data with the Interface")
-        dat = wideToDesign(args.input, args.design, args.uniqueID, logger=logger)
+        dat = wideToDesign("/ufgi-suz/data/jaciah.rashid/SECIMTools/galaxy/test-data/ST000006_data.tsv", "/ufgi-suz/data/jaciah.rashid/SECIMTools/galaxy/test-data/ST000006_design.tsv", 'Retention_Index', logger = logger)
+        #dat = wideToDesign(args.input, args.design, args.uniqueID, logger=logger)
 
         # Treat everything as numeric
         dat.wide = dat.wide.applymap(float)
@@ -271,11 +308,11 @@ def main(args):
             variance_value_all[j] = np.var(data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ], ddof = 1)
 
             # Performing one sample t-test for the entire dataset.
-            ttest_1samp_args = [ data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ] , float(args.mu) ]
+            ttest_1samp_args = [ data_frame_manipulate_transpose.loc[ indexes_list_complete[j] ] , float(0) ]
             p_value[j] = ttest_1samp( *ttest_1samp_args )[1]
             t_value[j] = ttest_1samp( *ttest_1samp_args )[0]
             neg_log10_p_value[j] = - np.log10(p_value[j])
-            difference_value[j] = mean_value_all[j] - float(args.mu)
+            difference_value[j] = mean_value_all[j] - float(0)
             if p_value[j] < 0.01: flag_value_0p01[j] = 1
             if p_value[j] < 0.05: flag_value_0p05[j] = 1
             if p_value[j] < 0.10: flag_value_0p10[j] = 1
@@ -286,13 +323,13 @@ def main(args):
 
         # Creating names for the current analysis columns and adding result columns to the data frame.
         means_value_column_name_current       = 'mean_treatment_all'
-        p_value_column_name_current           = 'prob_greater_than_t_for_diff_all_' + args.mu
-        t_value_column_name_current           = 't_value_for_diff_all_' + args.mu
-        neg_log10_p_value_column_name_current = 'neg_log10_p_value_all_' + args.mu
-        difference_value_column_name_current  = 'diff_of_all_' + args.mu
-        flag_value_column_name_current_0p01 = 'flag_significant_0p01_on_all_' + args.mu
-        flag_value_column_name_current_0p05 = 'flag_significant_0p05_on_all_' + args.mu
-        flag_value_column_name_current_0p10 = 'flag_significant_0p10_on_all_' + args.mu
+        p_value_column_name_current           = 'prob_greater_than_t_for_diff_all_' + str(0)
+        t_value_column_name_current           = 't_value_for_diff_all_' + str(0)
+        neg_log10_p_value_column_name_current = 'neg_log10_p_value_all_' + str(0)
+        difference_value_column_name_current  = 'diff_of_all_' + str(0)
+        flag_value_column_name_current_0p01 = 'flag_significant_0p01_on_all_' + str(0)
+        flag_value_column_name_current_0p05 = 'flag_significant_0p05_on_all_' + str(0)
+        flag_value_column_name_current_0p10 = 'flag_significant_0p10_on_all_' + str(0)
 
         summary_df[means_value_column_name_current]       = mean_value_all
         summary_df[p_value_column_name_current]           = p_value
@@ -336,9 +373,9 @@ def main(args):
 
             # If no grouping variable is provided.
             if number_of_unique_groups == 1:
-               current_key = 'all_'  + args.mu
+               current_key = 'all_'  + str(args.mu)
             else:
-               current_key =  group_values_series_unique[i] + '_' + args.mu
+               current_key =  group_values_series_unique[i] + '_' + str(args.mu)
 
             # Plot all results
             scatter.scatter2D(x=list(difs[current_key]), y=list(lpvals[current_key]),
