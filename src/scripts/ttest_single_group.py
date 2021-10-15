@@ -190,9 +190,7 @@ def main(args):
         for i in range(0, number_of_unique_groups ):
           
             # Extracting the pieces of the data frame that belong to the ith group.
-            
-            #ASK WTF THIS LINE IS
-            data_frame_current_group  = data_frame.loc[data_frame['White_wine_type_and_source'].isin( [group_values_series_unique[i]]  )]
+            data_frame_current_group  = data_frame.loc[data_frame['White_wine_type_and_source'].isin( [group_values_series_unique[i]] )]
             
             # Dropping columns that characterize group. Only feature columns will remain.
             # We also trnaspose here so it will be easier to operate with.
@@ -212,10 +210,10 @@ def main(args):
             flag_value_0p01   = [0] * number_of_features
             flag_value_0p05   = [0] * number_of_features
             flag_value_0p10   = [0] * number_of_features
-
+g
             for j in range(0, number_of_features ):
                 #WHERE THE ISSUE STARTS
-                #series_current = data_frame_current_group.loc[ indexes_list[j] ]
+                series_current = data_frame_current_group.loc[ indexes_list[j] ]
                 data_frame = data_frame.set_index('sampleID')
                 series_current = data_frame.loc[ indexes_list_complete[j] ]
                 means_value[j] = series_current.mean()
