@@ -99,7 +99,7 @@ def main(args):
     # If the user provides grouping variable we test each group against the null (my supplied by user, 0 is the default).
     if args.group != False:
         logger.info(u"""t-test will be performed for all groups saved in [{0}] variable in the desing file pairwise with the H_0: mu = {1}.""".format(args.group, args.mu))
-
+                           
 
         # Loading data trought Interface.
         logger.info("Loading data with the Interface")
