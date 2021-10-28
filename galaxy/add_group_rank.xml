@@ -1,5 +1,5 @@
 <tool id="secimtools_rank_group_wide" name="Ranked wide file"  version="@WRAPPER_VERSION@">
-    <description>Generate a wide format file with ranked columns from an input wide file.</description>
+    <description>Compute ranks for numeric columns in a wide dataset.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -18,7 +18,7 @@ add_group_rank.py
         <param name="wide" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="ngroup" type="integer" size="30" value="" optional="true" label="number of groups for each feature being ranked" help="number of bins/groups for each feature being ranked. If there is no input, the default behavir is ranking each column."/>
+        <param name="ngroup" type="integer" size="30" value="" optional="true" label="number of groups to rank data" help="number of bins/groups to rank data in."/>
     </inputs>
     <outputs>
         <data format="tabular" name="out" label="${tool.name} on ${on_string}: Results Table"/>
