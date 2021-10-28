@@ -1,4 +1,4 @@
-<tool id="secimtools_rank_group_wide" name="Ranked wide file"  version="@WRAPPER_VERSION@">
+<tool id="secimtools_rank_group_wide" name="Ranking a wide file"  version="@WRAPPER_VERSION@">
     <description>Compute ranks for numeric columns in a wide dataset.</description>
     <macros>
         <import>macros.xml</import>
