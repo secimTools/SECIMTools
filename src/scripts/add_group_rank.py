@@ -22,9 +22,10 @@ def getOptions():
     parser = argparse.ArgumentParser(description="get parameters from Galaxy")
     parser.add_argument('-w', '--wide', dest='wide', required=True, help="The input file in wide format")
     parser.add_argument('-o', '--out', dest='out', required=True, help="Output file name with full path")
-    parser.add_argument('-n', '--ngroup', dest='ngroup', default=None, help="Percentage for each column to be ranked ")
+    parser.add_argument('-n', '--ngroup', dest='ngroup', default=None, help="Number of bins to rank data in")
     parser.add_argument('-d', '--design', dest='design', required=True, help="A design file assigns which columns to be ranked")
     parser.add_argument('-u', '--uniqID', dest='uniqID', default='rowID', help="Specify the unique row ID column in the wide format input")
+    #parser.add_argument('-t', '--tiebreak', dest='tiebreak', required =True, help="Specify the ")
     args=parser.parse_args()
     return args
 
@@ -48,10 +49,13 @@ def main():
 
     if args.ngroup != None:
         groupBins = int(args.ngroup)
-        df_rank = df.apply(lambda x: pd.qcut(x.rank(method='first')+1, q=groupBins, labels = False), axis=0)
+        # Changed location of +1 from outside x.rank to outside pd.qcut(), 
+        df_rank = df.apply(lambda x: pd.qcut(x.rank(method='average'), q=groupBins, labels = False, duplicates = 'drop') + 1, axis=0)
         df_rank.insert(0, uniId, dat.wide.index)
     else:
-        df_rank = df.apply(lambda x: x.rank(method='first'), axis = 0)
+        #Need to add option for how to break ties
+        #Previous code method = 'first', which ranks assigned in order they appear in the array for tie breaks
+        df_rank = df.apply(lambda x: x.rank(method='average'), axis = 0)
         df_rank.insert(0, uniId, dat.wide.index)
     df_rank.to_csv(args.out, sep='\t', index = False)
 
