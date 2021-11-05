@@ -1,0 +1,16 @@
+sampleID	oldSampleID	set	batch	rack_position	run_order	tube_sample	genotype	wormgrowth_sample_name	Solvent	parameters	rank	study_group	sample
+aos113_ga_ms1_28	aos113_ga_ms1_NMR_CDCL3_28	1	2	C4	28	nmr28	PD1074	aos113_ga_ms1	CDCl3	proton	1	g2_g3	aos113
+aos115_gt_ms1_29	aos115_gt_ms1_NMR_CDCL3_29	1	2	C5	29	nmr29	CB4856	aos115_gt_ms1	CDCl3	proton	1	g1	aos115
+aos129_ga_ms2_6	aos129_ga_ms2_NMR_CDCL3_6	1	1	A6	6	nmr5	PD1074	aos129_ga_ms2	CDCl3	proton	1	g1	aos129
+aos142_ga_ms2_7	aos142_ga_ms2_NMR_CDCL3_7	1	1	A7	7	nmr6	CB4856	aos142_ga_ms2	CDCl3	proton	1	g1	aos142
+aos145_ga_ms2_8	aos145_ga_ms2_NMR_CDCL3_8	1	1	A8	8	nmr7	CB4856	aos145_ga_ms2	CDCl3	proton	1	g1	aos145
+aos149_ga_ms2_9	aos149_ga_ms2_NMR_CDCL3_9	1	1	A9	9	nmr8	PD1074	aos149_ga_ms2	CDCl3	proton	1	g1	aos149
+aos167_ga_ms3_31	aos167_ga_ms3_NMR_CDCL3_31	1	2	C7	31	nmr31	PD1074	aos167_ga_ms3	CDCl3	proton	1	g1	aos167
+aos170_ga_ms2_32	aos170_ga_ms2_NMR_CDCL3_32	1	2	C8	32	nmr32	CB4856	aos170_ga_ms2	CDCl3	proton	1	g1	aos170
+aos188_ga_ms3_36	aos188_ga_ms3_NMR_CDCL3_36	1	2	C12	36	nmr36	PD1074	aos188_ga_ms3	CDCl3	proton	1	g2_g3	aos188
+aos200_ga_ms2_39	aos200_ga_ms2_NMR_CDCL3_39	1	2	D3	39	nmr39	PD1074	aos200_ga_ms2	CDCl3	proton	1	g1	aos200
+aos27_ga_ms3_11	aos27_ga_ms3_NMR_CDCL3_11	1	1	A11	11	nmr10	PD1074	aos27_ga_ms3	CDCl3	proton	1	g1	aos27
+aos43_ga_ms4_13	aos43_ga_ms4_NMR_CDCL3_13	1	1	B1	13	nmr12	PD1074	aos43_ga_ms4	CDCl3	proton	1	g2	aos43
+aos53_ga_ms2_40	aos53_ga_ms2_NMR_CDCL3_40	1	2	D4	40	nmr40	PD1074	aos53_ga_ms2	CDCl3	proton	1	g2	aos53
+aos78_ga_ms4_22	aos78_ga_ms4_NMR_CDCL3_22	1	1	B10	22	nmr21	PD1074	aos78_ga_ms4	CDCl3	proton	1	g2	aos78
+aos99_ga_ms2_26	aos99_ga_ms2_NMR_CDCL3_26	1	2	C2	26	nmr26	PD1074	aos99_ga_ms2	CDCl3	proton	1	g2_g3	aos99
