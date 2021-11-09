@@ -27,24 +27,22 @@ meta_analysis.py
         <param name="uniqID" size="30" type="text" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that contains unique feature identifiers."/>
         <param name="study" type="text" size="30" value="batch" label="Study" help="Name of the column in your design file that contains batch information."/>
         <param name="treatment" type="text" size="30" label="Treatment/Group" help="Name of the column in your design file that specifies which mutants and wildtype genotypes are to be compared"/>
-        <param name="contrast" type="text"  size="30" label="The contrast to be used for the meta-analysis" help="Enter the name of the mutant that will be compared followed by the wildtype. Make sure these are only separated by a single comma (no spaces)"/>
+        <param name="contrast/pathway" type="text"  size="30" label="The contrast/metabolic pathway to be used for the meta-analysis" help="Enter the name of the mutant(s) followed by the strain of the control. If running with several mutants to determine the effects of a knock out gene on a metabolic pathway, enter the names of each of the strains to be analyzed. Make sure these are only separated by a single comma (no spaces)"/>
     </inputs>
     <outputs>
-        <data format="tsv" name="report" label= "${tool.name} on ${on_string}: Report"  />
-        <data format="csv" name="summary" label= "${tool.name} on ${on_string}: Summary"/>>
+        <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
+        <data format="csv" name="summary" label="${tool.name} on ${on_string}: Summary"/>
     </outputs>
     <tests>
         <test>
-            <param name="input"  value="ST000006_data.tsv"/>
-            <param name="design" value="ST000006_design.tsv"/>
-            <param name="uniqID" value="Retention_Index" />
-            <param name="group"  value="White_wine_type_and_source" />
-            <output name="ba_plots"           file="ST000006_bland_altman_plot_with_group_figure.pdf" compare="sim_size" delta="10000" />
-            <output name="outlier_dist_plots" file="ST000006_bland_altman_plot_with_group_flag_distribution.pdf" compare="sim_size" delta="10000" />
-            <output name="flag_sample"        file="ST000006_bland_altman_plot_with_group_flag_sample.tsv" />
-            <output name="flag_feature"       file="ST000006_bland_altman_plot_with_group_flag_feature.tsv" />
-            <output name="prop_feature"       file="ST000006_bland_altman_plot_with_group_proportion_feature.tsv" />
-            <output name="prop_sample"        file="ST000006_bland_altman_plot_with_group_proportion_sample.tsv" />
+            <param name="input"  value="ready_cdcl3_rank_sbys.tsv"/>
+            <param name="design" value="dsgn_nmr_4_MA_cdcl3_set1_CB4856.tsv"/>
+            <param name="uniqID" value="ppm" />
+            <param name="study"  value="batch" />
+            <param name="treatment" value="genotype" />
+            <param name="contrast" value="PD1074,CB4856" />
+            <output name="report" file="meta_analysis_report.tsv" />
+            <output name="summary" file="meta_analysis_summary.csv" />
         </test>
     </tests>
     <help><![CDATA[
