@@ -22,6 +22,7 @@ from argparse import RawDescriptionHelpFormatter
 # Impot add-on libraries
 import numpy as np
 import pandas as pd
+import math
 
 # Impot local data libraries
 from secimtools.dataManager import logger as sl
@@ -68,7 +69,6 @@ def main(args):
       
     # Imput data
     dat = wideToDesign(args.input, args.design, args.uniqID, logger=logger)
-
 
     # Convert objects to numeric
     norm = dat.wide.applymap(float)
