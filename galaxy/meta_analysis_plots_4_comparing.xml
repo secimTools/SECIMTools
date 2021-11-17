@@ -1,0 +1,91 @@
+<tool id="secimtools_meta_analysis" name="Meta-Analysis" version="@WRAPPER_VERSION@">
+    <description> Create plots and files for comparing pathway and in-Set meta-analyses</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <command detect_errors="exit_code"><![CDATA[
+meta_analysis_plots_4_comparing.py
+--in1 $input
+--inPath $pathway
+--inMut $mutants
+--in2 $summaries
+
+    ]]></command>
+    <inputs>
+        <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input summary file from pathway meta-analysis  below."/>
+        <param name="pathway" type="data" format="tabular" label="Pathway" help="Name of metabolic pathway."/>
+        <param name="mutants" type="text" size="30" label="Study" help="List of mutants (space separated) in the indicated metabolic pathway"/>
+    </inputs>
+    <outputs>
+        <data format="tsv" name="output" label="${tool.name} on ${on_string}: Output"  />
+    </outputs>
+    <tests>
+        <test>
+            <param name="input"  value="ready_cdcl3_rank_sbys.tsv"/>
+            <param name="design" value="dsgn_nmr_4_MA_cdcl3_set1_CB4856.tsv"/>
+            <param name="uniqID" value="ppm" />
+            <param name="study"  value="batch" />
+            <param name="treatment" value="genotype" />
+            <param name="contrast" value="PD1074,CB4856" />
+            <output name="report" file="meta_analysis_report.tsv" />
+            <output name="summary" file="meta_analysis_summary.csv" />
+        </test>
+    </tests>
+    <help><![CDATA[
+
+@TIP_AND_WARNING@
+
+**Tool Description**
+
+The meta-analysis tool is used to study batch effect corrections in large-scale metabolomics studies. In large scale studies, samples are broken up into several batches, where each batch constitutes replicates of a sample. Batch effects can occur biases when testing on the replicates, can be caused due to differences in laboratory conditions that the batches are run under, such as temperature, amount of reagents used, and even particles that are leftover from past runs in the LC/MS equipment. This tool is used to determine the extent to which batch effects are present so that steps may be taken to minimize them. 
+
+
+--------------------------------------------------------------------------------
+
+**Input**
+
+    - Two input datasets are required.
+
+@WIDE@
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
+
+@METADATA@
+
+@UNIQID@
+
+**Batch/Study**
+    - Enter the name of the column that contains what batch/study the sample was a part of.  
+
+**Genotype**
+
+    - Enter the name of the column that contains the different strains that are to be compared. For example, if the mutant strain is KJ550 and the control strain is PD1074, then these should both be under one column designating the genotype/strain to be compared. 
+
+
+**Contrast/Pathway**
+
+    - Name of the strains that you want to compare. If doing a pathway study involving multiple strains, please separate each genotypes/strains with commas (no spaces)
+
+--------------------------------------------------------------------------------
+
+**Output**
+
+This tool outputs two different files:
+(1) a summary CSV file that contains the statistical metrics of the batch effect with the following columns:
+    - featureID
+    - effect - Calculated estimated batch effect
+    - se - Standard Error
+    - z_value                  
+    - p_value
+    - ci_low - lower confidence interval
+    - ci_upper - upper confidence interval
+
+
+
+(2) a report file that contains a description of how much variability and heterogeneity is has been calculated for each sample, and what the results of the fixed effects model were
+  
+    ]]></help>
+    <expand macro="citations"/>
+</tool>
