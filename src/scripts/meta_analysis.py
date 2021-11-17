@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May 12 11:10:16 2021
-
-@author: zach
-"""
+#!/usr/bin/env python
+##
+##  Created on Wed May 12 11:10:16 2021
+##
+##  @author: zach
+##
 
 import sys, os
 import pandas as pd
@@ -113,10 +112,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-  
-
-
-
-
 
