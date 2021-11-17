@@ -1,5 +1,5 @@
 <tool id="secimtools_meta_analysis" name="Meta-Analysis" version="@WRAPPER_VERSION@">
-    <description> run statistical analyses to determine the extent of batch effects on a set of data </description>
+    <description> approach with a fixed effect model for untargeted metabolomics</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -25,9 +25,9 @@ meta_analysis.py
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab-separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
         <param name="uniqID" size="30" type="text" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that contains unique feature identifiers."/>
-        <param name="study" type="text" size="30" value="batch" label="Study" help="Name of the column in your design file that contains batch information."/>
-        <param name="treatment" type="text" size="30" label="Treatment/Group" help="Name of the column in your design file that specifies which mutants and wildtype genotypes are to be compared"/>
-        <param name="contrast" type="text"  size="30" label="The contrast to be used for the meta-analysis" help="Enter the name of the mutant that will be compared followed by the wildtype. Make sure these are only separated by a single comma (no spaces)"/>
+        <param name="study" type="text" size="30" label="Study" help="Name of the column in your design file that contains batch/study information."/>
+        <param name="treatment" type="text" size="30" label="Genotype/Strain" help="Name of the column in your design file that specifies which strains/genotypes are to be compared"/>
+        <param name="contrast/pathway" type="text"  size="30" label="The contrast/metabolic pathway to be used for the meta-analysis" help="Enter the name of the mutant(s) followed by the strain of the control. If running with several mutants to determine the effects of a knock out gene on a metabolic pathway, enter the names of each of the strains to be analyzed. Make sure these are only separated by a single comma (no spaces)"/>
     </inputs>
     <outputs>
         <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
@@ -51,7 +51,12 @@ meta_analysis.py
 
 **Tool Description**
 
-The meta-analysis tool is used to study batch effect corrections in large-scale metabolomics studies. In large scale studies, samples are broken up into several batches, where each batch constitutes replicates of a sample. Batch effects can occur biases when testing on the replicates, can be caused due to differences in laboratory conditions that the batches are run under, such as temperature, amount of reagents used, and even particles that are leftover from past runs in the LC/MS equipment. This tool is used to determine the extent to which batch effects are present so that steps may be taken to minimize them. 
+Metabolomics experiments have variations in sample acquisition, extraction, and data acquisition (Gouveia et al., 2021) with many 
+large-scale experiments subdividing the samples into smaller batches of samples.  
+
+This meta-analysis tool calculates batch-level summary statistics generated using metafor: Meta-Analysis Package for R (REF). 
+We note that the version wrapped here has been tested using the mean difference (MD) to estimate the effect size, unbiased estimates 
+of the sampling variance (UB) and a fixed effects (FE) model.     
 
 
 --------------------------------------------------------------------------------
@@ -69,26 +74,36 @@ The meta-analysis tool is used to study batch effect corrections in large-scale 
 
 @UNIQID@
 
-**Study**
+**Batch/Study**
+    - Enter the name of the column in the design file that contains the batch information for each sample.  
+
+**Genotype**
+
+    - Enter the name of the column in the design file that contains the information to be contrasted. For example, if you want to contrast strain KJ550 and control strain PD1074 and this information is in a column called 'genotype'. 
 
 
-**Treatment**
+**Contrast/Pathway**
 
-    - Enter the name of the column that contains the list of the different strains that are to be compared. For example, if the mutant is KJ550 and the wildtype is PD1074, then these should both be under one column designating the genotype/strain to be compared. 
-
-@GROUP@
-
-**Contrast**
-
-    - Name of the group(s) that you want to process. Separate multiple genotypes/strains with commas (no spaces)
+    - Name of the strains that you want to compare. If doing a pathway study involving multiple strains, please separate each genotypes/strains with commas (no spaces)
 
 --------------------------------------------------------------------------------
 
 **Output**
 
 This tool outputs two different files:
-(1) a summary CSV file that contains the statistical metrics of the batch effect
-(2) a report file 
+(1) a summary CSV file that contains the statistical metrics of the batch effect with the following columns:
+    - featureID
+    - effect - Calculated estimated batch effect
+    - se - Standard Error
+    - z_value                  
+    - p_value
+    - ci_low - lower confidence interval
+    - ci_upper - upper confidence interval
+
+
+
+(2) a report file that contains a description of how much variability and heterogeneity is has been calculated for each sample, and what the results of the fixed effects model were
+  
     ]]></help>
     <expand macro="citations"/>
 </tool>
