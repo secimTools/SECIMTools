@@ -24,10 +24,10 @@ meta_analysis.py
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab-separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Input your design file (tab-separated). Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" size="30" type="text" value="" label="Unique Feature ID" help="Name of the column in your wide dataset that contains unique feature identifiers."/>
-        <param name="study" type="text" size="30" label="Study" help="Name of the column in your design file that contains batch/study information."/>
-        <param name="treatment" type="text" size="30" label="Genotype/Strain" help="Name of the column in your design file that specifies which strains/genotypes are to be compared"/>
-        <param name="contrast/pathway" type="text"  size="30" label="The contrast/metabolic pathway to be used for the meta-analysis" help="Enter the name of the mutant(s) followed by the strain of the control. If running with several mutants to determine the effects of a knock out gene on a metabolic pathway, enter the names of each of the strains to be analyzed. Make sure these are only separated by a single comma (no spaces)"/>
+        <param name="uniqID" size="30" type="text" value="" label="Unique FeatureID" help="Name of the column in your wide dataset that contains unique feature identifiers."/>
+        <param name="study" type="text" size="30" label="Batch" help="Name of the column in your design file that contains batch/study information."/>
+        <param name="treatment" type="text" size="30" label="Variable Column" help="Name of the column in your design file that contains the name of the variables to be contrasted."/>
+        <param name="contrast/pathway" type="text"  size="30" label="Variables to be compared" help="Enter the name of the variables to be compared (comma separated, no spaces)"/>
     </inputs>
     <outputs>
         <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
@@ -54,8 +54,8 @@ meta_analysis.py
 Metabolomics experiments have variations in sample acquisition, extraction, and data acquisition (Gouveia et al., 2021) with many 
 large-scale experiments subdividing the samples into smaller batches of samples.  
 
-This meta-analysis tool calculates batch-level summary statistics generated using metafor: Meta-Analysis Package for R (REF). 
-We note that the version wrapped here has been tested using the mean difference (MD) to estimate the effect size, unbiased estimates 
+This meta-analysis tool uses metafor (Meta-Analysis Package for R (REF)) to calculate batch-level summary statistics and model estimates.
+We note that the version wrapped here has been tested using the standardized mean difference (SMD) to estimate the effect size, unbiased estimates 
 of the sampling variance (UB) and a fixed effects (FE) model.     
 
 
@@ -67,42 +67,45 @@ of the sampling variance (UB) and a fixed effects (FE) model.
 
 @WIDE@
 
-**NOTE:** The sample IDs must match the sample IDs in the Design File
+**NOTE:** The sampleIDs must match the sampleIDs in the Design File
 (below). Extra columns will automatically be ignored.
 
 @METADATA@
 
 @UNIQID@
 
-**Batch/Study**
-    - Enter the name of the column in the design file that contains the batch information for each sample.  
+**Batch**
+    - Enter the name of the column in the design file that contains the batch information for each sample.
 
-**Genotype**
+**Variable Column**
 
-    - Enter the name of the column in the design file that contains the information to be contrasted. For example, if you want to contrast strain KJ550 and control strain PD1074 and this information is in a column called 'genotype'. 
+    - Enter the name of the column in the design file that contains the name of the variables to be contrasted.
 
 
-**Contrast/Pathway**
+**Contrast**
 
-    - Name of the strains that you want to compare. If doing a pathway study involving multiple strains, please separate each genotypes/strains with commas (no spaces)
+    - Enter the name of the variables that you want to compare (these should be in the 'Variable Column'). Each variable should be comma separated, no spaces.
 
 --------------------------------------------------------------------------------
 
 **Output**
 
 This tool outputs two different files:
+
+
 (1) a summary CSV file that contains the statistical metrics of the batch effect with the following columns:
-    - featureID
-    - effect - Calculated estimated batch effect
-    - se - Standard Error
-    - z_value                  
-    - p_value
-    - ci_low - lower confidence interval
-    - ci_upper - upper confidence interval
+
+- featureID
+- effect - calculated effect size
+- se - standard error
+- z_value                  
+- p_value
+- ci_low - lower confidence interval
+- ci_upper - upper confidence interval
 
 
 
-(2) a report file that contains a description of how much variability and heterogeneity is has been calculated for each sample, and what the results of the fixed effects model were
+(2) a report file that contains a description of how much variability and heterogeneity has been calculated for each sample, and what the results of the fixed effects model were.
   
     ]]></help>
     <expand macro="citations"/>
