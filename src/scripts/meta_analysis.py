@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May 12 11:10:16 2021
-
-@author: zach
-"""
+#!/usr/bin/env python
+##
+##  Created on Wed May 12 11:10:16 2021
+##
+##  @author: zach
+##
 
 import sys, os
 import pandas as pd
@@ -32,7 +31,7 @@ def getoptions():
     parser.add_argument("-o", "--summary", dest="summary", required=True, help="The analysis summary file output name and path")
     parser.add_argument("-r", "--report", dest="report", required=True, help="The analysis report file output name and path")
     parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied")
-    parser.add_argument("-es", "--effectSize", dest="effectSize", default="MD", help="The approach used to calculate the effect size")
+    parser.add_argument("-es", "--effectSize", dest="effectSize", default="SMD", help="The approach used to calculate the effect size, default is SMD")
     parser.add_argument("-cm", "--cmMethod", dest="cmMethod", default = 'UB', help="The method used to compute the sampling variances, default is unbiased estimation, can be 'LS' and 'AV' etc.")
     parser.add_argument("-bg", "--background", dest="background", default = False, help="whether each factor will compare to all the controls in a set")
     args = parser.parse_args()
@@ -113,10 +112,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-  
-
-
-
-
 
