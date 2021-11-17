@@ -13,6 +13,7 @@
 ################################################################################
 
 import pandas as pd
+import numpy as np
 import argparse
 import logging
 from secimtools.dataManager import logger as sl
@@ -49,8 +50,12 @@ def main():
 
     if args.ngroup != None:
         groupBins = int(args.ngroup)
-        # Changed location of +1 from outside x.rank to outside pd.qcut(), 
-        df_rank = df.apply(lambda x: pd.qcut(x.rank(method='average'), q=groupBins, labels = False, duplicates = 'drop') + 1, axis=0)
+        #The next three lines mimic the grouping found in SAS's proc rank function   
+        #General formula for bins: FLOOR(rank*k/(n+1)) where k = # of bins and n = number of nonmissing entries
+        df_rank = df.apply(lambda x: (x.rank(method = 'average')*(groupBins)) / (len(df)+1))
+        df_rank = df_rank.apply(np.floor)
+        df_rank = df_rank.apply(lambda x: x+1)
+        #df_rank = df.apply(lambda x: x.astype('Int64')) trying to convert from float to int
         df_rank.insert(0, uniId, dat.wide.index)
     else:
         #Need to add option for how to break ties
