@@ -1,13 +1,21 @@
 #!/bin/bash
 
+## output for this is:/mclab/SHARE/McIntyre_Lab/CID/sweet16/nmr/roz_meta_analysis_comparisons
 
-
+## use following conda env
 export PATH=/TB14/TB14/galaxy_27oct21/galaxy/database/dependencies/_conda/envs/__secimtools@21.2.21/bin:$PATH
 
-PROJ=/nfshome/ammorse/mclab/SHARE/McIntyre_Lab/CID/sweet16
-SCRIPTS=$PROJ/scripts/NMR/meta_analysis
+# path to project dir - local
+PROJ=/nfshome/ammorse/TB14/TB14/upset_testing
+    mkdir -p $PROJ
 
-OUT=$PROJ/nmr/roz_meta_analysis_comparisons
+# path to input files
+INPUT=/TB14/TB14/github/SECIMTools/galaxy/test-data
+# path to scripts
+SCRIPTS=/TB14/TB14/github/SECIMTools/src/scripts
+
+# output dir (local for now)
+OUT=$PROJ/output
     mkdir -p $OUT
 
 for PATHWAY in TCA UGT NI
@@ -26,10 +34,10 @@ then
 fi
 
 python $SCRIPTS/metaInSet_vs_metaPathway_addArgs.py \
-    --in1 $PROJ/nmr/roz_meta_analysis_pathway/cdcl3_NI_summary.csv \
+    --in1 $INPUT/cdcl3_NI_summary.csv \
     --inPath $PATHWAY \
     --inMut $MUTS \
-    --in2 $PROJ/nmr/roz_meta_analysis_inSet \
+    --in2 $INPUT/roz_meta_analysis_inSet \
     --outD $OUT
 
 done
