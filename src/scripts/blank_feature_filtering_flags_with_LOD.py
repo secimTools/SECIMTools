@@ -64,6 +64,8 @@ def getOptions():
                         required=True,help="Output path for bff file[CSV]")
     output.add_argument("-l","--outlod",dest="outlod",action="store",
                         required=True,help="Output path for lod file[CSV]")
+    output.add_argument("-s","--outs",dest="outs",action="store",
+                        required=True,help="Output path for sample only file[CSV]")
     args = parser.parse_args()
 
     # Standardize paths
@@ -106,6 +108,11 @@ def main(args):
     # Output lod
     df_lod = df_blank[df_blank.columns.drop(list(df_blank.filter(regex='extraction')))]
     df_lod.to_csv(args.outlod, sep='\t')
+
+    # Output input data without extraction blanks
+    df_input = dat.wide 
+    df_samples = df_input[df_input.columns.drop(list(df_input.filter(regex='extraction')))]
+    df_input.to_csv(args.outs, sep='\t')
 
     # Apoply the limit of detection to the rest of the data, these values will be
     # compared agains the criteria value for flagging.
