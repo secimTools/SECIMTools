@@ -104,7 +104,8 @@ def main(args):
     df_blank["lod"].where(df_blank["lod"]!=0, args.bff, inplace=True)
 
     # Output lod
-    df_blank.to_csv(args.outlod, sep='\t')
+    df_lod = df_blank[df_blank.columns.drop(list(df_blank.filter(regex='extraction')))]
+    df_lod.to_csv(args.outlod, sep='\t')
 
     # Apoply the limit of detection to the rest of the data, these values will be
     # compared agains the criteria value for flagging.
