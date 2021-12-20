@@ -110,9 +110,9 @@ def main(args):
     df_lod.to_csv(args.outlod, sep='\t')
 
     # Output input data without extraction blanks
-    df_input = dat.wide 
+    df_input = dat.wide
     df_samples = df_input[df_input.columns.drop(list(df_input.filter(regex='extraction')))]
-    df_input.to_csv(args.outs, sep='\t')
+    df_samples.to_csv(args.outs, sep='\t')
 
     # Apoply the limit of detection to the rest of the data, these values will be
     # compared agains the criteria value for flagging.

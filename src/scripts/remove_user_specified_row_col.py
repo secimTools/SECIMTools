@@ -85,7 +85,10 @@ def dropRowCol(df_wide, args):
     df_row_UPD = df_wide.drop(args.row)
 
     # now drop cols
-    df_col_UPD = df_row_UPD.drop(args.col, axis=1)
+    cols_not_in_df = [col for col in args.col if col not in df_row_UPD.columns]
+    print("Columns not in data: {}".format(cols_not_in_df))
+    cols_in_df = [col for col in args.col if col in df_row_UPD.columns]
+    df_col_UPD = df_row_UPD.drop(cols_in_df, axis=1)
 
     return df_col_UPD
 
