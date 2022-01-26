@@ -12,14 +12,12 @@ meta_analysis.py
 --study $study
 --treatment "$treatment"
 --contrast $contrast
-
 ##Default is set to only use Fixed-effect model, use standard mean difference for effect size, and unbiased estimation for cmMethod 
 --model "FE"
 --effectSize "SMD"
 --cmMethod "UB"
 --summary $summary
 --report $report
-
     ]]></command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab-separated see TIP below."/>
@@ -27,7 +25,7 @@ meta_analysis.py
         <param name="uniqID" size="30" type="text" value="" label="Unique FeatureID" help="Name of the column in your wide dataset that contains unique feature identifiers."/>
         <param name="study" type="text" size="30" label="Batch" help="Name of the column in your design file that contains batch/study information."/>
         <param name="treatment" type="text" size="30" label="Variable Column" help="Name of the column in your design file that contains the name of the variables to be contrasted."/>
-        <param name="contrast/pathway" type="text"  size="30" label="Variables to be compared" help="Enter the name of the variables to be compared (comma separated, no spaces)"/>
+        <param name="contrast" type="text"  size="30" label="Variables to be compared" help="Enter the name of the variables to be compared (comma separated, no spaces)"/>
     </inputs>
     <outputs>
         <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
