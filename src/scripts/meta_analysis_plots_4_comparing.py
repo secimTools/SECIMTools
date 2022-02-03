@@ -216,6 +216,7 @@ def main():
     df_es_direct = df_es.loc[sig_upset.index, df_es.columns[1:-1]]
     df_es_direct = pd.DataFrame(np.where(df_es_direct > 0, 1, 0))
     
+    print(df_es_direct)
     print(df_es_direct.shape) # 2, 4
     print(sig_upset.shape)    # 2, 6
 
