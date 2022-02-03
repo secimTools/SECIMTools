@@ -17,7 +17,7 @@ from upsetplot import UpSet
 def getOptions():
     parser = argparse.ArgumentParser(description='Creates upset plots and outputs it as a pdf')
     parser.add_argument('-w', '--wide', dest='wide', required=True, help="The input file in wide format. Must be csv")
-    parser.add_argument('-d', '--design', dest='design', required=True, help="A design file that assigns which columns to be plotted and renames them.")
+    parser.add_argument('-d', '--design', dest='design', required=True, help="A design file that assigns which columns to be plotted and specifies the labels for the plot.")
     parser.add_argument('-u', '--uniqID', dest='uniqID', default='rowID', help="Specify the unique row ID column in the wide format input")
     parser.add_argument('-t', '--title', dest ='title', required =True, help="Specify the desired name of the plot")
     parser.add_argument("-o", "--outD", dest="outD", action='store', required=True, help="Output directory.")
