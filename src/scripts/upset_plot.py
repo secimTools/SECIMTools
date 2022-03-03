@@ -24,12 +24,14 @@ def getOptions():
     args=parser.parse_args()
     return args
 
-def plot_upset(df,title, fig, boxCols=None):
+def plot_upset(df, title, fig, boxCols=None):
         """
         Plot an UpSet plot given a properly formatted dataframe (multi-indexed with boolean values)
         """
-        
-        upset = UpSet(df,subset_size='count',show_counts=True,sort_by='degree',sort_categories_by=None)
+
+        upset = UpSet(df,subset_size='count',show_counts=True,sort_by='cardinality',sort_categories_by=None, min_subset_size=3)
+#        upset = UpSet(df,subset_size='count',show_counts=True,sort_by='cardinality',sort_categories_by=None, min_subset_size=2)
+#        upset = UpSet(df,subset_size='count',show_counts=True,sort_by='cardinality',sort_categories_by=None)
         
         if boxCols is not None:
             if type(boxCols) != list:
@@ -50,7 +52,7 @@ def main():
     uniqID = args.uniqID
     title = args.title
     design = pd.read_csv(args.design)
-    
+
     #Extract list of desired columns and desired names to a list from design file
     data_cols = design.iloc[:,0].tolist()
     colNameList = design.iloc[:,1].tolist()
@@ -69,6 +71,7 @@ def main():
     fig  = plt.figure(figsize=(12,8))
     plot_upset(df, title, fig)
     fig.savefig(args.outD + "/" + args.title + ".pdf", format='pdf')
+    fig.savefig(args.outD + "/" + args.title + ".svg", format='svg')
     plt.close(fig)
     
 if __name__ == '__main__':
