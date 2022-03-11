@@ -52,7 +52,7 @@ meta_analysis.py
 Metabolomics experiments have variations in sample acquisition, extraction, and data acquisition (Gouveia et al., 2021) with many 
 large-scale experiments subdividing the samples into smaller batches of samples.  
 
-This meta-analysis tool uses metafor (Meta-Analysis Package for R (REF)) to calculate batch-level summary statistics and model estimates.
+This meta-analysis tool uses metafor (Meta-Analysis Package for R (Viechtbauer, 2010) to calculate batch-level summary statistics and model estimates.
 We note that the version wrapped here has been tested using the standardized mean difference (SMD) to estimate the effect size, unbiased estimates 
 of the sampling variance (UB) and a fixed effects (FE) model.     
 
