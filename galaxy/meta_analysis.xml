@@ -29,7 +29,7 @@ meta_analysis.py
     </inputs>
     <outputs>
         <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
-        <data format="csv" name="summary" label="${tool.name} on ${on_string}: Summary"/>
+        <data format="tsv" name="summary" label="${tool.name} on ${on_string}: Summary"/>
     </outputs>
     <tests>
         <test>
@@ -40,7 +40,7 @@ meta_analysis.py
             <param name="treatment" value="genotype" />
             <param name="contrast" value="PD1074,CB4856" />
             <output name="report" file="meta_analysis_report.tsv" />
-            <output name="summary" file="meta_analysis_summary.csv" />
+            <output name="summary" file="meta_analysis_summary.tsv" />
         </test>
     </tests>
     <help><![CDATA[
@@ -54,7 +54,11 @@ large-scale experiments subdividing the samples into smaller batches of samples.
 
 This meta-analysis tool uses metafor (Meta-Analysis Package for R (Viechtbauer, 2010) to calculate batch-level summary statistics and model estimates.
 We note that the version wrapped here has been tested using the standardized mean difference (SMD) to estimate the effect size, unbiased estimates 
-of the sampling variance (UB) and a fixed effects (FE) model.     
+of the sampling variance (UB) and a fixed effects (FE) model.  
+
+More details about the Metafor package can be found here:
+
+Viechtbauer, W. (2010). Conducting meta-analyses in R with the metafor package. Journal of Statistical Software, 36(3), 1-48. https://doi.org/10.18637/jss.v036.i03
 
 
 --------------------------------------------------------------------------------
@@ -91,15 +95,15 @@ of the sampling variance (UB) and a fixed effects (FE) model.
 This tool outputs two different files:
 
 
-(1) a summary CSV file that contains the statistical metrics of the batch effect with the following columns:
+(1) a summary TSV file that contains the statistical metrics of the batch effect with the following columns:
 
 - featureID
-- effect - calculated effect size
-- se - standard error
-- z_value                  
-- p_value
-- ci_low - lower confidence interval
-- ci_upper - upper confidence interval
+- effect - calculated effect size (Standard Mean Difference between the experimental and control treatments)
+- se - corresponding standard errors
+- z_value - test statistics                 
+- p_value 
+- ci_low - lower bounds of confidence intervals
+- ci_upper - upper bounds of confidence intervals
 
 
 
