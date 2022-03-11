@@ -107,7 +107,7 @@ def main():
     
     df.index = features
     df.index.name = "featureID"
-    df.to_csv(args.summary)
+    df.to_csv(args.summary, sep = '\t')
     return
 
 if __name__ == "__main__":
