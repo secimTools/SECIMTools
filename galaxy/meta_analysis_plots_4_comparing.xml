@@ -1,4 +1,4 @@
-<tool id="secimtools_meta_analysis" name="Meta-Analysis" version="@WRAPPER_VERSION@">
+<tool id="secimtools_meta_analysis_plots" name="Meta-Analysis Plots" version="@WRAPPER_VERSION@">
     <description> Create plots and files for comparing pathway and in-Set meta-analyses</description>
     <macros>
         <import>macros.xml</import>
