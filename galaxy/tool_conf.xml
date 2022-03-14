@@ -1,4 +1,5 @@
   <section id="secim" name="SECIM Tools"  version="">
+    <tool file="SECIMTools/galaxy/add_group_rank.xml"/>
     <tool file="SECIMTools/galaxy/anova_fixed.xml"/>
     <tool file="SECIMTools/galaxy/blank_feature_filtering_flags.xml"/>
     <tool file="SECIMTools/galaxy/bland_altman_plot.xml"/>
@@ -18,6 +19,8 @@
     <tool file="SECIMTools/galaxy/magnitude_difference_flags.xml"/>
     <tool file="SECIMTools/galaxy/mahalanobis_distance.xml"/>
     <tool file="SECIMTools/galaxy/merge_flags.xml"/>
+    <tool file="SECIMTools/galaxy/meta_analysis.xml"/>
+    <tool file="SECIMTools/galaxy/meta_analysis_plots_4_comparing.xml"/>
     <tool file="SECIMTools/galaxy/modify_design_file.xml"/>
     <tool file="SECIMTools/galaxy/modulated_modularity_clustering.xml"/>
     <tool file="SECIMTools/galaxy/multiple_testing_adjustment.xml"/>
