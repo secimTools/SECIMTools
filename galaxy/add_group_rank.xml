@@ -1,5 +1,5 @@
-<tool id="secimtools_rank_group_wide" name="Ranking a wide file"  version="@WRAPPER_VERSION@">
-    <description>Compute ranks for numeric columns in a wide dataset.</description>
+<tool id="secimtools_rank_group_wide" name="Add Group Rank"  version="@WRAPPER_VERSION@">
+    <description>Perform Rank analysis by ranking each sample for numeric columns in a wide dataset.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -17,19 +17,25 @@ add_group_rank.py
     <inputs>
         <param name="wide" type="data" format="tabular" label="Wide Dataset" help="Input dataset in wide format and tab separated. If file is not tab separated see TIP below."/>
         <param name="design" type="data" format="tabular" label="Design File" help="Design file tab separated. Note you need a 'sampleID' column. If not tab separated see TIP below."/>
-        <param name="uniqID" type="text" size="30" value="rowID" label="Unique Feature ID" help="Name of the column in your Wide Dataset that has unique Feature IDs."/>
-        <param name="ngroup" type="integer" size="30" value="" optional="true" label="number of groups to rank data" help="number of bins/groups to rank data in."/>
+        <param name="uniqID" type="text" size="30" label="Unique Feature ID" help="Name of the column in your Wide Dataset containing the unique Feature IDs."/>
+        <param name="ngroup" type="integer" size="30" value="" optional="true" label="Enter number of bins [OPTIONAL]" help="Number of bins/groups to rank input data into. If left blank, samples will be ranked individually"/>
     </inputs>
     <outputs>
-        <data format="tabular" name="out" label="${tool.name} on ${on_string}: Results Table"/>
+        <data format="tsv" name="out" label="${tool.name} on ${on_string}: Results Table"/>
     </outputs>
     <tests>
       <test>
-	<param name="wide" value="ST000006_data.tsv"/>
-	<param name="design" value="ST000006_design.tsv"/>
-	<param name="uniqID" value="Retention_Index" />
-	<param name="ngroup" value="100" />
-	<output name="out" file="ST000006_add_group_rank_output_wide.tsv" />
+	    <param name="wide" value="ST000006_data.tsv"/>
+	    <param name="design" value="ST000006_design.tsv"/>
+	    <param name="uniqID" value="Retention_Index" />
+	    <output name="out" file="ST000006_add_group_rank_noBin.tsv" />
+      </test>
+      <test>
+	    <param name="wide" value="ST000006_data.tsv"/>
+	    <param name="design" value="ST000006_design.tsv"/>
+	    <param name="uniqID" value="Retention_Index" />
+	    <param name="ngroup" value="100" />
+	    <output name="out" file="ST000006_add_group_rank_bin100.tsv" />
       </test>
     </tests>
     <help><![CDATA[
@@ -40,37 +46,37 @@ add_group_rank.py
 
 The tool is used to generate a wide format file with each column being ranked in the input wide format dataset.
 
+This tool takes in a file in wide format and ranks the sample values from highest to lowest value, generating a new file containing the rankings. The user may set the number of bins (or groups) to rank the values. For example, if there are 100 samples, and the user wants 10 bins, the tool will output a file with each of the 100 samples grouped into a ranking that ranges from 1-10 for each column.
+
+
 --------------------------------------------------------------------------------
 
 **Input**
 
     - Two input datasets are required.
     
-    An example of input wide file is like:
+@WIDE@
 
-        +---------+---------+---------+---------+-----+
-        | Feature | sample1 | sample2 | sample3 | ... |
-        +=========+=========+=========+=========+=====+
-        | one     | 10.2    | 20      | 10      | ... |
-        +---------+---------+---------+---------+-----+
-        | two     | 5.1     | 22      | 30      | ... |
-        +---------+---------+---------+---------+-----+
-        | three   | 30.5    | 27      | 2       | ... |
-        +---------+---------+---------+---------+-----+
-        | four    | 32.9    | 17      | 8       | ... |
-        +---------+---------+---------+---------+-----+
-        | ...     | ...     | ...     | ...     | ... |
-        +---------+---------+---------+---------+-----+
+**NOTE**: The samples must all be numeric to run this tool.
+
+**NOTE:** The sample IDs must match the sample IDs in the Design File
+(below). Extra columns will automatically be ignored.
+
+@METADATA@
+
+**Number of bins/groups [OPTIONAL]**
+
+- Amount of bins to group the ranked samples into. If this field is left empty, the tool will rank the samples individually. 
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-The user will get a output file from the tool:
+This tool outputs one file:
 
-- a wide format file with each column being ranked.
+- a TSV file containing the rankings for each sample in a given column (Note that output file contains the same column names as in the original input Wide Dataset)
 
-The output wide file for the example above will be like:
+Example Output File:
         
 +---------+---------+---------+---------+-----+
 | Feature | sample1 | sample2 | sample3 | ... |
@@ -85,6 +91,7 @@ The output wide file for the example above will be like:
 +---------+---------+---------+---------+-----+
 | ...     | ...     | ...     | ...     | ... |
 +---------+---------+---------+---------+-----+
+
 
     ]]></help>
     <expand macro="citations"/>
