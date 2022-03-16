@@ -44,9 +44,7 @@ add_group_rank.py
 
 **Tool Description**
 
-The tool is used to generate a wide format file with each column being ranked in the input wide format dataset.
-
-This tool takes in a file in wide format and ranks the sample values from highest to lowest value, generating a new file containing the rankings. The user may set the number of bins (or groups) to rank the values. For example, if there are 100 samples, and the user wants 10 bins, the tool will output a file with each of the 100 samples grouped into a ranking that ranges from 1-10 for each column.
+The Add Group Rank tool takes in a file in wide format and ranks the sample values from highest to lowest value, generating a new file containing the rankings. The user may have the values be ranked individually, or they may set a number of bins to group the ranked values into. For example, if there are 100 samples, and the user wants 10 bins, the tool will output a file with each of the 100 samples grouped into a ranking that ranges from 1-10 for each column.
 
 
 --------------------------------------------------------------------------------
@@ -57,7 +55,7 @@ This tool takes in a file in wide format and ranks the sample values from highes
     
 @WIDE@
 
-**NOTE**: The samples must all be numeric to run this tool.
+**NOTE**: The sample values must all be numeric to run this tool.
 
 **NOTE:** The sample IDs must match the sample IDs in the Design File
 (below). Extra columns will automatically be ignored.
@@ -66,7 +64,7 @@ This tool takes in a file in wide format and ranks the sample values from highes
 
 **Number of bins/groups [OPTIONAL]**
 
-- Amount of bins to group the ranked samples into. If this field is left empty, the tool will rank the samples individually. 
+- Number of bins to group the ranked samples into. If this field is left empty, the tool will rank the samples individually. 
 
 --------------------------------------------------------------------------------
 
