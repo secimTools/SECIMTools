@@ -22,6 +22,6 @@ add_group_rank.py \
     --wide "$INPUT_DIR/ST000006_data.tsv" \
     --design  "$INPUT_DIR/ST000006_design.tsv" \
     --uniqID Retention_Index \
-    --out "$OUTPUT_DIR/ST000006_add_group_rank_output_wide.tsv"
+    --out "$OUTPUT_DIR/ST000006_add_group_rank_noBin.tsv"
 
 echo "### Finished test: ${TEST} on $(date)"
