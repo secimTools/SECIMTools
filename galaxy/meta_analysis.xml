@@ -57,9 +57,9 @@ We note that the version wrapped here has been tested using the standardized mea
 of the sampling variance (UB) and a fixed effects (FE) model.  
 
 
-More details about the Metafor package can be found here:
+Gouveia, G., et al. (2021). Long-Term Metabolomics Reference Material. bioRxiv. https://doi.org/10.1101/2021.03.24.436834 
 
-https://www.biorxiv.org/content/10.1101/2021.03.24.436834v1
+More details about the Metafor package can be found here:
 
 Viechtbauer, W. (2010). Conducting meta-analyses in R with the metafor package. Journal of Statistical Software, 36(3), 1-48. https://doi.org/10.18637/jss.v036.i03
 

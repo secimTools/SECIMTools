@@ -33,6 +33,10 @@ meta_analysis.py \
     --effectSize "SMD" \
     --cmMethod "UB" \
     --report "$OUTPUT_DIR/meta_analysis_report.tsv" \
+<<<<<<< HEAD
     --summary "$OUTPUT_DIR/meta_analysis_report.tsv"
+=======
+    --summary "$OUTPUT_DIR/meta_analysis_summary.tsv" 
+>>>>>>> 6e7bfd91459a6e0f909dbbf7b89144586ff65463
 
 echo "### Finished test: ${TEST} on $(date)"
