@@ -28,6 +28,7 @@ anova_fixed.py \
     -id Retention_Index \
     -f  White_wine_type_and_source \
     -t  C \
+    --interactions \
     -o  "$OUTPUT_DIR/ST000006_anova_fixed_with_group_summary.tsv" \
     -fl "$OUTPUT_DIR/ST000006_anova_fixed_with_group_flags.tsv" \
     -f1 "$OUTPUT_DIR/ST000006_anova_fixed_with_group_qq_plots.pdf" \

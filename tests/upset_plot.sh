@@ -24,8 +24,8 @@ upset_plot.py \
     --wide "$INPUT_DIR/upset_plot_input.tsv" \
     --design "$INPUT_DIR/upset_plot_design.tsv" \
     --uniqID geneID \
-    --title upsetPlot_flags \
-    --outD upsetPlot_flags \
+    --title upset_plot_title \
+    --outD $OUTPUT_DIR/upset_plot.pdf \
     --minSS 2
 
 echo "### Finished test: ${TEST} on $(date)"
