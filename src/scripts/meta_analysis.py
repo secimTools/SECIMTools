@@ -6,18 +6,21 @@
 ##
 
 import sys, os
+try:
+    from importlib import resources as ires
+except ImportError:
+    import importlib_resources as ires
 import pandas as pd
 import rpy2.robjects as ro
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
+from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
 import logging
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
 import argparse
 
-r = ro.r
-ro.r.source(os.path.dirname(sys.argv[0]) + '/metafor_wrappers.R')
-
+## AMM updated code to use ires for metafor R code and STAP
 
 def getoptions():
     parser = argparse.ArgumentParser(description="Perform meta-analysis by metafor in R")
@@ -38,6 +41,16 @@ def getoptions():
     return(args)
 
 def main():
+    ## amm updated to use ires and STAP
+    with ires.path("secimtools.data", "metafor_wrappers.R") as R_path:
+        my_r_script_path = str(R_path)
+
+    pandas2ri.activate()
+
+    with open(my_r_script_path, "r") as f:
+        rFile = f.read()
+    metaforScript = STAP(rFile, "metafor_wrappers")
+
     saveStdout = sys.stdout
     args = getoptions()
     logger = logging.getLogger()
@@ -81,7 +94,7 @@ def main():
                 #outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
             else:
                 outfig = 'NOFIG'
-            res_fromR = r.meta_batchCorrect(data = data_rform, 
+            res_fromR = metaforScript.meta_batchCorrect(data = data_rform, 
                                       dependent = fea, 
                                       study = args.study, 
                                       treatment = args.treatment,

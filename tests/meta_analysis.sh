@@ -27,12 +27,16 @@ meta_analysis.py \
     --design "$INPUT_DIR/dsgn_nmr_4_MA_cdcl3_set1_CB4856.tsv" \
     --uniqID ppm \
     --study  batch \
-    --treatment genotype \ 
-    --contrast PD1074,CB4856 \ 
+    --treatment genotype \
+    --contrast PD1074,CB4856 \
     --model "FE" \
     --effectSize "SMD" \
     --cmMethod "UB" \
     --report "$OUTPUT_DIR/meta_analysis_report.tsv" \
-    --summary "$OUTPUT_DIR/meta_analysis_report.tsv" 
+<<<<<<< HEAD
+    --summary "$OUTPUT_DIR/meta_analysis_report.tsv"
+=======
+    --summary "$OUTPUT_DIR/meta_analysis_summary.tsv" 
+>>>>>>> 6e7bfd91459a6e0f909dbbf7b89144586ff65463
 
 echo "### Finished test: ${TEST} on $(date)"

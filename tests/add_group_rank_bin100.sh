@@ -24,6 +24,6 @@ add_group_rank.py \
     --design  "$INPUT_DIR/ST000006_design.tsv" \
     --uniqID Retention_Index \
     --ngroup 100 \
-    --out "$OUTPUT_DIR/ST000006_add_group_rank_output_wide.tsv"
+    --out "$OUTPUT_DIR/ST000006_add_group_rank_bin100.tsv"
 
 echo "### Finished test: ${TEST} on $(date)"

@@ -15,12 +15,13 @@ from upsetplot import UpSet
 
 
 def getOptions():
-    parser = argparse.ArgumentParser(description='Creates upset plots and outputs it as a pdf')
-    parser.add_argument('-w', '--wide', dest='wide', required=True, help="The input file in wide format. Must be csv")
-    parser.add_argument('-d', '--design', dest='design', required=True, help="A design file that assigns which columns to be plotted and specifies the labels for the plot.")
-    parser.add_argument('-u', '--uniqID', dest='uniqID', default='rowID', help="Specify the unique row ID column in the wide format input")
-    parser.add_argument('-t', '--title', dest ='title', required =True, help="Specify the desired name of the plot")
-    parser.add_argument("-o", "--outD", dest="outD", action='store', required=True, help="Output directory.")
+    parser = argparse.ArgumentParser(description='Creates upset plot and outputs a pdf')
+    parser.add_argument('-w', '--wide', dest='wide', required=True, help="The input file in wide format. Must be tsv")
+    parser.add_argument('-d', '--design', dest='design', required=True, help="A design file that assigns columns in wide datsaset to be plotted and specifies the labels for the plot.")
+    parser.add_argument('-u', '--uniqID', dest='uniqID', default='rowID', help="Specify the unique row ID column in the wide input dataset")
+    parser.add_argument('-t', '--title', dest ='title', required =True, help="Specify the title to use in plot pdf")
+    parser.add_argument("-o", "--outD", dest="outD", action='store', required=True, help="Specify pdf output plot")
+    parser.add_argument("-m", "--minSS", dest="minSS", default='0', help="Set minimum subset size - use to truncate graph (e.g. omit 1's)")
     args=parser.parse_args()
     return args
 
@@ -28,8 +29,10 @@ def plot_upset(df, title, fig, boxCols=None):
         """
         Plot an UpSet plot given a properly formatted dataframe (multi-indexed with boolean values)
         """
-
-        upset = UpSet(df,subset_size='count',show_counts=True,sort_by='cardinality',sort_categories_by=None, min_subset_size=3)
+        args = getOptions()
+        minSS = args.minSS
+        
+        upset = UpSet(df,subset_size='count',show_counts=True,sort_by='cardinality',sort_categories_by=None, min_subset_size=int(minSS))
 #        upset = UpSet(df,subset_size='count',show_counts=True,sort_by='cardinality',sort_categories_by=None, min_subset_size=2)
 #        upset = UpSet(df,subset_size='count',show_counts=True,sort_by='cardinality',sort_categories_by=None)
         
@@ -51,13 +54,14 @@ def main():
     args = getOptions()
     uniqID = args.uniqID
     title = args.title
-    design = pd.read_csv(args.design)
+    design = pd.read_csv(args.design, sep='\t')
+
 
     #Extract list of desired columns and desired names to a list from design file
     data_cols = design.iloc[:,0].tolist()
     colNameList = design.iloc[:,1].tolist()
     
-    df = pd.read_csv(args.wide) #Input must be csv file
+    df = pd.read_csv(args.wide, sep='\t') #Input must be tsv file
         
     #Eliminates columns of unwanted data
     df = df[data_cols]
@@ -70,8 +74,8 @@ def main():
     
     fig  = plt.figure(figsize=(12,8))
     plot_upset(df, title, fig)
-    fig.savefig(args.outD + "/" + args.title + ".pdf", format='pdf')
-    fig.savefig(args.outD + "/" + args.title + ".svg", format='svg')
+    fig.savefig(args.outD, format='pdf')
+#    fig.savefig(args.outD + ".svg", format='svg')
     plt.close(fig)
     
 if __name__ == '__main__':

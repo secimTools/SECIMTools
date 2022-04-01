@@ -56,6 +56,9 @@ This meta-analysis tool uses metafor (Meta-Analysis Package for R (Viechtbauer, 
 We note that the version wrapped here has been tested using the standardized mean difference (SMD) to estimate the effect size, unbiased estimates 
 of the sampling variance (UB) and a fixed effects (FE) model.  
 
+
+Gouveia, G., et al. (2021). Long-Term Metabolomics Reference Material. bioRxiv. https://doi.org/10.1101/2021.03.24.436834 
+
 More details about the Metafor package can be found here:
 
 Viechtbauer, W. (2010). Conducting meta-analyses in R with the metafor package. Journal of Statistical Software, 36(3), 1-48. https://doi.org/10.18637/jss.v036.i03
@@ -99,12 +102,11 @@ This tool outputs two different files:
 
 - featureID
 - effect - calculated effect size (Standard Mean Difference between the experimental and control treatments)
-- se - corresponding standard errors
-- z_value - test statistics                 
-- p_value 
-- ci_low - lower bounds of confidence intervals
-- ci_upper - upper bounds of confidence intervals
-
+- se - standard errors of the coefficients
+- z_value - test statistics of the coefficients                 
+- p_value - p-values for test statistics
+- ci_low - lower bound of confidence intervals
+- ci_upper - upper bound of confidence intervals
 
 
 (2) a report file that contains a description of how much variability and heterogeneity has been calculated for each sample, and what the results of the fixed effects model were.
