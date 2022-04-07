@@ -30,6 +30,7 @@ meta_analysis.py
     <outputs>
         <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
         <data format="tsv" name="summary" label="${tool.name} on ${on_string}: Summary"/>
+        <data format="pdf" name="forest" label="${tool.name} on ${on_string}: ForestPlot"/>
     </outputs>
     <tests>
         <test>
@@ -97,8 +98,7 @@ Viechtbauer, W. (2010). Conducting meta-analyses in R with the metafor package. 
 
 **Output**
 
-This tool outputs two different files:
-
+This tool outputs two TSV files and an optional PDF of a forest plot:
 
 (1) a summary TSV file that contains the statistical metrics of the batch effect with the following columns:
 
@@ -112,6 +112,8 @@ This tool outputs two different files:
 
 
 (2) a report file that contains a description of how much variability and heterogeneity has been calculated for each sample, and what the results of the fixed effects model were.
+
+(3) a pdf containing a forest plots for all features in the wide dataset.
   
     ]]></help>
     <expand macro="citations"/>
