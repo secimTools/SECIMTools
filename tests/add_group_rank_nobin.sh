@@ -3,11 +3,11 @@
 #        <param name="wide"       value="ST000006_data.tsv"/>
 #        <param name="design"      value="ST000006_design.tsv"/>
 #        <param name="uniqID"      value="Retention_Index" />
-#        <param name="ngroup" value=100 />
 #        <output name="out" file="ST000006_add_group_rank_output_wide.tsv" />
 #     </test>
 
 SCRIPT=$(basename "${BASH_SOURCE[0]}");
+echo ${BASH_SOURCE[0]}
 TEST="${SCRIPT%.*}"
 TESTDIR="testout/${TEST}"
 INPUT_DIR="galaxy/test-data"
