@@ -30,7 +30,8 @@ def getoptions():
     parser.add_argument("-s", "--study", dest="study", required=True, help="The column name in the design file to specify study")
     parser.add_argument("-t", "--treatment", dest="treatment", required=True, help="The column name in the design file to specify treatment")
     parser.add_argument("-c", "--contrast", dest="contrast", required=True, help="The contrast to be used for the meta-anlysis")
-    parser.add_argument("-fr", "--forest", dest="forest", default=None, help="The forest plot output directory plus prefix")
+    parser.add_argument("-f", "--forest", dest="forest", required=True, help="Generate forest plot, yes or no")
+    parser.add_argument("-fp", "--forestplot", dest="forestplot", default=None, help="The forest plot output directory plus prefix")
     parser.add_argument("-o", "--summary", dest="summary", required=True, help="The analysis summary file output name and path")
     parser.add_argument("-r", "--report", dest="report", required=True, help="The analysis report file output name and path")
     parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied")
@@ -89,7 +90,7 @@ def main():
         sys.stdout = f
         for fea in features:
             print("\n\n\n===============================================\ntest feature: " + fea)
-            if args.forest:
+            if args.forest == 'yes' or args.forest == 'Yes':
                 outfig = args.forest + "_" + fea + "_" + args.model + "_forest.pdf"
                 #outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
             else:
