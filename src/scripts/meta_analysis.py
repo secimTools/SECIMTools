@@ -92,7 +92,7 @@ def main():
             print("\n\n\n===============================================\ntest feature: " + fea)
             #if args.forest:
             if args.forest == 'yes' or args.forest == 'Yes':
-                outfig = args.forest + "_" + fea + "_" + args.model + "_forest.pdf"
+                outfig = args.forestPlot + "_" + fea + "_" + args.model + "_forest.pdf"
                 #outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
             #else:
             elif args.forest == 'no' or args.forest == 'No':

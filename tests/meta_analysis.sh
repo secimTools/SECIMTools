@@ -28,13 +28,13 @@ meta_analysis.py \
     --uniqID ppm \
     --study  batch \
     --treatment genotype \
-    --contrast PD1074,CX11314,DL238,CB4856 \
+    --contrast PD1074,CB4856 \
     --model "FE" \
     --forest 'yes' \
     --effectSize "SMD" \
     --cmMethod "UB" \
     --report "$OUTPUT_DIR/meta_analysis_report.tsv" \
     --summary "$OUTPUT_DIR/meta_analysis_summary.tsv" \
-    --forestPlot "$OUTPUT_DIR"
+    --forestPlot "$OUTPUT_DIR/meta_analysis"
 
 echo "### Finished test: ${TEST} on $(date)"
