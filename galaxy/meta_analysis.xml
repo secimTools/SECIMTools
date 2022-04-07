@@ -90,6 +90,8 @@ Viechtbauer, W. (2010). Conducting meta-analyses in R with the metafor package. 
 **Contrast**
 
     - Enter the name of the variables that you want to compare (these should be in the 'Variable Column'). Each variable should be comma separated, no spaces.
+    - Meta-analyis for each feature to compare test samples to control samples: list name of the test sample followed by name of the control sample.
+    - Meta-analysis to test whether a feature is differentially expressed in a group of test samples compared to control: list name of all test samples followed by control sample.
 
 --------------------------------------------------------------------------------
 
