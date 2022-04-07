@@ -90,7 +90,7 @@ def main():
         sys.stdout = f
         for fea in features:
             print("\n\n\n===============================================\ntest feature: " + fea)
-           # if args.forest:
+            #if args.forest:
             if args.forest == 'yes':
                 outfig = args.forest + "_" + fea + "_" + args.model + "_forest.pdf"
                 #outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
