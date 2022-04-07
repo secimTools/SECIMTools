@@ -12,9 +12,7 @@ meta_analysis.py
 --study $study
 --treatment "$treatment"
 --contrast $contrast
-#if $forest
-    --forest 
-#end if
+--forest $forest
 ##Default is set to only use Fixed-effect model, use standard mean difference for effect size, and unbiased estimation for cmMethod 
 --model "FE"
 --effectSize "SMD"
@@ -29,7 +27,7 @@ meta_analysis.py
         <param name="study" type="text" size="30" label="Batch" help="Name of the column in your design file that contains batch/study information."/>
         <param name="treatment" type="text" size="30" label="Variable Column" help="Name of the column in your design file that contains the name of the variables to be contrasted."/>
         <param name="contrast" type="text"  size="30" label="Variables to be compared" help="Enter the name of the variables to be compared (comma separated, no spaces)"/>
-        <param name="forest" type="boolean" label="Output Forest Plot" help="If 'Yes', the Meta-analysis program will output a forest plot" />  
+        <param name="forest" type="text" label="Output Forest Plot" help="If 'Yes', the Meta-analysis program will output a forest plot" />  
     </inputs>
     <outputs>
         <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
