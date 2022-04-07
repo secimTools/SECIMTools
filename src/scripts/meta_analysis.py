@@ -90,14 +90,16 @@ def main():
         sys.stdout = f
         for fea in features:
             print("\n\n\n===============================================\ntest feature: " + fea)
-            if args.forest == 'yes' or args.forest == 'Yes':
+            if args.forest:
+            #if args.forest == 'yes':
                 outfig = args.forest + "_" + fea + "_" + args.model + "_forest.pdf"
                 #outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
             else:
+            #elif args.forest == 'no':
                 outfig = 'NOFIG'
             res_fromR = metaforScript.meta_batchCorrect(data = data_rform, 
                                       dependent = fea, 
-                                      study = args.study, 
+                                     study = args.study, 
                                       treatment = args.treatment,
                                       factors = rcontrast,
                                       forest = outfig, 
