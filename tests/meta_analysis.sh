@@ -30,10 +30,11 @@ meta_analysis.py \
     --treatment genotype \
     --contrast PD1074,CB4856 \
     --model "FE" \
+    --forest 'yes' \
     --effectSize "SMD" \
     --cmMethod "UB" \
     --report "$OUTPUT_DIR/meta_analysis_report.tsv" \
     --summary "$OUTPUT_DIR/meta_analysis_summary.tsv" \
-    --forest "OUTPUT_DIR/meta_analysis_forest_plot.pdf"
+    --forestPlot "OUTPUT_DIR/meta_analysis_forest_plot.pdf"
 
 echo "### Finished test: ${TEST} on $(date)"
