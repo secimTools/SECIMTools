@@ -1,6 +1,6 @@
 library(metafor)
 
-meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest, myMethod = "FE", myMeasure = 'MD', myvtype = 'LS', toBackground = FALSE) {
+meta_batchCorrect <- function(data, dependent, study, treatment, factors, forest, myMethod = "FE", myMeasure = 'SMD', myvtype = 'LS', toBackground = FALSE) {
   batch_set = rep(c("set1", "set2", "set3"), each = 2)
   names(batch_set) = c(1, 2, 3, 4, 5, 6)
   data$sets <- batch_set[data[[study]]]

@@ -5,19 +5,23 @@
     </macros>
     <expand macro="requirements" />
     <command detect_errors="exit_code"><![CDATA[
+mkdir outputs ;
+cd outputs;
 meta_analysis.py
---wide $input
---design $design
---uniqID $uniqID
---study $study
---treatment "$treatment"
---contrast $contrast
-##Default is set to only use Fixed-effect model, use standard mean difference for effect size, and unbiased estimation for cmMethod 
---model "FE"
---effectSize "SMD"
---cmMethod "UB"
---summary $summary
---report $report
+
+  --wide $input
+  --design $design
+  --uniqID $uniqID
+  --study $study
+  --treatment "$treatment"
+  --contrast $contrast
+  --forest $forest
+  ##Default is set to only use Fixed-effect model, use standard mean difference for effect size, and unbiased estimation for cmMethod 
+  --model "FE"
+  --effectSize "SMD"
+  --cmMethod "UB"
+  --summary $summary
+  --report $report
     ]]></command>
     <inputs>
         <param name="input" type="data" format="tabular" label="Wide Dataset" help="Input your tab-separated wide format dataset. If file is not tab-separated see TIP below."/>
@@ -26,10 +30,17 @@ meta_analysis.py
         <param name="study" type="text" size="30" label="Batch" help="Name of the column in your design file that contains batch/study information."/>
         <param name="treatment" type="text" size="30" label="Variable Column" help="Name of the column in your design file that contains the name of the variables to be contrasted."/>
         <param name="contrast" type="text"  size="30" label="Variables to be compared" help="Enter the name of the variables to be compared (comma separated, no spaces)"/>
+        <param name="forest" type="select" label="Output Forest Plot" help="If 'Yes', the Meta-analysis program will output a forest plot for each sample" >
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </param>             
     </inputs>
     <outputs>
-        <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
-        <data format="tsv" name="summary" label="${tool.name} on ${on_string}: Summary"/>
+      <collection format= "pdf" type="list" name="split_output" label="${tool.name} on ${on_string}: Forest Plots" >
+        <discover_datasets pattern="(?P&lt;name&gt;.*)\.pdf" ext="pdf" directory="outputs"/>
+      </collection>
+      <data format="tsv" name="report" label="${tool.name} on ${on_string}: Report"  />
+      <data format="tsv" name="summary" label="${tool.name} on ${on_string}: Summary"/>
     </outputs>
     <tests>
         <test>
@@ -55,6 +66,9 @@ large-scale experiments subdividing the samples into smaller batches of samples.
 This meta-analysis tool uses metafor (Meta-Analysis Package for R (Viechtbauer, 2010) to calculate batch-level summary statistics and model estimates.
 We note that the version wrapped here has been tested using the standardized mean difference (SMD) to estimate the effect size, unbiased estimates 
 of the sampling variance (UB) and a fixed effects (FE) model.  
+
+
+Gouveia, G., et al. (2021). Long-Term Metabolomics Reference Material. bioRxiv. https://doi.org/10.1101/2021.03.24.436834 
 
 More details about the Metafor package can be found here:
 
@@ -87,27 +101,29 @@ Viechtbauer, W. (2010). Conducting meta-analyses in R with the metafor package. 
 **Contrast**
 
     - Enter the name of the variables that you want to compare (these should be in the 'Variable Column'). Each variable should be comma separated, no spaces.
+    - Meta-analyis for each feature to compare test samples to control samples: list name of the test sample followed by name of the control sample.
+    - Meta-analysis to test whether a feature is differentially expressed in a group of test samples compared to control: list name of all test samples followed by control sample.
 
 --------------------------------------------------------------------------------
 
 **Output**
 
-This tool outputs two different files:
-
+This tool outputs two TSV files and an optional PDF of a forest plot:
 
 (1) a summary TSV file that contains the statistical metrics of the batch effect with the following columns:
 
 - featureID
 - effect - calculated effect size (Standard Mean Difference between the experimental and control treatments)
-- se - corresponding standard errors
-- z_value - test statistics                 
-- p_value 
-- ci_low - lower bounds of confidence intervals
-- ci_upper - upper bounds of confidence intervals
-
+- se - standard errors of the coefficients
+- z_value - test statistics of the coefficients                 
+- p_value - p-values for test statistics
+- ci_low - lower bound of confidence intervals
+- ci_upper - upper bound of confidence intervals
 
 
 (2) a report file that contains a description of how much variability and heterogeneity has been calculated for each sample, and what the results of the fixed effects model were.
+
+(3) a pdf containing a forest plots for all features in the wide dataset.
   
     ]]></help>
     <expand macro="citations"/>

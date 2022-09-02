@@ -151,10 +151,10 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
     #Geting number of features in dataframe
     nFeatures = len(SEDData.index)
 
-    #Calculates the widht for the figure base on the number of features
+    #Calculates the width for the figure base on the number of features
     figWidth = max(nFeatures/2, 16)
 
-    # Create figure object with a single axis and initiate the figss
+    # Create figure object with a single axis and initiate the figs
     figure = figureHandler(proj='2d', figsize=(figWidth, 8))
 
     # Keeping the order on the colors
@@ -190,13 +190,14 @@ def makePlots (SEDData, design, pdf, groupName, cutoff, p, plotType, ugColors, l
     elif(plotType=="boxplotPairwise"):
         # Add Figure title, x axis limits and set the xticks
         figure.formatAxis(figTitle="Box-plots for pairwise standardized Euclidean Distance from samples {}".
-                        format(groupName),xlim=(-0.5,-0.5+nFeatures),ylim="ignore",
-                        xticks=SEDData.index.values,xTitle="Index",
-                        yTitle="Standardized Euclidean Distance")
+                    format(groupName),xlim="ignore",ylim="ignore",xticks=SEDData.index.values,
+                    xTitle="Index",yTitle="Standardized Euclidean Distance")
+       
         # Plot Box plot
         box.boxDF(ax=figure.ax[0], colors=SEDData["colors"].values, dat=SEDData)
 
-    #Add a cutoof line
+        
+    #Add a cutoff line
     cutoff.apply(lambda x: plotCutoffs(x,ax=figure.ax[0],p=p),axis=0)
     figure.shrink()
     # Plot legend
@@ -230,7 +231,7 @@ def prepareSED(data_df, design, pdf, groupName, p, ugColors, levels):
         :return pdf: PDF for output plots.
 
         :rtype SEDtoMean: pd.DataFrames
-        :return SEDtoMean: SEd for Mean
+        :return SEDtoMean: SED for Mean
 
         :rtype SEDpairwise: pd.DataFrames
         :return SEDpairwise: SED for pairwise data

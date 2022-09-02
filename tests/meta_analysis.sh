@@ -5,7 +5,7 @@
 #            <param name="uniqID" value="ppm" />
 #            <param name="study"  value="batch" />
 #            <param name="treatment" value="genotype" />
-#            <param name="contrast" value="PD1074,CB4856" />
+#            <param name="contrast" value="PD1074,CX11314,DL238,CB4856" />
 #            <output name="report" file="meta_analysis_report.tsv" />
 #            <output name="summary" file="meta_analysis_summary.csv" />
 #        </test>
@@ -27,12 +27,14 @@ meta_analysis.py \
     --design "$INPUT_DIR/dsgn_nmr_4_MA_cdcl3_set1_CB4856.tsv" \
     --uniqID ppm \
     --study  batch \
-    --treatment genotype \ 
-    --contrast PD1074,CB4856 \ 
+    --treatment genotype \
+    --contrast PD1074,CB4856 \
     --model "FE" \
+    --forest 'yes' \
     --effectSize "SMD" \
     --cmMethod "UB" \
     --report "$OUTPUT_DIR/meta_analysis_report.tsv" \
-    --summary "$OUTPUT_DIR/meta_analysis_report.tsv" 
+    --summary "$OUTPUT_DIR/meta_analysis_summary.tsv" \
+    --forestPlot "$OUTPUT_DIR/meta_analysis"
 
 echo "### Finished test: ${TEST} on $(date)"

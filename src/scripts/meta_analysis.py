@@ -6,18 +6,21 @@
 ##
 
 import sys, os
+try:
+    from importlib import resources as ires
+except ImportError:
+    import importlib_resources as ires
 import pandas as pd
 import rpy2.robjects as ro
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
+from rpy2.robjects.packages import SignatureTranslatedAnonymousPackage as STAP
 import logging
 from secimtools.dataManager import logger as sl
 from secimtools.dataManager.interface import wideToDesign
 import argparse
 
-r = ro.r
-ro.r.source(os.path.dirname(sys.argv[0]) + '/metafor_wrappers.R')
-
+## AMM updated code to use ires for metafor R code and STAP
 
 def getoptions():
     parser = argparse.ArgumentParser(description="Perform meta-analysis by metafor in R")
@@ -27,17 +30,28 @@ def getoptions():
     parser.add_argument("-s", "--study", dest="study", required=True, help="The column name in the design file to specify study")
     parser.add_argument("-t", "--treatment", dest="treatment", required=True, help="The column name in the design file to specify treatment")
     parser.add_argument("-c", "--contrast", dest="contrast", required=True, help="The contrast to be used for the meta-anlysis")
-    parser.add_argument("-fr", "--forest", dest="forest", default=None, help="The forest plot output directory plus prefix")
+    parser.add_argument("-f", "--forest", dest="forest", required=True, help="Generate forest plots, yes or no")
+    parser.add_argument("-fp", "--forestPlot", dest="forestPlot", default=None, help="The forest plot output directory plus prefix")
     parser.add_argument("-o", "--summary", dest="summary", required=True, help="The analysis summary file output name and path")
     parser.add_argument("-r", "--report", dest="report", required=True, help="The analysis report file output name and path")
-    parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied")
+    parser.add_argument("-m", "--model", dest="model", default="FE", help="The meta-analysis model that will be applied, fixed-effects")
     parser.add_argument("-es", "--effectSize", dest="effectSize", default="SMD", help="The approach used to calculate the effect size, default is SMD")
-    parser.add_argument("-cm", "--cmMethod", dest="cmMethod", default = 'UB', help="The method used to compute the sampling variances, default is unbiased estimation, can be 'LS' and 'AV' etc.")
+    parser.add_argument("-cm", "--cmMethod", dest="cmMethod", default = 'LS', help="The method used to compute the sampling variances for ES calculation, default is large-sample approximation")
     parser.add_argument("-bg", "--background", dest="background", default = False, help="whether each factor will compare to all the controls in a set")
     args = parser.parse_args()
     return(args)
 
 def main():
+    ## amm updated to use ires and STAP
+    with ires.path("secimtools.data", "metafor_wrappers.R") as R_path:
+        my_r_script_path = str(R_path)
+
+    pandas2ri.activate()
+
+    with open(my_r_script_path, "r") as f:
+        rFile = f.read()
+    metaforScript = STAP(rFile, "metafor_wrappers")
+
     saveStdout = sys.stdout
     args = getoptions()
     logger = logging.getLogger()
@@ -76,12 +90,14 @@ def main():
         sys.stdout = f
         for fea in features:
             print("\n\n\n===============================================\ntest feature: " + fea)
-            if args.forest:
-                outfig = args.forest + "_" + fea + "_" + args.model + "_forest.pdf"
+            #if args.forest:
+            if args.forest == 'yes' or args.forest == 'Yes':
+                outfig = args.forestPlot + "_" + fea + "_" + args.model + "_forest.pdf"
                 #outfig = args.forest + "/" + fea + "_" + args.model + "_forest.pdf"
-            else:
+            #else:
+            elif args.forest == 'no' or args.forest == 'No':
                 outfig = 'NOFIG'
-            res_fromR = r.meta_batchCorrect(data = data_rform, 
+            res_fromR = metaforScript.meta_batchCorrect(data = data_rform, 
                                       dependent = fea, 
                                       study = args.study, 
                                       treatment = args.treatment,
